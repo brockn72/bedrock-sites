@@ -6465,7 +6465,7 @@ function showSuccess(state,contactName){
   }
 }
 
-function submitClaim(){
+async function submitClaim(){
   const name=document.getElementById('s4Name').value.trim();
   const phone=document.getElementById('s4Phone').value.trim();
   const email=document.getElementById('s4Email').value.trim();
@@ -6474,13 +6474,29 @@ function submitClaim(){
   errEl.style.display='none';
   if(!name||!phone||!email){errEl.textContent='Please fill in your name, phone, and email.';errEl.style.display='block';return;}
   const btn=document.getElementById('s4PayBtn');
-  btn.disabled=true;btn.textContent='Redirecting to payment…';
-  // Save lead fire-and-forget — doesn't block the redirect
-  fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim'})
-  }).catch(()=>{});
-  // Send them to Stripe
-  window.location.href=STRIPE_PAYMENT_LINK;
+  btn.disabled=true;btn.textContent='Setting up payment…';
+  try{
+    // Save lead first so we get a leadId to attach to the Stripe session
+    const leadRes=await fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim'})
+    });
+    const leadData=leadRes.ok?await leadRes.json():{};
+    const leadId=leadData.leadId||null;
+    // Create a Stripe Checkout session with leadId in metadata so the webhook can update the right record
+    btn.textContent='Redirecting to payment…';
+    const checkRes=await fetch('/.netlify/functions/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({leadId,businessName:bizName,email})
+    });
+    if(checkRes.ok){
+      const{url}=await checkRes.json();
+      if(url){window.location.href=url;return;}
+    }
+    // Fallback to static payment link if dynamic checkout fails
+    window.location.href=STRIPE_PAYMENT_LINK;
+  }catch(e){
+    // Network error — fall back to static link so the customer can still pay
+    window.location.href=STRIPE_PAYMENT_LINK;
+  }
 }
 
 // Contact form — build mailto on submit
