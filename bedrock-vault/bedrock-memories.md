@@ -14,12 +14,13 @@
 - [x] Node.js installed
 - [x] Cursor installed + GitHub connected
 - [x] Obsidian vault created
-- [ ] Claude Code installed
-- [ ] bedrock-v35.html added to repo
+- [x] Claude Code installed
+- [x] bedrock-v35.html added to repo
 
 ### Part One — Legal
 - [ ] LLC filed (sos.idaho.gov — $100)
-- [ ] EIN obtained (irs.gov/ein — free)
+- [x] EIN obtained (irs.gov/ein — free)
+EIN # is 42-2595138
 - [ ] Business bank account opened
 - [ ] Legal pages written (Termly.io)
 

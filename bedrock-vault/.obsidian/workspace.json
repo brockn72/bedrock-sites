@@ -4,55 +4,6 @@
     "type": "split",
     "children": [
       {
-        "id": "1d3c97c63884d436",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "cd7d547c771a3a79",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Welcome.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Welcome"
-            }
-          },
-          {
-            "id": "39a417e28d084385",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "CLAUDE.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "CLAUDE"
-            }
-          },
-          {
-            "id": "3dd73c6c22c8ebb1",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "bedrock-memories.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "bedrock-memories"
-            }
-          }
-        ],
-        "currentTab": 2
-      },
-      {
         "id": "d77d5eeb7f9e3ace",
         "type": "tabs",
         "children": [
@@ -64,6 +15,20 @@
               "state": {},
               "icon": "lucide-git-fork",
               "title": "Graph view"
+            }
+          },
+          {
+            "id": "fe6ddbfdf004e232",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "bedrock-context.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "bedrock-context"
             }
           }
         ]
@@ -86,7 +51,7 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": true
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -227,9 +192,23 @@
   },
   "active": "c25dfec6b6a5c475",
   "lastOpenFiles": [
-    "bedrock-memories.md",
+    "Untitled.base",
+    "2026-05-17.md",
+    "CLAUDE-CODE-CONTEXT.md",
+    "README-context-system.md",
+    "wealth-career-context.md",
     "CLAUDE.md",
+    "04-DECISIONS-LOG.md",
+    "03-ENV-VARS.md",
+    "02-DATABASE-SCHEMA.md",
+    "01-TECH-STACK.md",
+    "00-PROJECT-STATUS.md",
+    "bedrock-memories.md",
+    "bedrock-context.md",
     "Welcome.md",
+    "Untitled.canvas",
+    "AI-Context.md",
+    "Untitled",
     "desktop.ini"
   ]
 }
