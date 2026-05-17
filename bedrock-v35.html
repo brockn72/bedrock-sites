@@ -2461,13 +2461,14 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
           <div class="banner-green">One-time $200 fee covers your build + domain — no contracts — hosting plan can be canceled anytime without losing your domain</div>
         </div>
         <div class="pay-card">
-          <div class="pay-title">Payment Info</div>
-          <div style="background:#fef6e6;border-left:3px solid #b8860b;padding:0.7rem 0.9rem;font-size:0.7rem;color:#5c4214;line-height:1.55;margin-bottom:1rem"><strong>Demo only.</strong> Payment processing is not yet active. Card fields are illustrative — no real charge will happen and no card data is sent anywhere.</div>
-          <div class="b-field"><label class="b-label">Name on card</label><input class="b-input" type="text" placeholder="Demo · any name"></div>
-          <div class="b-field"><label class="b-label">Card number</label><input class="b-input" type="text" placeholder="•••• •••• •••• ••••"></div>
-          <div class="b-grid2"><div class="b-field"><label class="b-label">Expiry</label><input class="b-input" type="text" placeholder="MM / YY"></div><div class="b-field"><label class="b-label">CVV</label><input class="b-input" type="text" placeholder="•••"></div></div>
-          <button class="b-btn-gold" id="payBtn" style="width:100%" onclick="showSuccess()">Continue to Success Preview</button>
-          <div class="secure-note">Demo flow — Stripe will be wired in for the live launch.</div>
+          <div class="pay-title">Confirm &amp; Pay</div>
+          <p style="font-size:0.78rem;font-weight:300;color:var(--text-mid);line-height:1.7;margin-bottom:1.25rem">Confirm your contact info and pay securely via Stripe. Your site goes live within minutes after payment.</p>
+          <div class="b-field"><label class="b-label">Your Name</label><input class="b-input" type="text" id="s4Name" placeholder="Jane Smith" autocomplete="name"></div>
+          <div class="b-field"><label class="b-label">Phone</label><input class="b-input" type="tel" id="s4Phone" placeholder="(555) 000-0000" autocomplete="tel"></div>
+          <div class="b-field"><label class="b-label">Email</label><input class="b-input" type="email" id="s4Email" placeholder="you@yourbusiness.com" autocomplete="email"></div>
+          <div id="s4Error" style="display:none;font-size:0.72rem;color:#b91c1c;padding:8px 10px;background:#fef2f2;border-left:3px solid #b91c1c;margin-bottom:0.75rem"></div>
+          <button class="b-btn-gold" id="s4PayBtn" style="width:100%;margin-top:0.25rem" onclick="submitClaim()">Pay Now — $200 →</button>
+          <div class="secure-note">Secured by Stripe. You'll be redirected to complete payment.</div>
         </div>
       </div>
       <div class="b-btn-row"><button class="b-btn-back" onclick="goBS('3c')">Back</button></div>
@@ -2477,37 +2478,43 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div id="bsSuccess" style="display:none">
       <div class="success-wrap">
 
-        <!-- DEPLOYING: shown while Netlify publish is in progress -->
-        <div id="successDeploying" style="display:none;text-align:center;padding:2rem 0">
-          <div style="font-size:2.5rem;margin-bottom:1rem">⏳</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--dark);margin-bottom:0.75rem">Publishing your site…</div>
-          <p style="font-size:0.82rem;font-weight:300;color:var(--text-muted);max-width:420px;margin:0 auto;line-height:1.9">Usually takes about 30 seconds. Don't close this tab.</p>
-        </div>
-
-        <!-- LIVE: shown after a successful deploy -->
-        <div id="successLive" style="display:none">
+        <!-- PENDING: lead saved, Stripe redirected them here pre-payment or Stripe not yet live -->
+        <div id="successPending" style="display:none">
           <div class="success-mark">✓</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--dark);margin-bottom:0.5rem">Your site is live, <span id="successName"></span>.</div>
-          <p style="font-size:0.82rem;font-weight:300;color:var(--text-muted);max-width:480px;margin:0 auto 1.5rem;line-height:1.9">Here's your link. It may take up to a minute to fully propagate — if it doesn't load right away, try again in 60 seconds.</p>
-          <a id="successSiteUrl" href="#" target="_blank" rel="noopener" class="btn-gold" style="display:inline-block;margin-bottom:2rem">Visit Your Live Site →</a>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--dark);margin-bottom:0.5rem">Got it, <span id="successName"></span>. You're on the list.</div>
+          <p style="font-size:0.82rem;font-weight:300;color:var(--text-muted);max-width:480px;margin:0 auto 2rem;line-height:1.9">We'll text you within 24 hours to collect payment and get your site published. Keep an eye on your phone.</p>
           <div class="next-steps-card">
-            <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem">What's Next</div>
-            <div class="ns-item"><span class="ns-dash">—</span>Share your link with customers and add it to your Google Business profile</div>
-            <div class="ns-item"><span class="ns-dash">—</span>Your custom domain will be connected within 24 hours</div>
-            <div class="ns-item"><span class="ns-dash">—</span>Your monthly plan begins 30 days from today</div>
+            <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem">What Happens Next</div>
+            <div class="ns-item"><span class="ns-dash">—</span>We'll text you a secure payment link</div>
+            <div class="ns-item"><span class="ns-dash">—</span>Your site goes live within minutes of payment</div>
+            <div class="ns-item"><span class="ns-dash">—</span>You'll get an email with your live link</div>
+            <div class="ns-item"><span class="ns-dash">—</span>Your $19/month plan starts 30 days from your launch date</div>
           </div>
         </div>
 
-        <!-- DEMO FALLBACK: shown when deploy is not yet active (no API token / payment not live) -->
+        <!-- PAID: returned from Stripe with ?payment=success -->
+        <div id="successPaid" style="display:none">
+          <div class="success-mark">✓</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--dark);margin-bottom:0.5rem">Payment received. Your site is being published.</div>
+          <p style="font-size:0.82rem;font-weight:300;color:var(--text-muted);max-width:480px;margin:0 auto 2rem;line-height:1.9">Check your email — you'll receive your live link within 24 hours once your site is up.</p>
+          <div class="next-steps-card">
+            <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem">What's Next</div>
+            <div class="ns-item"><span class="ns-dash">—</span>We're publishing your site now</div>
+            <div class="ns-item"><span class="ns-dash">—</span>You'll get your live link by email within 24 hours</div>
+            <div class="ns-item"><span class="ns-dash">—</span>Add your site to your Google Business Profile to start getting traffic</div>
+            <div class="ns-item"><span class="ns-dash">—</span>Your $19/month plan starts 30 days from today</div>
+          </div>
+        </div>
+
+        <!-- DEMO FALLBACK: nothing was saved (no backend configured / error) -->
         <div id="successDemo" style="display:none">
           <div class="success-mark">✓</div>
           <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:300;color:var(--dark);margin-bottom:0.5rem">Preview: this is what you'll see once you launch.</div>
-          <p style="font-size:0.82rem;font-weight:300;color:var(--text-muted);max-width:480px;margin:0 auto 2rem;line-height:1.9">Hi <span id="successNameDemo"></span> — you've reached the end of the demo flow. Bedrock Sites is in active development; payment processing and live publishing are not yet active. Once we launch, this is the screen you'll see after approving your site.</p>
+          <p style="font-size:0.82rem;font-weight:300;color:var(--text-muted);max-width:480px;margin:0 auto 2rem;line-height:1.9">Hi <span id="successNameDemo"></span> — you've reached the end of the demo flow. Payment processing is not yet active. Once we launch, this is the screen you'll see after approving your site.</p>
           <div class="next-steps-card">
             <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem">What Will Happen Next (in the live version)</div>
             <div class="ns-item"><span class="ns-dash">—</span>Your site is published shortly after you approve and pay</div>
             <div class="ns-item"><span class="ns-dash">—</span>You'll receive a text and email with your live link</div>
-            <div class="ns-item"><span class="ns-dash">—</span>You'll be able to log in anytime to update your site</div>
             <div class="ns-item"><span class="ns-dash">—</span>Your monthly plan begins 30 days after launch</div>
           </div>
         </div>
@@ -4250,7 +4257,19 @@ function scrollToSection(id,e){
   if(!isOnHome){showPage('home');setTimeout(doScroll,120);} else {doScroll();}
 }
 // Open correct page on load if URL has a hash (deep links + back/forward)
-window.addEventListener('DOMContentLoaded',()=>{const h=(location.hash||'').replace('#','');if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('page')){showPage(h)}dmRender('overview');checkForSavedBuild();});
+window.addEventListener('DOMContentLoaded',()=>{
+  // Detect return from Stripe Checkout
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('payment')==='success'){
+    history.replaceState(null,'','/');
+    showPage('builder');
+    document.getElementById('bsSuccess').style.display='block';
+    ['successPending','successDemo'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    const el=document.getElementById('successPaid');if(el)el.style.display='block';
+    return;
+  }
+  const h=(location.hash||'').replace('#','');if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('page')){showPage(h)}dmRender('overview');checkForSavedBuild();
+});
 window.addEventListener('hashchange',()=>{const h=(location.hash||'').replace('#','');if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('page')){showPage(h)}});
 
 // ===== INTERACTIVE DASHBOARD MOCKUP (Tools page) =====
@@ -4508,7 +4527,7 @@ function closeLeadCaptureModal(){
 // To wire to a real form handler later, set LEAD_ENDPOINT to a Formspree URL
 // (e.g. 'https://formspree.io/f/abcd1234') or your own Cloudflare Worker URL.
 // While LEAD_ENDPOINT is null, the form falls back to mailto + storing in browser memory.
-const LEAD_ENDPOINT=null;
+const LEAD_ENDPOINT='/.netlify/functions/capture-lead';
 const LEAD_FALLBACK_EMAIL='support@bedrock-sites.com';
 
 function submitLeadCapture(e){
@@ -4572,9 +4591,15 @@ function populateSummary(){
 }
 function populateOrder(){
   document.getElementById('orderName').textContent=document.getElementById('bName').value;
-  // Show selected domain in order card
   const sel=document.getElementById('orderDomain');
   if(sel&&S.selectedDomain)sel.textContent=S.selectedDomain;
+  // Pre-fill Step 4 contact fields from lead info already captured in the modal
+  if(S.leadInfo){
+    const n=document.getElementById('s4Name');const p=document.getElementById('s4Phone');const em=document.getElementById('s4Email');
+    if(n&&!n.value)n.value=S.leadInfo.name||'';
+    if(p&&!p.value)p.value=S.leadInfo.phone||'';
+    if(em&&!em.value)em.value=S.leadInfo.email||'';
+  }
 }
 
 // ===== DOMAIN PICKER =====
@@ -6423,40 +6448,48 @@ function showBuildSourceNotice(){
   }
 }
 
-async function showSuccess(){
+function showSuccess(state,contactName){
+  // state: 'pending' | 'demo'
   document.getElementById('bs4').style.display='none';
   document.getElementById('bsSuccess').style.display='block';
-  const bizName=document.getElementById('bName').value;
-  document.getElementById('successName').textContent=bizName;
-  document.getElementById('successNameDemo').textContent=bizName;
-
-  // Attempt live deploy via Netlify function
-  document.getElementById('successDeploying').style.display='block';
-  document.getElementById('successLive').style.display='none';
-  document.getElementById('successDemo').style.display='none';
-
-  try{
-    const siteHTML=applyFontPair(generateSiteHTML());
-    const res=await fetch('/.netlify/functions/deploy-site',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({siteHTML,businessName:bizName})
-    });
-    if(res.ok){
-      const data=await res.json();
-      document.getElementById('successDeploying').style.display='none';
-      document.getElementById('successLive').style.display='block';
-      const link=document.getElementById('successSiteUrl');
-      link.href=data.url;
-      link.textContent=data.url;
-    }else{
-      document.getElementById('successDeploying').style.display='none';
-      document.getElementById('successDemo').style.display='block';
-    }
-  }catch(e){
-    document.getElementById('successDeploying').style.display='none';
+  ['successPending','successPaid','successDemo'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  if(state==='pending'){
+    document.getElementById('successPending').style.display='block';
+    const n=document.getElementById('successName');
+    if(n)n.textContent=contactName||document.getElementById('s4Name').value||document.getElementById('bName').value;
+  }else{
     document.getElementById('successDemo').style.display='block';
+    const n=document.getElementById('successNameDemo');
+    if(n)n.textContent=document.getElementById('bName').value;
   }
+}
+
+async function submitClaim(){
+  const name=document.getElementById('s4Name').value.trim();
+  const phone=document.getElementById('s4Phone').value.trim();
+  const email=document.getElementById('s4Email').value.trim();
+  const bizName=document.getElementById('bName').value.trim();
+  const errEl=document.getElementById('s4Error');
+  errEl.style.display='none';
+  if(!name||!phone||!email){errEl.textContent='Please fill in your name, phone, and email.';errEl.style.display='block';return;}
+  const btn=document.getElementById('s4PayBtn');
+  btn.disabled=true;btn.textContent='Loading…';
+  try{
+    // 1. Save claim lead to Supabase + email notification
+    let leadId=null;
+    const leadRes=await fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim'})});
+    if(leadRes.ok){const d=await leadRes.json();leadId=d.leadId||null;}
+    // 2. Try Stripe checkout — redirects away if available
+    const checkRes=await fetch('/.netlify/functions/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({leadId,businessName:bizName,email})});
+    if(checkRes.ok){const{url}=await checkRes.json();window.location.href=url;return;}
+    // 3. Stripe not live yet — show "we'll be in touch" screen
+    showSuccess('pending',name);
+  }catch(e){
+    showSuccess('pending',name);
+  }
+  btn.disabled=false;btn.textContent='Pay Now — $200 →';
 }
 
 // Contact form — build mailto on submit
