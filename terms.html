@@ -3,27 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terms of Service — Bedrock Sites</title>
+<title>Terms of Service — Bedrock Digital</title>
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{--dark:#111418;--accent:#c9a84c;--text:#1a1a2e;--text-mid:#3a4460;--text-muted:#6b7a99;--border:#e2e4ea;--offwhite:#f7f6f3}
-body{font-family:'Montserrat',sans-serif;background:#fff;color:var(--text);line-height:1.7}
+:root{--dark:#0D1B2E;--dark-mid:#1B3557;--accent:#C9922A;--accent-light:#D4A843;--text:#0D1B2E;--text-mid:#2E5A8E;--text-muted:#4A5568;--border:rgba(13,27,46,0.12);--offwhite:#FAF7F2}
+body{font-family:'DM Sans',sans-serif;background:#fff;color:var(--text);line-height:1.7}
 nav{background:var(--dark);display:flex;justify-content:space-between;align-items:center;padding:1rem 5%;border-bottom:3px solid var(--accent)}
-.nav-logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:500;letter-spacing:0.08em;color:#fff;text-decoration:none}
-.nav-logo span{color:var(--accent);font-size:0.55rem;font-family:'Montserrat',sans-serif;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;display:block;margin-top:2px}
+.nav-logo{display:flex;align-items:center;gap:9px;text-decoration:none}
+.nav-strata{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
+.nav-wm{display:flex;flex-direction:column;line-height:1}
+.nav-logo-bw{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;letter-spacing:-0.02em;color:#F5E6C8}
+.nav-logo span{color:var(--accent);font-size:0.52rem;font-family:'DM Sans',sans-serif;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;display:block;margin-top:3px}
 .nav-back{font-size:0.64rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;transition:color 0.2s}
 .nav-back:hover{color:var(--accent)}
-.hero{background:var(--dark);padding:3.5rem 5% 3rem;border-bottom:1px solid rgba(201,168,76,0.2)}
+.hero{background:var(--dark);padding:3.5rem 5% 3rem;border-bottom:1px solid rgba(201,146,42,0.2)}
 .hero-tag{font-size:0.58rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem}
-.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:300;color:#fff;margin-bottom:0.5rem}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:700;color:#fff;margin-bottom:0.5rem}
 .hero-sub{font-size:0.78rem;font-weight:300;color:rgba(255,255,255,0.65);margin-top:0.5rem}
 .container{max-width:820px;margin:0 auto;padding:3.5rem 5% 5rem}
 .effective{font-size:0.72rem;font-weight:500;color:var(--text-muted);background:var(--offwhite);border-left:3px solid var(--accent);padding:0.65rem 1rem;margin-bottom:2.5rem;display:inline-block}
-h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:400;color:var(--dark);margin:2.25rem 0 0.75rem;padding-top:2.25rem;border-top:1px solid var(--border)}
+h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:600;color:var(--dark);margin:2.25rem 0 0.75rem;padding-top:2.25rem;border-top:1px solid var(--border)}
 h2:first-of-type{border-top:none;margin-top:0;padding-top:0}
 h3{font-size:0.82rem;font-weight:600;letter-spacing:0.04em;color:var(--dark);margin:1.25rem 0 0.4rem}
 p{font-size:0.82rem;font-weight:300;color:var(--text-mid);line-height:1.9;margin-bottom:0.85rem}
@@ -38,7 +41,18 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
 <body>
 
 <nav>
-  <a href="/" class="nav-logo">Bedrock Sites<span>Real websites for real businesses</span></a>
+  <a href="/" class="nav-logo">
+    <div class="nav-strata" aria-hidden="true">
+      <div style="width:24px;height:4px;border-radius:2px;background:#C9922A;"></div>
+      <div style="width:19px;height:4px;border-radius:2px;background:#A8711A;"></div>
+      <div style="width:28px;height:4px;border-radius:2px;background:#2E5A8E;"></div>
+      <div style="width:22px;height:4px;border-radius:2px;background:#4A7DB5;"></div>
+    </div>
+    <div class="nav-wm">
+      <span class="nav-logo-bw">Bedrock</span>
+      <span>Digital</span>
+    </div>
+  </a>
   <a href="/" class="nav-back">← Back to Home</a>
 </nav>
 
@@ -46,7 +60,7 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
   <div style="max-width:820px;margin:0 auto">
     <div class="hero-tag">Legal</div>
     <h1 class="hero-title">Terms of Service</h1>
-    <p class="hero-sub">Please read these terms carefully before using Bedrock Sites.</p>
+    <p class="hero-sub">Please read these terms carefully before using Bedrock Digital.</p>
   </div>
 </div>
 
@@ -55,11 +69,11 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
   <div class="effective">Effective Date: May 17, 2026 &nbsp;|&nbsp; Last Updated: May 17, 2026</div>
 
   <div class="highlight-box">
-    These Terms of Service ("Terms") constitute a legally binding agreement between you ("Client," "you," or "your") and Bedrock Sites LLC ("Bedrock Sites," "we," "us," or "our"), governing your use of our website builder platform, hosting services, domain registration, and related services (collectively, the "Services"). By using our Services or clicking "I agree," you accept these Terms in full.
+    These Terms of Service ("Terms") constitute a legally binding agreement between you ("Client," "you," or "your") and Bedrock Digital LLC ("Bedrock Digital," "we," "us," or "our"), governing your use of our website builder platform, hosting services, domain registration, and related services (collectively, the "Services"). By using our Services or clicking "I agree," you accept these Terms in full.
   </div>
 
   <h2>1. Services Overview</h2>
-  <p>Bedrock Sites provides website design, development, hosting, and domain registration services targeted at home service contractors, tradespeople, and small local businesses. Our Services include but are not limited to:</p>
+  <p>Bedrock Digital provides website design, development, hosting, and domain registration services targeted at home service contractors, tradespeople, and small local businesses. Our Services include but are not limited to:</p>
   <ul>
     <li>AI-assisted website building and content generation</li>
     <li>Website hosting on Cloudflare infrastructure</li>
@@ -90,15 +104,15 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
 
   <h2>4. Domain Names</h2>
   <h3>4.1 Registration</h3>
-  <p>When you purchase a website build, Bedrock Sites will register a domain name on your behalf through our domain registrar (Name.com). The domain is registered in your name and is your property.</p>
+  <p>When you purchase a website build, Bedrock Digital will register a domain name on your behalf through our domain registrar (Name.com). The domain is registered in your name and is your property.</p>
   <h3>4.2 Ownership and Transfer</h3>
   <p>Your domain name is yours to keep even if you cancel your hosting subscription. Upon request, we will transfer the domain to a registrar of your choice within a reasonable timeframe. Domain transfer fees charged by the receiving registrar are your responsibility.</p>
   <h3>4.3 Domain Renewal</h3>
-  <p>While your hosting subscription is active, Bedrock Sites will manage domain renewals at no additional charge. If you cancel hosting, you are responsible for renewing your domain independently to avoid expiration.</p>
+  <p>While your hosting subscription is active, Bedrock Digital will manage domain renewals at no additional charge. If you cancel hosting, you are responsible for renewing your domain independently to avoid expiration.</p>
 
   <h2>5. Content, Accuracy, and Your Responsibilities</h2>
   <h3>5.1 AI-Generated Content</h3>
-  <p>Bedrock Sites uses artificial intelligence to draft website copy — including headlines, service descriptions, FAQs, and about-page content — based on the information you provide. This content is a starting point only. <strong>You are solely responsible for reviewing all AI-generated content before your site goes live and for ensuring it is accurate, truthful, and compliant with applicable laws.</strong></p>
+  <p>Bedrock Digital uses artificial intelligence to draft website copy — including headlines, service descriptions, FAQs, and about-page content — based on the information you provide. This content is a starting point only. <strong>You are solely responsible for reviewing all AI-generated content before your site goes live and for ensuring it is accurate, truthful, and compliant with applicable laws.</strong></p>
   <h3>5.2 Licensing and Certifications</h3>
   <p>You agree not to claim on your website that you hold licenses, certifications, insurance, bonding, or professional memberships that you do not actually hold. Making false claims about licensure or qualifications may violate state and federal laws. We expressly disclaim liability for any claims you add to your website.</p>
   <h3>5.3 Prohibited Content</h3>
@@ -112,23 +126,23 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
     <li>Discriminates on the basis of race, color, religion, sex, national origin, disability, or other protected characteristics</li>
   </ul>
   <h3>5.4 Your License to Us</h3>
-  <p>By uploading content (photos, logos, copy) to our Services, you grant Bedrock Sites a non-exclusive, royalty-free, worldwide license to host, display, reproduce, and distribute that content solely for the purpose of providing the Services to you. We do not claim ownership of your content.</p>
+  <p>By uploading content (photos, logos, copy) to our Services, you grant Bedrock Digital a non-exclusive, royalty-free, worldwide license to host, display, reproduce, and distribute that content solely for the purpose of providing the Services to you. We do not claim ownership of your content.</p>
 
   <h2>6. Intellectual Property</h2>
   <h3>6.1 Your Site Content</h3>
   <p>You own the content of your website — your business name, photos, custom copy, and branding. Upon full payment of the build fee, you also own the final HTML/CSS of your built website.</p>
   <h3>6.2 Our Platform</h3>
-  <p>Bedrock Sites retains all rights to the platform, software, underlying code, templates, algorithms, and tools used to build and host your website. These Terms do not transfer any ownership of our intellectual property to you.</p>
+  <p>Bedrock Digital retains all rights to the platform, software, underlying code, templates, algorithms, and tools used to build and host your website. These Terms do not transfer any ownership of our intellectual property to you.</p>
   <h3>6.3 Attribution</h3>
-  <p>We may include a small "Built by Bedrock Sites" attribution in the footer of your website. You may request removal of this attribution by contacting us.</p>
+  <p>We may include a small "Built by Bedrock Digital" attribution in the footer of your website. You may request removal of this attribution by contacting us.</p>
 
   <h2>7. Cancellation and Termination</h2>
   <h3>7.1 Cancellation by You</h3>
   <p>You may cancel your monthly hosting subscription at any time by contacting us at <a href="mailto:support@bedrock-sites.com">support@bedrock-sites.com</a>. Cancellations take effect at the end of the current billing period. No refunds are issued for partial months.</p>
   <h3>7.2 Effect of Cancellation</h3>
   <p>Upon cancellation: (a) your website will be taken offline; (b) your domain remains yours and will be transferred to you upon request; (c) you will retain a copy of your website HTML if requested within 30 days of cancellation.</p>
-  <h3>7.3 Termination by Bedrock Sites</h3>
-  <p>We may suspend or terminate your account immediately and without notice if you: (a) materially breach these Terms; (b) fail to pay fees when due; (c) use the Services for illegal or harmful purposes; or (d) engage in conduct that may harm Bedrock Sites, other clients, or third parties.</p>
+  <h3>7.3 Termination by Bedrock Digital</h3>
+  <p>We may suspend or terminate your account immediately and without notice if you: (a) materially breach these Terms; (b) fail to pay fees when due; (c) use the Services for illegal or harmful purposes; or (d) engage in conduct that may harm Bedrock Digital, other clients, or third parties.</p>
   <h3>7.4 Pre-Build Refund</h3>
   <p>If you have paid the build fee but your site has not yet been built and deployed, you may request a full refund within 7 days of payment by contacting <a href="mailto:support@bedrock-sites.com">support@bedrock-sites.com</a>.</p>
 
@@ -141,7 +155,7 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
   <p>OUR TOTAL CUMULATIVE LIABILITY TO YOU FOR ANY CLAIMS ARISING UNDER THESE TERMS SHALL NOT EXCEED THE TOTAL FEES PAID BY YOU TO BEDROCK SITES IN THE 12 MONTHS PRECEDING THE CLAIM.</p>
 
   <h2>10. Indemnification</h2>
-  <p>You agree to indemnify, defend, and hold harmless Bedrock Sites and its officers, directors, employees, agents, and contractors from and against any claims, liabilities, damages, losses, and expenses (including reasonable attorney's fees) arising out of or in any way connected with: (a) your access to or use of the Services; (b) your violation of these Terms; (c) the content you publish on your website; or (d) your violation of any third-party rights.</p>
+  <p>You agree to indemnify, defend, and hold harmless Bedrock Digital and its officers, directors, employees, agents, and contractors from and against any claims, liabilities, damages, losses, and expenses (including reasonable attorney's fees) arising out of or in any way connected with: (a) your access to or use of the Services; (b) your violation of these Terms; (c) the content you publish on your website; or (d) your violation of any third-party rights.</p>
 
   <h2>11. Third-Party Services</h2>
   <p>Our Services integrate with third-party providers including Stripe (payment processing), Cloudflare (hosting infrastructure), Name.com (domain registration), Supabase (data storage), and Resend (email). Your use of these third-party services is subject to their respective terms of service and privacy policies. We are not responsible for the acts or omissions of third-party service providers.</p>
@@ -164,7 +178,7 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
 
   <h2>15. General Provisions</h2>
   <h3>15.1 Entire Agreement</h3>
-  <p>These Terms, together with the Privacy Policy and any other agreements expressly incorporated herein, constitute the entire agreement between you and Bedrock Sites with respect to the Services and supersede all prior or contemporaneous understandings, representations, and agreements.</p>
+  <p>These Terms, together with the Privacy Policy and any other agreements expressly incorporated herein, constitute the entire agreement between you and Bedrock Digital with respect to the Services and supersede all prior or contemporaneous understandings, representations, and agreements.</p>
   <h3>15.2 Severability</h3>
   <p>If any provision of these Terms is found to be invalid, illegal, or unenforceable, the remaining provisions shall continue in full force and effect.</p>
   <h3>15.3 Waiver</h3>
@@ -177,7 +191,7 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
   <h2>16. Contact Information</h2>
   <p>For questions about these Terms of Service, please contact:</p>
   <div class="highlight-box">
-    <strong>Bedrock Sites LLC</strong><br>
+    <strong>Bedrock Digital LLC</strong><br>
     Email: <a href="mailto:support@bedrock-sites.com">support@bedrock-sites.com</a><br>
     Website: <a href="https://bedrock-sites.com">bedrock-sites.com</a>
   </div>
@@ -185,7 +199,7 @@ footer{background:var(--dark);padding:1.5rem 5%;text-align:center;border-top:3px
 </div>
 
 <footer>
-  <p class="f-note">© 2026 Bedrock Sites LLC. All rights reserved. &nbsp;|&nbsp; <a href="/privacy.html" style="color:rgba(255,255,255,0.5);text-decoration:underline">Privacy Policy</a></p>
+  <p class="f-note">© 2026 Bedrock Digital LLC. All rights reserved. &nbsp;|&nbsp; <a href="/privacy.html" style="color:rgba(255,255,255,0.5);text-decoration:underline">Privacy Policy</a></p>
 </footer>
 
 </body>
