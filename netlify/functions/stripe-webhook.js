@@ -53,6 +53,8 @@ exports.handler = async (event) => {
     const leadId       = session.metadata?.lead_id;
     const businessName = session.metadata?.business_name || 'Unknown Business';
     const customerEmail = session.customer_details?.email || session.customer_email || '';
+    const stripeKey    = process.env.STRIPE_SECRET_KEY;
+    const subPriceId   = process.env.STRIPE_SUBSCRIPTION_PRICE_ID;
 
     // Mark lead as paid in Supabase
     if (supabaseUrl && supabaseKey && leadId) {
@@ -69,6 +71,43 @@ exports.handler = async (event) => {
           stripe_session_id: session.id,
         }),
       });
+    }
+
+    // Auto-create $19/mo subscription using the payment method saved during checkout
+    if (stripeKey && subPriceId && session.customer && session.payment_intent) {
+      // Retrieve the payment intent to get the saved payment method
+      const piRes = await fetch(`https://api.stripe.com/v1/payment_intents/${session.payment_intent}`, {
+        headers: { Authorization: `Bearer ${stripeKey}` },
+      });
+      if (piRes.ok) {
+        const pi = await piRes.json();
+        const pmId = pi.payment_method;
+        if (pmId) {
+          // Set it as the customer's default so the subscription invoices it automatically
+          await fetch(`https://api.stripe.com/v1/customers/${session.customer}`, {
+            method: 'POST',
+            headers: {
+              Authorization:  `Bearer ${stripeKey}`,
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              'invoice_settings[default_payment_method]': pmId,
+            }).toString(),
+          });
+          // Create the recurring subscription
+          await fetch('https://api.stripe.com/v1/subscriptions', {
+            method: 'POST',
+            headers: {
+              Authorization:  `Bearer ${stripeKey}`,
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              customer:         session.customer,
+              'items[0][price]': subPriceId,
+            }).toString(),
+          });
+        }
+      }
     }
 
     // Email Brock to deploy the site
@@ -109,7 +148,7 @@ exports.handler = async (event) => {
       });
     }
 
-    // TODO: auto-deploy to Cloudflare Pages will go here once CF is configured
+    // Auto-deploy to Cloudflare Pages goes here once CF is configured
   }
 
   return { statusCode: 200, body: JSON.stringify({ received: true }) };
