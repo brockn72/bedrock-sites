@@ -1,0 +1,18 @@
+# Sensitive documents
+EIN.pdf
+backup codes/
+*.pem
+*.key
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Node
+node_modules/
