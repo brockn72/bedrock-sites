@@ -1,0 +1,8 @@
+{
+  "name": "bedrock-sites",
+  "version": "1.0.0",
+  "description": "Website builder for trades businesses",
+  "engines": {
+    "node": ">=18"
+  }
+}
