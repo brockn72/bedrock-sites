@@ -1224,6 +1224,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <li><a href="#ourwork" onclick="showPage('ourwork',event)" id="nl-ourwork">Our Work</a></li>
     <li><a href="#testimonials" onclick="showPage('testimonials',event)" id="nl-testimonials">Reviews</a></li>
     <li><a href="#about" onclick="showPage('about',event)" id="nl-about">About</a></li>
+    <li><a href="/portal.html" id="nl-portal">Client Login</a></li>
   </ul>
   <a href="#builder" class="nav-cta" onclick="showPage('builder',event)" role="button">Get Started Free</a>
 </nav>
@@ -2466,6 +2467,14 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
           <div class="b-field"><label class="b-label">Your Name</label><input class="b-input" type="text" id="s4Name" placeholder="Jane Smith" autocomplete="name"></div>
           <div class="b-field"><label class="b-label">Phone</label><input class="b-input" type="tel" id="s4Phone" placeholder="(555) 000-0000" autocomplete="tel"></div>
           <div class="b-field"><label class="b-label">Email</label><input class="b-input" type="email" id="s4Email" placeholder="you@yourbusiness.com" autocomplete="email"></div>
+          <div class="b-field"><label class="b-label">Create a password <span style="font-size:0.6rem;font-weight:300;letter-spacing:0;text-transform:none;color:var(--text-muted)">— for your client portal</span></label><input class="b-input" type="password" id="s4Password" placeholder="At least 8 characters" autocomplete="new-password"></div>
+          <div class="b-field"><label class="b-label">Confirm password</label><input class="b-input" type="password" id="s4PasswordConfirm" placeholder="Re-enter your password" autocomplete="new-password"></div>
+          <div style="margin-bottom:1rem;padding:0.75rem 0.9rem;background:var(--offwhite);border:1px solid var(--border)">
+            <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-size:0.76rem;font-weight:300;color:var(--text-mid);line-height:1.65">
+              <input type="checkbox" id="s4Terms" style="margin-top:3px;flex-shrink:0;accent-color:var(--dark)">
+              <span>I have read and agree to the <a href="/terms.html" target="_blank" style="color:var(--accent);text-decoration:underline">Terms of Service</a> and <a href="/privacy.html" target="_blank" style="color:var(--accent);text-decoration:underline">Privacy Policy</a></span>
+            </label>
+          </div>
           <div id="s4Error" style="display:none;font-size:0.72rem;color:#b91c1c;padding:8px 10px;background:#fef2f2;border-left:3px solid #b91c1c;margin-bottom:0.75rem"></div>
           <button class="b-btn-gold" id="s4PayBtn" style="width:100%;margin-top:0.25rem" onclick="submitClaim()">Pay Now — $200 →</button>
           <div class="secure-note">Secured by Stripe. You'll be redirected to complete payment.</div>
@@ -4258,8 +4267,15 @@ function scrollToSection(id,e){
 }
 // Open correct page on load if URL has a hash (deep links + back/forward)
 window.addEventListener('DOMContentLoaded',()=>{
-  // Detect return from Stripe Checkout
   const params=new URLSearchParams(window.location.search);
+
+  // Portal edit mode — client launched editor from portal.html
+  if(params.get('portalEdit')==='1'){
+    initPortalEditMode();
+    return;
+  }
+
+  // Detect return from Stripe Checkout
   if(params.get('payment')==='success'){
     history.replaceState(null,'','/');
     showPage('builder');
@@ -4270,6 +4286,106 @@ window.addEventListener('DOMContentLoaded',()=>{
   }
   const h=(location.hash||'').replace('#','');if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('page')){showPage(h)}dmRender('overview');checkForSavedBuild();
 });
+
+// ─── PORTAL EDIT MODE ────────────────────────────────────────────────────────
+// Launched when the client clicks "Edit My Site" in portal.html.
+// Restores their siteData, puts them straight into the Step 3 editor,
+// and swaps "Claim My Site" for a "Save Changes" button.
+function initPortalEditMode(){
+  const raw=sessionStorage.getItem('bedrock_portal_session');
+  if(!raw){window.location.href='/portal.html';return;}
+  let portalSession;
+  try{portalSession=JSON.parse(raw);}catch(e){window.location.href='/portal.html';return;}
+  const{token,lead}=portalSession;
+  if(!token||!lead){window.location.href='/portal.html';return;}
+
+  window._portalToken=token;
+  window._portalLeadId=lead.id;
+
+  // Restore builder state from the lead record
+  S.trade       =lead.trade       ||null;
+  S.services    =lead.services    ||[];
+  S.serviceAreas=lead.service_areas||[];
+  if(lead.site_data)S.siteData=lead.site_data;
+
+  // Pre-fill Step 1 text fields so the editor header shows the right business name
+  const f=(id,v)=>{const el=document.getElementById(id);if(el&&v)el.value=v;};
+  f('bName',lead.business_name);
+  f('bPhone',lead.phone);
+  f('bEmail',lead.email);
+  f('bCity',lead.city);
+
+  // Show a portal banner at the top of the builder
+  const portalBanner=document.createElement('div');
+  portalBanner.id='portalEditBanner';
+  portalBanner.style.cssText='background:#1a2030;border-bottom:2px solid var(--accent);padding:0.65rem 5%;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;font-size:0.7rem;font-family:\'Montserrat\',sans-serif';
+  portalBanner.innerHTML=`
+    <span style="color:rgba(255,255,255,0.75)">
+      <strong style="color:var(--accent)">Editing your site.</strong>
+      Make changes below, then click <strong style="color:#fff">Save Changes</strong> when you're done.
+    </span>
+    <a href="/portal.html" style="font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.55);text-decoration:none;border:1px solid rgba(255,255,255,0.2);padding:0.35rem 0.85rem;transition:all 0.2s">← Back to Portal</a>
+  `;
+  document.body.insertBefore(portalBanner,document.body.firstChild);
+
+  // Navigate into the builder and jump straight to Step 3c editor
+  history.replaceState(null,'','/');
+  showPage('builder');
+  // Delay slightly so Step 3 DOM is present before we call goBS
+  setTimeout(()=>{
+    goBS('3c');
+    swapClaimButtonForSave();
+  },50);
+}
+
+function swapClaimButtonForSave(){
+  // The "I Love It — Claim My Site for $200" button is in Step 3c
+  const claimBtns=document.querySelectorAll('.b-btn-gold');
+  claimBtns.forEach(btn=>{
+    if(btn.textContent&&btn.textContent.includes('Claim')){
+      btn.textContent='Save Changes';
+      btn.onclick=savePortalChanges;
+      btn.removeAttribute('disabled');
+    }
+  });
+  // Also handle the button added via onclick="goBS(4)"
+  const inlineBtn=document.querySelector('[onclick="goBS(4)"]');
+  if(inlineBtn){
+    inlineBtn.textContent='Save Changes';
+    inlineBtn.removeAttribute('onclick');
+    inlineBtn.onclick=savePortalChanges;
+  }
+}
+
+async function savePortalChanges(){
+  const btn=document.querySelector('#bs3c .b-btn-gold')||document.querySelector('.b-btn-gold');
+  if(btn){btn.disabled=true;btn.textContent='Saving…';}
+  try{
+    const res=await fetch('/.netlify/functions/update-site',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+window._portalToken},
+      body:JSON.stringify({
+        siteData:     S.siteData,
+        trade:        S.trade,
+        services:     S.services,
+        serviceAreas: S.serviceAreas,
+        businessName: document.getElementById('bName')?.value||'',
+        phone:        document.getElementById('bPhone')?.value||'',
+        email:        document.getElementById('bEmail')?.value||'',
+        city:         document.getElementById('bCity')?.value||'',
+      })
+    });
+    if(res.ok){
+      if(btn){btn.disabled=false;btn.textContent='Saved ✓';}
+      setTimeout(()=>{if(btn)btn.textContent='Save Changes';},2500);
+    }else{
+      if(btn){btn.disabled=false;btn.textContent='Save Changes';}
+      alert('Could not save changes. Please try again or contact support@bedrock-sites.com.');
+    }
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Save Changes';}
+  }
+}
 window.addEventListener('hashchange',()=>{const h=(location.hash||'').replace('#','');if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('page')){showPage(h)}});
 
 // ===== INTERACTIVE DASHBOARD MOCKUP (Tools page) =====
@@ -6469,16 +6585,22 @@ async function submitClaim(){
   const name=document.getElementById('s4Name').value.trim();
   const phone=document.getElementById('s4Phone').value.trim();
   const email=document.getElementById('s4Email').value.trim();
+  const password=document.getElementById('s4Password')?.value||'';
+  const passwordConfirm=document.getElementById('s4PasswordConfirm')?.value||'';
+  const termsChecked=document.getElementById('s4Terms')?.checked||false;
   const bizName=document.getElementById('bName').value.trim();
   const errEl=document.getElementById('s4Error');
   errEl.style.display='none';
   if(!name||!phone||!email){errEl.textContent='Please fill in your name, phone, and email.';errEl.style.display='block';return;}
+  if(password.length<8){errEl.textContent='Password must be at least 8 characters.';errEl.style.display='block';return;}
+  if(password!==passwordConfirm){errEl.textContent='Passwords do not match.';errEl.style.display='block';return;}
+  if(!termsChecked){errEl.textContent='Please accept the Terms of Service and Privacy Policy to continue.';errEl.style.display='block';return;}
   const btn=document.getElementById('s4PayBtn');
   btn.disabled=true;btn.textContent='Setting up payment…';
   try{
     // Save lead first so we get a leadId to attach to the Stripe session
     const leadRes=await fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim'})
+      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim',password})
     });
     const leadData=leadRes.ok?await leadRes.json():{};
     const leadId=leadData.leadId||null;

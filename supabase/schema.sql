@@ -16,8 +16,27 @@ create table if not exists leads (
   status            text         default 'new',  -- new | claim | paid | deployed
   stripe_session_id text,
   site_url          text,
-  notes             text
+  notes             text,
+  user_id           uuid         references auth.users(id) on delete set null
 );
 
-create index if not exists leads_status_idx on leads (status);
-create index if not exists leads_email_idx  on leads (email);
+create index if not exists leads_status_idx  on leads (status);
+create index if not exists leads_email_idx   on leads (email);
+create index if not exists leads_user_idx    on leads (user_id);
+
+-- Row-level security: each client can only read and update their own record.
+-- The service role (used by Netlify functions with SUPABASE_SERVICE_KEY) bypasses RLS automatically.
+alter table leads enable row level security;
+
+-- Drop policies before recreating so this script is safe to re-run
+drop policy if exists "client_read_own"   on leads;
+drop policy if exists "client_update_own" on leads;
+
+create policy "client_read_own" on leads
+  for select
+  using (auth.uid() = user_id);
+
+create policy "client_update_own" on leads
+  for update
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);

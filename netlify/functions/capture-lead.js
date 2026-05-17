@@ -12,7 +12,8 @@ exports.handler = async (event) => {
 
   const {
     businessName, contactName, phone, email,
-    trade, city, services, serviceAreas, siteData, source
+    trade, city, services, serviceAreas, siteData, source,
+    password  // only present when source === 'claim'
   } = body;
 
   if (!businessName) {
@@ -24,6 +25,32 @@ exports.handler = async (event) => {
   const resendKey   = process.env.RESEND_API_KEY;
 
   let leadId = null;
+  let userId = null;
+
+  // Create a Supabase Auth account when the customer is claiming their site
+  if (source === 'claim' && email && password && supabaseUrl && supabaseKey) {
+    const authRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        email_confirm: true,  // skip email confirmation — they already provided it in the builder
+        user_metadata: { business_name: businessName, contact_name: contactName || '' },
+      }),
+    });
+
+    if (authRes.ok) {
+      const authData = await authRes.json();
+      userId = authData.id || null;
+    }
+    // If account creation fails (e.g. email already exists), we continue anyway
+    // so the claim and payment still go through. Brock can manually link accounts if needed.
+  }
 
   // Save to Supabase
   if (supabaseUrl && supabaseKey) {
@@ -47,6 +74,7 @@ exports.handler = async (event) => {
         site_data:     siteData    || null,
         source:        source      || 'unknown',
         status:        source === 'claim' ? 'claim' : 'new',
+        user_id:       userId      || null,
       }),
     });
 
@@ -72,10 +100,11 @@ exports.handler = async (event) => {
           <tr><td style="padding:6px 12px 6px 0;color:#666">Trade</td><td style="padding:6px 0">${trade || '—'}</td></tr>
           <tr><td style="padding:6px 12px 6px 0;color:#666">City</td><td style="padding:6px 0">${city || '—'}</td></tr>
           <tr><td style="padding:6px 12px 6px 0;color:#666">Services</td><td style="padding:6px 0">${servicesList}</td></tr>
+          <tr><td style="padding:6px 12px 6px 0;color:#666">Portal account</td><td style="padding:6px 0">${userId ? '✓ Created' : '✗ Not created (check email/password)'}</td></tr>
         </table>
         <p style="margin-top:20px;color:#888;font-size:12px">
           Lead ID: ${leadId || 'not saved'}<br>
-          View all leads in your <a href="${supabaseUrl ? supabaseUrl.replace('/rest/v1','').replace('https://','https://app.supabase.com/project/') : '#'}">Supabase dashboard</a>.
+          View all leads in your <a href="${supabaseUrl ? supabaseUrl.replace('https://','https://app.supabase.com/project/').split('.supabase.co')[0] : '#'}">Supabase dashboard</a>.
         </p>
       </div>
     `;
