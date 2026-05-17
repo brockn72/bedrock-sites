@@ -4529,6 +4529,7 @@ function closeLeadCaptureModal(){
 // While LEAD_ENDPOINT is null, the form falls back to mailto + storing in browser memory.
 const LEAD_ENDPOINT='/.netlify/functions/capture-lead';
 const LEAD_FALLBACK_EMAIL='support@bedrock-sites.com';
+const STRIPE_PAYMENT_LINK='https://buy.stripe.com/aFacN7c0edSFcDWbJ15kk00';
 
 function submitLeadCapture(e){
   e.preventDefault();
@@ -6464,7 +6465,7 @@ function showSuccess(state,contactName){
   }
 }
 
-async function submitClaim(){
+function submitClaim(){
   const name=document.getElementById('s4Name').value.trim();
   const phone=document.getElementById('s4Phone').value.trim();
   const email=document.getElementById('s4Email').value.trim();
@@ -6473,23 +6474,13 @@ async function submitClaim(){
   errEl.style.display='none';
   if(!name||!phone||!email){errEl.textContent='Please fill in your name, phone, and email.';errEl.style.display='block';return;}
   const btn=document.getElementById('s4PayBtn');
-  btn.disabled=true;btn.textContent='Loading…';
-  try{
-    // 1. Save claim lead to Supabase + email notification
-    let leadId=null;
-    const leadRes=await fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim'})});
-    if(leadRes.ok){const d=await leadRes.json();leadId=d.leadId||null;}
-    // 2. Try Stripe checkout — redirects away if available
-    const checkRes=await fetch('/.netlify/functions/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({leadId,businessName:bizName,email})});
-    if(checkRes.ok){const{url}=await checkRes.json();window.location.href=url;return;}
-    // 3. Stripe not live yet — show "we'll be in touch" screen
-    showSuccess('pending',name);
-  }catch(e){
-    showSuccess('pending',name);
-  }
-  btn.disabled=false;btn.textContent='Pay Now — $200 →';
+  btn.disabled=true;btn.textContent='Redirecting to payment…';
+  // Save lead fire-and-forget — doesn't block the redirect
+  fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim'})
+  }).catch(()=>{});
+  // Send them to Stripe
+  window.location.href=STRIPE_PAYMENT_LINK;
 }
 
 // Contact form — build mailto on submit
