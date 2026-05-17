@@ -95,7 +95,7 @@ exports.handler = async (event) => {
               'invoice_settings[default_payment_method]': pmId,
             }).toString(),
           });
-          // Create the recurring subscription
+          // Create the recurring subscription — first billing 30 days after payment
           await fetch('https://api.stripe.com/v1/subscriptions', {
             method: 'POST',
             headers: {
@@ -103,8 +103,9 @@ exports.handler = async (event) => {
               'Content-Type': 'application/x-www-form-urlencoded',
             },
             body: new URLSearchParams({
-              customer:         session.customer,
+              customer:          session.customer,
               'items[0][price]': subPriceId,
+              trial_period_days: '30',
             }).toString(),
           });
         }
@@ -124,7 +125,7 @@ exports.handler = async (event) => {
 
     // Email Brock
     if (resendKey) {
-      const fromEmail = process.env.RESEND_FROM  || 'onboarding@resend.dev';
+      const fromEmail = process.env.RESEND_FROM  || 'hello@bedrock-sites.com';
       const toEmail   = process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com';
       const siteBlock = deployedUrl
         ? `<p style="margin-top:20px;padding:12px;background:#f0f5ea;border-left:3px solid #3b6d11;font-size:14px">
@@ -160,6 +161,57 @@ exports.handler = async (event) => {
           to:      [toEmail],
           subject: deployedUrl ? `Live: ${businessName} — ${deployedUrl}` : `Paid (deploy failed): ${businessName}`,
           html,
+        }),
+      });
+    }
+
+    // Welcome email to customer
+    if (resendKey && customerEmail && deployedUrl) {
+      const fromEmail  = process.env.RESEND_FROM  || 'hello@bedrock-sites.com';
+      const portalUrl  = process.env.SITE_URL ? `${process.env.SITE_URL}/portal.html` : 'https://bedrock-sites.com/portal.html';
+      const customerHtml = `
+        <div style="font-family:sans-serif;max-width:560px;color:#111">
+          <h2 style="font-size:1.4rem;margin-bottom:0.5rem">Your site is live.</h2>
+          <p style="color:#555;font-size:0.9rem;margin-bottom:1.5rem">Here's everything you need to know.</p>
+
+          <div style="background:#f5f5f0;border-left:3px solid #c9a84c;padding:1rem 1.25rem;margin-bottom:1.5rem">
+            <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:0.25rem">Your website</div>
+            <a href="${deployedUrl}" style="font-size:1rem;font-weight:500;color:#111">${deployedUrl}</a>
+            <div style="font-size:0.75rem;color:#888;margin-top:0.4rem">DNS may take up to 24 hours to fully propagate worldwide.</div>
+          </div>
+
+          <table style="border-collapse:collapse;width:100%;margin-bottom:1.5rem">
+            <tr>
+              <td style="padding:8px 12px 8px 0;color:#666;font-size:0.85rem;width:140px;vertical-align:top">Your first $19 charge</td>
+              <td style="padding:8px 0;font-size:0.85rem">30 days from today — we give you a full month free to get settled in.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px 8px 0;color:#666;font-size:0.85rem;vertical-align:top">Edit your site</td>
+              <td style="padding:8px 0;font-size:0.85rem">Log in to your portal anytime to update your info, photos, or hours.</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 12px 8px 0;color:#666;font-size:0.85rem;vertical-align:top">Questions?</td>
+              <td style="padding:8px 0;font-size:0.85rem">Reply to this email or reach us at <a href="mailto:hello@bedrock-sites.com" style="color:#111">hello@bedrock-sites.com</a>.</td>
+            </tr>
+          </table>
+
+          <a href="${portalUrl}" style="display:inline-block;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#fff;background:#111;padding:0.85rem 1.75rem;text-decoration:none">Log in to your portal →</a>
+
+          <p style="font-size:0.7rem;color:#aaa;margin-top:2rem">Bedrock Sites · <a href="https://bedrock-sites.com" style="color:#aaa">bedrock-sites.com</a></p>
+        </div>
+      `;
+
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${resendKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from:    fromEmail,
+          to:      [customerEmail],
+          subject: `Your site is live — ${businessName}`,
+          html:    customerHtml,
         }),
       });
     }

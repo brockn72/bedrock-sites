@@ -135,7 +135,7 @@ exports.handler = async (event) => {
 
   // Email Brock only when the customer clicks "Claim My Site" (not on every preview)
   if (source === 'claim' && resendKey) {
-    const fromEmail = process.env.RESEND_FROM || 'onboarding@resend.dev';
+    const fromEmail = process.env.RESEND_FROM || 'hello@bedrock-sites.com';
     const toEmail   = process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com';
 
     const servicesList = (services || []).join(', ') || '—';
