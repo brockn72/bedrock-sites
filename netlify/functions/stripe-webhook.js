@@ -1,4 +1,5 @@
 const { createHmac, timingSafeEqual } = require('crypto');
+const { deploySite } = require('../lib/deploy-site');
 
 function verifyStripeSignature(rawBody, sigHeader, secret) {
   if (!sigHeader) return false;
@@ -110,15 +111,33 @@ exports.handler = async (event) => {
       }
     }
 
-    // Email Brock to deploy the site
+    // Auto-deploy site to Cloudflare Workers
+    let deployedUrl = '';
+    if (leadId) {
+      try {
+        const deployResult = await deploySite(leadId);
+        deployedUrl = deployResult.url;
+      } catch (deployErr) {
+        console.error('Auto-deploy failed:', deployErr.message);
+      }
+    }
+
+    // Email Brock
     if (resendKey) {
       const fromEmail = process.env.RESEND_FROM  || 'onboarding@resend.dev';
       const toEmail   = process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com';
+      const siteBlock = deployedUrl
+        ? `<p style="margin-top:20px;padding:12px;background:#f0f5ea;border-left:3px solid #3b6d11;font-size:14px">
+             Site deployed: <a href="${deployedUrl}">${deployedUrl}</a>
+           </p>`
+        : `<p style="margin-top:20px;padding:12px;background:#fff3cd;border-left:3px solid #c9a84c;font-size:14px">
+             Auto-deploy did not complete — check Netlify logs and redeploy manually via<br>
+             POST /.netlify/functions/deploy-customer-site with {"leadId":"${leadId || ''}"}
+           </p>`;
 
       const html = `
         <div style="font-family:sans-serif;max-width:540px">
-          <h2 style="color:#111">Paid order ready to deploy: ${businessName}</h2>
-          <p>Payment confirmed via Stripe. Pull up this lead in Supabase and deploy their site.</p>
+          <h2 style="color:#111">New paid customer: ${businessName}</h2>
           <table style="border-collapse:collapse;width:100%">
             <tr><td style="padding:6px 12px 6px 0;color:#666;width:140px">Business</td><td>${businessName}</td></tr>
             <tr><td style="padding:6px 12px 6px 0;color:#666">Customer email</td><td><a href="mailto:${customerEmail}">${customerEmail || '—'}</a></td></tr>
@@ -126,10 +145,7 @@ exports.handler = async (event) => {
             <tr><td style="padding:6px 12px 6px 0;color:#666">Stripe session</td><td>${session.id}</td></tr>
             <tr><td style="padding:6px 12px 6px 0;color:#666">Amount</td><td>$${((session.amount_total || 0) / 100).toFixed(2)}</td></tr>
           </table>
-          <p style="margin-top:20px;padding:12px;background:#f0f5ea;border-left:3px solid #3b6d11;font-size:14px">
-            Next step: deploy their site to Cloudflare Pages, then update the lead record with the live URL.
-          </p>
-          <p style="color:#888;font-size:12px">Auto-deploy will be added here once Cloudflare Pages is configured.</p>
+          ${siteBlock}
         </div>
       `;
 
@@ -142,13 +158,11 @@ exports.handler = async (event) => {
         body: JSON.stringify({
           from:    fromEmail,
           to:      [toEmail],
-          subject: `Paid — deploy now: ${businessName}`,
+          subject: deployedUrl ? `Live: ${businessName} — ${deployedUrl}` : `Paid (deploy failed): ${businessName}`,
           html,
         }),
       });
     }
-
-    // Auto-deploy to Cloudflare Pages goes here once CF is configured
   }
 
   return { statusCode: 200, body: JSON.stringify({ received: true }) };
