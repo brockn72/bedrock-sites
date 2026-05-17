@@ -4802,32 +4802,40 @@ function onDomainCustomInput(){
   document.getElementById('domainCustomResult').textContent='';
 }
 
-function checkCustomDomain(){
+async function checkCustomDomain(){
   const raw=(document.getElementById('domainCustomInput').value||'').trim().toLowerCase().replace(/\.com$|\.net$/,'').replace(/[^a-z0-9-]/g,'');
   const res=document.getElementById('domainCustomResult');
+  const btn=document.querySelector('button[onclick="checkCustomDomain()"]');
   if(!raw){res.textContent='Please enter a domain name.';res.style.color='#a32d2d';return;}
   const domain=raw+'.com';
-  // In production this calls the Namecheap check API.
-  // For now: flag obviously taken names and accept the rest as "likely available".
-  const commonTaken=['google','facebook','apple','amazon','microsoft','yelp','homedepot','lowes'];
-  if(commonTaken.some(t=>raw.includes(t))){
-    res.innerHTML=`<span style="color:#a32d2d">✗ <strong>${domain}</strong> — this name is taken or unavailable.</span>`;
-  } else {
-    res.innerHTML=`<span style="color:#3b6d11">✓ <strong>${domain}</strong> looks available — selecting it now.</span>`;
-    selectDomain(domain);
-    // Add it to the suggestions list if not already there
-    const container=document.getElementById('domainSuggestions');
-    if(container){
-      const existing=container.querySelector(`[onclick*="'${domain}'"]`);
-      if(!existing){
-        const div=document.createElement('div');
-        div.className='domain-opt domain-opt-sel';
-        div.setAttribute('onclick',`selectDomain('${domain}')`);
-        div.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;border:2px solid var(--accent);background:rgba(201,168,76,0.08);cursor:pointer';
-        div.innerHTML=`<div style="display:flex;align-items:center;gap:0.75rem"><div style="width:18px;height:18px;border-radius:50%;border:2px solid var(--accent);background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:6px;height:6px;border-radius:50%;background:var(--dark)"></div></div><span style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:400;color:var(--dark)">${domain}</span><span style="font-size:0.52rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);background:rgba(201,168,76,0.12);padding:2px 7px">Your pick</span></div><span style="font-size:0.7rem;font-weight:300;color:var(--text-muted)">~$15 · included</span>`;
-        container.prepend(div);
+  res.innerHTML='<span style="color:var(--text-muted)">Checking availability…</span>';
+  if(btn){btn.disabled=true;btn.textContent='Checking…';}
+  try{
+    const r=await fetch('/.netlify/functions/check-domain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({domain})});
+    const data=r.ok?await r.json():{available:false};
+    if(data.available){
+      res.innerHTML=`<span style="color:#3b6d11">✓ <strong>${domain}</strong> is available — selecting it now.</span>`;
+      selectDomain(domain);
+      const container=document.getElementById('domainSuggestions');
+      if(container){
+        const existing=container.querySelector(`[data-domain="${domain}"]`);
+        if(!existing){
+          const div=document.createElement('div');
+          div.className='domain-opt domain-opt-sel';
+          div.dataset.domain=domain;
+          div.setAttribute('onclick',`selectDomain('${domain}')`);
+          div.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;border:2px solid var(--accent);background:rgba(201,168,76,0.08);cursor:pointer';
+          div.innerHTML=`<div style="display:flex;align-items:center;gap:0.75rem"><div style="width:18px;height:18px;border-radius:50%;border:2px solid var(--accent);background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0"><div style="width:6px;height:6px;border-radius:50%;background:var(--dark)"></div></div><span style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:400;color:var(--dark)">${domain}</span><span style="font-size:0.52rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);background:rgba(201,168,76,0.12);padding:2px 7px">Your pick</span></div><span style="font-size:0.7rem;font-weight:300;color:var(--text-muted)">included</span>`;
+          container.prepend(div);
+        }
       }
+    } else {
+      res.innerHTML=`<span style="color:#a32d2d">✗ <strong>${domain}</strong> is already taken. Try a different name.</span>`;
     }
+  }catch(e){
+    res.innerHTML=`<span style="color:#a32d2d">Could not check availability — try again.</span>`;
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Check';}
   }
 }
 
@@ -6602,7 +6610,7 @@ async function submitClaim(){
   try{
     // Save lead first so we get a leadId to attach to the Stripe session
     const leadRes=await fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim',password})
+      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,selectedDomain:S.selectedDomain||'',source:'claim',password})
     });
     const leadData=leadRes.ok?await leadRes.json():{};
     const leadId=leadData.leadId||null;

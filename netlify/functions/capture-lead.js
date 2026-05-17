@@ -13,8 +13,14 @@ exports.handler = async (event) => {
   const {
     businessName, contactName, phone, email,
     trade, city, services, serviceAreas, siteData, source,
-    password  // only present when source === 'claim'
+    password,       // only present when source === 'claim'
+    selectedDomain, // domain picked in Step 2
   } = body;
+
+  // Merge selected domain into site_data so deploy-site can access it
+  const mergedSiteData = selectedDomain
+    ? { ...(siteData || {}), _selectedDomain: selectedDomain }
+    : (siteData || null);
 
   if (!businessName) {
     return { statusCode: 400, body: JSON.stringify({ error: 'businessName required' }) };
@@ -56,7 +62,7 @@ exports.handler = async (event) => {
             city:          city        || null,
             services:      services    || [],
             service_areas: serviceAreas || [],
-            site_data:     siteData    || null,
+            site_data:     mergedSiteData,
             source:        source      || 'unknown',
             status:        source === 'claim' ? 'claim' : 'new',
           }),

@@ -1,4 +1,5 @@
-const { generateCustomerSite } = require('./generate-html');
+const { generateCustomerSite }        = require('./generate-html');
+const { registerAndDeployDomain } = require('./register-domain');
 
 const CF_BASE = 'https://api.cloudflare.com/client/v4';
 const CRLF = '\r\n';
@@ -106,6 +107,21 @@ async function deploySite(leadId) {
     }).catch(() => {});
   }
 
+  // --- Register custom domain if one was selected ---
+  let customDomainUrl = '';
+  const selectedDomain = lead.site_data?._selectedDomain;
+  if (selectedDomain && process.env.NAMECOM_USERNAME && process.env.NAMECOM_TOKEN) {
+    try {
+      const domainResult = await registerAndDeployDomain(selectedDomain, scriptName);
+      customDomainUrl = domainResult.customDomain;
+    } catch (domainErr) {
+      // Domain failure doesn't block the site — it's live on subdomain
+      console.error('[deploy-site] Domain registration failed:', domainErr.message);
+    }
+  }
+
+  const liveUrl = customDomainUrl || siteUrl;
+
   // --- Mark lead as deployed in Supabase ---
   await fetch(`${supabaseUrl}/rest/v1/leads?id=eq.${leadId}`, {
     method: 'PATCH',
@@ -115,10 +131,14 @@ async function deploySite(leadId) {
       Authorization: `Bearer ${supabaseKey}`,
       Prefer:        'return=minimal',
     },
-    body: JSON.stringify({ status: 'deployed', site_url: siteUrl }),
+    body: JSON.stringify({
+      status:        'deployed',
+      site_url:      liveUrl,
+      subdomain_url: siteUrl,
+    }),
   });
 
-  return { url: siteUrl };
+  return { url: liveUrl, subdomainUrl: siteUrl };
 }
 
 module.exports = { deploySite };
