@@ -16,15 +16,6 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid domain name' }) };
   }
 
-  // If Name.com credentials aren't set yet, optimistically return available
-  if (!process.env.NAMECOM_USERNAME || !process.env.NAMECOM_TOKEN) {
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ available: true, price: 12.99 }),
-    };
-  }
-
   try {
     const result = await checkAvailability(domain);
     return {
