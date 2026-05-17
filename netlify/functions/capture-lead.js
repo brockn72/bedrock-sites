@@ -90,6 +90,9 @@ exports.handler = async (event) => {
     if (authRes.ok) {
       const authData = await authRes.json();
       userId = authData.id || null;
+    } else {
+      const authErr = await authRes.text();
+      console.error(`[capture-lead] Auth user creation failed: ${authRes.status} — ${authErr}`);
     }
     // If account creation fails (e.g. email already exists), we continue anyway
     // so the claim and payment still go through. Brock can manually link accounts if needed.
@@ -124,6 +127,9 @@ exports.handler = async (event) => {
     if (res.ok) {
       const rows = await res.json();
       leadId = rows[0]?.id || null;
+    } else {
+      const leadErr = await res.text();
+      console.error(`[capture-lead] Lead insert failed: ${res.status} — ${leadErr}`);
     }
   }
 
