@@ -4,11 +4,11 @@ exports.handler = async (event) => {
   }
 
   const stripeKey  = process.env.STRIPE_SECRET_KEY;
-  const priceId    = process.env.STRIPE_PRICE_ID;
+  const priceId    = process.env.STRIPE_SETUP_PRICE_ID;  // $200 one-time setup fee
   const siteUrl    = process.env.SITE_URL || 'https://bedrock-sites.netlify.app';
 
   if (!stripeKey || !priceId) {
-    return { statusCode: 503, body: JSON.stringify({ error: 'Stripe not configured yet' }) };
+    return { statusCode: 503, body: JSON.stringify({ error: 'Stripe not configured — set STRIPE_SETUP_PRICE_ID in Netlify env vars' }) };
   }
 
   let body;

@@ -94,14 +94,16 @@ async function deploySite(leadId) {
       method: 'POST',
       headers: { ...cfHeaders(cfToken), 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'AAAA', name: slug, content: '100::', proxied: true }),
-    });
+    }).catch(() => {});
 
     // Worker route — binds the subdomain pattern to this Worker script.
+    // On re-deploy the route already exists and points to the same script name,
+    // so a duplicate error is harmless — the updated Worker is already live.
     await fetch(`${CF_BASE}/zones/${zoneId}/workers/routes`, {
       method: 'POST',
       headers: { ...cfHeaders(cfToken), 'Content-Type': 'application/json' },
       body: JSON.stringify({ pattern: `${subdomain}/*`, script: scriptName }),
-    });
+    }).catch(() => {});
   }
 
   // --- Mark lead as deployed in Supabase ---

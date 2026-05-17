@@ -55,7 +55,7 @@ exports.handler = async (event) => {
     const businessName = session.metadata?.business_name || 'Unknown Business';
     const customerEmail = session.customer_details?.email || session.customer_email || '';
     const stripeKey    = process.env.STRIPE_SECRET_KEY;
-    const subPriceId   = process.env.STRIPE_SUBSCRIPTION_PRICE_ID;
+    const subPriceId   = process.env.STRIPE_PRICE_ID;  // $19/mo subscription price
 
     // Mark lead as paid in Supabase
     if (supabaseUrl && supabaseKey && leadId) {

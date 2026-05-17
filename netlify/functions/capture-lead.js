@@ -27,6 +27,49 @@ exports.handler = async (event) => {
   let leadId = null;
   let userId = null;
 
+  // Deduplicate: if a lead with this email already exists and hasn't paid yet,
+  // update it instead of creating a duplicate (handles double-click on "Claim My Site").
+  if (email && supabaseUrl && supabaseKey) {
+    const checkRes = await fetch(
+      `${supabaseUrl}/rest/v1/leads?email=eq.${encodeURIComponent(email)}&status=in.(new,claim)&select=id,user_id&limit=1`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+    );
+    if (checkRes.ok) {
+      const existing = await checkRes.json();
+      if (existing.length) {
+        leadId = existing[0].id;
+        userId = existing[0].user_id || null;
+        // Patch the existing lead with latest data and return early
+        await fetch(`${supabaseUrl}/rest/v1/leads?id=eq.${leadId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            apikey: supabaseKey,
+            Authorization: `Bearer ${supabaseKey}`,
+            Prefer: 'return=minimal',
+          },
+          body: JSON.stringify({
+            business_name: businessName,
+            contact_name:  contactName || null,
+            phone:         phone       || null,
+            trade:         trade       || null,
+            city:          city        || null,
+            services:      services    || [],
+            service_areas: serviceAreas || [],
+            site_data:     siteData    || null,
+            source:        source      || 'unknown',
+            status:        source === 'claim' ? 'claim' : 'new',
+          }),
+        });
+        return {
+          statusCode: 200,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ success: true, leadId }),
+        };
+      }
+    }
+  }
+
   // Create a Supabase Auth account when the customer is claiming their site
   if (source === 'claim' && email && password && supabaseUrl && supabaseKey) {
     const authRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {

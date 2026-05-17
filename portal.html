@@ -183,6 +183,30 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     </div>
   </div>
 
+  <!-- ── RESET PASSWORD ── -->
+  <div id="pageReset" class="page">
+    <div class="login-wrap">
+      <div class="login-eyebrow">New Password</div>
+      <h2 class="login-title" style="font-size:1.8rem">Set your password.</h2>
+      <p class="login-sub">Choose a new password for your Bedrock client account.</p>
+      <div class="card">
+        <div class="error-box" id="resetError"></div>
+        <div id="resetSuccess" style="display:none;background:var(--green-bg);border-left:3px solid var(--green);padding:0.7rem 0.9rem;margin-bottom:1rem;font-size:0.74rem;color:var(--green);font-weight:500;line-height:1.55">
+          Password updated. Taking you to sign in…
+        </div>
+        <div class="field">
+          <label for="resetPassword">New password</label>
+          <input type="password" id="resetPassword" placeholder="At least 8 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')handleReset()">
+        </div>
+        <div class="field">
+          <label for="resetPasswordConfirm">Confirm password</label>
+          <input type="password" id="resetPasswordConfirm" placeholder="Re-enter your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')handleReset()">
+        </div>
+        <button class="btn-gold" id="btnReset" onclick="handleReset()">Update Password</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── DASHBOARD ── -->
   <div id="pageDash" class="page">
     <div class="dash-wrap">
@@ -278,21 +302,23 @@ const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 let currentSession = null;
 let currentLead    = null;
 
+// Listen for auth state changes — handles password recovery redirects automatically.
+// Supabase JS v2 detects type=recovery in the URL hash and fires PASSWORD_RECOVERY here.
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    showPage('pageReset');
+  }
+});
+
 // Check for existing session on load
 (async () => {
-  // Handle password reset redirect (Supabase sends ?type=recovery in the hash)
-  const hash = window.location.hash;
-  if (hash.includes('type=recovery')) {
-    // Let Supabase process the token, then show the password update UI
-    // For MVP: redirect to login with a message (full reset flow can be added later)
-    showPage('pageLogin');
-    showError('loginError', 'Follow the link in the email — it will sign you in automatically. Then change your password from the dashboard.');
-    return;
-  }
-
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
-    await loadDashboard(session);
+    // Don't auto-load dashboard if this is a recovery session — onAuthStateChange handles it
+    const hash = window.location.hash;
+    if (!hash.includes('type=recovery')) {
+      await loadDashboard(session);
+    }
   }
 })();
 
@@ -325,6 +351,32 @@ async function handleLogin() {
   }
 
   await loadDashboard(data.session);
+}
+
+// ── RESET PASSWORD (from email link) ─────────────────────────────────────────
+async function handleReset() {
+  const password = document.getElementById('resetPassword').value;
+  const confirm  = document.getElementById('resetPasswordConfirm').value;
+  clearError('resetError');
+
+  if (password.length < 8) return showError('resetError', 'Password must be at least 8 characters.');
+  if (password !== confirm)  return showError('resetError', 'Passwords do not match.');
+
+  const btn = document.getElementById('btnReset');
+  btn.disabled = true;
+  btn.textContent = 'Updating…';
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) {
+    btn.disabled = false;
+    btn.textContent = 'Update Password';
+    return showError('resetError', 'Could not update password. Please try again or contact support.');
+  }
+
+  document.getElementById('resetSuccess').style.display = 'block';
+  await supabase.auth.signOut();
+  setTimeout(() => { showPage('pageLogin'); }, 2000);
 }
 
 // ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
