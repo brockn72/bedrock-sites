@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(Remove-Item \"C:\\\\Users\\\\brock\\\\OneDrive\\\\Documents\\\\bedrock-sites\\\\bedrock-vault\\\\bedrock-context.md\")",
-      "Bash(Remove-Item \"C:\\\\Users\\\\brock\\\\OneDrive\\\\Documents\\\\bedrock-sites\\\\bedrock-vault\\\\bedrock-memories.md\")"
-    ]
-  }
-}

@@ -1,10 +1,12 @@
-# Sensitive documents
+# Sensitive documents & private notes
 EIN.pdf
 backup codes/
 *.pem
 *.key
 .env
 .env.*
+bedrock-vault/
+.claude/
 
 # OS
 .DS_Store
