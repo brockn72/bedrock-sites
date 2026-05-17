@@ -1,3 +1,8 @@
+---
+type: personal-context
+status: active
+---
+
 # CLAUDE.md — Master Context: Brock
 
 > This file gives Claude full personal context about who I am, what I value, and how I work.

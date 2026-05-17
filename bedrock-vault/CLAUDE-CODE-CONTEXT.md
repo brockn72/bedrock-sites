@@ -1,3 +1,9 @@
+---
+type: working-context
+project: bedrock
+status: active
+---
+
 # CLAUDE.md — Bedrock Digital
 
 > This file is for Claude Code. Read this at the start of every session before touching any code.
@@ -8,25 +14,12 @@
 
 Website builder SaaS for trade businesses (plumbers, electricians, contractors). Non-technical small business owners get a live professional site with minimal friction.
 
-- **Owner:** Brock Niederer (solo, Idaho Falls ID). Not a coder — directs Claude to write all code.
+- **Owner:** Brock Niederer (solo). Not a coder — directs Claude to write all code.
 - **Phase 1 goal:** 10 paying clients by August
 - **Pricing:** $200 setup + $19/month. Beta clients: $19/month only (promo)
-- **GitHub:** brockn72/bedrock-sites
-- **Live site:** bedrock-sites.com
+- **GitHub:** brockn72/bedrock-sites | **Live site:** bedrock-sites.com
 
----
-
-## Tech Stack
-
-| Layer | Tool | Notes |
-|---|---|---|
-| Frontend | `bedrock-v35.html` | Single file, vanilla HTML/CSS/JS, no framework, no build step |
-| Functions | Netlify Functions | `/netlify/functions/`, Node.js 18 |
-| Database | Supabase | `bedrock` project, vkzkzteewfoqrdwktgae.supabase.co |
-| Payments | Stripe | LIVE mode — real charges |
-| Email | Resend | Notification emails to Brock |
-| Hosting | Netlify | bedrock-sites.com |
-| Client sites | Cloudflare Pages (future) | Unlimited bandwidth; auto-deploy not yet built |
+> For full stack breakdown see [[01-TECH-STACK]]. For current build state see [[00-PROJECT-STATUS]].
 
 ---
 

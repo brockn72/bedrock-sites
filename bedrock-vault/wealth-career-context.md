@@ -1,3 +1,8 @@
+---
+type: career-context
+status: active
+---
+
 # wealth-career-context.md — Professional & Career Context
 
 > Load this when working on career planning, financial planning content,

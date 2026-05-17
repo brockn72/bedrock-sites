@@ -1,3 +1,9 @@
+---
+type: project-status
+project: bedrock
+status: active
+---
+
 # Bedrock Digital — Project Status
 *Last updated: May 17, 2026*
 

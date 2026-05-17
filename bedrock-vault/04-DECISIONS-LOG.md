@@ -1,3 +1,9 @@
+---
+type: decisions-log
+project: bedrock
+status: active
+---
+
 # Decisions Log
 
 A running record of key decisions made and why, so future Claude Code sessions don't re-litigate them.

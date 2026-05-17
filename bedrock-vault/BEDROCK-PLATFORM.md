@@ -1,3 +1,9 @@
+---
+type: project-context
+project: bedrock
+status: active
+---
+
 # Bedrock Digital — Platform Overview
 *Last updated: May 2026*
 

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "00-PROJECT-STATUS.md",
+                "file": "_template-context.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "00-PROJECT-STATUS"
+              "title": "_template-context"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "00-PROJECT-STATUS.md",
+                "file": "_template-context.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 00-PROJECT-STATUS"
+              "title": "Backlinks for _template-context"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "00-PROJECT-STATUS.md",
+                "file": "_template-context.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 00-PROJECT-STATUS"
+              "title": "Outgoing links from _template-context"
             }
           },
           {
@@ -156,13 +156,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "00-PROJECT-STATUS.md",
+                "file": "_template-context.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 00-PROJECT-STATUS"
+              "title": "Outline of _template-context"
             }
           }
         ]
@@ -185,20 +185,22 @@
   },
   "active": "fe6ddbfdf004e232",
   "lastOpenFiles": [
-    "BEDROCK-PLATFORM.md.tmp.38072.07512fc4c1ba",
+    "AI-Context.md",
+    "_template-context.md",
+    "04-DECISIONS-LOG.md.tmp.38072.8a25e01f5233",
+    "00-PROJECT-STATUS.md.tmp.38072.8631d2f55a5f",
+    "CLAUDE-CODE-CONTEXT.md.tmp.38072.71b40b85b9be",
+    "BEDROCK-PLATFORM.md.tmp.38072.f6ada80bc92b",
+    "wealth-career-context.md.tmp.38072.6f25f0bf7e0f",
+    "CLAUDE.md.tmp.38072.120c03535e29",
+    "CLAUDE-CODE-CONTEXT.md.tmp.38072.6e38d68ed1f9",
+    "README-context-system.md.tmp.38072.b006f6d48317",
     "00-PROJECT-STATUS.md",
+    "BEDROCK-PLATFORM.md.tmp.38072.07512fc4c1ba",
     "bedrock-context.md",
     "Untitled.base",
     "Untitled.canvas",
-    "BEDROCK-PLATFORM.md.tmp.38072.2ebe0ef1c6f8",
-    "03-ENV-VARS.md.tmp.38072.7c0afac00c08",
-    "02-DATABASE-SCHEMA.md.tmp.38072.e8e6d262c780",
-    "00-PROJECT-STATUS.md.tmp.38072.39cf94c89877",
-    "bedrock-memories.md.tmp.38072.48ec53f5aaef",
-    "README-context-system.md.tmp.38072.a0d344b8d53f",
-    "bedrock-context.md.tmp.38072.0e5eda54aac0",
     "04-DECISIONS-LOG.md",
-    "bedrock_digital_platform_onepager.html",
     "BEDROCK-PLATFORM.md",
     "2026-05-17.md",
     "CLAUDE-CODE-CONTEXT.md",
@@ -209,8 +211,6 @@
     "02-DATABASE-SCHEMA.md",
     "01-TECH-STACK.md",
     "bedrock-memories.md",
-    "Welcome.md",
-    "AI-Context.md",
-    "Untitled"
+    "Welcome.md"
   ]
 }

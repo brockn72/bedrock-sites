@@ -1,3 +1,9 @@
+---
+type: reference
+project: bedrock
+status: active
+---
+
 # Environment Variables — Netlify
 
 All vars are set in Netlify → bedrock-sites.com → Site configuration → Environment variables.

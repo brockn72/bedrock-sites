@@ -1,3 +1,9 @@
+---
+type: reference
+project: bedrock
+status: active
+---
+
 # Tech Stack & Architecture
 
 ## Stack Overview

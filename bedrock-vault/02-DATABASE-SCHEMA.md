@@ -1,3 +1,9 @@
+---
+type: reference
+project: bedrock
+status: active
+---
+
 # Database Schema — Supabase
 
 **Project name:** bedrock  
