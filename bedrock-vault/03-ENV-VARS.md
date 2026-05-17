@@ -43,3 +43,12 @@ A personal access token was created for Claude Code to add env vars via API.
 If the GitHub repo isn't connected to Netlify yet, the functions don't exist as far as Netlify is concerned. The env vars are ready, but `capture-lead.js`, `stripe-webhook.js` etc. won't respond to requests.
 
 **Fix:** Netlify → Site configuration → Build & deploy → Link repository → bedrock-sites
+
+---
+
+## Related
+
+- [[00-PROJECT-STATUS]] — current project state and what's blocking progress
+- [[01-TECH-STACK]] — how Netlify Functions use these variables
+- [[02-DATABASE-SCHEMA]] — Supabase project the keys connect to
+- [[04-DECISIONS-LOG]] — architecture decisions that shaped this config

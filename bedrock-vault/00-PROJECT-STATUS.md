@@ -85,3 +85,13 @@ Domain stays. Env vars stay. Functions go live.
 - Lead with the problem (no website = lost customers), not features
 - Genuine, value-first — no pushy tactics
 - Keep pricing simple and easy to say yes to
+
+---
+
+## Related
+
+- [[01-TECH-STACK]] — full stack breakdown and architecture
+- [[02-DATABASE-SCHEMA]] — Supabase tables and schema
+- [[03-ENV-VARS]] — all environment variables and Stripe config
+- [[04-DECISIONS-LOG]] — why things are built the way they are
+- [[BEDROCK-PLATFORM]] — broader product roadmap (Sites, SEO, CFO)

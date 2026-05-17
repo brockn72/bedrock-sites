@@ -1,0 +1,129 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  .page{font-family:'DM Sans',sans-serif;color:var(--color-text-primary);padding:2.5rem 2rem}
+  .eyebrow{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:0.5rem}
+  .headline{font-family:'DM Serif Display',serif;font-size:32px;line-height:1.15;margin-bottom:0.5rem}
+  .headline em{font-style:italic;color:#3B6D11}
+  .tagline{font-size:14px;color:var(--color-text-secondary);line-height:1.6;max-width:520px;margin-bottom:2rem}
+  .divider{height:0.5px;background:var(--color-border-tertiary);margin:1.5rem 0}
+  .products{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+  .product-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;position:relative;overflow:hidden}
+  .product-card.featured{border:1.5px solid #639922}
+  .badge{display:inline-block;font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:0.75rem}
+  .badge-live{background:#EAF3DE;color:#3B6D11}
+  .badge-soon{background:var(--color-background-secondary);color:var(--color-text-secondary)}
+  .badge-future{background:#FAEEDA;color:#633806}
+  .product-name{font-family:'DM Serif Display',serif;font-size:18px;margin-bottom:0.25rem}
+  .product-sub{font-size:12px;color:var(--color-text-secondary);margin-bottom:0.75rem}
+  .product-desc{font-size:12.5px;line-height:1.6;color:var(--color-text-secondary);margin-bottom:0.75rem}
+  .product-price{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+  .product-price span{font-size:11px;font-weight:400;color:var(--color-text-secondary)}
+  .bullets{list-style:none;margin-top:0.75rem}
+  .bullets li{font-size:12px;color:var(--color-text-secondary);padding:3px 0;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+  .bullets li::before{content:"—";color:var(--color-text-secondary);flex-shrink:0;margin-top:1px}
+  .bottom{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .stat-block{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem}
+  .stat-block h3{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--color-text-secondary);margin-bottom:0.75rem}
+  .stat-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12.5px}
+  .stat-row:last-child{border-bottom:none}
+  .stat-val{font-weight:500;font-size:13px}
+  .stat-val.green{color:#3B6D11}
+  .stat-val.amber{color:#854F0B}
+  .principle-block{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem}
+  .principle-block h3{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--color-text-secondary);margin-bottom:0.75rem}
+  .principle{font-size:12.5px;color:var(--color-text-secondary);padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);line-height:1.5;display:flex;gap:8px;align-items:flex-start}
+  .principle:last-child{border-bottom:none}
+  .principle strong{color:var(--color-text-primary);font-weight:500;white-space:nowrap}
+  .footer-bar{display:flex;justify-content:space-between;align-items:center;margin-top:1.5rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary)}
+  .footer-bar p{font-size:11px;color:var(--color-text-secondary)}
+  .phase-tag{font-size:10px;font-weight:500;padding:2px 8px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:99px;color:var(--color-text-secondary)}
+  .watermark{font-family:'DM Serif Display',serif;font-size:64px;position:absolute;bottom:-10px;right:-4px;opacity:0.04;color:var(--color-text-primary);pointer-events:none;line-height:1}
+</style>
+
+<div class="page">
+  <h2 class="sr-only">Bedrock Digital — Platform one-pager covering three products: Bedrock Sites, Bedrock SEO, and Bedrock CFO</h2>
+
+  <p class="eyebrow">Bedrock Digital — Company overview</p>
+  <h1 class="headline">Built for contractors who'd rather<br><em>do the work</em> than run the business.</h1>
+  <p class="tagline">Bedrock Digital builds software for trade businesses — plumbers, electricians, HVAC techs, roofers, and contractors. We handle the business side so they can stay on the job site.</p>
+
+  <div class="divider"></div>
+
+  <div class="products">
+    <div class="product-card featured">
+      <div class="watermark">Sites</div>
+      <span class="badge badge-live">● Live — MVP</span>
+      <p class="product-name">Bedrock Sites</p>
+      <p class="product-sub">Professional websites, done for you</p>
+      <p class="product-desc">A contractor fills out a 10-minute builder. We deliver a live, professional website. No tech skills required, ever.</p>
+      <p class="product-price">$200 setup + $19/mo <span>hosting</span></p>
+      <ul class="bullets">
+        <li>Mobile-first, fast-loading site</li>
+        <li>Live subdomain on payment</li>
+        <li>Lead capture built in</li>
+        <li>Zero steps for the customer</li>
+      </ul>
+    </div>
+
+    <div class="product-card">
+      <div class="watermark">SEO</div>
+      <span class="badge badge-soon">Coming soon</span>
+      <p class="product-name">Bedrock SEO</p>
+      <p class="product-sub">Audit & optimize for local search</p>
+      <p class="product-desc">Free automated report finds what's killing their Google ranking. Paid tier fixes it. Works on any website — not just ours.</p>
+      <p class="product-price">Free audit · Optimization TBD</p>
+      <ul class="bullets">
+        <li>Schema, meta tag, sitemap check</li>
+        <li>Plain-English findings report</li>
+        <li>Works as cold outreach tool</li>
+        <li>Upsells into Sites & CFO</li>
+      </ul>
+    </div>
+
+    <div class="product-card">
+      <div class="watermark">CFO</div>
+      <span class="badge badge-future">Roadmap</span>
+      <p class="product-name">Bedrock CFO</p>
+      <p class="product-sub">Mobile-first business intelligence</p>
+      <p class="product-desc">An AI agent connected to their QuickBooks, bank, and job data. Answers questions, builds bids, reconciles books — on their phone, after a long day.</p>
+      <p class="product-price">~$99–199/mo <span>est.</span></p>
+      <ul class="bullets">
+        <li>QuickBooks integration (MVP)</li>
+        <li>Bid profitability calculator</li>
+        <li>Auto bank reconciliation</li>
+        <li>Replaces $500–1,500/mo bookkeeper</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="stat-block">
+      <h3>Market opportunity</h3>
+      <div class="stat-row"><span>Home service businesses (US)</span><span class="stat-val">~2.5M</span></div>
+      <div class="stat-row"><span>Without a website</span><span class="stat-val">28%</span></div>
+      <div class="stat-row"><span>Shoppers lost due to no site</span><span class="stat-val amber">31%</span></div>
+      <div class="stat-row"><span>Phase 1 target (clients)</span><span class="stat-val green">10</span></div>
+      <div class="stat-row"><span>Phase 1 monthly revenue goal</span><span class="stat-val green">$190+/mo</span></div>
+      <div class="stat-row"><span>Gross margin (Sites)</span><span class="stat-val green">~99%</span></div>
+    </div>
+
+    <div class="principle-block">
+      <h3>Product principles</h3>
+      <div class="principle"><strong>Zero friction</strong> The target user is a plumber. Any step that requires technical knowledge is a product failure.</div>
+      <div class="principle"><strong>Simple first</strong> Get to working before clever. A contractor doesn't care how it works.</div>
+      <div class="principle"><strong>One ecosystem</strong> Sites → SEO → CFO. Same account, increasing value, increasing stickiness.</div>
+      <div class="principle"><strong>Margins matter</strong> Near-zero marginal cost per customer means sustainable from day one.</div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <p>Bedrock Digital · bedrock-sites.com · Owner: Brock Niederer · May 2026</p>
+    <div style="display:flex;gap:6px">
+      <span class="phase-tag">Phase 1: Sites live</span>
+      <span class="phase-tag">Phase 2: SEO — Fall '26</span>
+      <span class="phase-tag">Phase 3: CFO — 2027</span>
+    </div>
+  </div>
+</div>

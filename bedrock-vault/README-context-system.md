@@ -4,118 +4,133 @@
 
 A set of `.md` files that give Claude full context about you so you don't waste tokens re-explaining yourself every session. GIGO — good context in, good output out.
 
----
-
-## The Files
-
-| File | Use When |
-|---|---|
-| `CLAUDE.md` | Almost always — load this for any session that involves you personally |
-| `bedrock-context.md` | Building, planning, or selling anything related to Bedrock Sites |
-| `wealth-career-context.md` | Career decisions, professional writing, CFP prep, client communication |
+Obsidian is the **source of truth**. Claude.ai Projects and Claude Code get copies.
 
 ---
 
-## How to Use in Cursor
+## All Files in This Vault
 
-1. Put all these `.md` files in a folder at the root of your project (e.g., `/context/`)
-2. When you start a session in Cursor, type:
-   ```
-   @CLAUDE.md @bedrock-context.md
-   ```
-   Cursor will pull those files into context automatically
-3. For Bedrock dev sessions, always load both `CLAUDE.md` + `bedrock-context.md`
-4. You can reference them mid-conversation too: `per my bedrock-context.md, here's what I need...`
-
-**Pro tip:** In Cursor, you can add a `.cursorrules` file at your project root. Paste the contents of `CLAUDE.md` there and Cursor will load it automatically on every session without you having to ask.
+| File | What It Is | Load When |
+|---|---|---|
+| [[CLAUDE]] | Personal context — who you are, values, communication style | Almost every session |
+| [[wealth-career-context]] | Resume, credentials, career situation, job search | Career decisions, writing, CFP prep |
+| [[bedrock-context]] | Bedrock product overview, goals, original stack notes | Bedrock planning and sales |
+| [[BEDROCK-PLATFORM]] | Full platform roadmap — Sites, SEO, CFO products | Strategy / roadmap discussions |
+| [[CLAUDE-CODE-CONTEXT]] | Working rules for Claude Code — critical rules, payment flow | Every Bedrock dev session |
+| [[00-PROJECT-STATUS]] | Current build state, what's done, what's blocking | Starting any Bedrock dev session |
+| [[01-TECH-STACK]] | Stack breakdown, architecture, Netlify functions explained | Building or debugging anything |
+| [[02-DATABASE-SCHEMA]] | Supabase tables and columns | DB work, schema questions |
+| [[03-ENV-VARS]] | All Netlify env vars, Stripe config, key locations | Config, secrets, deployment |
+| [[04-DECISIONS-LOG]] | Why things were built the way they were | Before relitigating any past decision |
+| [[bedrock-memories]] | Running log of decisions and progress checklist | Catching up from a previous session |
+| [[README-context-system]] | This file — the system itself | When adding a new context file |
 
 ---
 
-## How to Use in Claude.ai Projects
+## Claude.ai Projects Setup
 
-Claude.ai has a **Projects** feature that lets you attach files and set a system prompt per project.
+Claude.ai Projects let you attach files and set a system prompt. Here's the correct setup for each project.
 
-**Setup for each project:**
+> **Note:** Claude.ai does not auto-sync from Obsidian. When you update a file or add a new one, you re-upload it manually (see checklist below).
 
-### Project: Bedrock
-- System prompt: Paste contents of `CLAUDE.md`
-- Attached files: `bedrock-context.md`
-- Use for: all Bedrock dev, planning, and sales work
+---
+
+### Project: Bedrock (Dev)
+
+**System prompt:** Paste contents of [[CLAUDE-CODE-CONTEXT]]
+
+**Attached files:**
+- [[CLAUDE]]
+- [[BEDROCK-PLATFORM]]
+- [[00-PROJECT-STATUS]]
+- [[01-TECH-STACK]]
+- [[02-DATABASE-SCHEMA]]
+- [[03-ENV-VARS]]
+- [[04-DECISIONS-LOG]]
+- [[bedrock-memories]]
+
+**Use for:** All Bedrock dev work, debugging, building features, architecture questions.
+
+---
+
+### Project: Bedrock (Strategy / Sales)
+
+**System prompt:** Paste contents of [[CLAUDE]]
+
+**Attached files:**
+- [[bedrock-context]]
+- [[BEDROCK-PLATFORM]]
+- [[00-PROJECT-STATUS]]
+
+**Use for:** Pricing decisions, sales scripts, product planning, outreach copy.
+
+---
 
 ### Project: Career / Wealth Management
-- System prompt: Paste contents of `CLAUDE.md`
-- Attached files: `wealth-career-context.md`
-- Use for: Lido decision, CFP prep, client writing, LinkedIn
+
+**System prompt:** Paste contents of [[CLAUDE]]
+
+**Attached files:**
+- [[wealth-career-context]]
+
+**Use for:** Lido decision, CFP prep, cover letters, LinkedIn content, client writing.
+
+---
 
 ### Project: Personal
-- System prompt: Paste contents of `CLAUDE.md`
-- Use for: fitness goals, family planning, general life stuff
+
+**System prompt:** Paste contents of [[CLAUDE]]
+
+**Attached files:** None required
+
+**Use for:** Fitness goals, family planning, general life decisions.
 
 ---
 
-## How to Use in Claude Code (Shell)
+## When You Create a New Context File
 
-When you open Claude Code in your terminal, you can tell it to read a context file at the start:
+Follow this checklist every time you add a new `.md` file to the vault:
 
+- [ ] Write the file with a clear `#` title and logical sections
+- [ ] Add wikilinks in the body wherever you mention another note by title (e.g., `[[01-TECH-STACK]]`)
+- [ ] Add a `## Related` section at the bottom linking to the 3–5 most relevant other notes
+- [ ] Add a row for it in the **All Files in This Vault** table above
+- [ ] Decide which Claude.ai Project(s) it belongs in — add it to the file list in that project's section above
+- [ ] Go to Claude.ai → open that Project → click **Add content** → upload the new file
+- [ ] If an existing file now references the new file, update that file and re-upload it too
+
+---
+
+## How to Use in Claude Code
+
+Claude Code picks up `CLAUDE.md` automatically from the project root and parent directories. The vault's [[CLAUDE-CODE-CONTEXT]] is synced into the repo as `CLAUDE.md` — so Claude Code sessions load it without you asking.
+
+For extra context mid-session:
 ```bash
-claude "Read CLAUDE.md and bedrock-context.md first, then help me with..."
+claude "Read bedrock-vault/00-PROJECT-STATUS.md first, then help me with..."
 ```
-
-Or put `CLAUDE.md` in your home directory — Claude Code will often pick it up automatically.
-
----
-
-## How to Maintain These in Obsidian
-
-1. Store all these files in your Obsidian vault under a folder called `/AI-Context/`
-2. When something changes (new job, project update, new goals), update the file in Obsidian
-3. Copy/paste or sync the updated file to your Cursor project folder when needed
-4. Think of Obsidian as the **source of truth** — Cursor/Claude get copies
-
-**Suggested Obsidian structure:**
-```
-/AI-Context/
-  CLAUDE.md
-  bedrock-context.md
-  wealth-career-context.md
-  README.md
-
-/Projects/
-  /Bedrock/
-    bedrock-memories.md   ← running log of decisions made, things tried
-  /Career/
-    career-notes.md
-
-/Personal/
-  goals.md
-  fitness.md
-```
-
----
-
-## The `[Project]-memories.md` Pattern
-
-For each active project, keep a running `memories.md` file. After each productive session, add a bullet:
-
-```markdown
-## Bedrock Memories
-
-- 2025-05-16: Decided on Option A deployment (single Netlify account, auto subdomain)
-- 2025-05-16: Removed AI editor via display:none — do not delete, it broke things before
-- 2025-05-18: Started building serverless deployment function
-```
-
-Load this file in future sessions so Claude picks up exactly where you left off without re-explaining the history.
 
 ---
 
 ## Quick Start for Any New Session
 
-**Bedrock dev session:**
-> "Load bedrock-context.md and CLAUDE.md. Today I want to work on [X]."
+**Bedrock dev session (Claude Code):**
+> Just open Claude Code — CLAUDE.md loads automatically. If picking up from last time, say: "Check 00-PROJECT-STATUS and bedrock-memories, then let's work on [X]."
+
+**Bedrock dev session (Claude.ai):**
+> Open the Bedrock (Dev) project — files are already attached. Say: "Today I want to work on [X]."
 
 **Career/writing session:**
-> "Load wealth-career-context.md and CLAUDE.md. Help me draft [X]."
+> Open the Career project. Say: "Help me draft [X]."
 
 **General session:**
-> "Load CLAUDE.md. Here's what I need today..."
+> Open the Personal project or start fresh. Say: "Load my CLAUDE context. Here's what I need..."
+
+---
+
+## Related
+
+- [[CLAUDE]] — main personal context file
+- [[bedrock-context]] — Bedrock project context
+- [[wealth-career-context]] — career and professional context
+- [[bedrock-memories]] — running log of Bedrock decisions and progress

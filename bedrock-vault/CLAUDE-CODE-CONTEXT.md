@@ -121,3 +121,13 @@ RLS is disabled — only service_role key accesses DB, no end users.
 3. **Cloudflare Pages setup** → auto-deploy on payment → customer email with live URL
 4. **Wire create-checkout.js** for dynamic checkout (auto-matches lead to payment)
 5. **Custom subdomains** on jpbsites.com
+
+---
+
+## Related
+
+- [[00-PROJECT-STATUS]] — detailed current state and what's blocking progress
+- [[01-TECH-STACK]] — full stack breakdown
+- [[02-DATABASE-SCHEMA]] — Supabase schema details
+- [[03-ENV-VARS]] — all environment variables
+- [[04-DECISIONS-LOG]] — decisions and the reasoning behind them

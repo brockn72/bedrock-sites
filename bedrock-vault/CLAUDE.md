@@ -90,3 +90,11 @@ These are non-negotiable — Claude should reflect these in everything it helps 
 - **Fitness:** Strength training, health-conscious, wants to lose some weight and stay strong for family
 - **Entrepreneurship:** Wired for it — first business at 16, always thinking about building things
 - **Faith/Community:** Volunteering matters to me; I want to give back, not just build wealth
+
+---
+
+## Related
+
+- [[BEDROCK-PLATFORM]] — Bedrock project context and roadmap
+- [[wealth-career-context]] — career and professional details
+- [[README-context-system]] — how to load these context files in Cursor and Claude

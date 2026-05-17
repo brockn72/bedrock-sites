@@ -83,3 +83,13 @@ The planning docs mentioned Railway + Express. That was an earlier plan. Current
 - **Zero friction for end user** — target customer is a plumber, not a developer
 - **Simple > clever** — get to working first
 - **Deploy trigger = payment, not button click** — never deploy from the frontend
+
+---
+
+## Related
+
+- [[00-PROJECT-STATUS]] — current build state and what's live
+- [[02-DATABASE-SCHEMA]] — Supabase tables the functions write to
+- [[03-ENV-VARS]] — all secrets and keys used by functions
+- [[04-DECISIONS-LOG]] — reasoning behind architecture choices
+- [[CLAUDE-CODE-CONTEXT]] — working rules and context for Claude Code sessions

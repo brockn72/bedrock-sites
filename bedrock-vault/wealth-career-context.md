@@ -2,7 +2,7 @@
 
 > Load this when working on career planning, financial planning content,
 > client communication, professional development, or LinkedIn/writing with Claude.
-> Pair with CLAUDE.md for full context.
+> Pair with [[CLAUDE]] for full context.
 
 ---
 
@@ -140,3 +140,10 @@
 - Explaining complex financial concepts simply
 - Cover letters and career communications
 - Professional bio (short and long versions)
+
+---
+
+## Related
+
+- [[CLAUDE]] — personal context and working principles
+- [[README-context-system]] — how and when to load this file

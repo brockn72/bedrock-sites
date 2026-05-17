@@ -71,3 +71,12 @@ The key currently in Netlify env vars is the `sb_secret_...` format (Supabase's 
 ## SQL to Run (if rebuilding)
 Located at `/supabase/schema.sql` in the GitHub repo.
 Steps: Supabase → SQL Editor → New Query → paste → Run without RLS
+
+---
+
+## Related
+
+- [[01-TECH-STACK]] — where Supabase fits in the overall stack
+- [[00-PROJECT-STATUS]] — current project state
+- [[03-ENV-VARS]] — Supabase URL and service key configuration
+- [[CLAUDE-CODE-CONTEXT]] — DB tables summarized for Claude Code sessions

@@ -4,6 +4,40 @@ A running record of key decisions made and why, so future Claude Code sessions d
 
 ---
 
+## Build Progress Checklist
+
+### Phase 0 — Dev Environment
+- [x] Git installed
+- [x] GitHub repo created (github.com/brockn72/bedrock-sites)
+- [x] Node.js installed
+- [x] Cursor installed + GitHub connected
+- [x] Obsidian vault created
+- [x] Claude Code installed
+- [x] bedrock-v35.html added to repo
+
+### Phase 1 — Legal
+- [ ] LLC filed (sos.idaho.gov — $100)
+- [x] EIN obtained (irs.gov/ein — free) — EIN: 42-2595138
+- [ ] Business bank account opened
+- [ ] Legal pages written (Termly.io)
+
+### Phase 2 — Vendor Accounts
+- [ ] Stripe set up
+- [ ] Namecheap sandbox set up
+- [ ] Supabase set up
+- [ ] Cloudflare set up
+- [ ] Resend set up
+
+### Phase 3 — Backend Built
+- [ ] All 7 routes built
+- [ ] Railway deployed
+
+### Phase 4 — Testing
+- [ ] Full sandbox test passing
+- [ ] Gone live
+
+---
+
 ## Architecture
 
 ### Deploy trigger = Stripe webhook, NOT the "Pay Now" button
@@ -61,3 +95,13 @@ A running record of key decisions made and why, so future Claude Code sessions d
 ### deploy-site.js (auto-deploy from frontend)
 **What happened:** Built a Netlify function that deployed a new site every time the success screen was reached. Realized this fires for demos, not just paying customers.  
 **Decision:** Deleted. Deploy trigger = payment webhook only.
+
+---
+
+## Related
+
+- [[00-PROJECT-STATUS]] — current build state
+- [[01-TECH-STACK]] — tech stack that these decisions shaped
+- [[BEDROCK-PLATFORM]] — product roadmap context (Sites, SEO, CFO)
+- [[CLAUDE-CODE-CONTEXT]] — critical rules for Claude Code sessions
+- [[BEDROCK-PLATFORM]] — product roadmap and market context
