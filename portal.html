@@ -299,32 +299,24 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 </footer>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────────────────────────
-// Replace these two values with your actual Supabase project URL and anon key.
-// The anon key is safe to expose — it's meant to be public.
-// Find both in: Supabase Dashboard → Project Settings → API
-const SUPABASE_URL  = 'https://vkzkzteewfoqrdwktgae.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZremt6dGVld2ZvcXJkd2t0Z2FlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5NTk4ODUsImV4cCI6MjA5NDUzNTg4NX0.UUpSlosIojUI8pDyTlvU97JObuxWwf6VQYHswomWnlE';
-
 // ── INIT ─────────────────────────────────────────────────────────────────────
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
+let supabase;
 let currentSession = null;
 let currentLead    = null;
 
-// Listen for auth state changes — handles password recovery redirects automatically.
-// Supabase JS v2 detects type=recovery in the URL hash and fires PASSWORD_RECOVERY here.
-supabase.auth.onAuthStateChange((event, session) => {
-  if (event === 'PASSWORD_RECOVERY') {
-    showPage('pageReset');
-  }
-});
-
-// Check for existing session on load
+// Fetch config from the server (keeps credentials out of source code),
+// then initialize Supabase and start the auth flow.
 (async () => {
+  const cfg = await fetch('/.netlify/functions/get-config').then(r => r.json());
+  supabase = window.supabase.createClient(cfg.url, cfg.anon);
+
+  // Handles password recovery redirects automatically.
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') showPage('pageReset');
+  });
+
   const { data: { session } } = await supabase.auth.getSession();
   if (session) {
-    // Don't auto-load dashboard if this is a recovery session — onAuthStateChange handles it
     const hash = window.location.hash;
     if (!hash.includes('type=recovery')) {
       await loadDashboard(session);
