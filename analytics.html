@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bedrock Analytics — Traffic & Performance for Contractors</title>
+<meta name="description" content="See who's visiting your site, where they're coming from, and what's converting — in plain English. No dashboards to figure out.">
+<link rel="canonical" href="https://bedrock-sites.com/analytics">
+<meta name="theme-color" content="#0D1B2E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D1B2E'/%3E%3Crect x='12' y='14' width='28' height='6' rx='2' fill='%23C9922A'/%3E%3Crect x='12' y='24' width='22' height='6' rx='2' fill='%23D4A843'/%3E%3Crect x='12' y='34' width='32' height='6' rx='2' fill='rgba(255,255,255,0.55)'/%3E%3Crect x='12' y='44' width='20' height='6' rx='2' fill='rgba(255,255,255,0.25)'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#0D1B2E;color:#fff;min-height:100vh;-webkit-font-smoothing:antialiased}
+:root{--navy:#0D1B2E;--gold:#C9922A;--gold-h:#D4A843;--bd:rgba(255,255,255,0.12)}
+
+nav{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 5%;border-bottom:1px solid var(--bd);background:var(--navy)}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.strata{display:flex;flex-direction:column;gap:4px}
+.s-bar{border-radius:1px;height:4px}
+.s1{width:24px;background:var(--gold)}.s2{width:18px;background:#B8821F}.s3{width:28px;background:rgba(255,255,255,.5)}.s4{width:20px;background:rgba(255,255,255,.22)}
+.nav-wm{display:flex;flex-direction:column;line-height:1}
+.nav-wm-brand{font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-.02em;color:#fff}
+.nav-wm-sub{font-size:.47rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-top:3px}
+.nav-back{font-size:.6rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);text-decoration:none;transition:color .18s}
+.nav-back:hover{color:#fff}
+
+.hero{padding:6rem 5% 5rem;max-width:860px;margin:0 auto;text-align:center}
+.badge{display:inline-block;background:rgba(201,146,42,.12);border:1px solid rgba(201,146,42,.3);color:var(--gold);font-size:.52rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;padding:.35rem .8rem;margin-bottom:1.75rem}
+h1{font-family:'Inter',sans-serif;font-size:clamp(2rem,4.5vw,3.4rem);font-weight:800;line-height:1.1;letter-spacing:-.03em;color:#fff;margin-bottom:1.25rem}
+h1 em{color:var(--gold);font-style:normal}
+.sub{font-size:.95rem;font-weight:300;line-height:1.85;color:rgba(255,255,255,.6);max-width:620px;margin:0 auto 3rem}
+
+/* MOCK DASHBOARD */
+.mock-dash{max-width:680px;margin:0 auto 4rem;background:rgba(255,255,255,.04);border:1px solid var(--bd);padding:2rem}
+.dash-head{font-size:.55rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:1.5rem}
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd);margin-bottom:1.5rem}
+.dash-stat{background:rgba(255,255,255,.03);padding:1.1rem;text-align:center}
+.dash-val{font-family:'Inter',sans-serif;font-size:1.4rem;font-weight:800;color:#fff}
+.dash-lbl{font-size:.55rem;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;margin-top:.2rem}
+.dash-bar-wrap{margin-bottom:.5rem}
+.dash-bar-label{display:flex;justify-content:space-between;font-size:.62rem;color:rgba(255,255,255,.4);margin-bottom:.4rem}
+.dash-bar-track{height:6px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.dash-bar-fill{height:100%;background:var(--gold);border-radius:2px}
+.dash-note{font-size:.62rem;color:rgba(255,255,255,.25);text-align:center;margin-top:1rem;font-style:italic}
+
+.notify-wrap{background:rgba(255,255,255,.04);border:1px solid var(--bd);border-top:3px solid var(--gold);padding:2.5rem;max-width:500px;margin:0 auto 4rem}
+.notify-label{font-size:.58rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:1rem;display:block}
+.notify-form{display:flex;gap:.75rem}
+.notify-input{flex:1;background:rgba(255,255,255,.06);border:1px solid var(--bd);color:#fff;font-family:'DM Sans',sans-serif;font-size:.85rem;padding:.75rem 1rem;outline:none;transition:border-color .18s}
+.notify-input::placeholder{color:rgba(255,255,255,.3)}
+.notify-input:focus{border-color:rgba(201,146,42,.5)}
+.notify-btn{background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;border:none;padding:.75rem 1.4rem;cursor:pointer;transition:background .2s;white-space:nowrap}
+.notify-btn:hover{background:var(--gold-h)}
+.notify-success{display:none;color:var(--gold);font-size:.8rem;font-weight:500;margin-top:.75rem;text-align:center}
+
+.features{padding:0 5% 5rem;max-width:1100px;margin:0 auto}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--bd)}
+.feat-card{background:var(--navy);padding:2rem 1.75rem}
+.feat-icon{font-size:1.5rem;margin-bottom:1rem}
+.feat-title{font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;color:#fff;letter-spacing:-.01em;margin-bottom:.65rem}
+.feat-desc{font-size:.8rem;font-weight:300;color:rgba(255,255,255,.55);line-height:1.75}
+
+.portal-note{text-align:center;padding:0 5% 2rem;font-size:.78rem;color:rgba(255,255,255,.4);max-width:560px;margin:0 auto}
+.portal-note a{color:var(--gold);text-decoration:none}
+.portal-note a:hover{opacity:.8}
+
+.back-section{text-align:center;padding:2rem 5% 4rem}
+.back-section a{font-size:.65rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.4);text-decoration:none;transition:color .18s}
+.back-section a:hover{color:rgba(255,255,255,.75)}
+
+@media(max-width:640px){
+  .notify-form,.dash-stats,.feat-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo" aria-label="Bedrock Digital home">
+    <div class="strata" aria-hidden="true">
+      <div class="s-bar s1"></div><div class="s-bar s2"></div><div class="s-bar s3"></div><div class="s-bar s4"></div>
+    </div>
+    <div class="nav-wm">
+      <span class="nav-wm-brand">Bedrock</span>
+      <span class="nav-wm-sub">Digital</span>
+    </div>
+  </a>
+  <a href="index.html" class="nav-back">← Back to Bedrock Digital</a>
+</nav>
+
+<main>
+
+  <div class="hero">
+    <span class="badge">In Development — Bedrock Analytics</span>
+    <h1>Know if your website<br>is actually <em>working.</em></h1>
+    <p class="sub">Traffic, leads, and conversions — explained in plain English. No dashboards to learn. No data to decipher. Just the numbers that matter to your business.</p>
+  </div>
+
+  <!-- MOCK DASHBOARD PREVIEW -->
+  <div class="mock-dash" aria-label="Preview of what Bedrock Analytics will look like">
+    <div class="dash-head">Your site this month — example preview</div>
+    <div class="dash-stats">
+      <div class="dash-stat">
+        <div class="dash-val">847</div>
+        <div class="dash-lbl">Visitors</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-val">23</div>
+        <div class="dash-lbl">Contact Forms</div>
+      </div>
+      <div class="dash-stat">
+        <div class="dash-val">2.7%</div>
+        <div class="dash-lbl">Conversion Rate</div>
+      </div>
+    </div>
+    <div class="dash-bar-wrap">
+      <div class="dash-bar-label"><span>Google Search</span><span>62%</span></div>
+      <div class="dash-bar-track"><div class="dash-bar-fill" style="width:62%"></div></div>
+    </div>
+    <div class="dash-bar-wrap">
+      <div class="dash-bar-label"><span>Direct / Referral</span><span>24%</span></div>
+      <div class="dash-bar-track"><div class="dash-bar-fill" style="width:24%;opacity:.6"></div></div>
+    </div>
+    <div class="dash-bar-wrap">
+      <div class="dash-bar-label"><span>Social Media</span><span>14%</span></div>
+      <div class="dash-bar-track"><div class="dash-bar-fill" style="width:14%;opacity:.4"></div></div>
+    </div>
+    <div class="dash-note">Example data — yours will show real numbers from your site</div>
+  </div>
+
+  <div class="notify-wrap">
+    <span class="notify-label">Get notified when it launches</span>
+    <div class="notify-form">
+      <input type="email" class="notify-input" id="analyticsEmail" placeholder="your@email.com" autocomplete="email">
+      <button class="notify-btn" onclick="notifySubmit()">Notify Me</button>
+    </div>
+    <div class="notify-success" id="analyticsSuccess">You're on the list. We'll reach out when it's ready.</div>
+  </div>
+
+  <div class="features">
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon">📍</div>
+        <div class="feat-title">Where Your Leads Come From</div>
+        <p class="feat-desc">Google? A referral? Facebook? Know which channels actually bring you jobs — so you can double down on what works and stop wasting time on what doesn't.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📞</div>
+        <div class="feat-title">Calls & Form Submissions</div>
+        <p class="feat-desc">Track every contact form submission and phone click. Know exactly how many leads your site generated this month — no more guessing.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🗓️</div>
+        <div class="feat-title">Weekly Plain-English Summary</div>
+        <p class="feat-desc">A short email every Monday. "Your site got 214 visitors last week. 6 people filled out your contact form. Your busiest day was Thursday." That's it.</p>
+      </div>
+    </div>
+  </div>
+
+  <p class="portal-note">
+    Current Bedrock Sites clients already have basic traffic analytics available in the <a href="portal.html">client portal</a>. This standalone tool will expand that with lead tracking and weekly summaries.
+  </p>
+
+  <div class="back-section">
+    <a href="index.html">← Back to Bedrock Digital</a>
+  </div>
+
+</main>
+
+<script>
+function notifySubmit() {
+  const email = document.getElementById('analyticsEmail').value.trim();
+  if (!email || !email.includes('@')) { document.getElementById('analyticsEmail').focus(); return; }
+  fetch('/.netlify/functions/capture-lead', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({email, source: 'analytics-waitlist', product: 'bedrock-analytics'})
+  }).catch(() => {});
+  document.getElementById('analyticsSuccess').style.display = 'block';
+  document.querySelector('.notify-btn').textContent = 'Done ✓';
+  document.querySelector('.notify-btn').style.background = '#3b6d11';
+  document.querySelector('.notify-btn').style.color = '#fff';
+  document.querySelector('.notify-btn').disabled = true;
+}
+document.getElementById('analyticsEmail').addEventListener('keydown', e => {
+  if (e.key === 'Enter') notifySubmit();
+});
+</script>
+</body>
+</html>

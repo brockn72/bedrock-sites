@@ -3,20 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bedrock Digital — Websites for Contractors & Trades</title>
-<meta name="description" content="Professional websites for contractors, trades, and local businesses. Preview your full site free — pay only when you love it. $200 flat fee + $20/month.">
+<title>Bedrock Digital — Websites, SEO, and Business Tools for Contractors</title>
+<meta name="description" content="Bedrock Digital gives trade contractors a professional website, SEO tools, and business intelligence — all in one platform. Get online in minutes.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://bedrock-sites.com/">
 <meta name="theme-color" content="#0D1B2E">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Bedrock Digital">
-<meta property="og:title" content="Bedrock Digital — Websites for Contractors & Trades">
-<meta property="og:description" content="Professional websites for contractors and trades. Preview free, pay when you love it.">
+<meta property="og:title" content="Bedrock Digital — More time on the job. Less time on everything else.">
+<meta property="og:description" content="Professional websites, SEO tools, and business intelligence for contractors and trades.">
 <meta property="og:url" content="https://bedrock-sites.com/">
 <meta property="og:image" content="https://bedrock-sites.com/og-image.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Bedrock Digital — Websites for Contractors & Trades">
-<meta name="twitter:description" content="Professional websites for contractors. Preview free, pay when you love it.">
+<meta name="twitter:title" content="Bedrock Digital — Websites for Contractors">
 <meta name="twitter:image" content="https://bedrock-sites.com/og-image.png">
 
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D1B2E'/%3E%3Crect x='12' y='14' width='28' height='6' rx='2' fill='%23C9922A'/%3E%3Crect x='12' y='24' width='22' height='6' rx='2' fill='%23D4A843'/%3E%3Crect x='12' y='34' width='32' height='6' rx='2' fill='rgba(255,255,255,0.55)'/%3E%3Crect x='12' y='44' width='20' height='6' rx='2' fill='rgba(255,255,255,0.25)'/%3E%3C/svg%3E">
@@ -26,7 +25,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Organization","@id":"https://bedrock-sites.com/#organization","name":"Bedrock Digital","url":"https://bedrock-sites.com/","description":"Website builder for contractors, trades, and local businesses.","email":"hello@bedrock-sites.com","foundingDate":"2026","areaServed":"United States"}
+{"@context":"https://schema.org","@type":"Organization","@id":"https://bedrock-sites.com/#organization","name":"Bedrock Digital","url":"https://bedrock-sites.com/","description":"Website builder and business tools for contractors and trade businesses.","email":"hello@bedrock-sites.com","foundingDate":"2026","areaServed":"United States"}
 </script>
 
 <style>
@@ -36,10 +35,6 @@
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:#fff;color:#0D1B2E;overflow-x:hidden;-webkit-font-smoothing:antialiased}
-
-/* =============================================
-   VARIABLES
-   ============================================= */
 :root{
   --navy:#0D1B2E;
   --gold:#C9922A;
@@ -52,18 +47,17 @@ body{font-family:'DM Sans',sans-serif;background:#fff;color:#0D1B2E;overflow-x:h
 }
 
 /* =============================================
-   TYPOGRAPHY
+   TYPE
    ============================================= */
 h1,h2,h3{font-family:'Inter',sans-serif;font-weight:800;line-height:1.1;letter-spacing:-0.025em}
 h1{font-size:clamp(2.4rem,5vw,4rem)}
 h2{font-size:clamp(1.8rem,3vw,2.8rem)}
 h3{font-size:1.05rem;font-weight:700;letter-spacing:-0.01em}
 p{font-size:0.88rem;line-height:1.9;font-weight:300}
-
 .eyebrow{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;display:block;margin-bottom:0.9rem}
-.ew-dark{color:rgba(255,255,255,0.45)}
-.ew-light{color:rgba(13,27,46,0.4)}
-.ew-gold{color:var(--gold)}
+.ew-d{color:rgba(255,255,255,0.45)}
+.ew-l{color:rgba(13,27,46,0.4)}
+.ew-g{color:var(--gold)}
 .divider{width:32px;height:2px;background:var(--gold);display:block;margin:1rem 0 1.75rem}
 
 /* =============================================
@@ -72,161 +66,127 @@ p{font-size:0.88rem;line-height:1.9;font-weight:300}
 .btn{display:inline-block;font-family:'DM Sans',sans-serif;font-size:0.63rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;cursor:pointer;border:none;transition:background .2s,color .2s,border-color .2s;line-height:1}
 .btn-gold{background:var(--gold);color:var(--navy);padding:.9rem 1.9rem}
 .btn-gold:hover{background:var(--gold-h);color:var(--navy)}
-.btn-ghost-dark{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28);padding:.9rem 1.9rem}
-.btn-ghost-dark:hover{border-color:var(--gold);color:var(--gold)}
-.btn-ghost-light{background:transparent;color:var(--navy);border:1px solid rgba(13,27,46,.25);padding:.9rem 1.9rem}
-.btn-ghost-light:hover{border-color:var(--navy);background:rgba(13,27,46,.04)}
+.btn-ghost-d{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28);padding:.9rem 1.9rem}
+.btn-ghost-d:hover{border-color:var(--gold);color:var(--gold)}
+.btn-ghost-l{background:transparent;color:var(--navy);border:1px solid rgba(13,27,46,.25);padding:.9rem 1.9rem}
+.btn-ghost-l:hover{border-color:var(--navy);background:rgba(13,27,46,.04)}
 .btn-lg{padding:1.05rem 2.2rem;font-size:.68rem}
 
 /* =============================================
    NAV
    ============================================= */
-nav{position:sticky;top:0;z-index:200;background:var(--navy);border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center;padding:1rem 5%}
-
-.nav-logo{display:flex;align-items:center;gap:12px;cursor:pointer;text-decoration:none}
+nav{position:sticky;top:0;z-index:200;background:var(--navy);border-bottom:2px solid var(--gold);display:flex;justify-content:space-between;align-items:center;padding:1rem 5%;gap:1.5rem}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0}
 .strata{display:flex;flex-direction:column;gap:4px}
 .s-bar{border-radius:1px;height:4px}
 .s1{width:24px;background:var(--gold)}
 .s2{width:18px;background:#B8821F}
 .s3{width:28px;background:rgba(255,255,255,.5)}
 .s4{width:20px;background:rgba(255,255,255,.22)}
-.nav-wordmark{display:flex;flex-direction:column;line-height:1}
+.nav-wm{display:flex;flex-direction:column;line-height:1}
 .nav-wm-brand{font-family:'Inter',sans-serif;font-size:1.05rem;font-weight:800;letter-spacing:-.02em;color:#fff}
 .nav-wm-sub{font-family:'DM Sans',sans-serif;font-size:.47rem;font-weight:500;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);margin-top:3px}
-
-.nav-links{display:flex;align-items:center;gap:2.25rem;list-style:none}
-.nav-links button,.nav-links a{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.7);text-decoration:none;cursor:pointer;border:none;background:none;padding:0;transition:color .18s}
-.nav-links button:hover,.nav-links a:hover,.nav-links button.active,.nav-links a.active{color:#fff}
-.nav-links button.active{color:var(--gold)}
-
-.nav-dd{position:relative}
-.nav-dd>button{display:inline-flex;align-items:center;gap:5px}
-.nav-dd>button::after{content:'▾';font-size:.48rem;opacity:.55;transition:transform .2s}
-.nav-dd:hover>button::after{transform:rotate(180deg);opacity:1}
-.dd-menu{position:absolute;top:calc(100% + 10px);left:-16px;min-width:190px;background:#071526;border:1px solid rgba(201,146,42,.2);box-shadow:0 16px 40px rgba(0,0,0,.55);list-style:none;display:flex;flex-direction:column;opacity:0;visibility:hidden;transform:translateY(-6px);transition:opacity .18s,visibility .18s,transform .18s;z-index:999}
-.nav-dd:hover .dd-menu{opacity:1;visibility:visible;transform:translateY(0)}
-.dd-menu::before{content:'';position:absolute;top:-6px;left:22px;width:10px;height:10px;background:#071526;border-top:1px solid rgba(201,146,42,.2);border-left:1px solid rgba(201,146,42,.2);transform:rotate(45deg)}
-.dd-menu li button{display:block;width:100%;text-align:left;padding:.65rem 1.15rem;font-family:'DM Sans',sans-serif;font-size:.58rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.65);border:none;border-left:2px solid transparent;background:transparent;cursor:pointer;transition:all .15s}
-.dd-menu li button:hover{background:rgba(201,146,42,.07);color:var(--gold);border-left-color:var(--gold)}
-
-.nav-cta{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;background:var(--gold);color:var(--navy);padding:.6rem 1.4rem;text-decoration:none;cursor:pointer;border:none;transition:background .2s;white-space:nowrap}
+.nav-links{display:flex;align-items:center;gap:2rem;list-style:none}
+.nav-links a{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.7);text-decoration:none;transition:color .18s}
+.nav-links a:hover{color:#fff}
+.nav-cta{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;background:var(--gold);color:var(--navy);padding:.6rem 1.3rem;text-decoration:none;transition:background .2s;flex-shrink:0}
 .nav-cta:hover{background:var(--gold-h)}
 
 /* =============================================
-   PAGE SWITCHING
+   HERO  [DARK]
    ============================================= */
-.page{display:none}
-.page.active{display:block}
+.hero{background:var(--navy);padding:5rem 5% 5.5rem}
+.hero-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 420px;gap:4rem;align-items:center}
+.hero-h1{color:#fff;margin-bottom:1.25rem}
+.hero-h1 em{color:var(--gold);font-style:normal}
+.hero-sub{color:rgba(255,255,255,.68);max-width:500px;margin-bottom:2rem}
+.hero-actions{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem}
+.hero-trust{display:flex;gap:1.5rem;flex-wrap:wrap}
+.trust-item{font-size:.65rem;font-weight:400;color:rgba(255,255,255,.5);letter-spacing:.04em}
+.trust-item::before{content:'✓ ';color:var(--gold)}
 
-/* =============================================
-   SHARED SECTION PADDING
-   ============================================= */
-.sec{padding:5.5rem 5%}
-.inner{max-width:1200px;margin:0 auto}
-
-/* =============================================
-   HOME — HERO  [DARK]
-   ============================================= */
-.hero{background:var(--navy);padding:7rem 5% 6rem}
-.hero-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr .85fr;gap:5rem;align-items:center}
-.hero h1{color:#fff;margin-bottom:1.25rem}
-.hero h1 em{font-style:italic;color:var(--gold)}
-.hero-sub{color:rgba(255,255,255,.62);max-width:500px;font-size:.88rem;margin-bottom:2.25rem;line-height:1.88}
-.hero-actions{display:flex;gap:.85rem;flex-wrap:wrap;margin-bottom:2.5rem}
-.hero-trust{display:flex;gap:1.75rem;flex-wrap:wrap}
-.trust-item{display:flex;align-items:center;gap:6px;font-size:.67rem;font-weight:400;color:rgba(255,255,255,.45);letter-spacing:.03em}
-.trust-icon{width:14px;height:14px;border-radius:50%;border:1px solid rgba(201,146,42,.5);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.trust-icon::after{content:'✓';font-size:.5rem;color:var(--gold)}
-
-/* What's included card */
-.hero-card{background:rgba(255,255,255,.04);border:1px solid var(--bd);padding:2rem 1.75rem}
-.hc-eyebrow{font-family:'DM Sans',sans-serif;font-size:.53rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.85rem}
-.hc-title{font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;color:#fff;margin-bottom:1.25rem;line-height:1.3;letter-spacing:-.01em}
-.hc-list{list-style:none;display:flex;flex-direction:column;gap:.85rem;margin-bottom:1.75rem}
-.hc-list li{display:flex;align-items:flex-start;gap:.75rem;font-size:.78rem;color:rgba(255,255,255,.72);font-weight:300;line-height:1.45}
-.hc-check{width:17px;height:17px;border-radius:50%;background:rgba(201,146,42,.14);border:1px solid rgba(201,146,42,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:.5rem;color:var(--gold)}
+.hero-card{background:rgba(255,255,255,.05);border:1px solid var(--bd);padding:2rem;border-top:3px solid var(--gold)}
+.hc-eyebrow{font-family:'DM Sans',sans-serif;font-size:.53rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.65rem}
+.hc-title{font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;color:#fff;line-height:1.4;margin-bottom:1.25rem}
+.hc-list{list-style:none;display:flex;flex-direction:column;gap:.65rem;margin-bottom:1.5rem}
+.hc-list li{font-size:.8rem;font-weight:300;color:rgba(255,255,255,.78);line-height:1.5}
+.hc-check{color:var(--gold);margin-right:.5rem;font-weight:600}
 .hc-price{border-top:1px solid var(--bd);padding-top:1.25rem}
-.hc-price-row{display:flex;align-items:baseline;gap:6px}
-.hc-amt{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;letter-spacing:-.03em}
-.hc-freq{font-size:.72rem;color:rgba(255,255,255,.42);font-weight:300}
-.hc-note{font-size:.62rem;color:rgba(255,255,255,.32);display:block;margin-top:5px;font-weight:300}
+.hc-row{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.35rem}
+.hc-amt{font-family:'Inter',sans-serif;font-size:1.8rem;font-weight:800;color:#fff}
+.hc-freq{font-size:.78rem;color:rgba(255,255,255,.5)}
+.hc-note{font-size:.65rem;color:rgba(255,255,255,.4);line-height:1.5}
 
 /* =============================================
-   HOME — STATS BAR  [LIGHT / OFF-WHITE]
+   STATS BAR  [OFF-WHITE]
    ============================================= */
-.stats-bar{background:var(--off);border-top:1px solid rgba(13,27,46,.08);border-bottom:1px solid rgba(13,27,46,.08);display:flex}
-.stat-item{flex:1;text-align:center;padding:2rem 1rem;border-right:1px solid rgba(13,27,46,.08)}
+.stats-bar{background:var(--off);border-bottom:1px solid var(--bl);display:flex}
+.stat-item{flex:1;padding:1.5rem 2rem;text-align:center;border-right:1px solid var(--bl)}
 .stat-item:last-child{border-right:none}
-.stat-val{font-family:'Inter',sans-serif;font-size:1.85rem;font-weight:800;color:var(--navy);letter-spacing:-.04em;line-height:1}
-.stat-lbl{font-size:.57rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--slate);margin-top:.45rem}
+.stat-val{font-family:'Inter',sans-serif;font-size:1.6rem;font-weight:800;color:var(--navy);letter-spacing:-0.02em}
+.stat-lbl{font-size:.6rem;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-top:.25rem}
 
 /* =============================================
-   HOME — HOW IT WORKS  [DARK]
+   PLATFORM  [DARK]
    ============================================= */
-.how-sec{background:var(--navy);padding:5.5rem 5%}
-.how-head{max-width:1200px;margin:0 auto;text-align:center;margin-bottom:3.5rem}
-.how-head h2{color:#fff;max-width:520px;margin:0 auto}
-.how-head p{color:rgba(255,255,255,.52);max-width:420px;margin:.85rem auto 0;font-size:.84rem}
-.how-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
-.how-step{background:rgba(255,255,255,.03);border:1px solid var(--bd);padding:2.25rem 2rem;position:relative;overflow:hidden}
-.how-step::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--gold);opacity:.35}
-.how-num{font-family:'Inter',sans-serif;font-size:2.6rem;font-weight:800;color:rgba(255,255,255,.06);letter-spacing:-.04em;line-height:1;margin-bottom:1rem}
-.how-step h3{color:#fff;margin-bottom:.6rem}
-.how-step p{font-size:.78rem;color:rgba(255,255,255,.52);line-height:1.82;font-weight:300}
+.platform-sec{background:var(--navy);padding:5.5rem 5%}
+.platform-inner{max-width:1200px;margin:0 auto}
+.platform-head{margin-bottom:3rem}
+.platform-head h2{color:#fff;margin-bottom:.75rem}
+.platform-head p{color:rgba(255,255,255,.58);max-width:540px}
+.platform-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--bd)}
+.tool-card{background:var(--navy);padding:2rem 1.75rem;display:flex;flex-direction:column;gap:1rem;position:relative;transition:background .2s}
+.tool-card:hover{background:#162840}
+.tool-badge{display:inline-block;font-family:'DM Sans',sans-serif;font-size:.5rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;padding:.3rem .65rem;margin-bottom:.25rem}
+.badge-live{background:rgba(201,146,42,.15);color:var(--gold);border:1px solid rgba(201,146,42,.3)}
+.badge-soon{background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.12)}
+.badge-dev{background:rgba(255,255,255,.04);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.1)}
+.tool-icon{font-size:1.4rem;margin-bottom:.25rem}
+.tool-name{font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;color:#fff;letter-spacing:-.01em}
+.tool-desc{font-size:.77rem;font-weight:300;color:rgba(255,255,255,.55);line-height:1.75;flex:1}
+.tool-link{font-family:'DM Sans',sans-serif;font-size:.58rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;color:var(--gold);transition:opacity .18s}
+.tool-link:hover{opacity:.75}
+.tool-link-muted{color:rgba(255,255,255,.3);cursor:default;pointer-events:none}
 
 /* =============================================
-   HOME — WHY BEDROCK  [LIGHT]
+   HOW IT WORKS  [LIGHT]
    ============================================= */
-.why-sec{background:var(--white);padding:5.5rem 5%}
-.why-head{max-width:1200px;margin:0 auto}
-.why-head h2{color:var(--navy);max-width:520px}
-.why-grid{max-width:1200px;margin:2.5rem auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-.why-card{background:var(--off);padding:2rem 1.75rem}
-.why-num{font-family:'DM Sans',sans-serif;font-size:.57rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
-.why-card h3{color:var(--navy);margin-bottom:.5rem}
-.why-card p{font-size:.78rem;color:var(--slate);line-height:1.82;font-weight:300}
+.how-sec{background:var(--white);padding:5.5rem 5%}
+.how-inner{max-width:1200px;margin:0 auto}
+.how-head{max-width:540px;margin-bottom:3.5rem}
+.how-head h2{color:var(--navy);margin-bottom:.75rem}
+.how-head p{color:var(--slate)}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2.5rem}
+.how-step{position:relative;padding-left:1.5rem;border-left:2px solid var(--bl)}
+.how-step.gold-line{border-left-color:var(--gold)}
+.how-num{font-family:'Inter',sans-serif;font-size:2.5rem;font-weight:800;color:var(--bl);letter-spacing:-0.04em;line-height:1;margin-bottom:1rem}
+.how-step h3{color:var(--navy);margin-bottom:.6rem}
+.how-step p{color:var(--slate)}
 
 /* =============================================
-   HOME — WHO IT'S FOR  [OFF-WHITE]
+   REVIEWS  [DARK]
    ============================================= */
-.for-sec{background:var(--off);border-top:1px solid rgba(13,27,46,.08);padding:3.5rem 5%}
-.for-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:3rem;flex-wrap:wrap}
-.for-left-lbl{font-family:'DM Sans',sans-serif;font-size:.57rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:.65rem}
-.for-tags{display:flex;flex-wrap:wrap;gap:.45rem}
-.for-tag{font-size:.63rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);padding:.38rem .8rem;border:1px solid rgba(13,27,46,.18);background:rgba(13,27,46,.03)}
-.for-right h3{font-family:'Inter',sans-serif;font-size:1.2rem;font-weight:800;color:var(--navy);letter-spacing:-.02em;margin-bottom:.85rem}
+.reviews-sec{background:var(--navy);padding:5.5rem 5%}
+.reviews-inner{max-width:1200px;margin:0 auto}
+.reviews-head{margin-bottom:3rem}
+.reviews-head h2{color:#fff;margin-bottom:.4rem}
+.reviews-sub{font-size:.8rem;color:rgba(255,255,255,.45)}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.review-card{background:rgba(255,255,255,.04);border:1px solid var(--bd);padding:2rem;display:flex;flex-direction:column;gap:1.25rem}
+.review-stars{color:var(--gold);font-size:.9rem;letter-spacing:.08em}
+.review-text{font-size:.82rem;font-weight:300;font-style:italic;color:rgba(255,255,255,.75);line-height:1.8;flex:1}
+.review-author{display:flex;flex-direction:column;gap:.15rem;border-top:1px solid var(--bd);padding-top:1.25rem}
+.review-name{font-family:'DM Sans',sans-serif;font-size:.7rem;font-weight:600;color:#fff;letter-spacing:.04em}
+.review-biz{font-size:.63rem;color:rgba(255,255,255,.38);letter-spacing:.06em;text-transform:uppercase}
 
 /* =============================================
-   FOOTER
-   ============================================= */
-footer{background:var(--navy);border-top:2px solid var(--gold);padding:2rem 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
-.f-left{display:flex;align-items:center;gap:1.1rem}
-.f-brand{font-family:'Inter',sans-serif;font-size:.88rem;font-weight:800;color:#fff;letter-spacing:-.01em}
-.f-tag{font-family:'DM Sans',sans-serif;font-size:.7rem;font-style:italic;color:var(--gold)}
-.f-links{display:flex;gap:1.5rem}
-.f-links a{font-family:'DM Sans',sans-serif;font-size:.56rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(255,255,255,.38);text-decoration:none;transition:color .2s}
-.f-links a:hover{color:rgba(255,255,255,.78)}
-.f-copy{font-size:.57rem;font-weight:300;color:rgba(255,255,255,.28)}
-
-/* =============================================
-   BUILD PAGE — INTRO  [DARK]
-   ============================================= */
-.build-intro{background:var(--navy);padding:4.5rem 5% 0}
-.bi-inner{max-width:1200px;margin:0 auto;padding-bottom:3.5rem}
-.bi-inner h1{color:#fff;font-size:clamp(2rem,4vw,3.2rem);max-width:680px}
-.bi-inner p{color:rgba(255,255,255,.58);max-width:520px;margin-top:.9rem;font-size:.88rem;line-height:1.88}
-.build-subnav{border-top:1px solid var(--bd);display:flex;gap:0;max-width:none;padding:0 5%}
-.bsn-btn{font-family:'DM Sans',sans-serif;font-size:.58rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.45);padding:1rem 1.5rem;cursor:pointer;border:none;border-bottom:2px solid transparent;background:transparent;transition:all .18s}
-.bsn-btn:hover{color:#fff;border-bottom-color:rgba(255,255,255,.25)}
-.bsn-btn.active{color:var(--gold);border-bottom-color:var(--gold)}
-
-/* =============================================
-   BUILD PAGE — OUR WORK  [LIGHT]
+   OUR WORK  [LIGHT]
    ============================================= */
 .work-sec{background:var(--white);padding:5.5rem 5%}
-.work-head{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;gap:1.5rem;flex-wrap:wrap}
+.work-inner{max-width:1200px;margin:0 auto}
+.work-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:3rem;flex-wrap:wrap;gap:1.5rem}
 .work-head h2{color:var(--navy)}
-.work-grid{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
 .work-card{background:var(--off);overflow:hidden;transition:transform .25s,box-shadow .25s}
 .work-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(13,27,46,.1)}
 .work-img{aspect-ratio:16/10;background:var(--navy);overflow:hidden;position:relative}
@@ -234,345 +194,324 @@ footer{background:var(--navy);border-top:2px solid var(--gold);padding:2rem 5%;d
 .work-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.55rem;background:linear-gradient(135deg,#0D1B2E 0%,#162840 100%);color:rgba(255,255,255,.22);font-family:'DM Sans',sans-serif;font-size:.55rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase}
 .work-placeholder svg{width:28px;height:28px;opacity:.2}
 .work-thumb-frame{position:absolute;top:0;left:0;width:334%;height:334%;transform:scale(0.299);transform-origin:top left;border:none;pointer-events:none;background:#1a2418}
-.work-card-link{cursor:pointer}
+.work-card-live{cursor:pointer}
 .work-thumb-overlay{position:absolute;inset:0;background:rgba(13,27,46,0);display:flex;align-items:center;justify-content:center;transition:background .25s}
-.work-card-link:hover .work-thumb-overlay{background:rgba(13,27,46,.55)}
+.work-card-live:hover .work-thumb-overlay{background:rgba(13,27,46,.55)}
 .work-thumb-overlay span{font-family:'DM Sans',sans-serif;font-size:.6rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#fff;opacity:0;transition:opacity .25s}
-.work-card-link:hover .work-thumb-overlay span{opacity:1}
+.work-card-live:hover .work-thumb-overlay span{opacity:1}
 .work-meta{padding:1.25rem 1.5rem 1.5rem}
 .work-trade{font-family:'DM Sans',sans-serif;font-size:.53rem;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin-bottom:.38rem}
 .work-name{font-family:'Inter',sans-serif;font-size:.95rem;font-weight:700;color:var(--navy);letter-spacing:-.01em;margin-bottom:.28rem}
 .work-loc{font-size:.67rem;color:var(--slate);font-weight:300}
-.work-quote{font-size:.73rem;font-weight:300;font-style:italic;color:var(--slate);margin-top:.75rem;padding-top:.75rem;border-top:1px solid rgba(13,27,46,.08);line-height:1.6}
+.work-quote{font-size:.73rem;font-weight:300;font-style:italic;color:var(--slate);margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--bl);line-height:1.6}
 
 /* =============================================
-   BUILD PAGE — REVIEWS  [DARK]
+   PRICING  [LIGHT / OFF-WHITE]
    ============================================= */
-.reviews-sec{background:var(--navy);padding:5.5rem 5%}
-.reviews-head{text-align:center;max-width:580px;margin:0 auto 3.5rem}
-.reviews-head h2{color:#fff}
-.reviews-head p{color:rgba(255,255,255,.52);margin-top:.75rem;font-size:.84rem}
-.reviews-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
-.review-card{background:rgba(255,255,255,.04);border:1px solid var(--bd);padding:1.75rem;display:flex;flex-direction:column}
-.review-stars{display:flex;gap:2px;margin-bottom:1rem;color:var(--gold);font-size:.78rem;letter-spacing:1px}
-.review-text{font-size:.8rem;font-weight:300;color:rgba(255,255,255,.72);line-height:1.82;font-style:italic;margin-bottom:1.25rem;flex:1}
-.review-author{display:flex;align-items:center;gap:.75rem;border-top:1px solid var(--bd);padding-top:1.1rem;margin-top:auto}
-.review-avatar{width:36px;height:36px;border-radius:50%;background:rgba(201,146,42,.18);border:1px solid rgba(201,146,42,.28);display:flex;align-items:center;justify-content:center;font-family:'Inter',sans-serif;font-size:.68rem;font-weight:700;color:var(--gold);flex-shrink:0;text-transform:uppercase}
-.review-name{font-family:'Inter',sans-serif;font-size:.72rem;font-weight:600;color:#fff}
-.review-trade{font-size:.62rem;font-weight:300;color:rgba(255,255,255,.42);margin-top:2px}
+.pricing-sec{background:var(--off);padding:5.5rem 5%}
+.pricing-inner{max-width:1000px;margin:0 auto}
+.pricing-head{text-align:center;margin-bottom:3rem}
+.pricing-head h2{color:var(--navy);margin-bottom:.75rem}
+.pricing-head p{color:var(--slate);max-width:460px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.price-card{background:var(--white);border:1px solid var(--bl);padding:2.25rem}
+.price-card.featured{border-color:var(--gold);border-width:2px;position:relative}
+.feat-badge{position:absolute;top:-1px;left:50%;transform:translateX(-50%) translateY(-50%);background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:.5rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:.3rem .8rem;white-space:nowrap}
+.price-type{font-family:'DM Sans',sans-serif;font-size:.58rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:1.5rem}
+.price-setup{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.4rem}
+.price-amt{font-family:'Inter',sans-serif;font-size:2.4rem;font-weight:800;color:var(--navy);letter-spacing:-.03em}
+.price-setup-lbl{font-size:.72rem;color:var(--slate)}
+.price-sub{font-size:.8rem;color:var(--slate);margin-bottom:1.5rem}
+.price-divider{width:100%;height:1px;background:var(--bl);margin-bottom:1.5rem}
+.price-feats{list-style:none;display:flex;flex-direction:column;gap:.75rem;margin-bottom:2rem}
+.price-feats li{font-size:.8rem;font-weight:300;color:var(--slate);padding-left:1rem;position:relative;line-height:1.5}
+.price-feats li::before{content:'✓';position:absolute;left:0;color:var(--gold);font-weight:700;font-size:.7rem}
+.cancel-note{font-size:.62rem;color:rgba(13,27,46,.4);margin-top:.75rem;line-height:1.6}
+.beta-note{text-align:center;font-size:.72rem;color:var(--slate);line-height:1.75;max-width:440px;margin:0 auto}
+.beta-note a{color:var(--gold);text-decoration:none}
+.beta-note strong{color:var(--navy)}
 
 /* =============================================
-   BUILD PAGE — PRICING  [LIGHT]
+   FINAL CTA  [DARK]
    ============================================= */
-.pricing-sec{background:var(--white);padding:5.5rem 5%}
-.pricing-head{text-align:center;max-width:560px;margin:0 auto 3.5rem}
-.pricing-head h2{color:var(--navy)}
-.pricing-head p{color:var(--slate);margin-top:.75rem;font-size:.84rem}
-.pricing-grid{max-width:860px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:start}
-.price-card{border:1px solid var(--bl);padding:2.5rem 2rem;background:var(--off)}
-.price-card.featured{border:2px solid var(--gold);background:var(--white);position:relative}
-.feat-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--navy);font-family:'DM Sans',sans-serif;font-size:.48rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;padding:.28rem 1rem;white-space:nowrap}
-.price-type{font-family:'DM Sans',sans-serif;font-size:.58rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--slate);margin-bottom:1.25rem}
-.price-setup{display:flex;align-items:baseline;gap:5px;margin-bottom:.2rem}
-.price-amt{font-family:'Inter',sans-serif;font-size:2.2rem;font-weight:800;color:var(--navy);letter-spacing:-.04em}
-.price-setup-lbl{font-size:.72rem;color:var(--slate);font-weight:300}
-.price-sub{font-size:.78rem;color:var(--slate);margin-bottom:2rem;font-weight:400}
-.price-sub strong{color:var(--navy);font-weight:600}
-.price-divider{height:1px;background:var(--bl);margin-bottom:1.5rem}
-.price-feats{list-style:none;display:flex;flex-direction:column;gap:.72rem;margin-bottom:2rem}
-.price-feats li{display:flex;align-items:flex-start;gap:.65rem;font-size:.77rem;color:var(--slate);font-weight:300;line-height:1.5}
-.price-feats li::before{content:'—';color:var(--gold);font-weight:400;flex-shrink:0;margin-top:.05em}
-.cancel-note{font-size:.63rem;font-weight:300;color:rgba(13,27,46,.38);margin-top:.85rem;line-height:1.65}
+.final-cta{background:var(--navy);padding:5rem 5%;text-align:center;border-top:2px solid var(--gold)}
+.final-cta h2{color:#fff;margin-bottom:.9rem}
+.final-cta p{color:rgba(255,255,255,.58);max-width:460px;margin:0 auto 2rem}
+.final-reassure{font-size:.63rem;color:rgba(255,255,255,.35);letter-spacing:.1em;text-transform:uppercase;margin-top:1.25rem}
 
 /* =============================================
-   BUILD PAGE — FINAL CTA  [DARK]
+   FOOTER  [DARK — same band as final CTA]
    ============================================= */
-.final-cta{background:var(--navy);padding:6rem 5%;text-align:center}
-.final-cta h2{color:#fff;max-width:600px;margin:.85rem auto 1.25rem}
-.final-cta p{color:rgba(255,255,255,.52);max-width:400px;margin:0 auto 2.5rem;font-size:.84rem}
-.final-actions{display:flex;gap:.85rem;justify-content:center;flex-wrap:wrap}
-.final-reassure{margin-top:1.5rem;font-size:.63rem;font-weight:300;color:rgba(255,255,255,.3);letter-spacing:.04em}
-
-/* =============================================
-   SKIP LINK (ACCESSIBILITY)
-   ============================================= */
-.skip-link{position:absolute;left:-9999px;top:0;background:var(--gold);color:var(--navy);padding:.75rem 1.25rem;font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;z-index:9999;text-decoration:none}
-.skip-link:focus{left:1rem;top:1rem}
+footer{background:var(--navy);padding:2rem 5%;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.f-brand{font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.04em}
+.f-links{display:flex;gap:1.5rem;list-style:none}
+.f-links a{font-size:.63rem;color:rgba(255,255,255,.38);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:color .18s}
+.f-links a:hover{color:rgba(255,255,255,.7)}
+.f-copy{font-size:.6rem;color:rgba(255,255,255,.25)}
 
 /* =============================================
    RESPONSIVE
    ============================================= */
-@media(max-width:960px){
-  .hero-grid{grid-template-columns:1fr}
-  .hero-card{display:none}
-  .how-grid,.why-grid,.reviews-grid,.work-grid{grid-template-columns:1fr}
-  .pricing-grid{grid-template-columns:1fr;max-width:480px}
-  .work-head{flex-direction:column;align-items:flex-start}
-  .for-inner{flex-direction:column;align-items:flex-start;gap:2rem}
-  .dd-menu{display:none}
-  .nav-dd>button::after{display:none}
+@media(max-width:1024px){
+  .platform-grid{grid-template-columns:repeat(2,1fr)}
 }
-@media(max-width:640px){
-  .hero{padding:4rem 5% 3.5rem}
-  .sec,.how-sec,.why-sec,.work-sec,.reviews-sec,.pricing-sec,.final-cta{padding:4rem 5%}
-  .build-intro{padding:3.5rem 5% 0}
-  .hero h1{font-size:2.1rem}
-  nav{padding:.85rem 5%}
+@media(max-width:768px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero-card{display:none}
+  .how-grid,.reviews-grid,.work-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .stats-bar{flex-wrap:wrap}
+  .stat-item{flex:1 1 50%;border-right:none;border-bottom:1px solid var(--bl)}
+  .stat-item:last-child,.stat-item:nth-child(even){border-right:none}
   .nav-links{display:none}
-  .stats-bar{flex-direction:column}
-  .stat-item{border-right:none;border-bottom:1px solid rgba(13,27,46,.08)}
-  .stat-item:last-child{border-bottom:none}
-  footer{flex-direction:column;align-items:flex-start}
-  .f-left{flex-direction:column;align-items:flex-start;gap:.3rem}
+  footer{flex-direction:column;align-items:flex-start;gap:.75rem}
 }
 </style>
 </head>
 
 <body>
-<a href="#main" class="skip-link">Skip to content</a>
 
-<!-- =============================================
-     NAV
-     ============================================= -->
+<!-- NAV -->
 <nav role="navigation" aria-label="Main navigation">
-  <a class="nav-logo" onclick="showPage('home')" tabindex="0" role="button" aria-label="Bedrock Digital — go to home">
+  <a href="index.html" class="nav-logo" aria-label="Bedrock Digital — home">
     <div class="strata" aria-hidden="true">
       <div class="s-bar s1"></div>
       <div class="s-bar s2"></div>
       <div class="s-bar s3"></div>
       <div class="s-bar s4"></div>
     </div>
-    <div class="nav-wordmark">
+    <div class="nav-wm">
       <span class="nav-wm-brand">Bedrock</span>
       <span class="nav-wm-sub">Digital</span>
     </div>
   </a>
 
   <ul class="nav-links">
-    <li>
-      <button id="nav-home" class="active" onclick="showPage('home')">Home</button>
-    </li>
-    <li class="nav-dd">
-      <button id="nav-build" onclick="showPage('build')">Build Your Site</button>
-      <ul class="dd-menu">
-        <li><button onclick="gotoSection('work')">Our Work</button></li>
-        <li><button onclick="gotoSection('reviews')">Reviews</button></li>
-        <li><button onclick="gotoSection('pricing')">Pricing</button></li>
-      </ul>
-    </li>
+    <li><a href="#platform">Our Tools</a></li>
+    <li><a href="#work">Our Work</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="portal.html">Client Login</a></li>
   </ul>
 
-  <!-- Update href to point to the actual builder file path -->
-  <a href="bedrock-v35.html" class="nav-cta">Start Building →</a>
+  <a href="bedrock-v35.html" class="nav-cta">Build Your Site →</a>
 </nav>
 
 <main id="main">
 
-<!-- ================================================================
-     HOME PAGE
-     ================================================================ -->
-<div id="page-home" class="page active">
-
-  <!-- [DARK] Hero -->
-  <section class="hero" aria-labelledby="hero-h1">
-    <div class="hero-grid">
-      <div>
-        <span class="eyebrow ew-gold">Website Builder for Trades</span>
-        <h1 id="hero-h1">More time<br>on the job.<br><em>Less time on<br>everything else.</em></h1>
-        <p class="hero-sub">Bedrock builds your business a professional website in minutes — you answer a few questions, preview your full site for free, and only pay when you love it.</p>
-        <div class="hero-actions">
-          <a href="bedrock-v35.html" class="btn btn-gold btn-lg">Build Your Site Free →</a>
-          <button onclick="showPage('build')" class="btn btn-ghost-dark btn-lg">See Our Work</button>
-        </div>
-        <div class="hero-trust">
-          <span class="trust-item"><span class="trust-icon" aria-hidden="true"></span>Preview free, no card needed</span>
-          <span class="trust-item"><span class="trust-icon" aria-hidden="true"></span>Cancel anytime</span>
-          <span class="trust-item"><span class="trust-icon" aria-hidden="true"></span>Domain included</span>
-        </div>
+<!-- =============================================
+     HERO  [DARK]
+     ============================================= -->
+<section class="hero" aria-labelledby="hero-h1">
+  <div class="hero-inner">
+    <div>
+      <span class="eyebrow ew-g">Built for Contractors & Trades</span>
+      <h1 id="hero-h1" class="hero-h1">More time<br>on the job.<br><em>Less time on<br>everything else.</em></h1>
+      <p class="hero-sub">Bedrock Digital gives your trade business a professional website, local SEO tools, and business intelligence — all in one place. No tech skills needed.</p>
+      <div class="hero-actions">
+        <a href="bedrock-v35.html" class="btn btn-gold btn-lg">Build Your Site Free →</a>
+        <a href="#platform" class="btn btn-ghost-d btn-lg">See What's Included</a>
       </div>
-
-      <div class="hero-card" aria-label="What's included with Bedrock">
-        <div class="hc-eyebrow">What you get</div>
-        <div class="hc-title">Everything to get your<br>business online — done.</div>
-        <ul class="hc-list">
-          <li><span class="hc-check" aria-hidden="true">✓</span>Custom .com domain — registered for you</li>
-          <li><span class="hc-check" aria-hidden="true">✓</span>Professional website built with your content</li>
-          <li><span class="hc-check" aria-hidden="true">✓</span>Local SEO built in — show up on Google</li>
-          <li><span class="hc-check" aria-hidden="true">✓</span>Contact form — leads go straight to you</li>
-          <li><span class="hc-check" aria-hidden="true">✓</span>SSL, fast hosting, mobile ready</li>
-        </ul>
-        <div class="hc-price">
-          <div class="hc-price-row">
-            <span class="hc-amt">$200</span>
-            <span class="hc-freq">+ $20/mo</span>
-          </div>
-          <span class="hc-note">Preview free. Pay only when you're ready to publish.</span>
-        </div>
+      <div class="hero-trust">
+        <span class="trust-item">Preview free, no card needed</span>
+        <span class="trust-item">Cancel anytime</span>
+        <span class="trust-item">Domain included</span>
       </div>
     </div>
-  </section>
 
-  <!-- [LIGHT / OFF-WHITE] Stats bar -->
-  <div class="stats-bar" role="list" aria-label="Quick stats">
-    <div class="stat-item" role="listitem">
-      <div class="stat-val">10 min</div>
-      <div class="stat-lbl">Average build time</div>
-    </div>
-    <div class="stat-item" role="listitem">
-      <div class="stat-val">$0</div>
-      <div class="stat-lbl">To preview your site</div>
-    </div>
-    <div class="stat-item" role="listitem">
-      <div class="stat-val">100%</div>
-      <div class="stat-lbl">Done for you</div>
-    </div>
-    <div class="stat-item" role="listitem">
-      <div class="stat-val">24 hrs</div>
-      <div class="stat-lbl">Live after you pay</div>
+    <div class="hero-card" aria-label="What's included with Bedrock Sites">
+      <div class="hc-eyebrow">Bedrock Sites — What you get</div>
+      <div class="hc-title">Everything to get your<br>business online — done.</div>
+      <ul class="hc-list">
+        <li><span class="hc-check">✓</span>Custom .com domain — registered for you</li>
+        <li><span class="hc-check">✓</span>Professional website built with your content</li>
+        <li><span class="hc-check">✓</span>Local SEO built in — show up on Google</li>
+        <li><span class="hc-check">✓</span>Contact form — leads go straight to your phone</li>
+        <li><span class="hc-check">✓</span>SSL, fast hosting, mobile ready</li>
+        <li><span class="hc-check">✓</span>Traffic analytics included</li>
+      </ul>
+      <div class="hc-price">
+        <div class="hc-row">
+          <span class="hc-amt">$200</span>
+          <span class="hc-freq">one-time + $20/mo</span>
+        </div>
+        <span class="hc-note">Preview free. Pay only when you're ready to go live.</span>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- [DARK] How it works -->
-  <section class="how-sec" aria-labelledby="how-h2">
+<!-- =============================================
+     STATS BAR  [OFF-WHITE]
+     ============================================= -->
+<div class="stats-bar" role="list" aria-label="Quick stats">
+  <div class="stat-item" role="listitem">
+    <div class="stat-val">10 min</div>
+    <div class="stat-lbl">Average build time</div>
+  </div>
+  <div class="stat-item" role="listitem">
+    <div class="stat-val">$0</div>
+    <div class="stat-lbl">To preview your site</div>
+  </div>
+  <div class="stat-item" role="listitem">
+    <div class="stat-val">100%</div>
+    <div class="stat-lbl">Done for you</div>
+  </div>
+  <div class="stat-item" role="listitem">
+    <div class="stat-val">24 hrs</div>
+    <div class="stat-lbl">Live after you pay</div>
+  </div>
+</div>
+
+<!-- =============================================
+     PLATFORM  [DARK]
+     ============================================= -->
+<section class="platform-sec" id="platform" aria-labelledby="platform-h2">
+  <div class="platform-inner">
+    <div class="platform-head">
+      <span class="eyebrow ew-d">The Platform</span>
+      <h2 id="platform-h2">Everything a trades business<br>needs — in one place.</h2>
+      <p>We started with websites. We're building the rest. One account, one login, everything your business needs to run lean and get found.</p>
+    </div>
+
+    <div class="platform-grid">
+
+      <!-- Tool 1: Bedrock Sites -->
+      <div class="tool-card">
+        <div>
+          <span class="tool-badge badge-live">Live Now</span>
+        </div>
+        <div class="tool-icon">🏗️</div>
+        <div class="tool-name">Bedrock Sites</div>
+        <p class="tool-desc">A professional website for your trade business — built in minutes, not months. Your content, your photos, your domain. Live within 24 hours of payment.</p>
+        <a href="bedrock-v35.html" class="tool-link">Start building →</a>
+      </div>
+
+      <!-- Tool 2: SEO / GEO -->
+      <div class="tool-card">
+        <div>
+          <span class="tool-badge badge-soon">Coming Soon</span>
+        </div>
+        <div class="tool-icon">🔍</div>
+        <div class="tool-name">Bedrock SEO</div>
+        <p class="tool-desc">Free website audit that scores your site for Google and AI search (ChatGPT, Siri, Perplexity). See exactly what's costing you leads and how to fix it.</p>
+        <a href="seo.html" class="tool-link">Learn more →</a>
+      </div>
+
+      <!-- Tool 3: CFO -->
+      <div class="tool-card">
+        <div>
+          <span class="tool-badge badge-dev">In Development</span>
+        </div>
+        <div class="tool-icon">📊</div>
+        <div class="tool-name">Bedrock CFO</div>
+        <p class="tool-desc">An AI-powered business intelligence agent that connects to QuickBooks, answers questions about your cash flow, and helps you bid jobs at the right margin.</p>
+        <a href="cfo.html" class="tool-link">Learn more →</a>
+      </div>
+
+      <!-- Tool 4: Analytics -->
+      <div class="tool-card">
+        <div>
+          <span class="tool-badge badge-dev">In Development</span>
+        </div>
+        <div class="tool-icon">📈</div>
+        <div class="tool-name">Bedrock Analytics</div>
+        <p class="tool-desc">See who's visiting your site, where they're coming from, and what's converting — in plain English. No dashboards to figure out. Just the numbers that matter.</p>
+        <a href="analytics.html" class="tool-link">Learn more →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- =============================================
+     HOW IT WORKS  [LIGHT]
+     ============================================= -->
+<section class="how-sec" aria-labelledby="how-h2">
+  <div class="how-inner">
     <div class="how-head">
-      <span class="eyebrow ew-dark">Simple process</span>
+      <span class="eyebrow ew-l">Simple process</span>
       <h2 id="how-h2">From zero to live<br>in minutes.</h2>
       <p>No tech skills. No designer. No back-and-forth. Just answer a few questions and get a real website.</p>
     </div>
     <div class="how-grid">
-      <div class="how-step">
-        <div class="how-num" aria-hidden="true">01</div>
+      <div class="how-step gold-line">
+        <div class="how-num">01</div>
         <h3>Tell us about your business</h3>
         <p>Answer a few questions — your trade, services, location, and what makes you different. Takes about 3 minutes.</p>
       </div>
       <div class="how-step">
-        <div class="how-num" aria-hidden="true">02</div>
+        <div class="how-num">02</div>
         <h3>Preview your full site</h3>
         <p>We build your entire website live. You see every section — headlines, services, contact form, photos — before you pay a cent.</p>
       </div>
       <div class="how-step">
-        <div class="how-num" aria-hidden="true">03</div>
+        <div class="how-num">03</div>
         <h3>Pay and go live</h3>
         <p>Love it? Pay the flat $200 build fee. We register your domain, set up hosting, and your site is live within 24 hours.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- [LIGHT] Why Bedrock -->
-  <section class="why-sec" aria-labelledby="why-h2">
-    <div class="why-head">
-      <span class="eyebrow ew-light">Why Bedrock</span>
-      <h2 id="why-h2">Built for the way<br>contractors actually work.</h2>
-      <span class="divider" aria-hidden="true"></span>
+<!-- =============================================
+     REVIEWS  [DARK]
+     ============================================= -->
+<section class="reviews-sec" id="reviews" aria-labelledby="reviews-h2">
+  <div class="reviews-inner">
+    <div class="reviews-head">
+      <span class="eyebrow ew-d">What clients say</span>
+      <h2 id="reviews-h2">Real feedback from<br>real contractors.</h2>
+      <p class="reviews-sub">Our first clients are trade business owners who needed a website that just works.</p>
     </div>
-    <div class="why-grid">
-      <div class="why-card">
-        <div class="why-num">01</div>
-        <h3>No tech skills needed</h3>
-        <p>If you can answer a few questions about your business, you can build a professional website. We handle everything else.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-num">02</div>
-        <h3>See it before you pay</h3>
-        <p>Preview your complete site — every section — for free. No surprises, no deposits. Pay only when you're ready to publish.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-num">03</div>
-        <h3>Leads come to you</h3>
-        <p>Every site has a contact form. When someone fills it out, you get an email instantly. No middleman, no missed jobs.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-num">04</div>
-        <h3>Domain included, always</h3>
-        <p>Your custom .com is registered and renewed as part of your plan. If you cancel, we transfer it to you. No strings.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-num">05</div>
-        <h3>Built to rank on Google</h3>
-        <p>Local SEO, structured data, mobile optimization, and fast load speeds — baked in from the start, not an add-on.</p>
-      </div>
-      <div class="why-card">
-        <div class="why-num">06</div>
-        <h3>Simple, fair pricing</h3>
-        <p>$200 to build. $20 a month to keep it live. No contracts, no hidden fees. Cancel anytime and keep your domain.</p>
-      </div>
-    </div>
-  </section>
+    <div class="reviews-grid">
 
-  <!-- [OFF-WHITE] Who it's for + CTA strip -->
-  <section class="for-sec" aria-label="Who Bedrock is built for">
-    <div class="for-inner">
-      <div>
-        <div class="for-left-lbl">Built for</div>
-        <div class="for-tags">
-          <span class="for-tag">Plumbers</span>
-          <span class="for-tag">Electricians</span>
-          <span class="for-tag">HVAC</span>
-          <span class="for-tag">Landscapers</span>
-          <span class="for-tag">Roofers</span>
-          <span class="for-tag">Concrete</span>
-          <span class="for-tag">General Contractors</span>
-          <span class="for-tag">Pest Control</span>
-          <span class="for-tag">Painters</span>
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"I had zero web presence. Brock built me a site that looks like I've been in business for 20 years. First lead came in within the week."</p>
+        <div class="review-author">
+          <span class="review-name">Mad Ox Outdoors</span>
+          <span class="review-biz">Paver Patios · Lakeville, MN</span>
         </div>
       </div>
-      <div>
-        <h3>Ready to get online?</h3>
-        <a href="bedrock-v35.html" class="btn btn-gold" style="display:inline-block;margin-top:.85rem">Build Your Site →</a>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"Didn't think I needed a website — I get all my work through referrals. Now I'm getting calls from people I've never met. Worth every penny."</p>
+        <div class="review-author">
+          <span class="review-name">Client Review</span>
+          <span class="review-biz">Trade Contractor · Idaho Falls, ID</span>
+        </div>
       </div>
+
+      <div class="review-card">
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">"The builder was stupid simple. I answered a few questions, saw my full site in like 5 minutes, and it already had everything I'd want. No BS."</p>
+        <div class="review-author">
+          <span class="review-name">Beta Client</span>
+          <span class="review-biz">Home Services · Pacific Northwest</span>
+        </div>
+      </div>
+
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <div class="f-left">
-      <span class="f-brand">Bedrock Digital</span>
-      <span class="f-tag">Spend more time on the job.</span>
-    </div>
-    <nav class="f-links" aria-label="Footer links">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="portal.html">Client Login</a>
-      <a href="mailto:hello@bedrock-sites.com">Contact</a>
-    </nav>
-    <span class="f-copy">© 2026 Bedrock Digital</span>
-  </footer>
-
-</div><!-- /page-home -->
-
-
-<!-- ================================================================
-     BUILD YOUR SITE PAGE
-     ================================================================ -->
-<div id="page-build" class="page">
-
-  <!-- [DARK] Page intro + sub-nav -->
-  <section class="build-intro" aria-labelledby="build-h1">
-    <div class="bi-inner">
-      <span class="eyebrow ew-gold">Bedrock Digital</span>
-      <h1 id="build-h1">Everything to get<br>your business online.</h1>
-      <p>A professional website, your own domain, local SEO, and a contact form that sends leads straight to you. One flat fee to build. One low monthly rate to keep it live.</p>
-    </div>
-    <nav class="build-subnav" aria-label="Build page sections">
-      <button class="bsn-btn active" onclick="scrollBuild('work')" id="bsn-work">Our Work</button>
-      <button class="bsn-btn" onclick="scrollBuild('reviews')" id="bsn-reviews">Reviews</button>
-      <button class="bsn-btn" onclick="scrollBuild('pricing')" id="bsn-pricing">Pricing</button>
-    </nav>
-  </section>
-
-  <!-- [LIGHT] Our Work -->
-  <section class="work-sec" id="work" aria-labelledby="work-h2">
+<!-- =============================================
+     OUR WORK  [LIGHT]
+     ============================================= -->
+<section class="work-sec" id="work" aria-labelledby="work-h2">
+  <div class="work-inner">
     <div class="work-head">
       <div>
-        <span class="eyebrow ew-light">Our Work</span>
+        <span class="eyebrow ew-l">Our Work</span>
         <h2 id="work-h2">Sites we've built<br>for real contractors.</h2>
       </div>
-      <a href="bedrock-v35.html" class="btn btn-ghost-light">Build Yours →</a>
+      <a href="bedrock-v35.html" class="btn btn-ghost-l">Build Yours →</a>
     </div>
     <div class="work-grid">
 
       <!-- Card 1 — Mad Ox Outdoors (live client) -->
-      <article class="work-card work-card-link" onclick="window.open('https://madoxoutdoors.com','_blank')" tabindex="0" role="link" aria-label="Visit Mad Ox Outdoors live site">
+      <article class="work-card work-card-live" onclick="window.open('https://madoxoutdoors.com','_blank')" tabindex="0" role="link" aria-label="Visit Mad Ox Outdoors live site">
         <div class="work-img">
           <iframe id="madoxFrame" class="work-thumb-frame" sandbox="allow-same-origin allow-scripts" title="Mad Ox Outdoors site preview" aria-hidden="true" tabindex="-1"></iframe>
           <div class="work-thumb-overlay"><span>Visit live site →</span></div>
@@ -585,95 +524,51 @@ footer{background:var(--navy);border-top:2px solid var(--gold);padding:2rem 5%;d
         </div>
       </article>
 
-      <!-- Card 2 -->
+      <!-- Card 2 — placeholder -->
       <article class="work-card">
         <div class="work-img">
           <div class="work-placeholder" aria-label="Site screenshot coming soon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-            Add screenshot here
+            Coming soon
           </div>
         </div>
         <div class="work-meta">
-          <div class="work-trade">Plumbing</div>
-          <div class="work-name">Your Client Name</div>
-          <div class="work-loc">City, State</div>
-          <div class="work-quote">"Professional look without the agency price tag."</div>
+          <div class="work-trade">Your Trade</div>
+          <div class="work-name">Your Business Name</div>
+          <div class="work-loc">Your City</div>
+          <div class="work-quote">"Want to be featured here? Build your site today."</div>
         </div>
       </article>
 
-      <!-- Card 3 -->
+      <!-- Card 3 — placeholder -->
       <article class="work-card">
         <div class="work-img">
           <div class="work-placeholder" aria-label="Site screenshot coming soon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-            Add screenshot here
+            Coming soon
           </div>
         </div>
         <div class="work-meta">
-          <div class="work-trade">HVAC</div>
-          <div class="work-name">Your Client Name</div>
-          <div class="work-loc">City, State</div>
-          <div class="work-quote">"Finally have a website that looks like my business."</div>
+          <div class="work-trade">Your Trade</div>
+          <div class="work-name">Your Business Name</div>
+          <div class="work-loc">Your City</div>
+          <div class="work-quote">"Want to be featured here? Build your site today."</div>
         </div>
       </article>
 
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- [DARK] Reviews -->
-  <section class="reviews-sec" id="reviews" aria-labelledby="reviews-h2">
-    <div class="reviews-head">
-      <span class="eyebrow ew-dark" style="display:block;text-align:center">Reviews</span>
-      <h2 id="reviews-h2">What contractors say.</h2>
-      <p>From business owners who needed a website and didn't want to deal with agencies or tech headaches.</p>
-    </div>
-    <div class="reviews-grid">
-
-      <article class="review-card">
-        <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
-        <p class="review-text">"I'd been putting off a website for years. Built this in about 15 minutes and had a lead come in the first week. Couldn't believe how easy it was."</p>
-        <div class="review-author">
-          <div class="review-avatar" aria-hidden="true">MJ</div>
-          <div>
-            <div class="review-name">Mike J.</div>
-            <div class="review-trade">Landscaper · Idaho Falls, ID</div>
-          </div>
-        </div>
-      </article>
-
-      <article class="review-card">
-        <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
-        <p class="review-text">"Paid $2,000 to a designer a few years back for a site I couldn't touch myself. This was $200 and it looks better. Wish I'd found it sooner."</p>
-        <div class="review-author">
-          <div class="review-avatar" aria-hidden="true">DS</div>
-          <div>
-            <div class="review-name">Dave S.</div>
-            <div class="review-trade">General Contractor · Boise, ID</div>
-          </div>
-        </div>
-      </article>
-
-      <article class="review-card">
-        <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
-        <p class="review-text">"My guys send customers to a real site now instead of a phone number. It's clean, it's professional, and it actually brings in calls. Worth every cent."</p>
-        <div class="review-author">
-          <div class="review-avatar" aria-hidden="true">RT</div>
-          <div>
-            <div class="review-name">Ryan T.</div>
-            <div class="review-trade">Plumber · Twin Falls, ID</div>
-          </div>
-        </div>
-      </article>
-
-    </div>
-  </section>
-
-  <!-- [LIGHT] Pricing -->
-  <section class="pricing-sec" id="pricing" aria-labelledby="pricing-h2">
+<!-- =============================================
+     PRICING  [OFF-WHITE]
+     ============================================= -->
+<section class="pricing-sec" id="pricing" aria-labelledby="pricing-h2">
+  <div class="pricing-inner">
     <div class="pricing-head">
-      <span class="eyebrow ew-light">Pricing</span>
-      <h2 id="pricing-h2">Simple. Flat.<br>No surprises.</h2>
-      <p>One build fee to get live. One low monthly rate to stay there. No contracts, no hidden fees. Cancel anytime.</p>
+      <span class="eyebrow ew-l">Pricing</span>
+      <h2 id="pricing-h2">Simple, flat pricing.<br>No surprises.</h2>
+      <p>One-time build fee, then a low monthly rate. No contracts. Cancel anytime. Your domain always stays yours.</p>
     </div>
     <div class="pricing-grid">
 
@@ -683,19 +578,19 @@ footer{background:var(--navy);border-top:2px solid var(--gold);padding:2rem 5%;d
           <span class="price-amt">$200</span>
           <span class="price-setup-lbl">one-time build fee</span>
         </div>
-        <p class="price-sub">then <strong>$20/month</strong> for hosting</p>
+        <p class="price-sub">then <strong>$20/month</strong></p>
         <div class="price-divider"></div>
         <ul class="price-feats">
+          <li>Professional website — built and deployed</li>
           <li>Custom .com domain registered for you</li>
-          <li>Professional website built with your content</li>
-          <li>Local SEO setup included</li>
-          <li>Contact form + lead email notifications</li>
-          <li>SSL certificate + Cloudflare hosting</li>
-          <li>Domain renewal — never billed separately</li>
-          <li>Cancel anytime — domain always stays yours</li>
+          <li>SSL, fast hosting on Cloudflare</li>
+          <li>Local SEO built into every page</li>
+          <li>Contact form — leads to your inbox</li>
+          <li>Traffic analytics dashboard</li>
+          <li>Edit your site anytime via client portal</li>
         </ul>
-        <a href="bedrock-v35.html" class="btn btn-ghost-light" style="display:block;text-align:center;width:100%">Get Started →</a>
-        <div class="cancel-note">No card required to preview. Pay only when you're ready to publish.</div>
+        <a href="bedrock-v35.html" class="btn btn-ghost-l" style="display:block;text-align:center;width:100%">Get Started →</a>
+        <div class="cancel-note">Cancel anytime. No long-term contract. Domain transfers to you at no charge.</div>
       </div>
 
       <div class="price-card featured">
@@ -709,104 +604,66 @@ footer{background:var(--navy);border-top:2px solid var(--gold);padding:2rem 5%;d
         <div class="price-divider"></div>
         <ul class="price-feats">
           <li>Everything in Monthly</li>
-          <li>$60 in savings every year vs monthly billing</li>
-          <li>Billed once annually — one less thing to manage</li>
+          <li>$60 in annual savings vs. monthly billing</li>
+          <li>Billed once a year — one less thing to manage</li>
         </ul>
         <a href="bedrock-v35.html" class="btn btn-gold" style="display:block;text-align:center;width:100%">Get Started →</a>
         <div class="cancel-note">Cancel before renewal. Domain transfers to you at no charge.</div>
       </div>
 
     </div>
-    <p style="text-align:center;margin-top:2.5rem;font-size:.72rem;color:var(--slate);max-width:480px;margin-left:auto;margin-right:auto;line-height:1.75">
-      <strong style="color:var(--navy)">Beta clients:</strong> Setup fee waived for our first 10 customers. Reach out directly — <a href="mailto:hello@bedrock-sites.com" style="color:var(--gold);text-decoration:none">hello@bedrock-sites.com</a>
+    <p class="beta-note">
+      <strong>Beta clients:</strong> Setup fee waived for our first 10 customers. Reach out directly — <a href="mailto:hello@bedrock-sites.com">hello@bedrock-sites.com</a>
     </p>
-  </section>
+  </div>
+</section>
 
-  <!-- [DARK] Final CTA -->
-  <section class="final-cta" aria-labelledby="cta-h2">
-    <span class="eyebrow ew-dark" style="display:block;text-align:center">Ready?</span>
-    <h2 id="cta-h2">Your business deserves<br>a real website.</h2>
-    <p>Preview your full site in minutes, free. No card, no commitment. Pay only when you're ready to go live.</p>
-    <div class="final-actions">
-      <a href="bedrock-v35.html" class="btn btn-gold btn-lg">Build My Site — It's Free to Preview</a>
-    </div>
-    <div class="final-reassure">$200 flat build fee · $20/month · Cancel anytime · Domain always yours</div>
-  </section>
+<!-- =============================================
+     FINAL CTA  [DARK]
+     ============================================= -->
+<section class="final-cta" aria-labelledby="cta-h2">
+  <span class="eyebrow ew-d" style="display:block;text-align:center">Ready?</span>
+  <h2 id="cta-h2">Your business deserves<br>a real website.</h2>
+  <p>Preview your full site in minutes, free. No card, no commitment. Pay only when you're ready to go live.</p>
+  <div>
+    <a href="bedrock-v35.html" class="btn btn-gold btn-lg">Build My Site — It's Free to Preview</a>
+  </div>
+  <div class="final-reassure">$200 flat build fee · $20/month · Cancel anytime · Domain always yours</div>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <div class="f-left">
-      <span class="f-brand">Bedrock Digital</span>
-      <span class="f-tag">Spend more time on the job.</span>
-    </div>
-    <nav class="f-links" aria-label="Footer links">
-      <a href="privacy.html">Privacy</a>
-      <a href="terms.html">Terms</a>
-      <a href="portal.html">Client Login</a>
-      <a href="mailto:hello@bedrock-sites.com">Contact</a>
-    </nav>
-    <span class="f-copy">© 2026 Bedrock Digital</span>
-  </footer>
-
-</div><!-- /page-build -->
+<!-- =============================================
+     FOOTER  [DARK — continues from CTA]
+     ============================================= -->
+<footer>
+  <span class="f-brand">© 2026 Bedrock Digital</span>
+  <ul class="f-links" aria-label="Footer links">
+    <li><a href="privacy.html">Privacy</a></li>
+    <li><a href="terms.html">Terms</a></li>
+    <li><a href="portal.html">Client Login</a></li>
+    <li><a href="mailto:hello@bedrock-sites.com">Contact</a></li>
+  </ul>
+</footer>
 
 </main>
 
 <script>
-/* Page switching */
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-' + id).classList.add('active');
-  window.scrollTo({top: 0, behavior: 'smooth'});
-  document.getElementById('nav-home').classList.toggle('active', id === 'home');
-  document.getElementById('nav-build').classList.toggle('active', id === 'build');
-}
-
-/* Go to a section on the Build page */
-function gotoSection(sectionId) {
-  showPage('build');
-  setTimeout(() => scrollBuild(sectionId), 60);
-}
-
-function scrollBuild(sectionId) {
-  const el = document.getElementById(sectionId);
-  if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'});
-  document.querySelectorAll('.bsn-btn').forEach(b => b.classList.remove('active'));
-  const btn = document.getElementById('bsn-' + sectionId);
-  if (btn) btn.classList.add('active');
-}
-
-/* Highlight active subnav item on scroll within Build page */
-const sections = ['work', 'reviews', 'pricing'];
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      document.querySelectorAll('.bsn-btn').forEach(b => b.classList.remove('active'));
-      const btn = document.getElementById('bsn-' + entry.target.id);
-      if (btn) btn.classList.add('active');
-    }
-  });
-}, {rootMargin: '-15% 0px -70% 0px'});
-
-sections.forEach(id => {
-  const el = document.getElementById(id);
-  if (el) observer.observe(el);
-});
-
-/* Logo keyboard support */
-document.querySelector('.nav-logo').addEventListener('keydown', e => {
-  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); showPage('home'); }
-});
-
-/* Mad Ox thumbnail — fetch standalone preview file and inject via srcdoc */
-(function loadMadoxThumb() {
+/* Mad Ox thumbnail — fetch standalone preview and inject via srcdoc */
+(function() {
   const frame = document.getElementById('madoxFrame');
   if (!frame) return;
   fetch('madox-preview.html')
     .then(r => r.text())
     .then(html => { frame.srcdoc = html; })
-    .catch(() => { /* silent fail — placeholder background shows instead */ });
+    .catch(() => {});
 })();
+
+/* Smooth anchor scroll for nav links */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) { e.preventDefault(); target.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+});
 </script>
 </body>
 </html>

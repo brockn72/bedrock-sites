@@ -1203,11 +1203,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
 <header role="banner">
 <nav aria-label="Primary navigation">
-  <a href="#home" class="nav-logo" onclick="showPage('home',event)" aria-label="Bedrock Sites home">
-    <span class="wordmark">Bedrock Sites</span>
-    <span class="sub">Real Websites for Real Businesses</span>
+  <a href="index.html" class="nav-logo" aria-label="Back to Bedrock Digital">
+    <span class="wordmark">Bedrock Digital</span>
+    <span class="sub">Website Builder</span>
   </a>
-  <ul class="nav-links">
+  <ul class="nav-links" style="display:none">
     <li class="nav-home-wrap">
       <a href="#home" onclick="showPage('home',event)" id="nl-home" class="active-link" aria-current="page" aria-haspopup="true">Home</a>
       <ul class="nav-jumps" role="menu" aria-label="Jump to section">
@@ -1225,15 +1225,17 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <li><a href="#testimonials" onclick="showPage('testimonials',event)" id="nl-testimonials">Reviews</a></li>
     <li><a href="#about" onclick="showPage('about',event)" id="nl-about">About</a></li>
   </ul>
-  <a href="portal.html" class="nav-login" style="font-size:0.66rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.65);text-decoration:none;padding:0.55rem 1rem;border:1px solid rgba(255,255,255,0.18);transition:color 0.2s,border-color 0.2s;white-space:nowrap" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.4)'" onmouseout="this.style.color='rgba(255,255,255,0.65)';this.style.borderColor='rgba(255,255,255,0.18)'">Client Login</a>
-  <a href="#builder" class="nav-cta" onclick="showPage('builder',event)" role="button">Get Started Free</a>
+  <div style="display:flex;align-items:center;gap:1rem">
+    <a href="index.html" style="font-size:0.62rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);text-decoration:none;transition:color 0.2s" onmouseover="this.style.color='rgba(255,255,255,0.9)'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">← Bedrock Digital</a>
+    <a href="portal.html" class="nav-login" style="font-size:0.66rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.65);text-decoration:none;padding:0.55rem 1rem;border:1px solid rgba(255,255,255,0.18);transition:color 0.2s,border-color 0.2s;white-space:nowrap" onmouseover="this.style.color='#fff';this.style.borderColor='rgba(255,255,255,0.4)'" onmouseout="this.style.color='rgba(255,255,255,0.65)';this.style.borderColor='rgba(255,255,255,0.18)'">Client Login</a>
+  </div>
 </nav>
 </header>
 
 <main id="main-content" role="main">
 
 <!-- HOME -->
-<article id="home" class="page active" aria-labelledby="home-h1">
+<article id="home" class="page" aria-labelledby="home-h1">
   <section class="hero" aria-labelledby="home-h1">
     <div>
       <p class="hero-eyebrow">A modern website builder for local businesses</p>
@@ -2005,7 +2007,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 </div>
 
 <!-- BUILDER -->
-<div id="builder" class="page">
+<div id="builder" class="page active">
   <div class="builder-hero">
     <div class="tag">Free Website Builder · 10–30 min</div>
     <h1>Let's build your site.<br><em>Free preview. No commitment.</em></h1>
