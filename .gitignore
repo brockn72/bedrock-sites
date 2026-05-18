@@ -5,6 +5,7 @@ backup codes/
 *.key
 .env
 .env.*
+!.env.example
 bedrock-vault/
 .claude/
 

@@ -123,7 +123,7 @@ exports.handler = async (event) => {
         city:          city        || null,
         services:      services    || [],
         service_areas: serviceAreas || [],
-        site_data:     siteData    || null,
+        site_data:     mergedSiteData || null,
         source:        source      || 'unknown',
         status:        source === 'claim' ? 'claim' : 'new',
         user_id:       userId      || null,

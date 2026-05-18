@@ -16,6 +16,7 @@ create table if not exists leads (
   status            text         default 'new',  -- new | claim | paid | deployed
   stripe_session_id text,
   site_url          text,
+  subdomain_url     text,
   notes             text,
   user_id           uuid         references auth.users(id) on delete set null
 );
