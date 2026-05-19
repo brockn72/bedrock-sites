@@ -2227,7 +2227,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <div class="lb-title">Sign In</div>
         <input type="email" placeholder="Email address" aria-label="Email address">
         <input type="password" placeholder="Password" aria-label="Password">
-        <button class="bd-btn-gold" onclick="window.open('/portal','_blank')">Sign In</button>
+        <button class="bd-btn-gold" onclick="window.location.href='/portal.html'">Sign In</button>
         <p class="bd-login-help">Need help? <a href="mailto:support@bedrock-sites.com">Contact support</a> or call Brock directly.</p>
       </div>
     </div>
@@ -2236,6 +2236,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
 <!-- ===== BUILDER SECTION ===== -->
 <div id="builder" class="page">
+  <button type="button" id="builderStartOver" onclick="refreshStartOver()" title="Erase your saved progress and reload a fresh builder" aria-label="Refresh and start over" style="position:fixed;left:14px;bottom:14px;z-index:9000;font-family:'Montserrat',sans-serif;font-size:0.56rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.62);background:rgba(13,27,46,0.78);border:1px solid rgba(255,255,255,0.2);padding:0.5rem 0.8rem;border-radius:7px;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)">&#8635;&nbsp; Start Over</button>
   <div class="builder-hero">
     <div class="tag">Builder</div>
     <h1>Build Your Site.<br><em>Free Preview. Pay Only When You Love It.</em></h1>
@@ -2798,31 +2799,38 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 <!-- LEAD CAPTURE MODAL: gates entry to the preview step -->
 <div id="leadCaptureModal" role="dialog" aria-modal="true" aria-labelledby="lcm-title" style="display:none;position:fixed;inset:0;background:rgba(17,20,24,0.85);z-index:10000;align-items:center;justify-content:center;padding:1rem">
   <div style="background:#fff;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;padding:2rem 1.75rem;border-top:4px solid var(--accent);box-shadow:0 24px 60px rgba(0,0,0,0.45)">
-    <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem">Save Your Preview</div>
-    <h2 id="lcm-title" style="font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:300;color:var(--dark);line-height:1.2;margin-bottom:0.5rem">Almost there. <em style="color:var(--accent);font-style:italic">Let's save your preview.</em></h2>
-    <p style="font-size:0.78rem;font-weight:300;color:var(--text-mid);line-height:1.7;margin-bottom:1.25rem">Confirm your contact info so we can save your work. Still free, no payment, no charge until you approve and launch. We'll only reach out if you ask us to.</p>
-    <div style="background:#fef6e6;border-left:3px solid #b8860b;padding:0.65rem 0.85rem;font-size:0.7rem;color:#5c4214;line-height:1.55;margin-bottom:1rem"><strong>Demo mode:</strong> backend isn't wired up yet. Submitting will open your email draft as a fallback so we can see who tested.</div>
+    <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem">Create Your Account</div>
+    <h2 id="lcm-title" style="font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:300;color:var(--dark);line-height:1.2;margin-bottom:0.5rem">One quick step. <em style="color:var(--accent);font-style:italic">Create your account.</em></h2>
+    <p style="font-size:0.78rem;font-weight:300;color:var(--text-mid);line-height:1.7;margin-bottom:1.25rem">This is the login you'll use to manage your site later. It saves your build and unlocks your preview &mdash; still free, no payment, no charge until you approve and launch.</p>
 
     <form id="lcmForm" onsubmit="submitLeadCapture(event)">
       <div class="b-field">
         <label class="b-label" for="lcm-name">Your name</label>
-        <input class="b-input" type="text" id="lcm-name" required placeholder="First and last name">
+        <input class="b-input" type="text" id="lcm-name" required placeholder="First and last name" autocomplete="name">
       </div>
       <div class="b-field">
         <label class="b-label" for="lcm-biz">Business name</label>
-        <input class="b-input" type="text" id="lcm-biz" required placeholder="Your business">
+        <input class="b-input" type="text" id="lcm-biz" required placeholder="Your business" autocomplete="organization">
       </div>
       <div class="b-field">
         <label class="b-label" for="lcm-email">Email <span style="color:#a32d2d">*</span></label>
-        <input class="b-input" type="email" id="lcm-email" required placeholder="you@yourbusiness.com">
+        <input class="b-input" type="email" id="lcm-email" required placeholder="you@yourbusiness.com" autocomplete="email">
       </div>
       <div class="b-field">
         <label class="b-label" for="lcm-phone">Phone <span style="color:#a32d2d">*</span></label>
-        <input class="b-input" type="tel" id="lcm-phone" required placeholder="(555) 123-4567">
+        <input class="b-input" type="tel" id="lcm-phone" required placeholder="(555) 123-4567" autocomplete="tel">
+      </div>
+      <div class="b-field">
+        <label class="b-label" for="lcm-pass">Create a password <span style="color:#a32d2d">*</span></label>
+        <input class="b-input" type="password" id="lcm-pass" required placeholder="At least 8 characters" autocomplete="new-password" minlength="8">
+      </div>
+      <div class="b-field">
+        <label class="b-label" for="lcm-pass2">Confirm password <span style="color:#a32d2d">*</span></label>
+        <input class="b-input" type="password" id="lcm-pass2" required placeholder="Re-enter your password" autocomplete="new-password" minlength="8">
       </div>
       <div id="lcm-error" style="display:none;background:#fceaea;color:#a32d2d;padding:0.6rem 0.85rem;font-size:0.74rem;margin-bottom:0.85rem"></div>
-      <button type="submit" class="b-btn-gold" style="width:100%">Save &amp; Show My Preview</button>
-      <p style="font-size:0.66rem;font-weight:300;color:var(--text-muted);text-align:center;margin-top:0.85rem;line-height:1.6">By continuing you agree to be contacted by Bedrock Sites about your preview. We won't share your info or send marketing without your permission.</p>
+      <button type="submit" class="b-btn-gold" style="width:100%">Create Account &amp; Continue</button>
+      <p style="font-size:0.66rem;font-weight:300;color:var(--text-muted);text-align:center;margin-top:0.85rem;line-height:1.6">Your account lets you log in to the client portal and manage your site. We won't share your info or send marketing without your permission.</p>
     </form>
   </div>
 </div>
@@ -2834,7 +2842,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <div style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem">Client Portal</div>
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:#fff;margin-bottom:1rem">Manage your site.</h2>
       <p style="font-family:'DM Sans',sans-serif;font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:2rem">Access your Bedrock Sites dashboard to edit your website, view analytics, and manage your account.</p>
-      <a href="/portal" class="btn-gold" style="font-family:'DM Sans',sans-serif">Go to Portal</a>
+      <a href="/portal.html" class="btn-gold" style="font-family:'DM Sans',sans-serif">Go to Portal</a>
       <div style="margin-top:1.5rem"><a href="#home" onclick="showPage('home',event)" style="font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.5);text-decoration:none">&larr; Back to Home</a></div>
     </div>
   </div>
@@ -4341,6 +4349,14 @@ function clearSavedBuild(){
   const banner=document.getElementById('resumeBuildBanner');
   if(banner)banner.style.display='none';
 }
+// Always-available hard reset. Guarded by confirm() so an accidental tap can't
+// wipe a build. Clears saved state and reloads a fresh builder.
+function refreshStartOver(){
+  if(!confirm('Start over? This erases your saved progress and reloads a fresh builder. This cannot be undone.'))return;
+  try{localStorage.removeItem(BUILDER_SAVE_KEY);}catch(e){}
+  try{window.location.hash='builder';}catch(e){}
+  window.location.reload();
+}
 function dismissResumeBanner(){
   const banner=document.getElementById('resumeBuildBanner');
   if(banner)banner.style.display='none';
@@ -4365,10 +4381,17 @@ function continueSavedBuild(){
   if(S.siteData){
     // Jump directly to the editor — they already finished the questionnaire.
     document.querySelectorAll('.b-card').forEach(c=>{c.style.display='none';});
+    // Resumed editor uses the WIDE layout (same as goBS('3c')). Without this the
+    // builder body keeps the narrow form width and the editor margins get crushed.
+    const bb=document.getElementById('builderBody');
+    if(bb)bb.className='builder-body-wide';
+    // A resumed build with siteData already cleared the earlier gates.
+    S.leadCaptured=true;S.accountCreated=true;
     const card=document.getElementById('bs3c');
     if(card){card.style.display='block';}
     if(typeof updateST==='function')updateST(3);
     populateDirectEdit();renderPreview();
+    if(typeof showBuildSourceNotice==='function')showBuildSourceNotice();
     setPreviewMode(S.previewMode||((window.innerWidth<=560)?'mobile':'desktop'));
   } else {
     // No site generated yet — they were partway through the questionnaire. Stay on step 1.
@@ -4731,9 +4754,9 @@ function dmRender(view){
 }
 
 function goBS(step){
-  // Hard wall: gate the preview (3c) behind lead-capture modal
-  if(step==='3c' && !S.leadCaptured){
-    openLeadCaptureModal();
+  // Hard wall: require a real account between Step 2 and Step 3.
+  if((step==='3a'||step===3||step==='3c') && !S.accountCreated){
+    openLeadCaptureModal(step);
     return;
   }
   ['bs1','bs2','bs3a','bs3b','bs3c','bs4','bsSuccess'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
@@ -4766,21 +4789,27 @@ function goBS(step){
 }
 
 // LEAD CAPTURE MODAL — fires before preview step. Pre-fills with values from Step 1.
-function openLeadCaptureModal(){
+function openLeadCaptureModal(step){
   const modal=document.getElementById('leadCaptureModal');
   if(!modal)return;
-  // Pre-fill from Step 1 inputs if available
+  // Remember where the user was headed so we can resume after the account is made.
+  S._pendingStep=(step==='3a'||step===3||step==='3c')?step:'3a';
+  // Pre-fill from Step 1 inputs / prior state if available
   const biz=document.getElementById('bName')?.value||'';
   const email=document.getElementById('bEmail')?.value||'';
   const phone=document.getElementById('bPhone')?.value||'';
+  const priorName=(S.leadInfo&&S.leadInfo.name)||'';
+  document.getElementById('lcm-name').value=priorName;
   document.getElementById('lcm-biz').value=biz;
   document.getElementById('lcm-email').value=email;
   document.getElementById('lcm-phone').value=phone;
+  document.getElementById('lcm-pass').value='';
+  document.getElementById('lcm-pass2').value='';
   document.getElementById('lcm-error').style.display='none';
   modal.style.display='flex';
   // Focus first empty field
   setTimeout(()=>{
-    const fields=['lcm-name','lcm-biz','lcm-email','lcm-phone'];
+    const fields=['lcm-name','lcm-biz','lcm-email','lcm-phone','lcm-pass'];
     for(const id of fields){const el=document.getElementById(id);if(el&&!el.value){el.focus();break;}}
   },50);
 }
@@ -4796,43 +4825,64 @@ function closeLeadCaptureModal(){
 const LEAD_ENDPOINT='/.netlify/functions/capture-lead';
 const LEAD_FALLBACK_EMAIL='support@bedrock-sites.com';
 
-function submitLeadCapture(e){
+async function submitLeadCapture(e){
   e.preventDefault();
   const name=document.getElementById('lcm-name').value.trim();
   const biz=document.getElementById('lcm-biz').value.trim();
   const email=document.getElementById('lcm-email').value.trim();
   const phone=document.getElementById('lcm-phone').value.trim();
+  const pass=document.getElementById('lcm-pass').value;
+  const pass2=document.getElementById('lcm-pass2').value;
   const err=document.getElementById('lcm-error');
-  // Basic validation
-  if(!name||!biz||!email||!phone){
-    err.textContent='Please fill in all four fields.';err.style.display='block';return false;
+  const showErr=(m)=>{err.textContent=m;err.style.display='block';};
+  // Validation
+  if(!name||!biz||!email||!phone||!pass||!pass2){
+    showErr('Please fill in every field.');return false;
   }
   if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    err.textContent='Please enter a valid email address.';err.style.display='block';return false;
+    showErr('Please enter a valid email address.');return false;
   }
   if(phone.replace(/\D/g,'').length<10){
-    err.textContent='Please enter a valid phone number.';err.style.display='block';return false;
+    showErr('Please enter a valid phone number.');return false;
   }
-  // Save lead info to state
+  if(pass.length<8){
+    showErr('Password must be at least 8 characters.');return false;
+  }
+  if(pass!==pass2){
+    showErr('Those passwords don’t match.');return false;
+  }
+  err.style.display='none';
+  const btn=document.querySelector('#lcmForm button[type="submit"]');
+  const btnText=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='Creating your account…';}
+  // Create the real Supabase account via capture-lead (source:'signup' triggers it).
+  let ok=false;
+  try{
+    const res=await fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({businessName:biz,contactName:name,email,phone,password:pass,trade:S.trade,services:S.services,city:document.getElementById('bCity')?.value||'',serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'signup'})});
+    ok=res.ok;
+    if(!ok){
+      let msg='We couldn’t create your account. Please try again.';
+      try{const j=await res.json();if(j&&j.error)msg=j.error;}catch(_){}
+      showErr(msg);
+    }
+  }catch(netErr){
+    console.warn('[Bedrock] Account create failed:',netErr);
+    showErr('Network error creating your account. Check your connection and try again.');
+  }
+  if(btn){btn.disabled=false;btn.textContent=btnText||'Create Account & Continue';}
+  if(!ok)return false;
+  // Account created — record state and continue.
   S.leadInfo={name,biz,email,phone,capturedAt:new Date().toISOString()};
+  S.accountInfo={name,email,createdAt:new Date().toISOString()};
   S.leadCaptured=true;
-  // Sync back to Step 1 fields if user updated them in the modal
+  S.accountCreated=true;
   if(document.getElementById('bName'))document.getElementById('bName').value=biz;
   if(document.getElementById('bEmail'))document.getElementById('bEmail').value=email;
   if(document.getElementById('bPhone'))document.getElementById('bPhone').value=phone;
-  // Send the lead. If LEAD_ENDPOINT is set, POST it. Otherwise, fall back to mailto.
-  if(LEAD_ENDPOINT){
-    fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({businessName:biz,contactName:name,email,phone,trade:S.trade,services:S.services,city:document.getElementById('bCity')?.value||'',serviceAreas:S.serviceAreas,source:'preview-modal'})}).catch(err=>console.warn('[Bedrock] Lead post failed:',err));
-  } else {
-    // No backend yet: open a mailto draft as a fallback so submissions surface.
-    const subject=encodeURIComponent(`New Bedrock Sites preview lead: ${biz}`);
-    const body=encodeURIComponent(`A new visitor just hit the preview step.\n\nName: ${name}\nBusiness: ${biz}\nEmail: ${email}\nPhone: ${phone}\nTrade: ${S.trade||'(not yet set)'}\nServices: ${(S.services||[]).join(', ')||'(none yet)'}\nService areas: ${(S.serviceAreas||[]).join('; ')||'(none yet)'}\n\n— Bedrock Sites preview form`);
-    // Open in a new tab so the builder flow isn't disrupted
-    setTimeout(()=>{window.open(`mailto:${LEAD_FALLBACK_EMAIL}?subject=${subject}&body=${body}`,'_blank');},150);
-  }
+  if(typeof saveBuildState==='function'){try{saveBuildState();}catch(_){}}
   closeLeadCaptureModal();
-  // Now actually proceed to step 3c
-  goBS('3c');
+  goBS(S._pendingStep||'3a');
   return false;
 }
 

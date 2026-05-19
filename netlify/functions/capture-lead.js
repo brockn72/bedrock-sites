@@ -76,8 +76,10 @@ exports.handler = async (event) => {
     }
   }
 
-  // Create a Supabase Auth account when the customer is claiming their site
-  if (source === 'claim' && email && password && supabaseUrl && supabaseKey) {
+  // Create a Supabase Auth account when the customer signs up (new account step
+  // between builder Step 2 and Step 3) or claims their site. Either path that
+  // supplies an email + password gets a real portal login created.
+  if ((source === 'signup' || source === 'claim') && email && password && supabaseUrl && supabaseKey) {
     const authRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
       method: 'POST',
       headers: {
