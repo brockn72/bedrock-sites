@@ -140,6 +140,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     </div>
   </a>
   <div class="nav-right">
+    <span id="demoBadge" style="display:none;font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--dark);background:var(--accent);padding:0.25rem 0.55rem;border-radius:3px">Demo</span>
     <span class="nav-user" id="navUserEmail"></span>
     <button id="btnLogout" onclick="handleLogout()">Sign Out</button>
   </div>
@@ -295,7 +296,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 </main>
 
 <footer>
-  <p class="f-note">© 2026 Bedrock Digital LLC &nbsp;|&nbsp; <a href="/terms.html">Terms</a> &nbsp;·&nbsp; <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="mailto:support@bedrock-sites.com">Support</a></p>
+  <p class="f-note">© 2026 Bedrock Digital &nbsp;|&nbsp; <a href="/terms.html">Terms</a> &nbsp;·&nbsp; <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="mailto:support@bedrock-sites.com">Support</a></p>
 </footer>
 
 <script>
@@ -303,12 +304,101 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 let supabase;
 let currentSession = null;
 let currentLead    = null;
+let DEMO           = false;
+
+// Demo mode: portal.html?demo=1 loads a realistic fake client with NO backend,
+// so the dashboard can be built/reviewed and tested without a real account.
+function isDemoRequested() {
+  try {
+    const p = new URLSearchParams(window.location.search);
+    if (p.get('demo') === '1' || p.get('demo') === 'true') return true;
+  } catch (e) {}
+  return (window.location.hash || '').indexOf('demo') !== -1;
+}
+
+const DEMO_SESSION = { access_token: 'demo-token', user: { email: 'demo@torrezplumbing.com' } };
+const DEMO_LEAD = {
+  id: 'demo-lead', business_name: 'Torrez Plumbing', contact_name: 'Marco Torrez',
+  phone: '(414) 555-0142', email: 'demo@torrezplumbing.com', trade: 'Plumbing',
+  city: 'Menomonee Falls, WI', status: 'deployed',
+  site_url: 'https://torrezplumbing.bedrock-sites.com',
+  created_at: '2026-04-02T00:00:00Z',
+};
+
+function startDemo() {
+  DEMO = true;
+  currentSession = DEMO_SESSION;
+  currentLead    = DEMO_LEAD;
+  const badge = document.getElementById('demoBadge');
+  if (badge) badge.style.display = 'inline-block';
+  document.getElementById('btnLogout').style.display = 'block';
+  document.getElementById('navUserEmail').textContent = DEMO_SESSION.user.email;
+  populateDashboard(DEMO_LEAD, DEMO_SESSION);
+  fillDemoAnalytics();
+  showPage('pageDash');
+}
+
+// Sample numbers so the demo dashboard isn't empty — clearly labeled as a
+// preview so it's never mistaken for real client data.
+function fillDemoAnalytics() {
+  const el = document.getElementById('analyticsContent');
+  if (!el) return;
+  el.innerHTML =
+    '<div class="stat-row">' +
+      '<div class="stat-cell"><div class="stat-val">1,284</div><div class="stat-lbl">Page Views</div></div>' +
+      '<div class="stat-cell"><div class="stat-val">612</div><div class="stat-lbl">Visitors</div></div>' +
+      '<div class="stat-cell"><div class="stat-val">+18%</div><div class="stat-lbl">This Month</div></div>' +
+    '</div>' +
+    '<p style="font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-top:0.75rem">Sample data — demo preview only</p>';
+}
+
+// Prefill the email if the marketing "Client Login" passed one along.
+function applyPrefillEmail() {
+  try {
+    const em = sessionStorage.getItem('bedrock_prefill_email');
+    if (em) {
+      const f = document.getElementById('loginEmail');
+      if (f && !f.value) f.value = em;
+    }
+  } catch (e) {}
+}
+
+// A clear message instead of a dead button when the backend isn't reachable.
+function showAuthUnavailable() {
+  applyPrefillEmail();
+  const btn = document.getElementById('btnLogin');
+  if (btn) { btn.disabled = true; btn.textContent = 'Sign-in unavailable'; }
+  showError('loginError',
+    'Sign-in is temporarily unavailable — the portal backend isn\'t fully configured yet. ' +
+    'Add ?demo=1 to the address bar to preview the dashboard, or email support@bedrock-sites.com.');
+}
 
 // Fetch config from the server (keeps credentials out of source code),
 // then initialize Supabase and start the auth flow.
 (async () => {
-  const cfg = await fetch('/.netlify/functions/get-config').then(r => r.json());
-  supabase = window.supabase.createClient(cfg.url, cfg.anon);
+  if (isDemoRequested()) { startDemo(); return; }
+
+  applyPrefillEmail();
+
+  let cfg;
+  try {
+    const res = await fetch('/.netlify/functions/get-config');
+    if (!res.ok) throw new Error('config ' + res.status);
+    cfg = await res.json();
+    if (!cfg || cfg.error || !cfg.url || !cfg.anon) {
+      throw new Error(cfg && cfg.error ? cfg.error : 'config missing');
+    }
+  } catch (e) {
+    showAuthUnavailable();
+    return;
+  }
+
+  try {
+    supabase = window.supabase.createClient(cfg.url, cfg.anon);
+  } catch (e) {
+    showAuthUnavailable();
+    return;
+  }
 
   // Handles password recovery redirects automatically.
   supabase.auth.onAuthStateChange((event, session) => {
@@ -332,6 +422,7 @@ function showPage(id) {
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
 async function handleLogin() {
+  if (!supabase) { return showAuthUnavailable(); }
   const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   clearError('loginError');
@@ -357,6 +448,7 @@ async function handleLogin() {
 
 // ── RESET PASSWORD (from email link) ─────────────────────────────────────────
 async function handleReset() {
+  if (!supabase) { return showError('resetError', 'This reset link can\'t be processed right now. Email support@bedrock-sites.com.'); }
   const password = document.getElementById('resetPassword').value;
   const confirm  = document.getElementById('resetPasswordConfirm').value;
   clearError('resetError');
@@ -383,6 +475,7 @@ async function handleReset() {
 
 // ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
 async function handleForgot() {
+  if (!supabase) { return showError('forgotError', 'Password reset is temporarily unavailable. Email support@bedrock-sites.com.'); }
   const email = document.getElementById('forgotEmail').value.trim();
   clearError('forgotError');
 
@@ -407,6 +500,8 @@ async function handleForgot() {
 
 // ── LOGOUT ────────────────────────────────────────────────────────────────────
 async function handleLogout() {
+  if (DEMO) { window.location.href = 'portal.html'; return; }
+  if (!supabase) { showPage('pageLogin'); return; }
   await supabase.auth.signOut();
   currentSession = null;
   currentLead    = null;
@@ -500,6 +595,7 @@ function populateDashboard(lead, session) {
 
 // ── LAUNCH EDITOR ─────────────────────────────────────────────────────────────
 function launchEditor() {
+  if (DEMO) { alert('The site editor is disabled in demo mode — this is a preview of the client dashboard.'); return; }
   if (!currentSession || !currentLead) {
     alert('Site data is still loading. Please wait a moment and try again.');
     return;
