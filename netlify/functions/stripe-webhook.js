@@ -55,7 +55,7 @@ exports.handler = async (event) => {
     const businessName = session.metadata?.business_name || 'Unknown Business';
     const customerEmail = session.customer_details?.email || session.customer_email || '';
     const stripeKey    = process.env.STRIPE_SECRET_KEY;
-    const subPriceId   = process.env.STRIPE_PRICE_ID;  // $19/mo subscription price
+    const subPriceId   = process.env.STRIPE_PRICE_ID;  // $20/mo subscription price
 
     // Mark lead as paid in Supabase
     if (supabaseUrl && supabaseKey && leadId) {
@@ -74,7 +74,7 @@ exports.handler = async (event) => {
       });
     }
 
-    // Auto-create $19/mo subscription using the payment method saved during checkout
+    // Auto-create $20/mo subscription using the payment method saved during checkout
     if (stripeKey && subPriceId && session.customer && session.payment_intent) {
       // Retrieve the payment intent to get the saved payment method
       const piRes = await fetch(`https://api.stripe.com/v1/payment_intents/${session.payment_intent}`, {
@@ -182,7 +182,7 @@ exports.handler = async (event) => {
 
           <table style="border-collapse:collapse;width:100%;margin-bottom:1.5rem">
             <tr>
-              <td style="padding:8px 12px 8px 0;color:#666;font-size:0.85rem;width:140px;vertical-align:top">Your first $19 charge</td>
+              <td style="padding:8px 12px 8px 0;color:#666;font-size:0.85rem;width:140px;vertical-align:top">Your first $20 charge</td>
               <td style="padding:8px 0;font-size:0.85rem">30 days from today — we give you a full month free to get settled in.</td>
             </tr>
             <tr>

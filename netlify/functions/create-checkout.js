@@ -28,7 +28,7 @@ exports.handler = async (event) => {
   params.append('mode',                    'payment');
   params.append('success_url',             `${siteUrl}?payment=success`);
   params.append('cancel_url',             `${siteUrl}/#builder`);
-  // Save payment method so the webhook can create the $19/mo subscription automatically
+  // Save payment method so the webhook can create the $20/mo subscription automatically
   params.append('payment_intent_data[setup_future_usage]', 'off_session');
   if (email)        params.append('customer_email',          email);
   if (leadId)       params.append('metadata[lead_id]',       leadId);
