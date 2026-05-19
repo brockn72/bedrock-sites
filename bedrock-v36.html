@@ -2459,72 +2459,47 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <p style="font-size:0.78rem;font-weight:300;color:var(--text-muted);line-height:1.7;margin-bottom:1rem">Fonts set the tone of your site. Pick the one that fits your business. You can change this later.</p>
         <div class="font-pair-grid" style="display:grid;grid-template-columns:1fr;gap:0.85rem">
 
-          <!-- CLASSIC -->
-          <button type="button" class="hero-style-card" data-style="classic" onclick="setHeroStyle('classic')" style="font-family:'Montserrat',sans-serif;padding:0;border:2px solid var(--accent);background:rgba(201,168,76,0.08);cursor:pointer;text-align:left;display:flex;flex-direction:column;overflow:hidden">
-            <div data-bnr-role="bg-primary" data-bnr-border="accent" style="background:#1a2030;padding:14px 14px 16px;display:flex;flex-direction:column;gap:5px;border-bottom:2px solid #c9a84c">
-              <div data-bnr-role="text-accent" style="font-size:7px;letter-spacing:1.5px;color:#c9a84c;text-transform:uppercase">Classic Block</div>
-              <div data-bnr-role="bar-accent" style="height:3px;background:rgba(201,168,76,0.6);width:55%"></div>
-              <div data-bnr-role="bar-light" style="height:3px;background:rgba(255,255,255,0.25);width:80%"></div>
-              <div data-bnr-role="bar-light" style="height:3px;background:rgba(255,255,255,0.18);width:65%"></div>
-              <div style="display:flex;gap:4px;margin-top:4px"><div data-bnr-role="btn-accent" style="height:8px;width:32px;background:#c9a84c"></div><div data-bnr-role="btn-outline" style="height:8px;width:32px;background:transparent;border:1px solid rgba(255,255,255,0.3)"></div></div>
+          <!-- CLASSIC: Cormorant Garamond + Montserrat -->
+          <button type="button" class="font-pair-card" data-font="classic" onclick="setFontPair('classic')" style="padding:1.1rem 1.25rem;border:2px solid var(--accent);background:rgba(201,168,76,0.08);cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem">
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent)">Classic</span>
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.62rem;font-weight:400;color:var(--text-muted)">Elegant &amp; refined</span>
             </div>
-            <div style="padding:10px 14px 14px">
-              <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.05em;color:var(--dark);margin-bottom:3px">Classic Block</div>
-              <div style="font-size:0.66rem;font-weight:300;color:var(--text-muted);line-height:1.5">Clean dark hero with bold headline and trust bar. Professional and easy to read.</div>
-            </div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.7rem;line-height:1.05;color:var(--dark)">Built to last.</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:400;font-size:0.74rem;line-height:1.5;color:var(--text-mid)">Quality work for homeowners who want it done right the first time.</div>
           </button>
 
-          <!-- PHOTO OVERLAY -->
-          <button type="button" class="hero-style-card" data-style="photo-overlay" onclick="setHeroStyle('photo-overlay')" style="font-family:'Montserrat',sans-serif;padding:0;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;overflow:hidden">
-            <div data-bnr-role="bg-primary-photo" style="position:relative;padding:14px 14px 16px;background:linear-gradient(135deg,#3a4a2a 0%,#1a2410 100%);overflow:hidden">
-              <div data-bnr-role="text-accent" style="font-size:7px;letter-spacing:1.5px;color:#c9a84c;text-transform:uppercase;margin-bottom:4px">City · Locally Owned</div>
-              <div data-bnr-role="bar-accent" style="height:3px;background:rgba(201,168,76,0.7);width:65%;margin-bottom:3px"></div>
-              <div data-bnr-role="bar-light" style="height:3px;background:rgba(255,255,255,0.3);width:80%;margin-bottom:3px"></div>
-              <div data-bnr-role="bar-light" style="height:3px;background:rgba(255,255,255,0.25);width:60%;margin-bottom:5px"></div>
-              <div style="display:flex;gap:4px"><div data-bnr-role="btn-accent" style="height:8px;width:30px;background:#c9a84c"></div><div data-bnr-role="btn-outline" style="height:8px;width:30px;background:transparent;border:1px solid rgba(255,255,255,0.4)"></div></div>
-              <div data-bnr-role="trust-strip" style="display:flex;gap:8px;margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.15);font-size:6px;color:rgba(255,255,255,0.6);letter-spacing:1px;text-transform:uppercase"><span>100%</span><span>5★</span><span>Free</span><span>10+</span></div>
+          <!-- MODERN: DM Sans -->
+          <button type="button" class="font-pair-card" data-font="modern" onclick="setFontPair('modern')" style="padding:1.1rem 1.25rem;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem">
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent)">Modern</span>
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.62rem;font-weight:400;color:var(--text-muted)">Clean &amp; minimal</span>
             </div>
-            <div style="padding:10px 14px 14px">
-              <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.05em;color:var(--dark);margin-bottom:3px">Photo Overlay</div>
-              <div style="font-size:0.66rem;font-weight:300;color:var(--text-muted);line-height:1.5">Full-width photo of your work with bold text overlay. Modern, high-impact.</div>
-            </div>
+            <div style="font-family:'DM Sans',sans-serif;font-weight:600;font-size:1.5rem;letter-spacing:-0.02em;line-height:1.1;color:var(--dark)">Clean. Simple. Done.</div>
+            <div style="font-family:'DM Sans',sans-serif;font-weight:400;font-size:0.76rem;line-height:1.5;color:var(--text-mid)">Sharp, modern type that loads fast and looks crisp on every screen.</div>
           </button>
 
-          <!-- MINIMAL LIGHT -->
-          <button type="button" class="hero-style-card" data-style="minimal-light" onclick="setHeroStyle('minimal-light')" style="font-family:'Montserrat',sans-serif;padding:0;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;overflow:hidden">
-            <div data-bnr-role="bg-bg" data-bnr-border="bg-edge" style="background:#fafaf7;padding:14px 14px 16px;display:flex;flex-direction:column;gap:4px;border-bottom:1px solid #e5e0d4">
-              <div data-bnr-role="text-accent" style="font-size:7px;letter-spacing:1.5px;color:#b89540;text-transform:uppercase">Minimal Light</div>
-              <div data-bnr-role="bar-accent" style="height:3px;background:#c9a84c;width:50%;margin-top:2px"></div>
-              <div data-bnr-role="bar-dark" style="height:3px;background:rgba(0,0,0,0.18);width:75%"></div>
-              <div data-bnr-role="bar-dark" style="height:3px;background:rgba(0,0,0,0.12);width:60%"></div>
-              <div style="display:flex;gap:4px;margin-top:4px"><div data-bnr-role="btn-dark" style="height:8px;width:32px;background:#1a1a1a"></div><div data-bnr-role="btn-outline-dark" style="height:8px;width:32px;background:transparent;border:1px solid rgba(0,0,0,0.2)"></div></div>
+          <!-- BOLD: Playfair Display + Montserrat -->
+          <button type="button" class="font-pair-card" data-font="bold" onclick="setFontPair('bold')" style="padding:1.1rem 1.25rem;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem">
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent)">Bold</span>
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.62rem;font-weight:400;color:var(--text-muted)">Strong &amp; dramatic</span>
             </div>
-            <div style="padding:10px 14px 14px">
-              <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.05em;color:var(--dark);margin-bottom:3px">Minimal Light</div>
-              <div style="font-size:0.66rem;font-weight:300;color:var(--text-muted);line-height:1.5">Clean white background with bold headline. Calm, premium, very readable.</div>
-            </div>
+            <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.85rem;line-height:1.02;color:var(--dark)">Get noticed.</div>
+            <div style="font-family:'Montserrat',sans-serif;font-weight:400;font-size:0.74rem;line-height:1.5;color:var(--text-mid)">Big, confident type that makes your business impossible to ignore.</div>
           </button>
 
-          <!-- SPLIT SCREEN -->
-          <button type="button" class="hero-style-card" data-style="split-screen" onclick="setHeroStyle('split-screen')" style="font-family:'Montserrat',sans-serif;padding:0;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;overflow:hidden">
-            <div style="display:grid;grid-template-columns:55% 45%;min-height:74px">
-              <div data-bnr-role="bg-primary" style="background:#1a2030;padding:12px 12px 14px;display:flex;flex-direction:column;gap:4px">
-                <div data-bnr-role="text-accent" style="font-size:7px;letter-spacing:1.2px;color:#c9a84c;text-transform:uppercase">Split Screen</div>
-                <div data-bnr-role="bar-accent" style="height:3px;background:rgba(201,168,76,0.55);width:75%"></div>
-                <div data-bnr-role="bar-light" style="height:3px;background:rgba(255,255,255,0.25);width:90%"></div>
-                <div data-bnr-role="bar-light" style="height:3px;background:rgba(255,255,255,0.18);width:60%"></div>
-                <div data-bnr-role="btn-accent" style="height:8px;width:32px;background:#c9a84c;margin-top:4px"></div>
-              </div>
-              <div data-bnr-role="bg-photo" style="background:linear-gradient(135deg,#5a4a32 0%,#3a2818 100%);position:relative;display:flex;align-items:center;justify-content:center"><div style="font-size:8px;color:rgba(255,255,255,0.5);font-style:italic">your photo</div></div>
+          <!-- FRIENDLY: Cormorant Garamond italic + DM Sans -->
+          <button type="button" class="font-pair-card" data-font="friendly" onclick="setFontPair('friendly')" style="padding:1.1rem 1.25rem;border:1px solid var(--border);background:#fff;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:1rem">
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent)">Friendly</span>
+              <span style="font-family:'Montserrat',sans-serif;font-size:0.62rem;font-weight:400;color:var(--text-muted)">Warm &amp; approachable</span>
             </div>
-            <div style="padding:10px 14px 14px">
-              <div style="font-size:0.78rem;font-weight:600;letter-spacing:0.05em;color:var(--dark);margin-bottom:3px">Split Screen</div>
-              <div style="font-size:0.66rem;font-weight:300;color:var(--text-muted);line-height:1.5">Headline on one side, your photo on the other. Bold and balanced.</div>
-            </div>
+            <div style="font-family:'Cormorant Garamond',serif;font-weight:600;font-style:italic;font-size:1.7rem;line-height:1.05;color:var(--dark)">Let&rsquo;s get started.</div>
+            <div style="font-family:'DM Sans',sans-serif;font-weight:400;font-size:0.76rem;line-height:1.55;color:var(--text-mid)">Warm, easy-to-read type that feels like a real conversation.</div>
           </button>
 
         </div>
-        <p style="font-size:0.7rem;font-weight:300;color:var(--text-muted);margin-top:0.85rem;font-style:italic">For Photo Overlay or Split Screen: upload at least one work photo above for best results. No photo? We'll use a clean dark gradient.</p>
       </div>
 
       <!-- DOMAIN PICKER — injected after business name is known -->
@@ -2664,7 +2639,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
 
       <div class="b-btn-row" style="margin-top:1.25rem">
-        <button class="b-btn-back" onclick="goBS('3a')">Start Over</button>
+        <button class="b-btn-back" onclick="goBS(1)">Start Over</button>
         <button class="b-btn-gold" onclick="goBS(4)">I Love It — Claim My Site for $200</button>
       </div>
     </div>
@@ -2984,10 +2959,10 @@ const GOALS=[{id:'exposure',label:'More Exposure',desc:'Show up when locals sear
 const BUILD_STEPS_TEXT=['Reading your business info…','Writing homepage copy…','Building services section…','Generating specialties…','Writing work process…','Creating service areas…','Finishing contact section…','Your site is ready.'];
 
 const FONT_PAIRS={
-  classic:{label:'Classic',sub:'Elegant serif headings',heading:`'Cormorant Garamond',serif`,body:`'Montserrat',sans-serif`,headingWeight:300,bodyWeight:400},
-  modern:{label:'Modern',sub:'Clean and minimal',heading:`'Inter',sans-serif`,body:`'Inter',sans-serif`,headingWeight:600,bodyWeight:400},
-  bold:{label:'Bold',sub:'Strong and confident',heading:`'Playfair Display',serif`,body:`'Source Sans 3',sans-serif`,headingWeight:600,bodyWeight:400},
-  friendly:{label:'Friendly',sub:'Warm and readable',heading:`'Merriweather',serif`,body:`'Open Sans',sans-serif`,headingWeight:700,bodyWeight:400}
+  classic:{label:'Classic',sub:'Elegant & refined',heading:`'Cormorant Garamond',serif`,body:`'Montserrat',sans-serif`,headingWeight:600,bodyWeight:400},
+  modern:{label:'Modern',sub:'Clean & minimal',heading:`'DM Sans',sans-serif`,body:`'DM Sans',sans-serif`,headingWeight:600,bodyWeight:400},
+  bold:{label:'Bold',sub:'Strong & dramatic',heading:`'Playfair Display',serif`,body:`'Montserrat',sans-serif`,headingWeight:700,bodyWeight:400},
+  friendly:{label:'Friendly',sub:'Warm & approachable',heading:`'Cormorant Garamond',serif`,body:`'DM Sans',sans-serif`,headingWeight:600,bodyWeight:400}
 };
 
 const sectionVis={services:true,about:true,specialties:true,pricing:false,gallery_1:true,process:true,areas:true,reviews:true,faq:true,credentials:false};
@@ -4754,9 +4729,10 @@ function dmRender(view){
 }
 
 function goBS(step){
-  // Hard wall: require a real account between Step 2 and Step 3.
-  if((step==='3a'||step===3||step==='3c') && !S.accountCreated){
-    openLeadCaptureModal(step);
+  // Hard wall: never show the finished preview without a real account.
+  // (Account creation runs concurrently with the build — see startBuild.)
+  if(step==='3c' && !S.accountCreated){
+    openLeadCaptureModal('3c');
     return;
   }
   ['bs1','bs2','bs3a','bs3b','bs3c','bs4','bsSuccess'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
@@ -4882,6 +4858,13 @@ async function submitLeadCapture(e){
   if(document.getElementById('bPhone'))document.getElementById('bPhone').value=phone;
   if(typeof saveBuildState==='function'){try{saveBuildState();}catch(_){}}
   closeLeadCaptureModal();
+  // Account is done. Coordinate with the build:
+  // - If the site is still building, let the build's own completion take them to
+  //   the preview (closing this modal just reveals the build-progress screen).
+  // - If the build already finished while they filled this out, go to the preview.
+  // - Otherwise (no build in flight) resume wherever they were headed.
+  if(S._building){ return false; }
+  if(S._buildReady||S.siteData){ goBS('3c'); if(typeof renderPreview==='function')renderPreview(); return false; }
   goBS(S._pendingStep||'3a');
   return false;
 }
@@ -5030,8 +5013,19 @@ function checkCustomDomain(){
 
 
 // BUILD
+// Called when the build finishes. Only reveals the preview once the account
+// exists too; otherwise it (re)shows the account modal and waits for it.
+function finishBuildToPreview(){
+  S._building=false;
+  if(S.accountCreated){ goBS('3c'); if(typeof renderPreview==='function')renderPreview(); }
+  else { S._buildReady=true; openLeadCaptureModal('3c'); }
+}
 async function startBuild(){
+  S._building=true;S._buildReady=false;
   goBS('3b');
+  // Create the account WHILE the site builds — the modal overlays the
+  // build-progress screen so the wait does double duty.
+  if(!S.accountCreated){ openLeadCaptureModal('3c'); }
   const sl=document.getElementById('buildStepsList');
   sl.innerHTML=BUILD_STEPS_TEXT.map((s,i)=>`<div class="b-step" id="bst${i}"><div class="b-step-dot" id="bsd${i}"></div><span class="b-step-text">${s}</span></div>`).join('');
   for(let i=0;i<BUILD_STEPS_TEXT.length-1;i++){await new Promise(r=>setTimeout(r,700));if(i>0){const pd=document.getElementById('bsd'+(i-1));pd.classList.remove('active');pd.classList.add('done');pd.textContent='✓';}document.getElementById('bst'+i).classList.add('vis');document.getElementById('bsd'+i).classList.add('active');}
@@ -5063,7 +5057,7 @@ async function startBuild(){
       faqs:[],
     };
     const last=BUILD_STEPS_TEXT.length-1;document.getElementById('bst'+(last-1)).classList.add('vis');const ld=document.getElementById('bsd'+(last-1));ld.classList.remove('active');ld.classList.add('done');ld.textContent='✓';document.getElementById('bst'+last).classList.add('vis');document.getElementById('bsd'+last).classList.add('active');
-    await new Promise(r=>setTimeout(r,500));goBS('3c');renderPreview();
+    await new Promise(r=>setTimeout(r,500));finishBuildToPreview();
     return;
   }
 
@@ -5233,7 +5227,7 @@ ${document.getElementById('bStory').value||'(The owner did not share a story. Wr
     };
   }
   const last=BUILD_STEPS_TEXT.length-1;document.getElementById('bst'+(last-1)).classList.add('vis');const ld=document.getElementById('bsd'+(last-1));ld.classList.remove('active');ld.classList.add('done');ld.textContent='✓';document.getElementById('bst'+last).classList.add('vis');document.getElementById('bsd'+last).classList.add('active');
-  await new Promise(r=>setTimeout(r,500));goBS('3c');renderPreview();
+  await new Promise(r=>setTimeout(r,500));finishBuildToPreview();
 }
 
 // THEME
@@ -5583,7 +5577,7 @@ function generateSiteHTML(){
   const mailtoSubject=encodeURIComponent(`Quote request from your website`);
   // NOTE: navigation uses anchor links; all sections must have matching IDs (services, work, process, contact, pricing)
 
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${biz}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600&family=Merriweather:wght@300;400;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>${biz}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500;600&family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600&family=Merriweather:wght@300;400;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:80px}
