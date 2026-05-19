@@ -1,8 +1,9 @@
 // Bedrock Optimizer — site audit engine.
 // Fetches a URL, runs Google PageSpeed + HTML checks, returns a 0–100 score,
-// category breakdown, per-check plain-English results, and scraped data for
-// the builder handoff. Zero npm deps (Node 18 global fetch on Netlify).
-// Scoring rubric: bedrock-vault/06-SEO-AUDIT-TOOL.md. Standards: seo_guide.md, geo_guide.md.
+// category breakdown, per-check tier (good/warn/bad) + plain-English education,
+// and scraped data for the builder handoff. Zero npm deps (Node 18 fetch).
+// Rubric: bedrock-vault/06-SEO-AUDIT-TOOL.md. Standards: seo_guide.md, geo_guide.md.
+// Scoring is deterministic — same site always yields the same score.
 
 const TRADES = [
   'plumb', 'electric', 'hvac', 'heating', 'cooling', 'roof', 'landscap',
@@ -17,6 +18,13 @@ const LOCALBUSINESS_TYPES = [
   'generalcontractor', 'housepainter', 'homeandconstructionbusiness',
   'professionalservice', 'contractor', 'movingcompany', 'locksmith',
 ];
+
+// warn (yellow) earns half the points, rounded. bad earns nothing.
+function award(points, tier) {
+  if (tier === 'good') return points;
+  if (tier === 'warn') return Math.round(points * 0.5);
+  return 0;
+}
 
 function withTimeout(promise, ms, label) {
   let t;
@@ -96,35 +104,26 @@ async function getPageSpeed(url) {
 function buildChecks({ html, text, url, ps, jsonld }) {
   const titleTag = firstMatch(/<title[^>]*>([\s\S]*?)<\/title>/i, html);
   const h1 = stripTags(firstMatch(/<h1[^>]*>([\s\S]*?)<\/h1>/i, html));
-  const metaDesc = firstMatch(
-    /<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i,
-    html
-  ) || firstMatch(
-    /<meta[^>]+content=["']([^"']*)["'][^>]+name=["']description["']/i,
-    html
-  );
+  const metaDesc =
+    firstMatch(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/i, html) ||
+    firstMatch(/<meta[^>]+content=["']([^"']*)["'][^>]+name=["']description["']/i, html);
 
   const localBiz = jsonld.find((n) => typeMatches(n, LOCALBUSINESS_TYPES));
   const faqSchema = jsonld.find((n) => typeMatches(n, ['faqpage']));
 
-  const phoneRe = /(?:tel:\s*)?(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/;
   const hasTelLink = /href=["']tel:/i.test(html);
-  const hasPhone = hasTelLink || phoneRe.test(text);
+  const phoneInText = /(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/.test(text);
 
   const addrSchema =
     localBiz &&
     (localBiz.address?.streetAddress ||
       (typeof localBiz.address === 'string' && localBiz.address));
-  const addrText =
-    /\d{1,6}\s+([A-Za-z0-9.'-]+\s){1,4}(st|street|ave|avenue|rd|road|blvd|boulevard|dr|drive|ln|lane|way|ct|court|hwy|highway|pkwy|suite|ste)\b/i.test(
-      text
-    );
+  const addrText = /\d{1,6}\s+([A-Za-z0-9.'-]+\s){1,4}(st|street|ave|avenue|rd|road|blvd|boulevard|dr|drive|ln|lane|way|ct|court|hwy|highway|pkwy|suite|ste)\b/i.test(text);
   const zipText = /\b[A-Z]{2}\s?\d{5}(-\d{4})?\b/.test(text);
-  const hasAddress = !!addrSchema || addrText || zipText;
 
   const cityStateRe = /\b([A-Z][a-zA-Z.'-]+(?:\s[A-Z][a-zA-Z.'-]+)*),\s*([A-Z]{2})\b/;
-  const cityInTitleOrH1 =
-    cityStateRe.test(titleTag) ||
+  const cityInTitle = cityStateRe.test(titleTag);
+  const cityInH1 =
     cityStateRe.test(h1) ||
     (localBiz?.address?.addressLocality &&
       (titleTag + ' ' + h1)
@@ -136,17 +135,12 @@ function buildChecks({ html, text, url, ps, jsonld }) {
   const faqTextSignals =
     /frequently asked|\bf\.?a\.?q\b/i.test(text) &&
     (text.match(/\?/g) || []).length >= 3;
-  const hasFaq = !!faqSchema || faqTextSignals;
 
   const wordCount = text.split(/\s+/).filter(Boolean).length;
   const mentionsTrade = TRADES.some((t) => text.toLowerCase().includes(t));
-  const serviceDetail = wordCount >= 350 && mentionsTrade;
 
   const schemaName = (localBiz?.name || '').toLowerCase();
-  const cleanTitle = titleTag
-    .toLowerCase()
-    .split(/[|\-–—:·]/)[0]
-    .trim();
+  const cleanTitle = titleTag.toLowerCase().split(/[|\-–—:·]/)[0].trim();
   const nameConsistent =
     !!schemaName &&
     !!cleanTitle &&
@@ -155,139 +149,231 @@ function buildChecks({ html, text, url, ps, jsonld }) {
       (h1 && h1.toLowerCase().includes(schemaName)));
 
   const psKnown = ps && ps.ok;
-  const fastEnough = psKnown && ps.fcpSeconds != null ? ps.fcpSeconds < 3 : null;
-  const speedOk = psKnown ? ps.perfScore >= 70 : null;
+  const def = (cond) => (cond ? 'good' : 'bad');
 
-  // status: pass | fail | unknown. unknown = couldn't measure (PageSpeed down).
-  const checks = [
-    {
-      cat: 'Performance',
-      key: 'mobile_speed',
-      label: 'Loads fast on a phone',
-      points: 15,
-      status: speedOk == null ? 'unknown' : speedOk ? 'pass' : 'fail',
-      detail:
-        speedOk == null
-          ? "We couldn't measure your speed automatically this time."
-          : speedOk
-          ? `Google scores your mobile speed at ${ps.perfScore}/100 — that's solid.`
-          : `Google scores your mobile speed at ${ps.perfScore}/100. Slow sites lose customers before the page even loads.`,
+  // ---- Performance ----
+  let speedTier, speedResult;
+  if (!psKnown) {
+    speedTier = 'warn';
+    speedResult = "We couldn't measure your speed automatically this time — it's worth a manual check.";
+  } else if (ps.perfScore >= 70) {
+    speedTier = 'good';
+    speedResult = `Google scores your mobile speed at ${ps.perfScore}/100 — that's solid.`;
+  } else if (ps.perfScore >= 40) {
+    speedTier = 'warn';
+    speedResult = `Google scores your mobile speed at ${ps.perfScore}/100 — okay, but slow enough to lose impatient visitors.`;
+  } else {
+    speedTier = 'bad';
+    speedResult = `Google scores your mobile speed at ${ps.perfScore}/100. This is slow enough that people leave before it loads.`;
+  }
+
+  let fcpTier, fcpResult;
+  if (!psKnown || ps.fcpSeconds == null) {
+    fcpTier = 'warn';
+    fcpResult = "Couldn't measure load time automatically this time.";
+  } else if (ps.fcpSeconds < 3) {
+    fcpTier = 'good';
+    fcpResult = `Your page starts showing in ${ps.fcpSeconds.toFixed(1)} seconds.`;
+  } else if (ps.fcpSeconds < 5) {
+    fcpTier = 'warn';
+    fcpResult = `Your page takes ${ps.fcpSeconds.toFixed(1)} seconds to start showing — past the point most people wait.`;
+  } else {
+    fcpTier = 'bad';
+    fcpResult = `Your page takes ${ps.fcpSeconds.toFixed(1)} seconds to start showing. Most visitors are long gone.`;
+  }
+
+  // ---- Local SEO ----
+  let phoneTier, phoneResult;
+  if (hasTelLink) {
+    phoneTier = 'good';
+    phoneResult = 'Your phone number is a tap-to-call link — exactly right for mobile.';
+  } else if (phoneInText) {
+    phoneTier = 'warn';
+    phoneResult = 'A phone number is on the page, but it isn\'t a tap-to-call link, so mobile visitors have to copy it.';
+  } else {
+    phoneTier = 'bad';
+    phoneResult = "We couldn't find a phone number. If someone can't call you in one tap, you lose the job.";
+  }
+
+  let addrTier, addrResult;
+  if (addrSchema || addrText) {
+    addrTier = 'good';
+    addrResult = 'A physical address is present on the page.';
+  } else if (zipText) {
+    addrTier = 'warn';
+    addrResult = 'We found a city/ZIP but not a full address. Google trusts a complete address more.';
+  } else {
+    addrTier = 'bad';
+    addrResult = 'No address or service area found. Google needs to know where you are to rank you locally.';
+  }
+
+  let cityTier, cityResult;
+  if (cityInTitle) {
+    cityTier = 'good';
+    cityResult = 'Your service area is in the page title — the strongest local-search signal.';
+  } else if (cityInH1) {
+    cityTier = 'warn';
+    cityResult = 'Your city is in the headline but not the page title. The title carries more weight.';
+  } else {
+    cityTier = 'bad';
+    cityResult = 'Your city isn\'t in your title or headline — the #1 thing Google uses for "near me" searches.';
+  }
+
+  const httpsTier = def(isHttps);
+
+  // ---- Schema & Structure ----
+  const lbTier = def(!!localBiz);
+
+  let metaTier, metaResult;
+  if (metaDesc && metaDesc.length >= 50 && metaDesc.length <= 165) {
+    metaTier = 'good';
+    metaResult = 'You have a well-sized description for search results.';
+  } else if (metaDesc && metaDesc.length > 10) {
+    metaTier = 'warn';
+    metaResult = `Your search description is ${metaDesc.length} characters — present, but ${metaDesc.length < 50 ? 'too short to be compelling' : 'long enough that Google will cut it off'}.`;
+  } else {
+    metaTier = 'bad';
+    metaResult = 'No description tag. Google is guessing what to show under your name in search results.';
+  }
+
+  let faqTier, faqResult;
+  if (faqSchema) {
+    faqTier = 'good';
+    faqResult = 'You have FAQ content with proper schema — ideal for both Google and AI.';
+  } else if (faqTextSignals) {
+    faqTier = 'warn';
+    faqResult = 'You have FAQ-style content but no FAQ schema, so AI engines may miss it.';
+  } else {
+    faqTier = 'bad';
+    faqResult = 'No FAQ content. FAQs are the single highest-impact thing for showing up in AI answers.';
+  }
+
+  // ---- GEO Readiness ----
+  let geoFaqTier, geoFaqResult;
+  if (faqSchema) {
+    geoFaqTier = 'good';
+    geoFaqResult = 'Your Q&A is structured so ChatGPT, Siri, and Google AI can quote it directly.';
+  } else if (faqTextSignals) {
+    geoFaqTier = 'warn';
+    geoFaqResult = 'You have some Q&A content, but without schema AI engines often skip it.';
+  } else {
+    geoFaqTier = 'bad';
+    geoFaqResult = "When someone asks ChatGPT for a contractor in your area, there's nothing here for it to quote.";
+  }
+
+  let svcTier, svcResult;
+  if (wordCount >= 500 && mentionsTrade) {
+    svcTier = 'good';
+    svcResult = 'Your services are described in real detail — enough for AI to understand what you do.';
+  } else if (wordCount >= 250 && mentionsTrade) {
+    svcTier = 'warn';
+    svcResult = 'You have some service content, but more specific detail would help Google and AI.';
+  } else {
+    svcTier = 'bad';
+    svcResult = 'Your service descriptions are thin. "We do plumbing" tells Google and AI almost nothing.';
+  }
+
+  let nameTier, nameResult;
+  if (nameConsistent) {
+    nameTier = 'good';
+    nameResult = 'Your business name is consistent across title, headline, and code.';
+  } else if (schemaName || cleanTitle) {
+    nameTier = 'warn';
+    nameResult = 'Your business name isn\'t identical across your title, headline, and code — AI may read those as different businesses.';
+  } else {
+    nameTier = 'bad';
+    nameResult = "We couldn't pin down a consistent business name anywhere on the page.";
+  }
+
+  const INFO = {
+    mobile_speed: {
+      why: 'Over half of local searches happen on a phone. A slow site loses the customer before they ever see your work.',
+      measures: "Google PageSpeed's mobile performance score for your page (0–100).",
+      fix: 'Compress big images, remove unused plugins/widgets, and use a fast host. Every Bedrock site is a lightweight static page on a global CDN.',
     },
-    {
-      cat: 'Performance',
-      key: 'load_under_3s',
-      label: 'First content shows in under 3 seconds',
-      points: 10,
-      status: fastEnough == null ? 'unknown' : fastEnough ? 'pass' : 'fail',
-      detail:
-        fastEnough == null
-          ? "Couldn't measure load time automatically this time."
-          : fastEnough
-          ? `Your page starts showing in ${ps.fcpSeconds.toFixed(1)}s.`
-          : `Your page takes ${ps.fcpSeconds ? ps.fcpSeconds.toFixed(1) + 's' : 'over 3s'} to start showing. Most people leave by then.`,
+    load_under_3s: {
+      why: 'Most people abandon a page that takes more than 3 seconds to start showing. That is a lost lead, every time.',
+      measures: 'Time until the first real content appears on screen (First Contentful Paint), on mobile.',
+      fix: 'Cut heavy scripts and oversized images, and serve the page from a CDN. Bedrock sites typically paint in under a second.',
     },
-    {
-      cat: 'Local SEO',
-      key: 'phone_visible',
-      label: 'Phone number is on the page',
-      points: 10,
-      status: hasPhone ? 'pass' : 'fail',
-      detail: hasPhone
-        ? 'A phone number is visible on your site.'
-        : "We couldn't find a phone number. If a customer can't call you in one tap, you lose the job.",
+    phone_visible: {
+      why: 'The whole point of a contractor site is getting the call. A buried or un-clickable number costs you jobs.',
+      measures: "Whether a phone number is on the page, and whether it's a one-tap 'tel:' link.",
+      fix: 'Put a tap-to-call number in the header and hero. Every Bedrock layout has tap-to-call built in.',
     },
-    {
-      cat: 'Local SEO',
-      key: 'address_present',
-      label: 'Physical address or service area shown',
-      points: 8,
-      status: hasAddress ? 'pass' : 'fail',
-      detail: hasAddress
-        ? 'An address or service area is present.'
-        : 'No address found. Google needs to know where you are to show you in local results.',
+    address_present: {
+      why: 'Google ranks you for "near me" searches partly on a clear, consistent address or service area.',
+      measures: 'Whether a street address or service-area location appears in the page text or schema.',
+      fix: 'Show your full address or the cities you serve in the footer and contact section. Bedrock builds this in.',
     },
-    {
-      cat: 'Local SEO',
-      key: 'city_in_title',
-      label: 'Your city is in the page title or headline',
-      points: 7,
-      status: cityInTitleOrH1 ? 'pass' : 'fail',
-      detail: cityInTitleOrH1
-        ? 'Your service area appears in the title or main headline.'
-        : 'Your city isn\'t in your title or headline. That\'s the #1 thing Google uses to match "plumber near me" searches.',
+    city_in_title: {
+      why: 'The single biggest local-ranking lever: matching the city in the search ("plumber Milwaukee").',
+      measures: 'Whether your service-area city appears in the page <title> or main headline.',
+      fix: 'Use a title like "Service + City | Business Name." Bedrock writes your city into the title during the build.',
     },
-    {
-      cat: 'Local SEO',
-      key: 'https',
-      label: 'Secure (HTTPS) connection',
-      points: 5,
-      status: isHttps ? 'pass' : 'fail',
-      detail: isHttps
-        ? 'Your site loads securely over HTTPS.'
-        : 'Your site is not secure (no HTTPS). Browsers warn visitors, and Google ranks you lower.',
+    https: {
+      why: 'Browsers flag non-HTTPS sites as "Not secure," which scares off customers, and Google ranks them lower.',
+      measures: 'Whether your site loads over a secure HTTPS connection.',
+      fix: 'Install an SSL certificate (most hosts offer it free). Every Bedrock site gets automatic SSL.',
     },
-    {
-      cat: 'Schema',
-      key: 'localbusiness_schema',
-      label: 'LocalBusiness schema markup',
-      points: 10,
-      status: localBiz ? 'pass' : 'fail',
-      detail: localBiz
-        ? 'Your site has LocalBusiness structured data.'
-        : 'No LocalBusiness markup — the invisible code that tells Google and AI exactly what your business does and where.',
+    localbusiness_schema: {
+      why: 'Schema is the invisible code that tells Google and AI exactly what your business is, where, and what you do.',
+      measures: 'Whether valid LocalBusiness structured data (JSON-LD) is present on the page.',
+      fix: 'Add LocalBusiness JSON-LD with your name, phone, address, and hours. Bedrock generates it automatically.',
     },
-    {
-      cat: 'Schema',
-      key: 'meta_description',
-      label: 'Search-result description (meta description)',
-      points: 8,
-      status: metaDesc && metaDesc.length > 10 ? 'pass' : 'fail',
-      detail:
-        metaDesc && metaDesc.length > 10
-          ? 'You have a meta description for search results.'
-          : 'No description tag. Google is guessing what to show under your name in search results.',
+    meta_description: {
+      why: "It's the sentence people read under your name in Google. A good one gets the click; a missing one gets skipped.",
+      measures: 'Whether a meta description exists and is a useful length (roughly 50–165 characters).',
+      fix: 'Write a one-line pitch with your service and city, ending in a reason to call. Bedrock writes this for you.',
     },
-    {
-      cat: 'Schema',
-      key: 'faq_present',
-      label: 'FAQ section or FAQ schema',
-      points: 7,
-      status: hasFaq ? 'pass' : 'fail',
-      detail: hasFaq
-        ? 'You have FAQ content or FAQ schema.'
-        : 'No FAQ content. FAQs are the single highest-impact thing for showing up in AI answers.',
+    faq_present: {
+      why: 'A real FAQ answers buyer questions and is the highest-impact content for both Google rich results and AI.',
+      measures: 'Whether FAQ content exists, and whether it has proper FAQPage schema.',
+      fix: 'Add 3–5 real customer questions with clear answers, plus FAQ schema. Built into every Bedrock template.',
     },
-    {
-      cat: 'GEO',
-      key: 'faq_for_ai',
-      label: 'Question-and-answer content for AI search',
-      points: 8,
-      status: hasFaq ? 'pass' : 'fail',
-      detail: hasFaq
-        ? 'Your Q&A content can be quoted by ChatGPT, Siri, and Google AI.'
-        : "When someone asks ChatGPT for a contractor in your area, there's nothing here for it to quote.",
+    faq_for_ai: {
+      why: 'AI search (ChatGPT, Siri, Google AI) quotes structured Q&A. No Q&A means you simply do not show up in the answer.',
+      measures: 'Whether your Q&A content is structured (FAQPage schema) so AI can lift and cite it.',
+      fix: 'Phrase headings as the exact questions customers ask and answer them directly, with schema. Bedrock does this by default.',
     },
-    {
-      cat: 'GEO',
-      key: 'service_detail',
-      label: 'Detailed service descriptions',
-      points: 7,
-      status: serviceDetail ? 'pass' : 'fail',
-      detail: serviceDetail
-        ? 'Your services are described in enough detail for AI to understand them.'
-        : 'Your service descriptions are thin. "We do plumbing" tells Google and AI almost nothing.',
+    service_detail: {
+      why: 'Thin content ("we do plumbing") gives Google and AI nothing to match a searcher to. Detail wins the ranking.',
+      measures: 'How much specific, trade-relevant service content is on the page.',
+      fix: 'Describe each service: what it includes, common problems, your process. Bedrock builds detailed service sections.',
     },
-    {
-      cat: 'GEO',
-      key: 'name_consistent',
-      label: 'Business name consistent across the page',
-      points: 5,
-      status: nameConsistent ? 'pass' : 'fail',
-      detail: nameConsistent
-        ? 'Your business name is consistent across title, headline, and schema.'
-        : "Your business name doesn't match across your title, headline, and code. AI treats inconsistent names as different businesses.",
+    name_consistent: {
+      why: 'AI systems treat inconsistent names as different businesses, splitting your credibility and hiding you from answers.',
+      measures: 'Whether your business name matches across the title, headline, and schema.',
+      fix: 'Use the exact same business name everywhere — site, Google profile, directories. Bedrock keeps it consistent.',
     },
+  };
+
+  const raw = [
+    ['Performance', 'mobile_speed', 'Loads fast on a phone', 15, speedTier, speedResult],
+    ['Performance', 'load_under_3s', 'First content in under 3 seconds', 10, fcpTier, fcpResult],
+    ['Local SEO', 'phone_visible', 'Phone number is tap-to-call', 10, phoneTier, phoneResult],
+    ['Local SEO', 'address_present', 'Address or service area shown', 8, addrTier, addrResult],
+    ['Local SEO', 'city_in_title', 'Your city is in the page title', 7, cityTier, cityResult],
+    ['Local SEO', 'https', 'Secure (HTTPS) connection', 5, httpsTier,
+      isHttps ? 'Your site loads securely over HTTPS.' : 'Your site is not secure (no HTTPS). Browsers warn visitors and Google ranks you lower.'],
+    ['Schema', 'localbusiness_schema', 'LocalBusiness schema markup', 10, lbTier,
+      localBiz ? 'Your site has LocalBusiness structured data.' : 'No LocalBusiness markup — the code that tells Google and AI what your business is.'],
+    ['Schema', 'meta_description', 'Search-result description', 8, metaTier, metaResult],
+    ['Schema', 'faq_present', 'FAQ section or FAQ schema', 7, faqTier, faqResult],
+    ['GEO', 'faq_for_ai', 'Q&A content for AI search', 8, geoFaqTier, geoFaqResult],
+    ['GEO', 'service_detail', 'Detailed service descriptions', 7, svcTier, svcResult],
+    ['GEO', 'name_consistent', 'Business name consistent', 5, nameTier, nameResult],
   ];
+
+  const checks = raw.map(([cat, key, label, points, tier, result]) => ({
+    cat,
+    key,
+    label,
+    points,
+    tier, // good | warn | bad
+    result,
+    info: INFO[key],
+  }));
 
   return { checks, scraped: scrape({ html, text, titleTag, h1, localBiz, url }) };
 }
@@ -304,10 +390,9 @@ function scrape({ html, text, titleTag, h1, localBiz, url }) {
   const cleanTitle = (titleTag || '').split(/[|\-–—:·]/)[0].trim();
   const businessName = localBiz?.name || ogName || cleanTitle || h1 || '';
 
-  let phone = '';
   const tel = firstMatch(/href=["']tel:([^"']+)["']/i, html);
   const phoneRe = /(\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/;
-  phone = (tel || firstMatch(phoneRe, text) || '').trim();
+  const phone = (tel || firstMatch(phoneRe, text) || '').trim();
 
   let city = '';
   if (localBiz?.address?.addressLocality) {
@@ -321,7 +406,7 @@ function scrape({ html, text, titleTag, h1, localBiz, url }) {
     if (m) city = `${m[1]}, ${m[2]}`;
   }
 
-  const hay = `${titleTag} ${h1} ${(localBiz?.['@type'] || '')}`.toLowerCase();
+  const hay = `${titleTag} ${h1} ${localBiz?.['@type'] || ''}`.toLowerCase();
   let trade = '';
   for (const t of TRADES) {
     if (hay.includes(t)) {
@@ -360,7 +445,7 @@ function scoreLabel(score) {
   if (score >= 80) return 'Solid foundation — a few things to improve';
   if (score >= 60) return 'Falling behind — missing key signals Google and AI use';
   if (score >= 40) return "Significant issues — you're likely invisible in local search";
-  return "Critical problems — this site is costing you customers";
+  return 'Critical problems — this site is costing you customers';
 }
 
 exports.handler = async (event) => {
@@ -424,7 +509,7 @@ exports.handler = async (event) => {
     };
   }
 
-  // PageSpeed runs in parallel but is allowed to fail without blocking the audit.
+  // PageSpeed runs but is allowed to fail without blocking the audit.
   let ps = { ok: false };
   try {
     const r = await withTimeout(getPageSpeed(url.href), 9500, 'PageSpeed');
@@ -437,34 +522,29 @@ exports.handler = async (event) => {
   const jsonld = extractJsonLd(html);
   const { checks, scraped } = buildChecks({ html, text, url, ps, jsonld });
 
-  // Unknown (unmeasured) checks get neutral half-credit so the 0–100 scale
-  // stays stable and honest — we neither punish nor reward what we couldn't see.
   let earned = 0;
   let possible = 0;
-  for (const c of checks) {
-    possible += c.points;
-    if (c.status === 'pass') earned += c.points;
-    else if (c.status === 'unknown') earned += c.points / 2;
-  }
-  const score = Math.round((earned / possible) * 100);
-
   const cats = {};
   for (const c of checks) {
+    const got = award(c.points, c.tier);
+    earned += got;
+    possible += c.points;
     if (!cats[c.cat]) cats[c.cat] = { earned: 0, possible: 0 };
+    cats[c.cat].earned += got;
     cats[c.cat].possible += c.points;
-    if (c.status === 'pass') cats[c.cat].earned += c.points;
-    else if (c.status === 'unknown') cats[c.cat].earned += c.points / 2;
   }
+  const score = Math.round((earned / possible) * 100);
   const categories = Object.entries(cats).map(([name, v]) => ({
     name,
     pct: Math.round((v.earned / v.possible) * 100),
   }));
 
+  const rank = { bad: 0, warn: 1, good: 2 };
   const topIssues = checks
-    .filter((c) => c.status === 'fail')
-    .sort((a, b) => b.points - a.points)
+    .filter((c) => c.tier !== 'good')
+    .sort((a, b) => rank[a.tier] - rank[b.tier] || b.points - a.points)
     .slice(0, 3)
-    .map((c) => ({ label: c.label, detail: c.detail }));
+    .map((c) => ({ label: c.label, result: c.result, tier: c.tier }));
 
   return {
     statusCode: 200,
