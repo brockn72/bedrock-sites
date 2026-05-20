@@ -10,8 +10,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-<!-- Supabase JS (auth client) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -337,145 +335,95 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 </footer>
 
 <script>
-// ── INIT ─────────────────────────────────────────────────────────────────────
-let supabase;
-let currentSession = null;
-let currentLead    = null;
-let DEMO           = false;
+// ── STATE ─────────────────────────────────────────────────────────────────────
+var currentSession = null;
+var currentLead    = null;
+var DEMO           = false;
+var SESSION_KEY    = 'bedrock_portal_session';
 
-// Demo mode: portal.html?demo=1 loads a realistic fake client with NO backend,
-// so the dashboard can be built/reviewed and tested without a real account.
+// ── DEMO ──────────────────────────────────────────────────────────────────────
 function isDemoRequested() {
-  try {
-    const p = new URLSearchParams(window.location.search);
-    if (p.get('demo') === '1' || p.get('demo') === 'true') return true;
-  } catch (e) {}
+  try { var p = new URLSearchParams(window.location.search); if (p.get('demo') === '1') return true; } catch(e) {}
   return (window.location.hash || '').indexOf('demo') !== -1;
 }
-
-const DEMO_SESSION = { access_token: 'demo-token', user: { email: 'demo@torrezplumbing.com' } };
-const DEMO_LEAD = {
-  id: 'demo-lead', business_name: 'Torrez Plumbing', contact_name: 'Marco Torrez',
-  phone: '(414) 555-0142', email: 'demo@torrezplumbing.com', trade: 'Plumbing',
-  city: 'Menomonee Falls, WI', status: 'deployed',
-  site_url: 'https://torrezplumbing.bedrock-sites.com',
-  created_at: '2026-04-02T00:00:00Z',
+var DEMO_SESSION = { access_token: 'demo-token', user: { email: 'demo@torrezplumbing.com' } };
+var DEMO_LEAD = {
+  id:'demo-lead', business_name:'Torrez Plumbing', contact_name:'Marco Torrez',
+  phone:'(414) 555-0142', email:'demo@torrezplumbing.com', trade:'Plumbing',
+  city:'Menomonee Falls, WI', status:'deployed',
+  site_url:'https://torrezplumbing.bedrock-sites.com', created_at:'2026-04-02T00:00:00Z',
 };
-
 function startDemo() {
-  DEMO = true;
-  currentSession = DEMO_SESSION;
-  currentLead    = DEMO_LEAD;
-  const badge = document.getElementById('demoBadge');
-  if (badge) badge.style.display = 'inline-block';
+  DEMO = true; currentSession = DEMO_SESSION; currentLead = DEMO_LEAD;
+  var badge = document.getElementById('demoBadge'); if (badge) badge.style.display = 'inline-block';
   document.getElementById('btnLogout').style.display = 'block';
   document.getElementById('navUserEmail').textContent = DEMO_SESSION.user.email;
   populateDashboard(DEMO_LEAD, DEMO_SESSION);
   fillDemoAnalytics();
   showPage('pageDash');
 }
-
-// Sample numbers so the demo dashboard isn't empty — clearly labeled as a
-// preview so it's never mistaken for real client data.
 function fillDemoAnalytics() {
-  const el = document.getElementById('analyticsContent');
-  if (!el) return;
-  el.innerHTML =
-    '<div class="stat-row">' +
-      '<div class="stat-cell"><div class="stat-val">1,284</div><div class="stat-lbl">Page Views</div></div>' +
-      '<div class="stat-cell"><div class="stat-val">612</div><div class="stat-lbl">Visitors</div></div>' +
-      '<div class="stat-cell"><div class="stat-val">+18%</div><div class="stat-lbl">This Month</div></div>' +
-    '</div>' +
-    '<p style="font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-top:0.75rem">Sample data — demo preview only</p>';
+  var el = document.getElementById('analyticsContent'); if (!el) return;
+  el.innerHTML = '<div class="stat-row">' +
+    '<div class="stat-cell"><div class="stat-val">1,284</div><div class="stat-lbl">Page Views</div></div>' +
+    '<div class="stat-cell"><div class="stat-val">612</div><div class="stat-lbl">Visitors</div></div>' +
+    '<div class="stat-cell"><div class="stat-val">+18%</div><div class="stat-lbl">This Month</div></div>' +
+    '</div><p style="font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-top:0.75rem">Sample data — demo preview only</p>';
 }
 
-// Prefill the email if the marketing "Client Login" passed one along.
-function applyPrefillEmail() {
+// ── SESSION HELPERS ───────────────────────────────────────────────────────────
+function saveSession(d) {
   try {
-    const em = sessionStorage.getItem('bedrock_prefill_email');
-    if (em) {
-      const f = document.getElementById('loginEmail');
-      if (f && !f.value) f.value = em;
+    localStorage.setItem(SESSION_KEY, JSON.stringify({
+      access_token:  d.access_token,
+      refresh_token: d.refresh_token,
+      expires_at:    Date.now() + (d.expires_in || 3600) * 1000,
+      user:          d.user,
+    }));
+  } catch(e) {}
+}
+function loadStoredSession() {
+  try {
+    var raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return null;
+    var s = JSON.parse(raw);
+    if (!s.access_token || !s.expires_at || Date.now() > s.expires_at) {
+      localStorage.removeItem(SESSION_KEY);
+      return null;
     }
-  } catch (e) {}
+    return s;
+  } catch(e) { return null; }
+}
+function clearSession() {
+  try { localStorage.removeItem(SESSION_KEY); } catch(e) {}
 }
 
-// A clear message instead of a dead button when the backend isn't reachable.
-function showAuthUnavailable() {
-  applyPrefillEmail();
-  const btn = document.getElementById('btnLogin');
-  if (btn) { btn.disabled = true; btn.textContent = 'Sign-in unavailable'; }
-  showError('loginError',
-    'Sign-in is temporarily unavailable — the portal backend isn\'t fully configured yet. ' +
-    'Add ?demo=1 to the address bar to preview the dashboard, or email support@bedrock-sites.com.');
-}
-
-// Fetch config from the server (keeps credentials out of source code),
-// then initialize Supabase and start the auth flow.
-(async () => {
+// ── STARTUP ───────────────────────────────────────────────────────────────────
+(function init() {
   if (isDemoRequested()) { startDemo(); return; }
 
-  applyPrefillEmail();
-
-  let cfg;
+  // Prefill email if carried over from main site
   try {
-    const res = await fetch('/.netlify/functions/get-config');
-    if (!res.ok) throw new Error('config ' + res.status);
-    cfg = await res.json();
-    if (!cfg || cfg.error || !cfg.url || !cfg.anon) {
-      throw new Error(cfg && cfg.error ? cfg.error : 'config missing');
-    }
-  } catch (e) {
-    showAuthUnavailable();
-    return;
-  }
+    var em = sessionStorage.getItem('bedrock_prefill_email');
+    if (em) { var f = document.getElementById('loginEmail'); if (f && !f.value) f.value = em; }
+  } catch(e) {}
 
-  try {
-    supabase = window.supabase.createClient(cfg.url, cfg.anon);
-  } catch (e) {
-    showAuthUnavailable();
-    return;
-  }
-
-  // Handles password recovery redirects automatically.
-  supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'PASSWORD_RECOVERY') showPage('pageReset');
-  });
-
-  // Pick up pre-authenticated session passed from the marketing site login form.
-  const preAuthRaw = sessionStorage.getItem('bedrock_portal_auth');
-  if (preAuthRaw) {
-    try {
-      sessionStorage.removeItem('bedrock_portal_auth');
-      const pa = JSON.parse(preAuthRaw);
-      const { data, error } = await supabase.auth.setSession({
-        access_token: pa.access_token,
-        refresh_token: pa.refresh_token,
-      });
-      if (!error && data.session) {
-        await loadDashboard(data.session);
-        return;
-      }
-    } catch(e) {}
-  }
-
-  const { data: { session } } = await supabase.auth.getSession();
-  if (session) {
-    const hash = window.location.hash;
-    if (!hash.includes('type=recovery')) {
-      await loadDashboard(session);
-    }
+  var stored = loadStoredSession();
+  if (stored) {
+    currentSession = stored;
+    loadDashboard(stored);
   }
 })();
 
-// ── PAGE ROUTING ─────────────────────────────────────────────────────────────
+// ── PAGE ROUTING ──────────────────────────────────────────────────────────────
 function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+  var el = document.getElementById(id);
+  if (el) el.classList.add('active');
 }
 
 function switchAuthTab(tab) {
-  const isLogin = tab === 'login';
+  var isLogin = tab === 'login';
   document.getElementById('formLogin').style.display = isLogin ? '' : 'none';
   document.getElementById('formCreate').style.display = isLogin ? 'none' : '';
   document.getElementById('tabLogin').style.color = isLogin ? 'var(--accent)' : 'rgba(255,255,255,0.4)';
@@ -490,199 +438,153 @@ function switchAuthTab(tab) {
 }
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────────
-async function handleLogin() {
-  if (!supabase) { return showAuthUnavailable(); }
-  const email    = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPassword').value;
+function handleLogin() {
+  var email    = (document.getElementById('loginEmail').value || '').trim();
+  var password = (document.getElementById('loginPassword').value || '');
   clearError('loginError');
+  if (!email || !password) { showError('loginError', 'Please enter your email and password.'); return; }
 
-  if (!email || !password) {
-    return showError('loginError', 'Please enter your email and password.');
-  }
+  var btn = document.getElementById('btnLogin');
+  btn.disabled = true; btn.textContent = 'Signing in…';
 
-  const btn = document.getElementById('btnLogin');
-  btn.disabled = true;
-  btn.textContent = 'Signing in…';
-
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-
-  if (error) {
-    btn.disabled = false;
-    btn.textContent = 'Sign In';
-    return showError('loginError', friendlyAuthError(error.message));
-  }
-
-  await loadDashboard(data.session);
+  fetch('/.netlify/functions/portal-auth', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ action: 'signin', email: email, password: password }),
+  }).then(function(r) { return r.json(); }).then(function(d) {
+    if (d.success) {
+      saveSession(d);
+      currentSession = loadStoredSession();
+      loadDashboard(currentSession);
+    } else {
+      btn.disabled = false; btn.textContent = 'Sign In';
+      showError('loginError', d.error || 'Incorrect email or password. Please try again.');
+    }
+  }).catch(function() {
+    btn.disabled = false; btn.textContent = 'Sign In';
+    showError('loginError', 'Connection error — please try again.');
+  });
 }
 
 // ── CREATE ACCOUNT ────────────────────────────────────────────────────────────
-async function handleCreate() {
-  const biz   = (document.getElementById('createBiz').value   || '').trim();
-  const name  = (document.getElementById('createName').value  || '').trim();
-  const email = (document.getElementById('createEmail').value || '').trim();
-  const pass  = (document.getElementById('createPass').value  || '').trim();
-  const btn   = document.getElementById('btnCreate');
+function handleCreate() {
+  var biz   = (document.getElementById('createBiz').value   || '').trim();
+  var name  = (document.getElementById('createName').value  || '').trim();
+  var email = (document.getElementById('createEmail').value || '').trim();
+  var pass  = (document.getElementById('createPass').value  || '').trim();
+  var btn   = document.getElementById('btnCreate');
   clearError('createError');
 
-  if (!biz)  return showError('createError', 'Business name is required.');
-  if (!email || !email.includes('@')) return showError('createError', 'Enter a valid email address.');
-  if (pass.length < 6) return showError('createError', 'Password must be at least 6 characters.');
+  if (!biz)  { showError('createError', 'Business name is required.'); return; }
+  if (!email || !email.includes('@')) { showError('createError', 'Enter a valid email address.'); return; }
+  if (pass.length < 6) { showError('createError', 'Password must be at least 6 characters.'); return; }
 
   btn.disabled = true; btn.textContent = 'Creating account…';
 
-  try {
-    const res = await fetch('/.netlify/functions/capture-lead', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({businessName:biz, contactName:name, email, password:pass, source:'signup'}),
-    });
-    const d = await res.json();
+  fetch('/.netlify/functions/capture-lead', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ businessName:biz, contactName:name, email:email, password:pass, source:'signup' }),
+  }).then(function(r) { return r.json(); }).then(function(d) {
     if (d.success !== false) {
       document.getElementById('createSuccess').style.display = 'block';
       // Auto sign-in after creation
-      document.getElementById('loginEmail').value = email;
-      document.getElementById('loginPassword').value = pass;
-      setTimeout(() => { switchAuthTab('login'); handleLogin(); }, 900);
+      return fetch('/.netlify/functions/portal-auth', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ action: 'signin', email: email, password: pass }),
+      }).then(function(r2) { return r2.json(); }).then(function(d2) {
+        if (d2.success) {
+          saveSession(d2);
+          currentSession = loadStoredSession();
+          setTimeout(function() { loadDashboard(currentSession); }, 900);
+        } else {
+          setTimeout(function() { switchAuthTab('login'); }, 900);
+        }
+      });
     } else {
       showError('createError', d.error || 'Could not create account — that email may already be registered. Try signing in.');
       btn.disabled = false; btn.textContent = 'Create My Account';
     }
-  } catch(e) {
+  }).catch(function() {
     showError('createError', 'Connection error — please try again.');
     btn.disabled = false; btn.textContent = 'Create My Account';
-  }
-}
-
-// ── RESET PASSWORD (from email link) ─────────────────────────────────────────
-async function handleReset() {
-  if (!supabase) { return showError('resetError', 'This reset link can\'t be processed right now. Email support@bedrock-sites.com.'); }
-  const password = document.getElementById('resetPassword').value;
-  const confirm  = document.getElementById('resetPasswordConfirm').value;
-  clearError('resetError');
-
-  if (password.length < 8) return showError('resetError', 'Password must be at least 8 characters.');
-  if (password !== confirm)  return showError('resetError', 'Passwords do not match.');
-
-  const btn = document.getElementById('btnReset');
-  btn.disabled = true;
-  btn.textContent = 'Updating…';
-
-  const { error } = await supabase.auth.updateUser({ password });
-
-  if (error) {
-    btn.disabled = false;
-    btn.textContent = 'Update Password';
-    return showError('resetError', 'Could not update password. Please try again or contact support.');
-  }
-
-  document.getElementById('resetSuccess').style.display = 'block';
-  await supabase.auth.signOut();
-  setTimeout(() => { showPage('pageLogin'); }, 2000);
+  });
 }
 
 // ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
-async function handleForgot() {
-  if (!supabase) { return showError('forgotError', 'Password reset is temporarily unavailable. Email support@bedrock-sites.com.'); }
-  const email = document.getElementById('forgotEmail').value.trim();
+function handleForgot() {
+  var email = (document.getElementById('forgotEmail').value || '').trim();
   clearError('forgotError');
-
-  if (!email) return showError('forgotError', 'Please enter your email address.');
-
-  const btn = document.getElementById('btnForgot');
-  btn.disabled = true;
-  btn.textContent = 'Sending…';
-
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/portal.html'
-  });
-
-  btn.disabled = false;
-  btn.textContent = 'Send Reset Link';
-
-  if (error) {
-    return showError('forgotError', 'Could not send reset email. Please try again.');
-  }
+  if (!email) { showError('forgotError', 'Please enter your email address.'); return; }
+  // Password reset emails are sent by Supabase via the admin dashboard.
+  // For now, direct clients to support.
+  document.getElementById('forgotSuccess').textContent =
+    'Email support@bedrock-sites.com and we\'ll send you a password reset link right away.';
   document.getElementById('forgotSuccess').style.display = 'block';
 }
 
 // ── LOGOUT ────────────────────────────────────────────────────────────────────
-async function handleLogout() {
+function handleLogout() {
   if (DEMO) { window.location.href = 'portal.html'; return; }
-  if (!supabase) { showPage('pageLogin'); return; }
-  await supabase.auth.signOut();
-  currentSession = null;
-  currentLead    = null;
+  clearSession();
+  currentSession = null; currentLead = null;
   document.getElementById('btnLogout').style.display = 'none';
   document.getElementById('navUserEmail').textContent = '';
-  document.getElementById('btnLogin').disabled = false;
-  document.getElementById('btnLogin').textContent = 'Sign In';
+  var btn = document.getElementById('btnLogin');
+  if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
   showPage('pageLogin');
 }
 
 // ── LOAD DASHBOARD ────────────────────────────────────────────────────────────
-async function loadDashboard(session) {
-  currentSession = session;
+function loadDashboard(session) {
+  if (!session) { showPage('pageLogin'); return; }
   document.getElementById('btnLogout').style.display = 'block';
-  document.getElementById('navUserEmail').textContent = session.user.email;
+  document.getElementById('navUserEmail').textContent = session.user ? session.user.email : '';
 
-  // Fetch client lead data from our authenticated Netlify function
-  let lead = null;
-  try {
-    const res = await fetch('/.netlify/functions/get-portal', {
-      headers: { Authorization: 'Bearer ' + session.access_token }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      lead = data.lead;
-    }
-  } catch(e) {
-    // Network error — show dashboard anyway, lead fields will be blank
-  }
-
-  currentLead = lead;
-  populateDashboard(lead, session);
-  showPage('pageDash');
+  fetch('/.netlify/functions/get-portal', {
+    headers: { Authorization: 'Bearer ' + session.access_token }
+  }).then(function(r) { return r.ok ? r.json() : null; }).then(function(data) {
+    var lead = data ? data.lead : null;
+    currentLead = lead;
+    populateDashboard(lead, session);
+    showPage('pageDash');
+  }).catch(function() {
+    populateDashboard(null, session);
+    showPage('pageDash');
+  });
 }
 
 // ── POPULATE DASHBOARD ────────────────────────────────────────────────────────
 function populateDashboard(lead, session) {
-  const bizName = lead?.business_name || 'Your Business';
+  var bizName = (lead && lead.business_name) ? lead.business_name : 'Your Business';
   document.getElementById('dashBizName').textContent = bizName;
   document.getElementById('dashSiteTitle').textContent = bizName;
 
-  // Status pill
-  const status = lead?.status || 'new';
-  const statusMap = {
-    new:      { label: 'Pending Review', cls: 'pending' },
-    claim:    { label: 'Claim Received', cls: 'pending' },
-    paid:     { label: 'Building', cls: 'building' },
-    deployed: { label: 'Live', cls: 'live' },
+  var status = (lead && lead.status) ? lead.status : 'new';
+  var statusMap = {
+    new:      { label:'Pending Review', cls:'pending' },
+    claim:    { label:'Claim Received', cls:'pending' },
+    paid:     { label:'Building',       cls:'building' },
+    deployed: { label:'Live',           cls:'live' },
   };
-  const s = statusMap[status] || { label: status, cls: 'pending' };
+  var s = statusMap[status] || { label:status, cls:'pending' };
   document.getElementById('dashStatusWrap').innerHTML =
-    `<span class="status-pill ${s.cls}"><span class="dot"></span>${s.label}</span>`;
+    '<span class="status-pill ' + s.cls + '"><span class="dot"></span>' + s.label + '</span>';
 
-  // Site URL
-  const siteUrl = lead?.site_url;
+  var siteUrl = lead && lead.site_url;
   if (siteUrl) {
-    document.getElementById('dashSiteUrl').innerHTML = `<a href="${siteUrl}" target="_blank" rel="noopener">${siteUrl}</a>`;
-    const viewBtn = document.getElementById('dashViewBtn');
-    viewBtn.href = siteUrl;
-    viewBtn.style.display = 'inline-block';
+    document.getElementById('dashSiteUrl').innerHTML = '<a href="' + siteUrl + '" target="_blank" rel="noopener">' + siteUrl + '</a>';
+    var viewBtn = document.getElementById('dashViewBtn');
+    viewBtn.href = siteUrl; viewBtn.style.display = 'inline-block';
     document.getElementById('dashSiteSub').textContent = 'Your site is live. Click Edit My Site above to make changes.';
-    // Show analytics stats placeholder (would be real Cloudflare data in production)
-    document.getElementById('analyticsContent').innerHTML = `
-      <div class="stat-row">
-        <div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">Page Views</div></div>
-        <div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">Visitors</div></div>
-        <div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">This Month</div></div>
-      </div>
-      <p style="font-size:0.64rem;font-weight:300;color:var(--text-muted);margin-top:0.75rem;line-height:1.6">
-        Analytics data will populate as your site receives traffic. Data is powered by Cloudflare Web Analytics — privacy-friendly, no cookies.
-      </p>`;
+    document.getElementById('analyticsContent').innerHTML =
+      '<div class="stat-row">' +
+        '<div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">Page Views</div></div>' +
+        '<div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">Visitors</div></div>' +
+        '<div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">This Month</div></div>' +
+      '</div>' +
+      '<p style="font-size:0.64rem;font-weight:300;color:var(--text-muted);margin-top:0.75rem;line-height:1.6">Analytics data will populate as your site receives traffic. Powered by Cloudflare Web Analytics — no cookies.</p>';
   } else {
-    const subMessages = {
-      new:  'We\'ll reach out within 24 hours to confirm your order and get your site live.',
+    var subMessages = {
+      new:   'We\'ll reach out within 24 hours to confirm your order and get your site live.',
       claim: 'Payment received — your site is being set up. We\'ll send your live link by email.',
       paid:  'We\'re building your site now. You\'ll receive your live link within 24 hours.',
     };
@@ -690,57 +592,30 @@ function populateDashboard(lead, session) {
     document.getElementById('dashSiteSub').textContent = subMessages[status] || 'Your site is in progress.';
   }
 
-  // Account info
-  document.getElementById('acctBizName').textContent = lead?.business_name || '—';
-  document.getElementById('acctName').textContent    = lead?.contact_name  || '—';
-  document.getElementById('acctEmail').textContent   = lead?.email         || session.user.email;
-  document.getElementById('acctPhone').textContent   = lead?.phone         || '—';
-  document.getElementById('acctTrade').textContent   = lead?.trade         || '—';
-  const since = lead?.created_at ? new Date(lead.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+  document.getElementById('acctBizName').textContent = (lead && lead.business_name) || '—';
+  document.getElementById('acctName').textContent    = (lead && lead.contact_name)  || '—';
+  document.getElementById('acctEmail').textContent   = (lead && lead.email) || (session.user && session.user.email) || '—';
+  document.getElementById('acctPhone').textContent   = (lead && lead.phone) || '—';
+  document.getElementById('acctTrade').textContent   = (lead && lead.trade) || '—';
+  var since = (lead && lead.created_at) ? new Date(lead.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
   document.getElementById('acctSince').textContent = since;
 }
 
 // ── LAUNCH EDITOR ─────────────────────────────────────────────────────────────
 function launchEditor() {
   if (DEMO) { alert('The site editor is disabled in demo mode — this is a preview of the client dashboard.'); return; }
-  if (!currentSession || !currentLead) {
-    alert('Site data is still loading. Please wait a moment and try again.');
-    return;
-  }
-
-  // Store session + lead data in sessionStorage so the builder can pick it up
-  sessionStorage.setItem('bedrock_portal_session', JSON.stringify({
-    token:     currentSession.access_token,
-    lead:      currentLead,
-  }));
-
-  // Redirect to the builder in portal-edit mode
+  if (!currentSession || !currentLead) { alert('Site data is still loading. Please wait a moment and try again.'); return; }
+  sessionStorage.setItem('bedrock_editor_session', JSON.stringify({ token:currentSession.access_token, lead:currentLead }));
   window.location.href = '/?portalEdit=1';
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function showError(id, msg) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = msg;
-  el.style.display = 'block';
+  var el = document.getElementById(id); if (!el) return;
+  el.textContent = msg; el.style.display = 'block';
 }
 function clearError(id) {
-  const el = document.getElementById(id);
-  if (el) { el.textContent = ''; el.style.display = 'none'; }
-}
-function friendlyAuthError(msg) {
-  if (!msg) return 'Something went wrong. Please try again.';
-  if (msg.toLowerCase().includes('invalid login') || msg.toLowerCase().includes('invalid credentials')) {
-    return 'Incorrect email or password. Please try again.';
-  }
-  if (msg.toLowerCase().includes('email not confirmed')) {
-    return 'Please verify your email address before signing in.';
-  }
-  if (msg.toLowerCase().includes('too many')) {
-    return 'Too many sign-in attempts. Please wait a few minutes and try again.';
-  }
-  return 'Sign-in failed. Please check your credentials and try again.';
+  var el = document.getElementById(id); if (el) { el.textContent = ''; el.style.display = 'none'; }
 }
 </script>
 </body>
