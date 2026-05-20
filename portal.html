@@ -133,6 +133,43 @@ main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:3
 footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-top:1px solid rgba(201,146,42,0.15);flex-shrink:0}
 .f-note{font-size:0.58rem;font-weight:300;color:rgba(255,255,255,0.25)}
 .f-note a{color:rgba(255,255,255,0.35);text-decoration:underline}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  nav{padding:0.85rem 4%}
+  .nav-user{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.58rem}
+  main{padding:2rem 4%}
+  .login-wrap{padding-top:1rem}
+  .card{padding:1.75rem 1.25rem}
+  .field input{font-size:16px!important}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .stat-cell:nth-child(2){border-right:none}
+  .stat-cell:nth-child(3){grid-column:1/-1;border-top:1px solid var(--border);border-right:none}
+  .portal-tab{padding:0.75rem 0.85rem;font-size:0.58rem}
+  .dash-card{padding:1.25rem 1.25rem 1rem}
+  .dash-card-full{padding:1.25rem}
+  .edit-cta-row{flex-direction:column;align-items:flex-start}
+  .dash-header{margin-bottom:1.5rem}
+  .portal-tabs{margin-bottom:1.5rem}
+  .coming-soon-pane{padding:2rem 1.25rem}
+}
+@media(max-width:480px){
+  nav{padding:0.75rem 4%}
+  .nav-user{display:none}
+  #btnLogout{padding:0.4rem 0.75rem;font-size:0.58rem}
+  main{padding:1.5rem 4%}
+  .stat-row{grid-template-columns:1fr}
+  .stat-cell{border-right:none;border-bottom:1px solid var(--border)}
+  .stat-cell:last-child{border-bottom:none}
+  .stat-cell:nth-child(2){border-right:none}
+  .stat-cell:nth-child(3){grid-column:auto;border-top:none}
+  .dash-grid{gap:1rem}
+  .dash-card{padding:1rem}
+  .dash-card-full{padding:1rem}
+  .portal-tab{padding:0.7rem 0.7rem;font-size:0.55rem;letter-spacing:0.06em}
+  .login-title{font-size:1.8rem}
+  .card{padding:1.5rem 1rem}
+}
 </style>
 </head>
 <body>
