@@ -117,6 +117,19 @@ main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:3
 /* Save confirmation */
 #saveConfirm{display:none;background:var(--green-bg);border-left:3px solid var(--green);padding:0.75rem 1rem;font-size:0.74rem;color:var(--green);font-weight:500;margin-top:1rem}
 
+/* ── PORTAL TABS ── */
+.portal-tabs{display:flex;gap:0;border-bottom:2px solid rgba(255,255,255,0.1);margin-bottom:2rem;overflow-x:auto;scrollbar-width:none}
+.portal-tabs::-webkit-scrollbar{display:none}
+.portal-tab{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.8rem 1.1rem;border:none;background:transparent;cursor:pointer;white-space:nowrap;color:rgba(255,255,255,0.38);border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s}
+.portal-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.portal-tab:hover:not(.active){color:rgba(255,255,255,0.7)}
+.portal-pane{display:none}
+.portal-pane.active{display:block}
+.coming-soon-pane{background:#fff;padding:3rem 2rem;text-align:center;border-top:3px solid var(--accent);max-width:580px}
+.cs-badge{display:inline-flex;align-items:center;gap:5px;font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;background:#e8f4fd;color:#185fa5;padding:0.3rem 0.75rem;border-radius:2px;margin-bottom:1.25rem}
+.nav-home-link{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s;border-left:1px solid rgba(255,255,255,0.12);padding-left:1.25rem;margin-left:0.25rem}
+.nav-home-link:hover{color:var(--accent)}
+
 footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-top:1px solid rgba(201,146,42,0.15);flex-shrink:0}
 .f-note{font-size:0.58rem;font-weight:300;color:rgba(255,255,255,0.25)}
 .f-note a{color:rgba(255,255,255,0.35);text-decoration:underline}
@@ -125,18 +138,21 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 <body>
 
 <nav>
-  <a href="/" class="nav-logo">
-    <div class="nav-strata" aria-hidden="true">
-      <div style="width:28px;height:5px;border-radius:2px;background:#C9922A;"></div>
-      <div style="width:22px;height:5px;border-radius:2px;background:#A8711A;"></div>
-      <div style="width:32px;height:5px;border-radius:2px;background:#2E5A8E;"></div>
-      <div style="width:26px;height:5px;border-radius:2px;background:#4A7DB5;"></div>
-    </div>
-    <div class="nav-wm">
-      <span class="wordmark">Bedrock</span>
-      <span class="sub">Digital</span>
-    </div>
-  </a>
+  <div style="display:flex;align-items:center">
+    <a href="/" class="nav-logo">
+      <div class="nav-strata" aria-hidden="true">
+        <div style="width:28px;height:5px;border-radius:2px;background:#C9922A;"></div>
+        <div style="width:22px;height:5px;border-radius:2px;background:#A8711A;"></div>
+        <div style="width:32px;height:5px;border-radius:2px;background:#2E5A8E;"></div>
+        <div style="width:26px;height:5px;border-radius:2px;background:#4A7DB5;"></div>
+      </div>
+      <div class="nav-wm">
+        <span class="wordmark">Bedrock</span>
+        <span class="sub">Digital</span>
+      </div>
+    </a>
+    <a href="/" class="nav-home-link">&#8592; Home</a>
+  </div>
   <div class="nav-right">
     <span id="demoBadge" style="display:none;font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--dark);background:var(--accent);padding:0.25rem 0.55rem;border-radius:3px">Demo</span>
     <span class="nav-user" id="navUserEmail"></span>
@@ -259,70 +275,126 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <div class="dash-header">
         <div class="dash-eyebrow">Your Dashboard</div>
         <div class="dash-title" id="dashBizName">Loading…</div>
-        <div class="dash-sub">Manage your website, view your traffic, and make changes anytime.</div>
+        <div class="dash-sub">Manage your website, view traffic, and make changes anytime.</div>
       </div>
 
-      <!-- Edit CTA card — full width -->
-      <div class="dash-card-full">
-        <div class="edit-cta-row">
-          <div class="edit-cta-text">
-            <div class="dc-label">Website Editor</div>
-            <div class="dc-title">Edit your site</div>
-            <div class="dc-sub" style="margin-bottom:0">Change your business info, services, photos, colors, and content. Same editor you built with — click Save Changes when you're done.</div>
+      <!-- Portal tab bar -->
+      <div class="portal-tabs">
+        <button class="portal-tab active" data-tab="dashboard" onclick="switchPortalTab('dashboard')">Dashboard</button>
+        <button class="portal-tab" data-tab="editor" onclick="switchPortalTab('editor')">Website Editor</button>
+        <button class="portal-tab" data-tab="yoursite" onclick="switchPortalTab('yoursite')">Your Website</button>
+        <button class="portal-tab" data-tab="analytics" onclick="switchPortalTab('analytics')">Site Analytics</button>
+        <button class="portal-tab" data-tab="seo" onclick="switchPortalTab('seo')">SEO / GEO Optimizer</button>
+        <button class="portal-tab" data-tab="marketing" onclick="switchPortalTab('marketing')">Marketing</button>
+      </div>
+
+      <!-- DASHBOARD pane: account info + support -->
+      <div class="portal-pane active" id="pane-dashboard">
+        <div class="dash-grid">
+          <div class="dash-card">
+            <div class="dc-label">Your Account</div>
+            <div class="dc-title">Account Info</div>
+            <div style="margin-top:0.85rem">
+              <div class="info-row"><span class="info-key">Business</span><span class="info-val" id="acctBizName">—</span></div>
+              <div class="info-row"><span class="info-key">Name</span><span class="info-val" id="acctName">—</span></div>
+              <div class="info-row"><span class="info-key">Email</span><span class="info-val" id="acctEmail">—</span></div>
+              <div class="info-row"><span class="info-key">Phone</span><span class="info-val" id="acctPhone">—</span></div>
+              <div class="info-row"><span class="info-key">Trade</span><span class="info-val" id="acctTrade">—</span></div>
+              <div class="info-row"><span class="info-key">Member since</span><span class="info-val" id="acctSince">—</span></div>
+            </div>
           </div>
-          <button class="btn-gold" id="btnEditSite" onclick="launchEditor()" style="width:auto;padding:0.85rem 2rem;white-space:nowrap">Edit My Site →</button>
+          <div class="dash-card">
+            <div class="dc-label">Quick Links</div>
+            <div class="dc-title">What would you like to do?</div>
+            <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:1rem">
+              <button onclick="switchPortalTab('editor')" class="btn-dark" style="text-align:left;width:100%">Edit My Site →</button>
+              <button onclick="switchPortalTab('yoursite')" class="btn-outline" style="text-align:left;width:100%">View Site Status →</button>
+              <button onclick="switchPortalTab('analytics')" class="btn-outline" style="text-align:left;width:100%">Site Analytics →</button>
+            </div>
+          </div>
         </div>
-        <div id="saveConfirm">Changes saved. We'll rebuild and redeploy your site shortly.</div>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;padding:1.25rem 1.5rem;background:rgba(255,255,255,0.04);border:1px solid rgba(201,146,42,0.15);margin-top:0.5rem">
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:0.25rem">Need help?</div>
+            <div style="font-size:0.74rem;font-weight:300;color:rgba(255,255,255,0.65);line-height:1.6">Questions about your site, billing, or anything else — we'll get back to you fast.</div>
+          </div>
+          <a href="mailto:support@bedrock-sites.com" class="btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.2)">Email Support</a>
+        </div>
       </div>
 
-      <div class="dash-grid">
+      <!-- WEBSITE EDITOR pane -->
+      <div class="portal-pane" id="pane-editor">
+        <div class="dash-card-full">
+          <div class="edit-cta-row">
+            <div class="edit-cta-text">
+              <div class="dc-label">Website Editor</div>
+              <div class="dc-title">Edit your site</div>
+              <div class="dc-sub" style="margin-bottom:0">Change your business info, services, photos, colors, and content. Same editor you built with — click Save Changes when you're done.</div>
+            </div>
+            <button class="btn-gold" id="btnEditSite" onclick="launchEditor()" style="width:auto;padding:0.85rem 2rem;white-space:nowrap">Edit My Site →</button>
+          </div>
+          <div id="saveConfirm">Changes saved. We'll rebuild and redeploy your site shortly.</div>
+        </div>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;padding:1.25rem 1.5rem;background:rgba(255,255,255,0.04);border:1px solid rgba(201,146,42,0.15);margin-top:1rem">
+          <div style="flex:1;min-width:200px;font-size:0.72rem;font-weight:300;color:rgba(255,255,255,0.55);line-height:1.6">Small changes — text, hours, phone number — are always free. Photos, new sections, and redesigns are covered under your plan.</div>
+        </div>
+      </div>
 
-        <!-- Site card -->
-        <div class="dash-card">
+      <!-- YOUR WEBSITE pane -->
+      <div class="portal-pane" id="pane-yoursite">
+        <div class="dash-card" style="max-width:640px">
           <div class="dc-label">Your Website</div>
           <div class="dc-title" id="dashSiteTitle">—</div>
-          <div id="dashStatusWrap" style="margin-bottom:0.85rem"></div>
+          <div id="dashStatusWrap" style="margin:0.75rem 0 1rem"></div>
           <div class="dc-url" id="dashSiteUrl"></div>
           <div class="dc-sub" id="dashSiteSub" style="margin-bottom:1.25rem"></div>
           <a id="dashViewBtn" href="#" target="_blank" rel="noopener" class="btn-dark" style="display:none">View Live Site →</a>
         </div>
-
-        <!-- Account card -->
-        <div class="dash-card">
-          <div class="dc-label">Your Account</div>
-          <div class="dc-title">Account Info</div>
-          <div style="margin-top:0.85rem">
-            <div class="info-row"><span class="info-key">Business</span><span class="info-val" id="acctBizName">—</span></div>
-            <div class="info-row"><span class="info-key">Name</span><span class="info-val" id="acctName">—</span></div>
-            <div class="info-row"><span class="info-key">Email</span><span class="info-val" id="acctEmail">—</span></div>
-            <div class="info-row"><span class="info-key">Phone</span><span class="info-val" id="acctPhone">—</span></div>
-            <div class="info-row"><span class="info-key">Trade</span><span class="info-val" id="acctTrade">—</span></div>
-            <div class="info-row"><span class="info-key">Member since</span><span class="info-val" id="acctSince">—</span></div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Analytics card — full width -->
-      <div class="dash-card" style="grid-column:1/-1;margin-bottom:1.5rem" id="analyticsCard">
-        <div class="dc-label">Site Analytics</div>
-        <div class="dc-title">Traffic Overview</div>
-        <div id="analyticsContent">
-          <div class="analytics-placeholder">
-            <div class="ap-icon">◈</div>
-            <div class="ap-title">Analytics available once your site is live</div>
-            <div class="ap-sub">After your site is deployed, you'll see page views and visitor stats here. We use Cloudflare Web Analytics — no cookies, no tracking your visitors across sites.</div>
+      <!-- SITE ANALYTICS pane -->
+      <div class="portal-pane" id="pane-analytics">
+        <div class="dash-card" id="analyticsCard">
+          <div class="dc-label">Site Analytics</div>
+          <div class="dc-title">Traffic Overview</div>
+          <div id="analyticsContent">
+            <div class="analytics-placeholder">
+              <div class="ap-icon">◈</div>
+              <div class="ap-title">Analytics available once your site is live</div>
+              <div class="ap-sub">After your site is deployed, you'll see page views and visitor stats here. We use Cloudflare Web Analytics — no cookies, no tracking your visitors across sites.</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Support row -->
-      <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;padding:1.25rem 1.5rem;background:rgba(255,255,255,0.04);border:1px solid rgba(201,146,42,0.15)">
-        <div style="flex:1;min-width:200px">
-          <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:0.25rem">Need help?</div>
-          <div style="font-size:0.74rem;font-weight:300;color:rgba(255,255,255,0.65);line-height:1.6">Questions about your site, billing, or anything else — reach out and we'll get back to you fast.</div>
+      <!-- SEO / GEO OPTIMIZER pane (coming soon) -->
+      <div class="portal-pane" id="pane-seo">
+        <div class="coming-soon-pane">
+          <div class="cs-badge"><span>Coming Soon</span></div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">SEO / GEO Optimizer</div>
+          <div class="dc-sub" style="max-width:420px;margin:0 auto 1.5rem">Run a full audit of your site's search performance and AI-answer visibility. See exactly where you rank vs. competitors and what to fix first.</div>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:320px;margin:0 auto;text-align:left">
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Keyword ranking by service + city</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">GEO score — how AI models describe you</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Competitor gap analysis</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">One-click fix recommendations</div>
+          </div>
         </div>
-        <a href="mailto:support@bedrock-sites.com" class="btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.2)">Email Support</a>
+      </div>
+
+      <!-- MARKETING pane (coming soon) -->
+      <div class="portal-pane" id="pane-marketing">
+        <div class="coming-soon-pane">
+          <div class="cs-badge"><span>Coming Soon</span></div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Marketing</div>
+          <div class="dc-sub" style="max-width:420px;margin:0 auto 1.5rem">Campaigns, reputation management, review requests, and lead tracking — all in one place. Built for contractors who want more jobs, not more software to learn.</div>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:320px;margin:0 auto;text-align:left">
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Automated Google review requests</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Lead tracking and follow-up reminders</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Seasonal campaign templates</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Performance reports delivered monthly</div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -420,6 +492,15 @@ function showPage(id) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
   var el = document.getElementById(id);
   if (el) el.classList.add('active');
+}
+
+function switchPortalTab(tab) {
+  document.querySelectorAll('.portal-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.portal-pane').forEach(function(p) { p.classList.remove('active'); });
+  var btn = document.querySelector('.portal-tab[data-tab="'+tab+'"]');
+  var pane = document.getElementById('pane-'+tab);
+  if (btn) btn.classList.add('active');
+  if (pane) pane.classList.add('active');
 }
 
 function switchAuthTab(tab) {
