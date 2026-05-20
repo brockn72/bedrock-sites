@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bedrock Marketing — Make marketing materials in minutes</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D1B2E'/%3E%3Crect x='12' y='16' width='28' height='6' rx='2' fill='%23C9922A'/%3E%3Crect x='12' y='26' width='22' height='6' rx='2' fill='%23A8711A'/%3E%3Crect x='12' y='36' width='32' height='6' rx='2' fill='%232E5A8E'/%3E%3Crect x='12' y='46' width='24' height='6' rx='2' fill='%234A7DB5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Bebas+Neue&family=Oswald:wght@600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy-deep:#0D1B2E;--navy:#1B3557;--navy-mid:#2E5A8E;
+  --gold:#C9922A;--gold-light:#D4A843;
+  --off-white:#FAF7F2;--white:#FFFFFF;--slate:#4A5568;--cream:#F5E6C8;
+  --border-light:rgba(13,27,46,0.1);--border-dark:rgba(255,255,255,0.12);
+  --muted-light:rgba(255,255,255,0.45);--muted-dark:rgba(13,27,46,0.35);
+  --red:#b91c1c;--red-bg:#fef2f2;--green:#3b6d11;--green-bg:#f0f5ea;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy-deep);min-height:100vh;display:flex;flex-direction:column;line-height:1.5}
+
+/* ── NAV ── */
+nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;align-items:center;padding:0.85rem 2rem;border-bottom:3px solid var(--gold);flex-shrink:0;position:sticky;top:0;z-index:50;gap:1rem;flex-wrap:wrap}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-strata{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
+.nav-strata span{height:5px;border-radius:1px}
+.nav-strata span:nth-child(1){width:26px;background:var(--gold)}
+.nav-strata span:nth-child(2){width:20px;background:#A8711A}
+.nav-strata span:nth-child(3){width:30px;background:#2E5A8E}
+.nav-strata span:nth-child(4){width:22px;background:#4A7DB5}
+.nav-wm{display:flex;flex-direction:column;line-height:1}
+.nav-wm .wordmark{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;letter-spacing:-0.02em;color:var(--cream)}
+.nav-wm .sub{font-size:0.52rem;font-weight:500;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin-top:3px}
+.nav-product{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.55);border-left:1px solid rgba(255,255,255,0.15);padding-left:0.85rem;margin-left:0.85rem}
+.nav-right{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+.nav-link{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.65);text-decoration:none;transition:color .2s;padding:0.5rem 0.85rem;border-radius:3px;display:inline-flex;align-items:center;gap:6px}
+.nav-link:hover{color:var(--gold);background:rgba(255,255,255,0.04)}
+.nav-portal-btn{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:0.6rem 1rem;cursor:pointer;border-radius:4px;text-decoration:none}
+.nav-portal-btn:hover{background:var(--gold-light)}
+
+/* dropdown */
+.nav-dd{position:relative}
+.nav-dd-trigger{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.65);background:transparent;border:1px solid rgba(255,255,255,0.15);padding:0.5rem 0.85rem;cursor:pointer;border-radius:3px;display:inline-flex;align-items:center;gap:6px}
+.nav-dd-trigger:hover{color:var(--gold);border-color:rgba(201,146,42,0.5)}
+.nav-dd-menu{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border-light);border-top:2px solid var(--gold);min-width:220px;box-shadow:0 6px 24px rgba(13,27,46,0.18);display:none;z-index:60}
+.nav-dd.open .nav-dd-menu{display:block}
+.nav-dd-item{display:block;padding:0.75rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--navy-deep);text-decoration:none;border-bottom:1px solid var(--border-light);transition:background .15s}
+.nav-dd-item:last-child{border-bottom:none}
+.nav-dd-item:hover{background:var(--off-white)}
+.nav-dd-item-eyebrow{font-size:0.52rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:2px}
+
+/* ── EMAIL GATE / HERO ── */
+.page{display:none}
+.page.active{display:block}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+
+section.hero{background:var(--navy-deep);color:#fff;padding:4rem 0 5rem;position:relative;overflow:hidden}
+section.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(27,53,87,0.45) 0%,transparent 55%),radial-gradient(ellipse at 80% 80%,rgba(201,146,42,0.06) 0%,transparent 40%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;text-align:center;max-width:680px;margin:0 auto}
+.eyebrow{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted-light);margin-bottom:1.25rem}
+.eyebrow.light{color:var(--muted-dark)}
+h1.hero-h{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4.5vw,3.4rem);font-weight:700;line-height:1.12;color:var(--cream);margin-bottom:1.25rem}
+h1.hero-h em{font-style:italic;color:var(--gold)}
+p.hero-sub{font-family:'DM Sans',sans-serif;font-size:clamp(0.95rem,1.4vw,1.05rem);font-weight:400;line-height:1.75;color:rgba(255,255,255,0.78);margin-bottom:2.25rem}
+.hero-form{display:flex;gap:0.5rem;max-width:480px;margin:0 auto;flex-wrap:wrap}
+.hero-form input{flex:1;min-width:220px;padding:0.95rem 1.1rem;font-family:'DM Sans',sans-serif;font-size:0.9rem;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.18);color:#fff;border-radius:4px;outline:none;transition:border-color .2s}
+.hero-form input:focus{border-color:var(--gold)}
+.hero-form input::placeholder{color:rgba(255,255,255,0.4)}
+
+/* ── BUTTONS ── */
+.btn-gold{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:0.95rem 1.75rem;cursor:pointer;border-radius:4px;transition:background .2s;display:inline-block;text-decoration:none;text-align:center;line-height:1}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-gold:disabled{background:rgba(201,146,42,0.4);cursor:not-allowed}
+.btn-dark{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:var(--navy-deep);color:#fff;border:none;padding:0.75rem 1.4rem;cursor:pointer;border-radius:4px;transition:background .2s;text-decoration:none;display:inline-block;text-align:center;line-height:1}
+.btn-dark:hover{background:var(--navy)}
+.btn-outline{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:var(--navy);border:1px solid rgba(27,53,87,0.3);padding:0.75rem 1.4rem;cursor:pointer;border-radius:4px;transition:all .2s;text-decoration:none;display:inline-block;text-align:center;line-height:1}
+.btn-outline:hover{border-color:var(--navy-deep);background:rgba(13,27,46,0.04)}
+.btn-ghost-dark{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.2);padding:0.75rem 1.4rem;cursor:pointer;border-radius:4px;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-ghost-dark:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── HUB LAYOUT ── */
+.hub{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 80px)}
+@media(max-width:880px){.hub{grid-template-columns:1fr;min-height:auto}}
+.sidebar{background:var(--navy-deep);color:#fff;padding:1.5rem 0;border-right:1px solid rgba(255,255,255,0.06)}
+@media(max-width:880px){.sidebar{padding:0;border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}}
+.sidebar-section{padding:0 1rem;margin-bottom:1.25rem}
+.sidebar-label{font-family:'DM Sans',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:0.65rem;padding:0 0.5rem}
+.sidebar-link{display:flex;align-items:center;gap:0.7rem;padding:0.7rem 0.85rem;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;color:rgba(255,255,255,0.7);transition:all .15s;text-decoration:none;background:transparent;border:none;width:100%;text-align:left}
+.sidebar-link:hover{background:rgba(255,255,255,0.04);color:#fff}
+.sidebar-link.active{background:rgba(201,146,42,0.15);color:var(--gold);border-left:3px solid var(--gold);padding-left:calc(0.85rem - 3px)}
+.sidebar-link.locked{cursor:not-allowed;color:rgba(255,255,255,0.3)}
+.sidebar-link.locked:hover{background:transparent}
+.sidebar-link .icon{width:18px;height:18px;flex-shrink:0;opacity:0.7}
+.sidebar-link.active .icon{opacity:1}
+.sidebar-link .badge{margin-left:auto;font-size:0.5rem;font-weight:700;letter-spacing:0.1em;padding:0.15rem 0.4rem;border-radius:99px;background:var(--gold);color:#fff;text-transform:uppercase}
+.sidebar-link.locked .badge{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.5)}
+.sidebar-summary{padding:1rem;margin:0.5rem 1rem;background:rgba(255,255,255,0.04);border-radius:6px;border:1px solid rgba(255,255,255,0.06)}
+.sidebar-summary .ss-eyebrow{font-size:0.52rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+.sidebar-summary .ss-name{font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:#fff;line-height:1.2;margin-bottom:8px}
+.sidebar-summary .ss-meter{height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden}
+.sidebar-summary .ss-meter-fill{height:100%;background:var(--gold);transition:width .3s}
+.sidebar-summary .ss-pct{font-size:0.6rem;color:rgba(255,255,255,0.55);margin-top:4px;letter-spacing:0.06em}
+
+.main-area{background:var(--off-white);padding:0;overflow-x:hidden}
+
+/* ── SECTION HEAD ── */
+.section-head{background:#fff;padding:1.75rem 2rem;border-bottom:1px solid var(--border-light)}
+.section-head .eyebrow.light{margin-bottom:0.4rem}
+.section-h{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,2.6vw,2rem);font-weight:700;color:var(--navy-deep);margin-bottom:0.25rem;line-height:1.2}
+.section-h em{font-style:italic;color:var(--gold)}
+.section-sub{font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--slate);line-height:1.65;max-width:680px}
+.section-content{padding:2rem}
+
+/* ── BRAND KIT ── */
+.brand-kit-grid{display:grid;grid-template-columns:1fr;gap:1.5rem;max-width:920px}
+.bk-card{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);padding:1.75rem 1.85rem;border-radius:0}
+.bk-card h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--navy-deep);margin-bottom:0.3rem}
+.bk-card .bk-card-sub{font-size:0.78rem;color:var(--slate);margin-bottom:1.25rem;line-height:1.6}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--slate);margin-bottom:6px}
+.field input[type="text"],.field input[type="email"],.field input[type="tel"],.field input[type="url"],.field input[type="number"],.field select,.field textarea{font-family:'DM Sans',sans-serif;font-size:0.88rem;width:100%;padding:0.72rem 0.9rem;border:1px solid var(--border-light);background:#fff;color:var(--navy-deep);outline:none;border-radius:8px;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--navy-deep)}
+.field textarea{resize:vertical;min-height:80px;font-family:inherit}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.85rem}
+@media(max-width:640px){.field-row,.field-row-3{grid-template-columns:1fr}}
+
+.color-pickers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.85rem}
+@media(max-width:640px){.color-pickers{grid-template-columns:1fr}}
+.color-pick{display:flex;flex-direction:column;gap:6px}
+.color-pick-row{display:flex;gap:8px;align-items:center}
+.color-pick input[type="color"]{width:48px;height:48px;border:1px solid var(--border-light);border-radius:8px;cursor:pointer;padding:2px;background:#fff}
+.color-pick input[type="text"]{flex:1}
+.palette-suggest{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.palette-chip{display:flex;gap:4px;padding:4px 7px;background:#fff;border:1px solid var(--border-light);border-radius:6px;cursor:pointer;align-items:center;transition:border-color .15s}
+.palette-chip:hover{border-color:var(--navy)}
+.palette-swatch{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,0.1)}
+.palette-label{font-size:0.6rem;color:var(--slate);font-weight:600;letter-spacing:0.06em}
+
+.tone-chips{display:flex;flex-wrap:wrap;gap:7px}
+.tone-chip{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:500;background:#fff;border:1px solid var(--border-light);color:var(--slate);padding:0.5rem 0.95rem;border-radius:999px;cursor:pointer;transition:all .15s}
+.tone-chip:hover{border-color:var(--navy)}
+.tone-chip.active{background:var(--navy-deep);color:#fff;border-color:var(--navy-deep)}
+.tone-example{margin-top:0.65rem;padding:0.65rem 0.85rem;background:#fff;border-left:3px solid var(--gold);font-style:italic;color:var(--slate);font-size:0.82rem;display:none}
+.tone-example.show{display:block}
+
+.font-pick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:640px){.font-pick{grid-template-columns:1fr 1fr}}
+.font-card{background:#fff;border:1px solid var(--border-light);padding:0.85rem 0.7rem;cursor:pointer;text-align:center;border-radius:8px;transition:all .15s}
+.font-card:hover{border-color:var(--navy)}
+.font-card.active{border-color:var(--gold);background:rgba(201,146,42,0.06)}
+.font-card-name{font-size:0.58rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--slate);margin-bottom:0.25rem}
+.font-card-preview{font-size:1.1rem;font-weight:700;color:var(--navy-deep)}
+
+.logo-drop{display:flex;align-items:center;gap:1rem;padding:1rem;background:#fff;border:2px dashed var(--border-light);border-radius:8px;cursor:pointer;transition:border-color .15s}
+.logo-drop:hover{border-color:var(--gold)}
+.logo-preview{width:72px;height:72px;background:var(--off-white);border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--navy-deep)}
+.logo-preview img{max-width:100%;max-height:100%}
+.logo-drop-text{font-size:0.78rem;color:var(--slate);line-height:1.5}
+.logo-drop-text strong{color:var(--navy-deep);display:block;margin-bottom:2px}
+
+.save-row{display:flex;justify-content:flex-end;gap:0.65rem;align-items:center;margin-top:1.25rem;flex-wrap:wrap}
+.save-status{font-size:0.72rem;color:var(--slate);min-width:140px;text-align:right}
+.save-status.ok{color:var(--green)}
+.save-status.err{color:var(--red)}
+
+/* ── WIZARD ── */
+.wiz-wrap{max-width:920px}
+.wiz-step{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);padding:2rem 2.25rem;margin-bottom:1rem}
+.wiz-step h3{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--navy-deep);margin-bottom:0.35rem;font-weight:600;line-height:1.2}
+.wiz-step .wiz-step-sub{font-size:0.84rem;color:var(--slate);margin-bottom:1.25rem}
+.wiz-step-num{display:inline-block;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--gold);margin-right:0.65rem}
+.goal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.85rem}
+@media(max-width:640px){.goal-grid{grid-template-columns:1fr}}
+.goal-card{background:var(--off-white);border:1px solid var(--border-light);padding:1.1rem 1.2rem;cursor:pointer;text-align:left;border-radius:6px;transition:all .15s;display:flex;align-items:flex-start;gap:0.85rem;font:inherit;width:100%}
+.goal-card:hover{border-color:var(--gold);transform:translateY(-2px);background:#fff}
+.goal-card.active{border-color:var(--gold);background:#fff;box-shadow:0 4px 14px rgba(13,27,46,0.06)}
+.goal-card .goal-icon{font-size:1.5rem;flex-shrink:0;color:var(--gold);line-height:1}
+.goal-card .goal-text{flex:1}
+.goal-card .goal-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--navy-deep);margin-bottom:0.2rem}
+.goal-card .goal-sub{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--slate);line-height:1.5}
+
+/* material picker */
+.mat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem}
+@media(max-width:880px){.mat-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.mat-grid{grid-template-columns:repeat(2,1fr)}}
+.mat-card{background:var(--off-white);border:1px solid var(--border-light);padding:1rem 0.85rem;cursor:pointer;text-align:center;border-radius:6px;transition:all .15s;border-top:3px solid transparent;font:inherit}
+.mat-card:hover{border-top-color:var(--gold);transform:translateY(-2px);background:#fff}
+.mat-card.active{border-top-color:var(--gold);background:#fff;box-shadow:0 4px 14px rgba(13,27,46,0.06)}
+.mat-icon{width:48px;height:36px;margin:0 auto 0.7rem;background:var(--navy-deep);position:relative;border-radius:2px;overflow:hidden}
+.mat-icon::after{content:'';position:absolute;left:6px;right:6px;top:6px;height:3px;background:rgba(255,255,255,0.4);border-radius:1px}
+.mat-icon::before{content:'';position:absolute;left:6px;right:14px;top:13px;height:2px;background:rgba(255,255,255,0.25);border-radius:1px}
+.mat-icon.square{width:36px;height:36px}
+.mat-icon.tall{width:24px;height:48px}
+.mat-icon.wide{width:54px;height:30px}
+.mat-icon.wide-thin{width:54px;height:18px}
+.mat-icon.card{width:48px;height:28px}
+.mat-icon.postcard{width:54px;height:38px}
+.mat-name{font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:600;color:var(--navy-deep);margin-bottom:0.15rem;line-height:1.2}
+.mat-size{font-family:'DM Sans',sans-serif;font-size:0.6rem;color:var(--slate);font-weight:400}
+.mat-cat{font-family:'DM Sans',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem}
+
+/* ── GENERATOR WORKSPACE ── */
+.gen-layout{display:grid;grid-template-columns:1fr 380px;gap:1.5rem;align-items:start}
+@media(max-width:980px){.gen-layout{grid-template-columns:1fr}}
+.gen-controls{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);padding:1.5rem;border-radius:0}
+.gen-controls h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--navy-deep);margin-bottom:0.85rem}
+.control-group{margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border-light)}
+.control-group:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.control-label{font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--slate);margin-bottom:8px}
+
+.tmpl-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tmpl-card{background:var(--off-white);border:1px solid var(--border-light);padding:0.4rem;cursor:pointer;border-radius:6px;text-align:center;transition:all .15s}
+.tmpl-card:hover{border-color:var(--navy)}
+.tmpl-card.active{border-color:var(--gold);background:#fff}
+.tmpl-card-mini{width:100%;height:64px;background:var(--off-white);border-radius:4px;margin-bottom:5px;position:relative;overflow:hidden}
+.tmpl-card-label{font-size:0.56rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate)}
+
+.photo-bin{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photo-thumb{width:64px;height:64px;background:#fff;border:1px solid var(--border-light);border-radius:4px;position:relative;overflow:hidden}
+.photo-thumb img{width:100%;height:100%;object-fit:cover}
+.photo-thumb .remove{position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(0,0,0,0.75);color:#fff;border:none;border-radius:50%;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:0}
+.photo-thumb.active{outline:2px solid var(--gold)}
+
+.copy-edit textarea,.copy-edit input{font-family:'DM Sans',sans-serif;font-size:0.85rem;width:100%;padding:0.55rem 0.7rem;border:1px solid var(--border-light);background:#fff;color:var(--navy-deep);outline:none;border-radius:6px;margin-bottom:6px}
+.copy-edit textarea{resize:vertical;min-height:48px}
+
+.gen-preview{background:#fff;border:1px solid var(--border-light);padding:1.5rem;border-radius:0;border-top:3px solid var(--navy-deep);position:sticky;top:80px}
+.preview-frame-wrap{background:#f4f4f6;padding:1rem;border-radius:6px;display:flex;justify-content:center;align-items:center;min-height:340px;margin-bottom:1rem;overflow:hidden}
+.preview-scale-wrap{transform-origin:top center;display:inline-block}
+.dl-row{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:6px}
+.dl-row > *{flex:1;min-width:90px}
+
+/* ── HIDDEN RENDER STAGE ── */
+#renderStage{position:fixed;left:-99999px;top:0;width:auto;height:auto;pointer-events:none}
+#renderStage .tmpl{background:#fff;color:#0D1B2E;overflow:hidden;position:relative;font-family:var(--bk-body, 'DM Sans'),sans-serif}
+
+/* ── TEMPLATE 1: PHOTO DOMINANT ── */
+.tmpl-1{display:flex;flex-direction:column}
+.tmpl-1 .photo{flex:1;background-size:cover;background-position:center;background-color:var(--bk-c1,#1B3557);position:relative;min-height:60%}
+.tmpl-1 .photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,0.35) 100%)}
+.tmpl-1 .bar{background:var(--bk-c1,#0D1B2E);color:#fff;padding:5% 6%;display:flex;align-items:center;gap:4%;border-top:0.5% solid var(--bk-c3,#C9922A)}
+.tmpl-1 .bar .logo{flex-shrink:0;max-width:18%;max-height:80px;background:var(--bk-c2,#fff);color:var(--bk-c1,#0D1B2E);display:flex;align-items:center;justify-content:center;padding:6px 10px;font-family:var(--bk-display,'Cormorant Garamond'),serif;font-weight:700;font-size:1.1rem;border-radius:4px;overflow:hidden}
+.tmpl-1 .bar .logo img{max-width:100%;max-height:100%}
+.tmpl-1 .bar .copy{flex:1;display:flex;flex-direction:column;gap:0.4rem}
+.tmpl-1 .bar h1{font-family:var(--bk-display,'Cormorant Garamond'),serif;font-weight:700;line-height:1.05;color:#fff;margin:0}
+.tmpl-1 .bar h2{font-family:var(--bk-body,'DM Sans'),sans-serif;font-weight:400;color:rgba(255,255,255,0.85);margin:0;line-height:1.35}
+.tmpl-1 .bar .cta-row{display:flex;justify-content:space-between;align-items:center;gap:8%;margin-top:0.35rem;flex-wrap:wrap}
+.tmpl-1 .bar .cta{background:var(--bk-c3,#C9922A);color:#fff;padding:0.55rem 1.1rem;font-family:var(--bk-body,'DM Sans'),sans-serif;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border-radius:4px}
+.tmpl-1 .bar .contact{font-family:var(--bk-body,'DM Sans'),sans-serif;color:rgba(255,255,255,0.85);font-weight:500;text-align:right}
+
+/* ── TEMPLATE 2: TEXT DOMINANT ── */
+.tmpl-2{background:var(--bk-c1,#0D1B2E);color:#fff;display:flex;flex-direction:column;padding:6%;gap:4%;position:relative}
+.tmpl-2::before{content:'';position:absolute;top:0;left:0;right:0;height:0.5%;background:var(--bk-c3,#C9922A)}
+.tmpl-2 .logo{align-self:flex-start;max-height:60px;max-width:35%;background:rgba(255,255,255,0.06);padding:8px 12px;font-family:var(--bk-display,'Cormorant Garamond'),serif;font-weight:700;color:#fff;border-radius:4px;display:flex;align-items:center;overflow:hidden}
+.tmpl-2 .logo img{max-width:100%;max-height:100%}
+.tmpl-2 .copy{flex:1;display:flex;flex-direction:column;justify-content:center}
+.tmpl-2 h1{font-family:var(--bk-display,'Cormorant Garamond'),serif;font-weight:700;line-height:1.05;color:#fff;margin-bottom:0.45rem}
+.tmpl-2 h2{font-family:var(--bk-body,'DM Sans'),sans-serif;font-weight:400;color:rgba(255,255,255,0.78);line-height:1.4;margin-bottom:1rem}
+.tmpl-2 .cta{display:inline-block;background:var(--bk-c3,#C9922A);color:#fff;padding:0.7rem 1.4rem;font-family:var(--bk-body,'DM Sans'),sans-serif;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;align-self:flex-start;border-radius:4px}
+.tmpl-2 .footer{display:flex;align-items:center;justify-content:space-between;gap:4%;border-top:1px solid rgba(255,255,255,0.15);padding-top:3%}
+.tmpl-2 .contact{font-family:var(--bk-body,'DM Sans'),sans-serif;font-weight:500;color:rgba(255,255,255,0.85)}
+.tmpl-2 .photo{background-size:cover;background-position:center;background-color:rgba(255,255,255,0.06);border-radius:4px;flex-shrink:0}
+
+/* ── TEMPLATE 3: SPLIT ── */
+.tmpl-3{display:grid;grid-template-columns:1fr 1fr;height:100%;width:100%}
+.tmpl-3 .left{background:var(--bk-c1,#0D1B2E);color:#fff;padding:6%;display:flex;flex-direction:column;justify-content:space-between;border-top:0.5% solid var(--bk-c3,#C9922A)}
+.tmpl-3 .left .logo{align-self:flex-start;max-height:60px;max-width:80%;background:rgba(255,255,255,0.06);padding:8px 12px;font-family:var(--bk-display,'Cormorant Garamond'),serif;font-weight:700;color:#fff;border-radius:4px;display:flex;align-items:center;overflow:hidden}
+.tmpl-3 .left .logo img{max-width:100%;max-height:100%}
+.tmpl-3 .left h1{font-family:var(--bk-display,'Cormorant Garamond'),serif;font-weight:700;line-height:1.05;color:#fff;margin-top:1.5rem;margin-bottom:0.4rem}
+.tmpl-3 .left h2{font-family:var(--bk-body,'DM Sans'),sans-serif;font-weight:400;color:rgba(255,255,255,0.78);line-height:1.4;margin-bottom:1.2rem}
+.tmpl-3 .left .cta{display:inline-block;background:var(--bk-c3,#C9922A);color:#fff;padding:0.7rem 1.3rem;font-family:var(--bk-body,'DM Sans'),sans-serif;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;align-self:flex-start;border-radius:4px}
+.tmpl-3 .left .contact{font-family:var(--bk-body,'DM Sans'),sans-serif;font-weight:500;color:rgba(255,255,255,0.85);margin-top:auto;font-size:0.9em}
+.tmpl-3 .right{background-size:cover;background-position:center;background-color:var(--bk-c2,#1B3557)}
+
+/* ── PLACEHOLDER PANELS ── */
+.placeholder-card{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);padding:3rem 2.5rem;text-align:center;max-width:560px;margin:1rem auto 0}
+.placeholder-icon{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--gold);margin-bottom:0.75rem;font-weight:300;line-height:1}
+.placeholder-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--navy-deep);margin-bottom:0.5rem;font-weight:600}
+.placeholder-sub{font-family:'DM Sans',sans-serif;font-size:0.86rem;color:var(--slate);line-height:1.65;margin-bottom:1.5rem}
+
+/* ── NOTE / NOTICE BOXES ── */
+.notebox{padding:0.85rem 1rem;background:#fff;border-left:3px solid var(--navy-deep);font-size:0.78rem;color:var(--slate);line-height:1.55;margin-bottom:1rem;border-radius:4px}
+.notebox.warn{background:#fff8e6;border-left-color:#d49019}
+.notebox.err{background:var(--red-bg);border-left-color:var(--red);color:var(--red)}
+.notebox.ok{background:var(--green-bg);border-left-color:var(--green);color:var(--green)}
+.notebox.lock{background:#fef9e7;border-left-color:var(--gold);color:#7a5b16}
+
+/* ── STEPS ROW ── */
+.steps-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+@media(max-width:780px){.steps-row{grid-template-columns:1fr 1fr}}
+.step-box{padding:1.25rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:6px}
+.step-num{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--gold);margin-bottom:0.4rem;line-height:1}
+.step-title{font-family:'DM Sans',sans-serif;font-size:0.86rem;font-weight:600;color:#fff;margin-bottom:0.3rem}
+.step-sub{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.62);line-height:1.55}
+
+/* ── PILLS ── */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:0.58rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:0.35rem 0.7rem;border-radius:3px;background:var(--off-white);color:var(--slate)}
+.pill.ok{background:var(--green-bg);color:var(--green)}
+.pill.warn{background:#fff3cd;color:#825a00}
+.pill.gold{background:rgba(201,146,42,0.12);color:#8b6310}
+
+/* ── FOOTER ── */
+footer{background:var(--navy-deep);color:rgba(255,255,255,0.55);padding:1.5rem 0;text-align:center;border-top:1px solid rgba(255,255,255,0.08)}
+footer a{color:var(--gold);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* loading spinner */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spinAnim 0.8s linear infinite;vertical-align:middle;margin-right:6px}
+.spin.dark{border-color:rgba(13,27,46,0.2);border-top-color:var(--navy-deep)}
+@keyframes spinAnim{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <a href="/portal.html" class="nav-logo">
+    <div class="nav-strata"><span></span><span></span><span></span><span></span></div>
+    <div class="nav-wm">
+      <span class="wordmark">Bedrock</span>
+      <span class="sub">Digital</span>
+    </div>
+    <span class="nav-product">Marketing</span>
+  </a>
+  <div class="nav-right">
+    <div class="nav-dd" id="otherToolsDD">
+      <button type="button" class="nav-dd-trigger" onclick="toggleDD('otherToolsDD')">Other Bedrock Tools ▾</button>
+      <div class="nav-dd-menu">
+        <a class="nav-dd-item" href="/">
+          <span class="nav-dd-item-eyebrow">Live</span>Bedrock Sites &mdash; Website Builder
+        </a>
+        <a class="nav-dd-item" href="/?seo=1">
+          <span class="nav-dd-item-eyebrow">Beta</span>Bedrock SEO &mdash; Audit &amp; Optimization
+        </a>
+        <a class="nav-dd-item" href="mailto:hello@bedrock-sites.com?subject=Bedrock%20CFO%20early%20list">
+          <span class="nav-dd-item-eyebrow">Coming Soon</span>Bedrock CFO &mdash; Get on the list
+        </a>
+      </div>
+    </div>
+    <a href="/" class="nav-link">← Take me Home</a>
+    <a href="/portal.html" class="nav-portal-btn">My Portal →</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- ╭───────────────────────────────────────────────────────────╮ -->
+<!-- │ PAGE 1 — EMAIL GATE / HERO                                │ -->
+<!-- ╰───────────────────────────────────────────────────────────╯ -->
+<div id="pageGate" class="page active">
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="eyebrow">Bedrock Marketing</div>
+        <h1 class="hero-h">Build your brand once.<br><em>Make marketing forever.</em></h1>
+        <p class="hero-sub">Set up your Brand Kit &mdash; colors, fonts, voice, logo &mdash; one time. Then turn out flyers, social posts, door hangers, business cards, and yard signs in minutes, all in your brand. PDF, PNG, or JPG &mdash; whatever you need.</p>
+        <form class="hero-form" onsubmit="startWithEmail(event)">
+          <input id="gateEmail" type="email" required placeholder="Your email" autocomplete="email">
+          <button class="btn-gold" type="submit">Get Started →</button>
+        </form>
+        <p style="font-size:0.7rem;color:rgba(255,255,255,0.5);margin-top:1rem">No password. We use your email to save your Brand Kit so you don&rsquo;t start from scratch every time.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--navy-deep);padding-top:1.5rem;padding-bottom:3.5rem;color:#fff">
+    <div class="container">
+      <div class="steps-row">
+        <div class="step-box"><div class="step-num">01</div><div class="step-title">Build your Brand Kit</div><div class="step-sub">Colors, fonts, voice, logo, contact info. One time. Used on everything after.</div></div>
+        <div class="step-box"><div class="step-num">02</div><div class="step-title">Pick what to make</div><div class="step-sub">Social, flyer, door hanger, yard sign, business card, postcard, banner, email signature.</div></div>
+        <div class="step-box"><div class="step-num">03</div><div class="step-title">Add photos &amp; copy</div><div class="step-sub">Pictures of your work + a headline. AI can write the headline if you want.</div></div>
+        <div class="step-box"><div class="step-num">04</div><div class="step-title">Download &amp; share</div><div class="step-sub">PNG for social, JPG for email, PDF for the print shop. Your call.</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+
+<!-- ╭───────────────────────────────────────────────────────────╮ -->
+<!-- │ PAGE 2 — HUB (sidebar + main content)                     │ -->
+<!-- ╰───────────────────────────────────────────────────────────╯ -->
+<div id="pageHub" class="page">
+  <div class="hub">
+
+    <aside class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Make</div>
+        <button class="sidebar-link active" id="nav-wizard" onclick="navTo('wizard')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l3-3 4 4 5-5 6 6"/><path d="M14 4h7v7"/></svg>
+          <span>Start here</span>
+        </button>
+        <button class="sidebar-link" id="nav-brand" onclick="navTo('brand')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+          <span>Brand Kit</span>
+        </button>
+        <button class="sidebar-link" id="nav-build" onclick="navTo('build')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Build Materials</span>
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Organize</div>
+        <button class="sidebar-link" id="nav-campaigns" onclick="navTo('campaigns')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+          <span>Campaigns</span>
+          <span class="badge">Soon</span>
+        </button>
+        <button class="sidebar-link" id="nav-library" onclick="navTo('library')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          <span>Asset Library</span>
+          <span class="badge">Soon</span>
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Account</div>
+        <a class="sidebar-link" href="/portal.html">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+          <span>Back to Portal</span>
+        </a>
+      </div>
+
+      <div class="sidebar-summary" id="sidebarSummary" style="display:none">
+        <div class="ss-eyebrow">Brand Kit</div>
+        <div class="ss-name" id="ssName">Your Business</div>
+        <div class="ss-meter"><div class="ss-meter-fill" id="ssMeterFill" style="width:0%"></div></div>
+        <div class="ss-pct"><span id="ssPct">0%</span> complete</div>
+      </div>
+    </aside>
+
+    <div class="main-area">
+
+      <!-- ────────────────────────────────────────────────────── -->
+      <!-- VIEW: WIZARD                                           -->
+      <!-- ────────────────────────────────────────────────────── -->
+      <div class="view" id="view-wizard">
+        <div class="section-head">
+          <div class="eyebrow light">Start here</div>
+          <h1 class="section-h">What are we <em>making today?</em></h1>
+          <p class="section-sub">Pick a goal &mdash; we'll walk you through the rest. You can also jump straight to the Brand Kit or Build Materials from the sidebar anytime.</p>
+        </div>
+        <div class="section-content">
+          <div class="wiz-wrap">
+
+            <div class="wiz-step">
+              <h3><span class="wiz-step-num">01</span> Pick a goal</h3>
+              <div class="wiz-step-sub">This tells us what kind of copy and material to suggest. You can change it later.</div>
+              <div class="goal-grid">
+                <button class="goal-card" data-goal="leads"     onclick="pickGoal('leads')"><span class="goal-icon">📞</span><span class="goal-text"><span class="goal-title">Get more calls</span><span class="goal-sub">General lead generation. Best for door hangers, yard signs, social.</span></span></button>
+                <button class="goal-card" data-goal="promo"     onclick="pickGoal('promo')"><span class="goal-icon">🏷️</span><span class="goal-text"><span class="goal-title">Promote a special</span><span class="goal-sub">$X off, limited-time, or a seasonal offer. Best for flyers, postcards.</span></span></button>
+                <button class="goal-card" data-goal="service"   onclick="pickGoal('service')"><span class="goal-icon">🔧</span><span class="goal-text"><span class="goal-title">Highlight a service</span><span class="goal-sub">Show off one specific service you offer. Best for flyers, social.</span></span></button>
+                <button class="goal-card" data-goal="brand"     onclick="pickGoal('brand')"><span class="goal-icon">🏗️</span><span class="goal-text"><span class="goal-title">Build awareness</span><span class="goal-sub">Just look professional everywhere you show up. Best for business cards, signs.</span></span></button>
+              </div>
+            </div>
+
+            <div class="wiz-step" id="wizStep2" style="display:none">
+              <h3><span class="wiz-step-num">02</span> Pick a material</h3>
+              <div class="wiz-step-sub">Each one comes in the right size and resolution for that use. You can change copy and photos in the next step.</div>
+              <div class="mat-grid" id="wizMatGrid"></div>
+            </div>
+
+            <div class="wiz-step" id="wizStep3" style="display:none">
+              <h3><span class="wiz-step-num">03</span> Open the builder</h3>
+              <div class="wiz-step-sub">We'll drop you into the Build Materials workspace with your goal and material pre-selected.</div>
+              <button class="btn-gold" onclick="goToBuildFromWizard()">Open the Builder →</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ────────────────────────────────────────────────────── -->
+      <!-- VIEW: BRAND KIT                                        -->
+      <!-- ────────────────────────────────────────────────────── -->
+      <div class="view" id="view-brand" style="display:none">
+        <div class="section-head">
+          <div class="eyebrow light">Step 1 &mdash; one time setup</div>
+          <h1 class="section-h">Your <em>Brand Kit.</em></h1>
+          <p class="section-sub">Fill this out once. Every flyer, post, sign, business card, and email you make from here on will pull from this. Editable any time.</p>
+        </div>
+        <div class="section-content">
+
+          <div id="kitStatus"></div>
+
+          <div class="brand-kit-grid">
+
+            <div class="bk-card">
+              <h3>Identity</h3>
+              <div class="bk-card-sub">Your business basics &mdash; shown on every piece you make.</div>
+              <div class="field-row">
+                <div class="field"><label>Business name</label><input id="bk_business_name" type="text" placeholder="Smith Plumbing LLC"></div>
+                <div class="field"><label>Trade</label><input id="bk_trade" type="text" placeholder="Plumbing"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>City</label><input id="bk_city" type="text" placeholder="Milwaukee, WI"></div>
+                <div class="field"><label>Service area</label><input id="bk_service_area" type="text" placeholder="Milwaukee + surrounding counties"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Phone</label><input id="bk_phone" type="tel" placeholder="(414) 555-0192"></div>
+                <div class="field"><label>Website (optional)</label><input id="bk_website" type="url" placeholder="smithplumbing.bedrock-sites.com"></div>
+              </div>
+              <div class="field"><label>Tagline (one short line)</label><input id="bk_tagline" type="text" placeholder="Fast. Reliable. Local."></div>
+            </div>
+
+            <div class="bk-card">
+              <h3>Colors</h3>
+              <div class="bk-card-sub">Your brand colors. Not sure? Tap a trade palette.</div>
+              <div class="color-pickers">
+                <div class="color-pick">
+                  <label class="control-label">Primary</label>
+                  <div class="color-pick-row"><input id="bk_color_primary_picker" type="color" value="#1B3557" oninput="syncColor('primary')"><input id="bk_color_primary" type="text" value="#1B3557" oninput="syncColorHex('primary')"></div>
+                </div>
+                <div class="color-pick">
+                  <label class="control-label">Secondary</label>
+                  <div class="color-pick-row"><input id="bk_color_secondary_picker" type="color" value="#FFFFFF" oninput="syncColor('secondary')"><input id="bk_color_secondary" type="text" value="#FFFFFF" oninput="syncColorHex('secondary')"></div>
+                </div>
+                <div class="color-pick">
+                  <label class="control-label">Accent</label>
+                  <div class="color-pick-row"><input id="bk_color_accent_picker" type="color" value="#C9922A" oninput="syncColor('accent')"><input id="bk_color_accent" type="text" value="#C9922A" oninput="syncColorHex('accent')"></div>
+                </div>
+              </div>
+              <div class="palette-suggest" id="paletteSuggest"></div>
+            </div>
+
+            <div class="bk-card">
+              <h3>Typography</h3>
+              <div class="bk-card-sub">Pick a style. We'll handle the specific font pairing.</div>
+              <div class="font-pick" id="fontPick">
+                <div class="font-card" data-font-style="modern" onclick="selectFontStyle('modern')"><div class="font-card-name">Modern</div><div class="font-card-preview" style="font-family:'DM Sans',sans-serif">Aa</div></div>
+                <div class="font-card" data-font-style="classic" onclick="selectFontStyle('classic')"><div class="font-card-name">Classic</div><div class="font-card-preview" style="font-family:'Cormorant Garamond',serif">Aa</div></div>
+                <div class="font-card" data-font-style="bold" onclick="selectFontStyle('bold')"><div class="font-card-name">Bold</div><div class="font-card-preview" style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em">Aa</div></div>
+                <div class="font-card" data-font-style="rugged" onclick="selectFontStyle('rugged')"><div class="font-card-name">Rugged</div><div class="font-card-preview" style="font-family:'Oswald',sans-serif">Aa</div></div>
+              </div>
+            </div>
+
+            <div class="bk-card">
+              <h3>Voice &amp; Tone</h3>
+              <div class="bk-card-sub">How should your marketing sound? Pick one &mdash; this drives any AI copy.</div>
+              <div class="tone-chips" id="toneChips">
+                <button type="button" class="tone-chip" data-tone="Bold"             onclick="selectTone('Bold')">Bold</button>
+                <button type="button" class="tone-chip" data-tone="Friendly"         onclick="selectTone('Friendly')">Friendly</button>
+                <button type="button" class="tone-chip" data-tone="Premium"          onclick="selectTone('Premium')">Premium</button>
+                <button type="button" class="tone-chip" data-tone="Family-owned"     onclick="selectTone('Family-owned')">Family-owned</button>
+                <button type="button" class="tone-chip" data-tone="Industrial"       onclick="selectTone('Industrial')">Industrial</button>
+                <button type="button" class="tone-chip" data-tone="Emergency-focused" onclick="selectTone('Emergency-focused')">Emergency</button>
+                <button type="button" class="tone-chip" data-tone="Modern"           onclick="selectTone('Modern')">Modern</button>
+                <button type="button" class="tone-chip" data-tone="Rugged"           onclick="selectTone('Rugged')">Rugged</button>
+                <button type="button" class="tone-chip" data-tone="Luxury"           onclick="selectTone('Luxury')">Luxury</button>
+              </div>
+              <div id="toneExample" class="tone-example"></div>
+              <div class="field" style="margin-top:1rem"><label>Target customer (optional)</label><input id="bk_target_customer" type="text" placeholder="Homeowners 35-65 who care about quality, not the cheapest bid"></div>
+            </div>
+
+            <div class="bk-card">
+              <h3>Logo</h3>
+              <div class="bk-card-sub">Upload your logo. Don't have one? We'll use your business name as a wordmark for now.</div>
+              <label class="logo-drop" for="logoFile">
+                <div class="logo-preview" id="logoPreview"><span id="logoFallback">Aa</span></div>
+                <div class="logo-drop-text">
+                  <strong>Click to upload</strong>
+                  PNG or JPG. Transparent background recommended.
+                </div>
+              </label>
+              <input id="logoFile" type="file" accept="image/png,image/jpeg,image/svg+xml" style="display:none" onchange="handleLogoUpload(event)">
+            </div>
+
+          </div>
+
+          <div class="save-row">
+            <span class="save-status" id="saveStatus"></span>
+            <button class="btn-outline" onclick="navTo('wizard')">← Back to Start</button>
+            <button class="btn-dark" onclick="saveBrandKit()">Save Brand Kit</button>
+            <button class="btn-gold" onclick="saveBrandAndBuild()">Save &amp; Build Materials →</button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ────────────────────────────────────────────────────── -->
+      <!-- VIEW: BUILD MATERIALS                                  -->
+      <!-- ────────────────────────────────────────────────────── -->
+      <div class="view" id="view-build" style="display:none">
+        <div class="section-head">
+          <div class="eyebrow light">Step 2 &mdash; make an asset</div>
+          <h1 class="section-h">Build a <em>marketing piece.</em></h1>
+          <p class="section-sub">Pick a material, drop in your photos, write a headline (or let AI do it). Download as PNG, JPG, or PDF. Brand Kit colors and fonts apply automatically.</p>
+        </div>
+        <div class="section-content">
+
+          <div id="brandLockNote" class="notebox lock" style="display:none">
+            🔒 Your Brand Kit isn&rsquo;t set up yet. Materials will use defaults until you complete it &mdash;
+            <a href="#" onclick="navTo('brand');return false" style="color:var(--gold);font-weight:600">finish your Brand Kit →</a>
+          </div>
+
+          <!-- material picker -->
+          <div style="background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);padding:1.5rem;margin-bottom:1.25rem">
+            <div class="control-label" style="margin-bottom:10px">Choose a material</div>
+            <div class="mat-grid" id="matGrid"></div>
+          </div>
+
+          <div class="gen-layout">
+
+            <div class="gen-controls">
+
+              <div class="control-group">
+                <div class="control-label">Selected Material</div>
+                <div id="selectedMat" style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;color:var(--navy-deep);font-weight:600">Social Media Post</div>
+                <div id="selectedMatSize" style="font-size:0.72rem;color:var(--slate);margin-top:2px">1080 × 1080 &middot; square</div>
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">Template</div>
+                <div class="tmpl-grid" id="tmplPick">
+                  <div class="tmpl-card active" data-tmpl="1" onclick="selectTemplate(1)">
+                    <div class="tmpl-card-mini" style="background:linear-gradient(180deg,#1B3557 65%,#0D1B2E 65%)"></div>
+                    <div class="tmpl-card-label">Photo</div>
+                  </div>
+                  <div class="tmpl-card" data-tmpl="2" onclick="selectTemplate(2)">
+                    <div class="tmpl-card-mini" style="background:#0D1B2E;position:relative"><div style="position:absolute;left:8px;right:24px;top:18px;height:4px;background:#fff"></div><div style="position:absolute;left:8px;right:32px;top:28px;height:2px;background:rgba(255,255,255,0.5)"></div></div>
+                    <div class="tmpl-card-label">Text</div>
+                  </div>
+                  <div class="tmpl-card" data-tmpl="3" onclick="selectTemplate(3)">
+                    <div class="tmpl-card-mini" style="background:linear-gradient(90deg,#0D1B2E 50%,#1B3557 50%)"></div>
+                    <div class="tmpl-card-label">Split</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">Photos</div>
+                <label class="btn-outline" style="display:inline-block;cursor:pointer">
+                  + Upload photos
+                  <input id="photoFile" type="file" accept="image/*" multiple style="display:none" onchange="handlePhotoUpload(event)">
+                </label>
+                <div class="photo-bin" id="photoBin"></div>
+                <div style="font-size:0.66rem;color:var(--slate);margin-top:6px">Click a photo to use it. Up to 8 photos.</div>
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">Copy</div>
+                <button class="btn-dark" id="aiBtn" onclick="generateCopy()" style="width:100%;margin-bottom:8px">✨ Generate copy with AI</button>
+                <div id="aiNote" style="font-size:0.7rem;color:var(--slate);margin-bottom:8px;display:none"></div>
+                <div class="copy-edit">
+                  <input id="copy_headline" type="text" placeholder="Headline" oninput="renderPreview()">
+                  <textarea id="copy_subheadline" placeholder="Subheadline" oninput="renderPreview()"></textarea>
+                  <input id="copy_cta" type="text" placeholder="Call to action (e.g. Call Today)" oninput="renderPreview()">
+                </div>
+              </div>
+
+              <div class="control-group">
+                <div class="control-label">Campaign / Goal (optional)</div>
+                <input id="campaign_note" type="text" placeholder="e.g. Spring HVAC tune-up" oninput="renderPreview()" style="width:100%;padding:0.55rem 0.7rem;border:1px solid var(--border-light);border-radius:6px;font-size:0.85rem">
+                <div style="font-size:0.66rem;color:var(--slate);margin-top:6px">Focuses the AI &mdash; doesn&rsquo;t change the layout.</div>
+              </div>
+
+            </div>
+
+            <div class="gen-preview">
+              <div class="control-label" style="margin-bottom:8px">Preview</div>
+              <div class="preview-frame-wrap">
+                <div class="preview-scale-wrap" id="previewScaleWrap">
+                  <div id="previewMount"></div>
+                </div>
+              </div>
+              <div class="dl-row">
+                <button class="btn-gold" onclick="downloadFile('png')">PNG</button>
+                <button class="btn-outline" onclick="downloadFile('jpg')">JPG</button>
+                <button class="btn-outline" onclick="downloadFile('pdf')">PDF</button>
+              </div>
+              <div id="dlStatus" style="font-size:0.72rem;color:var(--slate);margin-top:8px;text-align:center"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ────────────────────────────────────────────────────── -->
+      <!-- VIEW: CAMPAIGNS (placeholder)                          -->
+      <!-- ────────────────────────────────────────────────────── -->
+      <div class="view" id="view-campaigns" style="display:none">
+        <div class="section-head">
+          <div class="eyebrow light">Coming soon</div>
+          <h1 class="section-h">My <em>Campaigns.</em></h1>
+          <p class="section-sub">Group your materials into campaigns &mdash; "Spring HVAC," "Holiday Lighting," "Storm Cleanup" &mdash; so you can find them later, re-use them next season, and track what worked.</p>
+        </div>
+        <div class="section-content">
+          <div class="placeholder-card">
+            <div class="placeholder-icon">◈</div>
+            <div class="placeholder-title">Campaign organizer is on the way</div>
+            <div class="placeholder-sub">For now, you can use the "Campaign / Goal" field in Build Materials to label what you're making. We'll bring saved campaigns and re-use online in the next update.</div>
+            <button class="btn-gold" onclick="navTo('build')">Go Build Something →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ────────────────────────────────────────────────────── -->
+      <!-- VIEW: LIBRARY (placeholder)                            -->
+      <!-- ────────────────────────────────────────────────────── -->
+      <div class="view" id="view-library" style="display:none">
+        <div class="section-head">
+          <div class="eyebrow light">Coming soon</div>
+          <h1 class="section-h">Asset <em>Library.</em></h1>
+          <p class="section-sub">Everything you&rsquo;ve made, saved in one place. Re-download, duplicate, or tweak older pieces without starting over.</p>
+        </div>
+        <div class="section-content">
+          <div class="placeholder-card">
+            <div class="placeholder-icon">▣</div>
+            <div class="placeholder-title">Your saved assets will live here</div>
+            <div class="placeholder-sub">For now, downloads save to your computer when you click PNG / JPG / PDF. Persistent storage of past designs is coming next.</div>
+            <button class="btn-gold" onclick="navTo('build')">Build a New One →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- HIDDEN RENDER STAGE — html2canvas captures from here -->
+<div id="renderStage"><div id="renderMount"></div></div>
+
+<footer>
+  <div class="container" style="font-size:0.72rem">
+    Bedrock Digital &middot; <a href="/">Home</a> &middot; <a href="/portal.html">Portal</a> &middot; <a href="mailto:support@bedrock-sites.com">Support</a>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────────────────────────────────────
+var MATERIALS = {
+  social:    { name:'Social Media Post',     w:1080, h:1080, mm:null,            cat:'social',  shape:'square',    sizeText:'1080 × 1080 · square' },
+  flyer:     { name:'Print Flyer',           w:1275, h:1650, mm:[216,279],       cat:'print',   shape:'tall',      sizeText:'8.5 × 11 in · portrait' },
+  door:      { name:'Door Hanger',           w:600,  h:1650, mm:[102,279],       cat:'print',   shape:'tall',      sizeText:'4 × 11 in · narrow tall' },
+  yard:      { name:'Yard Sign',             w:2700, h:1800, mm:[610,457],       cat:'print',   shape:'wide',      sizeText:'24 × 18 in · landscape' },
+  bizcard:   { name:'Business Card',         w:1050, h:600,  mm:[88.9,50.8],     cat:'print',   shape:'card',      sizeText:'3.5 × 2 in · landscape' },
+  postcard:  { name:'Postcard',              w:1800, h:1200, mm:[152.4,101.6],   cat:'print',   shape:'postcard',  sizeText:'6 × 4 in · landscape' },
+  emailsig:  { name:'Email Signature',       w:640,  h:200,  mm:null,            cat:'digital', shape:'wide-thin', sizeText:'640 × 200 · banner' },
+  fbcover:   { name:'Facebook Cover',        w:820,  h:312,  mm:null,            cat:'digital', shape:'wide-thin', sizeText:'820 × 312 · banner' },
+};
+var MATERIAL_ORDER = ['social','flyer','door','yard','bizcard','postcard','emailsig','fbcover'];
+
+var TONE_EXAMPLES = {
+  'Bold':              '"We show up. We get it done. No excuses."',
+  'Friendly':          '"Hey neighbor — need a hand with the plumbing? We&rsquo;ve got you."',
+  'Premium':           '"Craftsmanship that holds up. Service that earns referrals."',
+  'Family-owned':      '"Run by the Smith family since 1998. We treat your home like ours."',
+  'Industrial':        '"Built right. Wired tight. Done once."',
+  'Emergency-focused': '"24/7 response. We answer when the pipe breaks."',
+  'Modern':            '"Clean work. Clear pricing. Texts confirmed."',
+  'Rugged':            '"From the truck to the trench — we handle the dirty work."',
+  'Luxury':            '"Discreet, premium service for homes that demand the best."',
+};
+
+var PALETTES = [
+  { label:'Plumbing',     c:['#1F4E79','#FFFFFF','#C9922A'] },
+  { label:'Electrical',   c:['#1F1F1F','#FFD23F','#FF6B35'] },
+  { label:'Landscaping',  c:['#234E1B','#F5F5F5','#A87C2E'] },
+  { label:'HVAC',         c:['#0E2A47','#E5E5E5','#D14A2B'] },
+  { label:'Roofing',      c:['#2B2B2B','#FFFFFF','#C44A1E'] },
+  { label:'Concrete',     c:['#3D3D3D','#F1ECE3','#C9922A'] },
+];
+
+var FONT_STYLES = {
+  modern:  { display:"'DM Sans',sans-serif",            body:"'DM Sans',sans-serif" },
+  classic: { display:"'Cormorant Garamond',serif",      body:"'DM Sans',sans-serif" },
+  bold:    { display:"'Bebas Neue',sans-serif",         body:"'DM Sans',sans-serif" },
+  rugged:  { display:"'Oswald',sans-serif",             body:"'DM Sans',sans-serif" },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+var STATE = {
+  email: '',
+  authToken: '',  // optional — when called from portal with session
+  view: 'wizard',
+  goal: '',
+  brandKit: {
+    business_name:'', tagline:'', trade:'', city:'', phone:'', website:'',
+    logo_url:'', logo_base64:'',
+    color_primary:'#1B3557', color_secondary:'#FFFFFF', color_accent:'#C9922A',
+    font_style:'classic', tone:'Friendly',
+    target_customer:'', service_area:'',
+  },
+  brandKitComplete: false,
+  photos: [],
+  activePhoto: 0,
+  template: 1,
+  material: 'social',
+  copy: { headline:'', subheadline:'', cta:'' },
+  campaign_note: '',
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PAGE + NAV
+// ─────────────────────────────────────────────────────────────────────────────
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var el = document.getElementById(id); if (el) el.classList.add('active');
+  try { window.scrollTo({ top:0, behavior:'instant' }); } catch(e){ window.scrollTo(0,0); }
+}
+
+function navTo(view) {
+  STATE.view = view;
+  document.querySelectorAll('.sidebar-link').forEach(function(l){ l.classList.remove('active'); });
+  var btn = document.getElementById('nav-'+view); if (btn) btn.classList.add('active');
+  document.querySelectorAll('.view').forEach(function(v){ v.style.display = 'none'; });
+  var vw = document.getElementById('view-'+view); if (vw) vw.style.display = 'block';
+  if (view === 'build') {
+    document.getElementById('brandLockNote').style.display = STATE.brandKitComplete ? 'none' : 'block';
+    paintMatGrid();
+    renderPreview();
+  }
+  try { window.scrollTo({ top:0, behavior:'instant' }); } catch(e){}
+}
+
+function toggleDD(id) {
+  var dd = document.getElementById(id);
+  document.querySelectorAll('.nav-dd').forEach(function(d){ if (d !== dd) d.classList.remove('open'); });
+  if (dd) dd.classList.toggle('open');
+}
+document.addEventListener('click', function(e){
+  if (!e.target.closest('.nav-dd')) {
+    document.querySelectorAll('.nav-dd').forEach(function(d){ d.classList.remove('open'); });
+  }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GATE → LOOKUP / START
+// ─────────────────────────────────────────────────────────────────────────────
+async function startWithEmail(e) {
+  if (e) e.preventDefault();
+  var email = (document.getElementById('gateEmail').value || '').trim().toLowerCase();
+  if (!email || !email.includes('@')) return;
+  STATE.email = email;
+  try { sessionStorage.setItem('bedrock_marketing_email', email); } catch(_){}
+
+  try {
+    var r = await fetch('/.netlify/functions/get-brand-kit?email=' + encodeURIComponent(email));
+    var data = await r.json();
+    if (data.brand_kit) {
+      hydrateKit(data.brand_kit);
+      renderKitStatus('Loaded your saved Brand Kit. Edit anything, or jump into Build Materials.', 'ok');
+      STATE.brandKitComplete = true;
+    } else {
+      renderKitStatus('No saved Brand Kit yet &mdash; fill out the form to get started.', '');
+      STATE.brandKitComplete = false;
+    }
+  } catch(_) {
+    renderKitStatus('Could not check for an existing Brand Kit. You can fill it out fresh.', 'warn');
+  }
+
+  showPage('pageHub');
+  paintPalettes();
+  selectFontStyle(STATE.brandKit.font_style, true);
+  selectTone(STATE.brandKit.tone, true);
+  updateBrandSummary();
+  paintMatGrid();
+  // Default landing: if brand kit exists, take them to wizard; if not, take them to brand kit
+  navTo(STATE.brandKitComplete ? 'wizard' : 'brand');
+}
+
+function renderKitStatus(msg, kind) {
+  var el = document.getElementById('kitStatus');
+  if (!el) return;
+  if (!msg) { el.innerHTML = ''; return; }
+  var cls = 'notebox' + (kind ? (' ' + kind) : '');
+  el.innerHTML = '<div class="'+cls+'">'+msg+'</div>';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// BRAND KIT
+// ─────────────────────────────────────────────────────────────────────────────
+function hydrateKit(k) {
+  STATE.brandKit.business_name   = k.business_name   || '';
+  STATE.brandKit.tagline         = k.tagline         || '';
+  STATE.brandKit.trade           = k.trade           || '';
+  STATE.brandKit.city            = k.city            || '';
+  STATE.brandKit.phone           = k.phone           || '';
+  STATE.brandKit.website         = k.website         || '';
+  STATE.brandKit.logo_url        = k.logo_url        || '';
+  STATE.brandKit.logo_base64     = (k.raw_data && k.raw_data.logo_base64) || '';
+  STATE.brandKit.color_primary   = k.color_primary   || '#1B3557';
+  STATE.brandKit.color_secondary = k.color_secondary || '#FFFFFF';
+  STATE.brandKit.color_accent    = k.color_accent    || '#C9922A';
+  STATE.brandKit.font_style      = k.font_style      || 'classic';
+  STATE.brandKit.tone            = k.tone            || 'Friendly';
+  STATE.brandKit.target_customer = k.target_customer || '';
+  STATE.brandKit.service_area    = k.service_area    || '';
+
+  setVal('bk_business_name',   STATE.brandKit.business_name);
+  setVal('bk_tagline',         STATE.brandKit.tagline);
+  setVal('bk_trade',           STATE.brandKit.trade);
+  setVal('bk_city',            STATE.brandKit.city);
+  setVal('bk_phone',           STATE.brandKit.phone);
+  setVal('bk_website',         STATE.brandKit.website);
+  setVal('bk_service_area',    STATE.brandKit.service_area);
+  setVal('bk_target_customer', STATE.brandKit.target_customer);
+  setVal('bk_color_primary',   STATE.brandKit.color_primary);
+  setVal('bk_color_primary_picker',   STATE.brandKit.color_primary);
+  setVal('bk_color_secondary', STATE.brandKit.color_secondary);
+  setVal('bk_color_secondary_picker', STATE.brandKit.color_secondary);
+  setVal('bk_color_accent',    STATE.brandKit.color_accent);
+  setVal('bk_color_accent_picker',    STATE.brandKit.color_accent);
+
+  if (STATE.brandKit.logo_base64) {
+    var lp = document.getElementById('logoPreview');
+    lp.innerHTML = '<img src="'+STATE.brandKit.logo_base64+'" alt="logo">';
+  }
+  updateBrandSummary();
+}
+function setVal(id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; }
+
+function readKitFromForm() {
+  STATE.brandKit.business_name   = (document.getElementById('bk_business_name').value || '').trim();
+  STATE.brandKit.tagline         = (document.getElementById('bk_tagline').value       || '').trim();
+  STATE.brandKit.trade           = (document.getElementById('bk_trade').value         || '').trim();
+  STATE.brandKit.city            = (document.getElementById('bk_city').value          || '').trim();
+  STATE.brandKit.phone           = (document.getElementById('bk_phone').value         || '').trim();
+  STATE.brandKit.website         = (document.getElementById('bk_website').value       || '').trim();
+  STATE.brandKit.service_area    = (document.getElementById('bk_service_area').value  || '').trim();
+  STATE.brandKit.target_customer = (document.getElementById('bk_target_customer').value || '').trim();
+  STATE.brandKit.color_primary   = (document.getElementById('bk_color_primary').value   || '#1B3557').trim();
+  STATE.brandKit.color_secondary = (document.getElementById('bk_color_secondary').value || '#FFFFFF').trim();
+  STATE.brandKit.color_accent    = (document.getElementById('bk_color_accent').value    || '#C9922A').trim();
+}
+
+function brandKitPct() {
+  var fields = [
+    STATE.brandKit.business_name, STATE.brandKit.trade, STATE.brandKit.city,
+    STATE.brandKit.phone, STATE.brandKit.tagline, STATE.brandKit.service_area,
+    STATE.brandKit.tone, STATE.brandKit.font_style,
+  ];
+  var defaults = { primary:'#1B3557', secondary:'#FFFFFF', accent:'#C9922A' };
+  var colorsTouched = STATE.brandKit.color_primary !== defaults.primary ||
+                      STATE.brandKit.color_secondary !== defaults.secondary ||
+                      STATE.brandKit.color_accent !== defaults.accent;
+  var total = fields.length + 1 + 1;
+  var filled = fields.filter(function(v){ return v && String(v).trim() !== ''; }).length;
+  if (colorsTouched) filled++;
+  if (STATE.brandKit.logo_base64) filled++;
+  return Math.round(100 * filled / total);
+}
+
+function updateBrandSummary() {
+  var pct = brandKitPct();
+  STATE.brandKitComplete = pct >= 60;
+  var summary = document.getElementById('sidebarSummary');
+  if (summary) summary.style.display = STATE.email ? 'block' : 'none';
+  var n = document.getElementById('ssName');   if (n) n.textContent  = STATE.brandKit.business_name || (STATE.email || 'Your Business');
+  var f = document.getElementById('ssMeterFill'); if (f) f.style.width = pct + '%';
+  var p = document.getElementById('ssPct');    if (p) p.textContent = pct + '%';
+}
+
+async function saveBrandKit() {
+  if (!STATE.email) {
+    renderKitStatus('Missing email &mdash; go back and enter your email to save.', 'err');
+    return false;
+  }
+  readKitFromForm();
+  var status = document.getElementById('saveStatus');
+  status.textContent = 'Saving…'; status.className = 'save-status';
+
+  var payload = {
+    email: STATE.email,
+    business_name:   STATE.brandKit.business_name,
+    tagline:         STATE.brandKit.tagline,
+    trade:           STATE.brandKit.trade,
+    city:            STATE.brandKit.city,
+    phone:           STATE.brandKit.phone,
+    website:         STATE.brandKit.website,
+    logo_url:        STATE.brandKit.logo_url,
+    color_primary:   STATE.brandKit.color_primary,
+    color_secondary: STATE.brandKit.color_secondary,
+    color_accent:    STATE.brandKit.color_accent,
+    font_style:      STATE.brandKit.font_style,
+    tone:            STATE.brandKit.tone,
+    target_customer: STATE.brandKit.target_customer,
+    service_area:    STATE.brandKit.service_area,
+    raw_data:        { logo_base64: STATE.brandKit.logo_base64 || '' },
+  };
+
+  var headers = {'Content-Type':'application/json'};
+  if (STATE.authToken) headers['Authorization'] = 'Bearer ' + STATE.authToken;
+
+  try {
+    var r = await fetch('/.netlify/functions/save-brand-kit', { method:'POST', headers: headers, body: JSON.stringify(payload) });
+    if (r.ok) {
+      status.textContent = '✓ Saved'; status.className = 'save-status ok';
+      setTimeout(function(){ status.textContent=''; }, 2200);
+      STATE.brandKitComplete = true;
+      updateBrandSummary();
+      return true;
+    } else {
+      status.textContent = 'Save failed &mdash; try again'; status.className = 'save-status err';
+      return false;
+    }
+  } catch(e) {
+    status.textContent = 'Network error'; status.className = 'save-status err';
+    return false;
+  }
+}
+
+async function saveBrandAndBuild() { await saveBrandKit(); navTo('build'); }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PALETTES / FONT / TONE
+// ─────────────────────────────────────────────────────────────────────────────
+function syncColor(key) {
+  var picker = document.getElementById('bk_color_'+key+'_picker');
+  var hex    = document.getElementById('bk_color_'+key);
+  hex.value  = picker.value.toUpperCase();
+  STATE.brandKit['color_'+key] = hex.value;
+  updateBrandSummary();
+}
+function syncColorHex(key) {
+  var hex    = document.getElementById('bk_color_'+key);
+  var v      = (hex.value || '').trim();
+  if (/^#?[0-9A-Fa-f]{6}$/.test(v)) {
+    if (!v.startsWith('#')) v = '#' + v;
+    document.getElementById('bk_color_'+key+'_picker').value = v;
+    STATE.brandKit['color_'+key] = v.toUpperCase();
+    updateBrandSummary();
+  }
+}
+function paintPalettes() {
+  var wrap = document.getElementById('paletteSuggest'); if (!wrap) return;
+  wrap.innerHTML = PALETTES.map(function(p){
+    var sw = p.c.map(function(c){return '<span class="palette-swatch" style="background:'+c+'"></span>';}).join('');
+    return '<button type="button" class="palette-chip" onclick="applyPalette(\''+p.c.join(',')+'\')">'+sw+'<span class="palette-label">'+p.label+'</span></button>';
+  }).join('');
+}
+function applyPalette(csv) {
+  var parts = csv.split(',');
+  setVal('bk_color_primary',   parts[0]); setVal('bk_color_primary_picker',   parts[0]);
+  setVal('bk_color_secondary', parts[1]); setVal('bk_color_secondary_picker', parts[1]);
+  setVal('bk_color_accent',    parts[2]); setVal('bk_color_accent_picker',    parts[2]);
+  STATE.brandKit.color_primary = parts[0]; STATE.brandKit.color_secondary = parts[1]; STATE.brandKit.color_accent = parts[2];
+  updateBrandSummary();
+}
+function selectFontStyle(style){
+  STATE.brandKit.font_style = style;
+  document.querySelectorAll('#fontPick .font-card').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-font-style') === style); });
+  updateBrandSummary();
+}
+function selectTone(tone){
+  STATE.brandKit.tone = tone;
+  document.querySelectorAll('#toneChips .tone-chip').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-tone') === tone); });
+  var ex = document.getElementById('toneExample');
+  if (ex && TONE_EXAMPLES[tone]) { ex.innerHTML = TONE_EXAMPLES[tone]; ex.classList.add('show'); }
+  updateBrandSummary();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LOGO + PHOTO UPLOAD
+// ─────────────────────────────────────────────────────────────────────────────
+function handleLogoUpload(e) {
+  var file = e.target.files && e.target.files[0]; if (!file) return;
+  fileToBase64(file).then(function(b64){
+    STATE.brandKit.logo_base64 = b64;
+    document.getElementById('logoPreview').innerHTML = '<img src="'+b64+'" alt="logo">';
+    updateBrandSummary();
+  });
+}
+function fileToBase64(file) {
+  return new Promise(function(resolve, reject){
+    var r = new FileReader(); r.onload = function(){ resolve(r.result); }; r.onerror = reject; r.readAsDataURL(file);
+  });
+}
+function handlePhotoUpload(e) {
+  var files = e.target.files; if (!files || !files.length) return;
+  var promises = [];
+  for (var i = 0; i < files.length && STATE.photos.length < 8; i++) promises.push(fileToBase64(files[i]));
+  Promise.all(promises).then(function(arr){
+    arr.forEach(function(b64){ STATE.photos.push(b64); });
+    paintPhotos(); renderPreview();
+  });
+  e.target.value = '';
+}
+function paintPhotos() {
+  var bin = document.getElementById('photoBin'); if (!bin) return;
+  bin.innerHTML = STATE.photos.map(function(p, i){
+    var active = i === STATE.activePhoto ? ' active' : '';
+    return '<div class="photo-thumb'+active+'" onclick="setActivePhoto('+i+')"><img src="'+p+'" alt=""><button class="remove" onclick="event.stopPropagation();removePhoto('+i+')">×</button></div>';
+  }).join('');
+}
+function setActivePhoto(i) { STATE.activePhoto = i; paintPhotos(); renderPreview(); }
+function removePhoto(i) {
+  STATE.photos.splice(i, 1);
+  if (STATE.activePhoto >= STATE.photos.length) STATE.activePhoto = Math.max(0, STATE.photos.length - 1);
+  paintPhotos(); renderPreview();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MATERIAL PICKER + TEMPLATE
+// ─────────────────────────────────────────────────────────────────────────────
+function paintMatGrid() {
+  var grid = document.getElementById('matGrid'); if (!grid) return;
+  grid.innerHTML = MATERIAL_ORDER.map(function(key){
+    var m = MATERIALS[key];
+    var active = STATE.material === key ? ' active' : '';
+    return '<button type="button" class="mat-card'+active+'" data-mat="'+key+'" onclick="selectMaterial(\''+key+'\')">' +
+           '<div class="mat-icon '+m.shape+'"></div>' +
+           '<div class="mat-cat">'+m.cat+'</div>' +
+           '<div class="mat-name">'+m.name+'</div>' +
+           '<div class="mat-size">'+m.sizeText+'</div>' +
+           '</button>';
+  }).join('');
+}
+function paintWizardMatGrid() {
+  var grid = document.getElementById('wizMatGrid'); if (!grid) return;
+  grid.innerHTML = MATERIAL_ORDER.map(function(key){
+    var m = MATERIALS[key];
+    var active = STATE.material === key ? ' active' : '';
+    return '<button type="button" class="mat-card'+active+'" data-mat="'+key+'" onclick="wizSelectMat(\''+key+'\')">' +
+           '<div class="mat-icon '+m.shape+'"></div>' +
+           '<div class="mat-cat">'+m.cat+'</div>' +
+           '<div class="mat-name">'+m.name+'</div>' +
+           '<div class="mat-size">'+m.sizeText+'</div>' +
+           '</button>';
+  }).join('');
+}
+function selectMaterial(key) {
+  STATE.material = key;
+  var m = MATERIALS[key];
+  document.getElementById('selectedMat').textContent = m.name;
+  document.getElementById('selectedMatSize').textContent = m.sizeText;
+  paintMatGrid();
+  renderPreview();
+}
+function selectTemplate(n) {
+  STATE.template = n;
+  document.querySelectorAll('#tmplPick .tmpl-card').forEach(function(c){ c.classList.toggle('active', parseInt(c.getAttribute('data-tmpl'), 10) === n); });
+  renderPreview();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WIZARD
+// ─────────────────────────────────────────────────────────────────────────────
+function pickGoal(g) {
+  STATE.goal = g;
+  document.querySelectorAll('.goal-card').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-goal') === g); });
+  document.getElementById('wizStep2').style.display = 'block';
+  paintWizardMatGrid();
+  // suggest material based on goal
+  var suggested = { leads:'door', promo:'flyer', service:'flyer', brand:'bizcard' }[g];
+  if (suggested) { STATE.material = suggested; paintWizardMatGrid(); }
+  setTimeout(function(){ document.getElementById('wizStep2').scrollIntoView({behavior:'smooth',block:'center'}); }, 80);
+}
+function wizSelectMat(key) {
+  STATE.material = key;
+  paintWizardMatGrid();
+  document.getElementById('wizStep3').style.display = 'block';
+  setTimeout(function(){ document.getElementById('wizStep3').scrollIntoView({behavior:'smooth',block:'center'}); }, 80);
+}
+function goToBuildFromWizard() {
+  // suggest a campaign note from the goal
+  var hint = { leads:'Get more calls', promo:'Special offer', service:'Highlighted service', brand:'Brand presence' }[STATE.goal];
+  if (hint && document.getElementById('campaign_note')) document.getElementById('campaign_note').value = hint;
+  navTo('build');
+  selectMaterial(STATE.material);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PREVIEW + RENDER
+// ─────────────────────────────────────────────────────────────────────────────
+function readCopy() {
+  STATE.copy.headline    = (document.getElementById('copy_headline').value    || '').trim();
+  STATE.copy.subheadline = (document.getElementById('copy_subheadline').value || '').trim();
+  STATE.copy.cta         = (document.getElementById('copy_cta').value         || '').trim();
+  STATE.campaign_note    = (document.getElementById('campaign_note').value    || '').trim();
+}
+
+function templateHTML(b, copy, photoUrl, dims) {
+  var logoNode = b.logo_base64
+    ? '<img src="'+b.logo_base64+'" alt="logo">'
+    : (b.business_name || 'Your Logo');
+  var contact  = [b.phone, b.website || (b.city ? b.city : '')].filter(Boolean).join(' &middot; ');
+  var headline = copy.headline || (b.tagline || 'Quality work, on time.');
+  var sub      = copy.subheadline || (b.business_name ? (b.business_name + ' — ' + (b.trade || '')) : '');
+  var cta      = copy.cta || 'Call Today';
+
+  var W = dims.w;
+  var hSize  = Math.round(W * 0.058);
+  var h2Size = Math.round(W * 0.022);
+  var bSize  = Math.round(W * 0.018);
+
+  if (STATE.template === 1) {
+    var photoStyle = photoUrl
+      ? 'background-image:url(\''+photoUrl+'\')'
+      : 'background:linear-gradient(135deg,'+b.color_primary+','+b.color_accent+')';
+    return ''
+    + '<div class="tmpl tmpl-1" style="width:'+dims.w+'px;height:'+dims.h+'px">'
+    + '  <div class="photo" style="'+photoStyle+'"></div>'
+    + '  <div class="bar">'
+    + '    <div class="logo" style="font-size:'+Math.round(W*0.025)+'px">'+logoNode+'</div>'
+    + '    <div class="copy">'
+    + '      <h1 style="font-size:'+hSize+'px">'+escapeHTML(headline)+'</h1>'
+    + (sub ? '<h2 style="font-size:'+h2Size+'px">'+escapeHTML(sub)+'</h2>' : '')
+    + '      <div class="cta-row">'
+    + '        <span class="cta" style="font-size:'+bSize+'px">'+escapeHTML(cta)+'</span>'
+    + '        <span class="contact" style="font-size:'+bSize+'px">'+contact+'</span>'
+    + '      </div>'
+    + '    </div>'
+    + '  </div>'
+    + '</div>';
+  }
+  if (STATE.template === 2) {
+    return ''
+    + '<div class="tmpl tmpl-2" style="width:'+dims.w+'px;height:'+dims.h+'px">'
+    + '  <div class="logo" style="font-size:'+Math.round(W*0.025)+'px">'+logoNode+'</div>'
+    + '  <div class="copy">'
+    + '    <h1 style="font-size:'+Math.round(W*0.075)+'px">'+escapeHTML(headline)+'</h1>'
+    + (sub ? '<h2 style="font-size:'+Math.round(W*0.028)+'px">'+escapeHTML(sub)+'</h2>' : '')
+    + '    <span class="cta" style="font-size:'+bSize+'px">'+escapeHTML(cta)+'</span>'
+    + '  </div>'
+    + '  <div class="footer">'
+    + '    <span class="contact" style="font-size:'+Math.round(W*0.018)+'px">'+contact+'</span>'
+    + (photoUrl ? '<div class="photo" style="width:'+Math.round(W*0.22)+'px;height:'+Math.round(W*0.22)+'px;background-image:url(\''+photoUrl+'\')"></div>' : '')
+    + '  </div>'
+    + '</div>';
+  }
+  var rightStyle = photoUrl ? 'background-image:url(\''+photoUrl+'\')' : '';
+  return ''
+  + '<div class="tmpl tmpl-3" style="width:'+dims.w+'px;height:'+dims.h+'px">'
+  + '  <div class="left">'
+  + '    <div class="logo" style="font-size:'+Math.round(W*0.025)+'px">'+logoNode+'</div>'
+  + '    <div>'
+  + '      <h1 style="font-size:'+Math.round(W*0.068)+'px">'+escapeHTML(headline)+'</h1>'
+  + (sub ? '<h2 style="font-size:'+Math.round(W*0.024)+'px">'+escapeHTML(sub)+'</h2>' : '')
+  + '      <span class="cta" style="font-size:'+bSize+'px">'+escapeHTML(cta)+'</span>'
+  + '    </div>'
+  + '    <span class="contact" style="font-size:'+Math.round(W*0.02)+'px">'+contact+'</span>'
+  + '  </div>'
+  + '  <div class="right" style="'+rightStyle+'"></div>'
+  + '</div>';
+}
+
+function escapeHTML(s) {
+  return String(s == null ? '' : s).replace(/[&<>\"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]; });
+}
+
+function setStageStyles() {
+  var stage = document.getElementById('renderStage');
+  var fs = FONT_STYLES[STATE.brandKit.font_style] || FONT_STYLES.classic;
+  stage.style.setProperty('--bk-c1', STATE.brandKit.color_primary);
+  stage.style.setProperty('--bk-c2', STATE.brandKit.color_secondary);
+  stage.style.setProperty('--bk-c3', STATE.brandKit.color_accent);
+  stage.style.setProperty('--bk-display', fs.display);
+  stage.style.setProperty('--bk-body', fs.body);
+  var p = document.getElementById('previewScaleWrap');
+  if (p) {
+    p.style.setProperty('--bk-c1', STATE.brandKit.color_primary);
+    p.style.setProperty('--bk-c2', STATE.brandKit.color_secondary);
+    p.style.setProperty('--bk-c3', STATE.brandKit.color_accent);
+    p.style.setProperty('--bk-display', fs.display);
+    p.style.setProperty('--bk-body', fs.body);
+  }
+}
+
+function renderPreview() {
+  if (STATE.view !== 'build') return;
+  readCopy();
+  setStageStyles();
+  var dims = MATERIALS[STATE.material];
+  var photo = STATE.photos[STATE.activePhoto] || '';
+  var html = templateHTML(STATE.brandKit, STATE.copy, photo, dims);
+
+  document.getElementById('renderMount').innerHTML = html;
+  var pm = document.getElementById('previewMount'); if (pm) pm.innerHTML = html;
+  var wrap = document.querySelector('.preview-frame-wrap'); if (!wrap) return;
+  var available = Math.max(160, wrap.clientWidth - 32);
+  var scale = available / dims.w;
+  if (scale > 0.5) scale = 0.5;
+  var sw = document.getElementById('previewScaleWrap');
+  if (sw) { sw.style.transform = 'scale(' + scale + ')'; sw.style.width = dims.w + 'px'; }
+  wrap.style.minHeight = Math.round(dims.h * scale + 32) + 'px';
+}
+
+window.addEventListener('resize', function(){ if (STATE.view === 'build') renderPreview(); });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// AI COPY
+// ─────────────────────────────────────────────────────────────────────────────
+async function generateCopy() {
+  readCopy();
+  var btn = document.getElementById('aiBtn'), note = document.getElementById('aiNote');
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Writing copy…';
+  note.style.display = 'none';
+
+  try {
+    var r = await fetch('/.netlify/functions/generate-marketing-copy', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ brand_kit: STATE.brandKit, format: MATERIALS[STATE.material].name, campaign_note: STATE.campaign_note }),
+    });
+    var data = await r.json();
+    if (r.status === 503) { note.textContent = data.error || 'AI not configured &mdash; type your copy manually.'; note.style.display = 'block'; }
+    else if (data.copy && data.copy.headline) {
+      document.getElementById('copy_headline').value    = data.copy.headline || '';
+      document.getElementById('copy_subheadline').value = data.copy.subheadline || '';
+      document.getElementById('copy_cta').value         = data.copy.cta || '';
+      renderPreview();
+      if (data.warning) { note.textContent = data.warning; note.style.display = 'block'; }
+    } else {
+      note.textContent = data.error || 'AI returned no copy &mdash; try again or type it manually.';
+      note.style.display = 'block';
+    }
+  } catch(e) {
+    note.textContent = 'Network error &mdash; check your connection and try again.'; note.style.display = 'block';
+  }
+  btn.disabled = false; btn.innerHTML = '✨ Generate copy with AI';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DOWNLOAD — PNG / JPG / PDF
+// ─────────────────────────────────────────────────────────────────────────────
+async function captureCanvas() {
+  renderPreview();
+  await document.fonts.ready;
+  await new Promise(function(r){ setTimeout(r, 450); });
+  var node = document.querySelector('#renderMount .tmpl');
+  if (!node) throw new Error('Nothing to render yet');
+  return await html2canvas(node, { scale:1, useCORS:true, backgroundColor:'#ffffff' });
+}
+
+async function downloadFile(kind) {
+  var status = document.getElementById('dlStatus');
+  status.textContent = 'Rendering ' + kind.toUpperCase() + '…';
+  try {
+    var canvas = await captureCanvas();
+    if (kind === 'png' || kind === 'jpg') {
+      var mime = kind === 'png' ? 'image/png' : 'image/jpeg';
+      var url  = canvas.toDataURL(mime, kind === 'jpg' ? 0.92 : undefined);
+      triggerDownload(url, filenameFor(kind));
+      status.textContent = '✓ ' + kind.toUpperCase() + ' downloaded';
+      return;
+    }
+    // PDF
+    var imgData = canvas.toDataURL('image/png');
+    var jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    if (!jsPDFCtor) throw new Error('jsPDF not loaded');
+    var dims = MATERIALS[STATE.material];
+    var doc;
+    if (dims.mm) {
+      var orient = dims.mm[0] > dims.mm[1] ? 'l' : 'p';
+      doc = new jsPDFCtor({ orientation: orient, unit:'mm', format:[dims.mm[0], dims.mm[1]] });
+      doc.addImage(imgData, 'PNG', 0, 0, dims.mm[0], dims.mm[1]);
+    } else {
+      var orient2 = dims.w > dims.h ? 'l' : 'p';
+      doc = new jsPDFCtor({ orientation: orient2, unit:'px', format:[dims.w, dims.h] });
+      doc.addImage(imgData, 'PNG', 0, 0, dims.w, dims.h);
+    }
+    doc.save(filenameFor('pdf'));
+    status.textContent = '✓ PDF downloaded';
+  } catch(e) {
+    status.textContent = 'Could not render &mdash; try again.';
+  }
+}
+
+function triggerDownload(href, name) {
+  var a = document.createElement('a'); a.href = href; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+function filenameFor(ext) {
+  var base = (STATE.brandKit.business_name || 'bedrock').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  return base + '-' + STATE.material + '.' + ext;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────────────────────
+(function init() {
+  paintPalettes();
+
+  // Pull session token from query (if portal handed us one)
+  try {
+    var p = new URLSearchParams(window.location.search);
+    var qpEmail = (p.get('email') || '').trim().toLowerCase();
+    var qpToken = (p.get('token') || '').trim();
+    if (qpToken) STATE.authToken = qpToken;
+    if (qpEmail && qpEmail.includes('@')) {
+      var input = document.getElementById('gateEmail'); if (input) input.value = qpEmail;
+      STATE.email = qpEmail;
+      try { sessionStorage.setItem('bedrock_marketing_email', qpEmail); } catch(_){}
+      fetch('/.netlify/functions/get-brand-kit?email=' + encodeURIComponent(qpEmail))
+        .then(function(r){ return r.json(); })
+        .then(function(d){
+          if (d.brand_kit) { hydrateKit(d.brand_kit); STATE.brandKitComplete = true; renderKitStatus('Loaded your saved Brand Kit.', 'ok'); }
+          selectFontStyle(STATE.brandKit.font_style); selectTone(STATE.brandKit.tone);
+          paintMatGrid(); updateBrandSummary();
+          showPage('pageHub');
+          navTo(STATE.brandKitComplete ? 'wizard' : 'brand');
+        })
+        .catch(function(){
+          selectFontStyle(STATE.brandKit.font_style); selectTone(STATE.brandKit.tone);
+          paintMatGrid(); updateBrandSummary();
+          showPage('pageHub'); navTo('brand');
+        });
+      return;
+    }
+  } catch(_){}
+
+  try {
+    var em = sessionStorage.getItem('bedrock_marketing_email');
+    if (em) { var ge = document.getElementById('gateEmail'); if (ge) ge.value = em; }
+  } catch(_){}
+
+  selectFontStyle('classic'); selectTone('Friendly');
+  paintMatGrid();
+})();
+</script>
+</body>
+</html>

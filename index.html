@@ -1675,6 +1675,301 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   <div style="text-align:center;margin-top:1.75rem;font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:400;letter-spacing:0.04em;color:rgba(255,255,255,0.45)">Sources: SCORE, BrightLocal, Network Solutions &mdash; not our numbers, the industry's.</div>
 </section>
 
+<!-- ╭─────────────────────────────────────────────────────────────╮ -->
+<!-- │ INTERACTIVE WORK-TRUCK ECOSYSTEM SECTION                    │ -->
+<!-- │ Each part is clickable. Click reveals product detail below. │ -->
+<!-- ╰─────────────────────────────────────────────────────────────╯ -->
+<section id="bd-truck" class="bd-section" style="background:#FFFFFF;padding:5rem 5% 5.5rem;border-top:1px solid rgba(13,27,46,0.06);border-bottom:1px solid rgba(13,27,46,0.06)">
+  <style>
+    #bd-truck .truck-head{text-align:center;max-width:680px;margin:0 auto 3rem}
+    #bd-truck .truck-eyebrow{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:rgba(13,27,46,0.35);margin-bottom:0.85rem}
+    #bd-truck h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:700;color:#0D1B2E;margin-bottom:0.6rem;line-height:1.15}
+    #bd-truck h2 em{font-style:italic;color:#C9922A}
+    #bd-truck .truck-sub{font-family:'DM Sans',sans-serif;font-size:0.95rem;color:#4A5568;line-height:1.7}
+    #bd-truck .truck-parts{display:grid;grid-template-columns:repeat(5,1fr);gap:0.75rem;max-width:1080px;margin:0 auto;align-items:stretch}
+    @media(max-width:880px){#bd-truck .truck-parts{grid-template-columns:1fr 1fr}}
+    @media(max-width:520px){#bd-truck .truck-parts{grid-template-columns:1fr}}
+    #bd-truck .truck-part{background:#FAF7F2;border:1px solid rgba(13,27,46,0.08);border-top:3px solid transparent;padding:1.5rem 1.1rem 1.35rem;text-align:left;cursor:pointer;font:inherit;transition:border-color .2s,transform .2s,background .2s;border-radius:0;display:flex;flex-direction:column;align-items:flex-start;width:100%;position:relative}
+    #bd-truck .truck-part:hover{border-top-color:#C9922A;transform:translateY(-2px);background:#fff}
+    #bd-truck .truck-part.active{border-top-color:#C9922A;background:#fff;box-shadow:0 4px 18px rgba(13,27,46,0.06)}
+    #bd-truck .truck-part .icon{width:42px;height:42px;margin-bottom:0.85rem;flex-shrink:0;color:#0D1B2E}
+    #bd-truck .truck-part .icon svg{width:100%;height:100%;display:block}
+    #bd-truck .truck-part .part-label{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#C9922A;margin-bottom:0.35rem}
+    #bd-truck .truck-part h3{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:#0D1B2E;margin-bottom:0.4rem;line-height:1.2}
+    #bd-truck .truck-part p{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:#4A5568;line-height:1.55;margin:0}
+    #bd-truck .truck-part .tap-hint{font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(13,27,46,0.35);margin-top:0.85rem;display:flex;align-items:center;gap:5px}
+    #bd-truck .truck-part .tap-hint::after{content:'▾';font-size:0.7rem}
+    #bd-truck .truck-part.active .tap-hint{color:#C9922A}
+    #bd-truck .truck-part.active .tap-hint::after{content:'▴'}
+    #bd-truck .truck-part .status-pill{position:absolute;top:0.85rem;right:0.85rem;font-family:'DM Sans',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.2rem 0.45rem;border-radius:2px;background:rgba(13,27,46,0.06);color:rgba(13,27,46,0.55)}
+    #bd-truck .truck-part .status-pill.live{background:rgba(59,109,17,0.12);color:#3b6d11}
+    #bd-truck .truck-part .status-pill.new{background:rgba(201,146,42,0.15);color:#8b6310}
+
+    #bd-truck .truck-detail{max-width:1080px;margin:1.5rem auto 0;background:#FAF7F2;border:1px solid rgba(13,27,46,0.08);border-top:3px solid #C9922A;padding:2.25rem 2rem;display:none;animation:bdTruckSlide .35s ease}
+    #bd-truck .truck-detail.show{display:block}
+    @keyframes bdTruckSlide{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+    #bd-truck .truck-detail-inner{display:grid;grid-template-columns:1fr 320px;gap:2rem;align-items:start}
+    @media(max-width:780px){#bd-truck .truck-detail-inner{grid-template-columns:1fr}}
+    #bd-truck .td-eyebrow{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#C9922A;margin-bottom:0.5rem}
+    #bd-truck .td-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:#0D1B2E;margin-bottom:0.6rem;line-height:1.2}
+    #bd-truck .td-lead{font-family:'DM Sans',sans-serif;font-size:0.92rem;color:#4A5568;line-height:1.75;margin-bottom:1rem}
+    #bd-truck .td-list{list-style:none;padding:0;margin:0 0 1rem}
+    #bd-truck .td-list li{font-family:'DM Sans',sans-serif;font-size:0.85rem;color:#0D1B2E;padding:0.45rem 0;border-bottom:1px solid rgba(13,27,46,0.07);display:flex;align-items:flex-start;gap:0.65rem}
+    #bd-truck .td-list li::before{content:'';width:6px;height:6px;background:#C9922A;border-radius:50%;flex-shrink:0;margin-top:0.5rem}
+    #bd-truck .td-list li:last-child{border-bottom:none}
+    #bd-truck .td-aside{background:#fff;border:1px solid rgba(13,27,46,0.08);padding:1.25rem 1.3rem}
+    #bd-truck .td-aside .td-kv{display:flex;justify-content:space-between;padding:0.55rem 0;border-bottom:1px solid rgba(13,27,46,0.07);font-family:'DM Sans',sans-serif;font-size:0.78rem}
+    #bd-truck .td-aside .td-kv:last-child{border-bottom:none}
+    #bd-truck .td-aside .td-k{color:#4A5568}
+    #bd-truck .td-aside .td-v{color:#0D1B2E;font-weight:600}
+    #bd-truck .td-cta-row{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:1rem}
+    #bd-truck .td-cta-gold{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;background:#C9922A;color:#fff;border:none;padding:0.8rem 1.5rem;cursor:pointer;border-radius:4px;text-decoration:none;display:inline-block}
+    #bd-truck .td-cta-gold:hover{background:#b8831f}
+    #bd-truck .td-cta-outline{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:#0D1B2E;border:1px solid rgba(13,27,46,0.25);padding:0.8rem 1.5rem;cursor:pointer;border-radius:4px;text-decoration:none;display:inline-block}
+    #bd-truck .td-cta-outline:hover{border-color:#0D1B2E}
+  </style>
+
+  <div class="truck-head">
+    <div class="truck-eyebrow">The Bedrock Ecosystem</div>
+    <h2>One company. <em>One connected system.</em></h2>
+    <p class="truck-sub">Each Bedrock tool is a different part of the same setup &mdash; like your work truck. Tap any part to see what it does.</p>
+  </div>
+
+  <div class="truck-parts" role="tablist" aria-label="Bedrock product parts">
+
+    <button type="button" class="truck-part" data-part="sites" aria-pressed="false" onclick="bdTruckOpen('sites')">
+      <span class="status-pill live">Live</span>
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="22" width="42" height="20" rx="2"/>
+          <rect x="46" y="28" width="14" height="14" rx="1"/>
+          <circle cx="16" cy="48" r="4"/><circle cx="40" cy="48" r="4"/><circle cx="54" cy="48" r="4"/>
+          <line x1="4" y1="34" x2="46" y2="34"/>
+        </svg>
+      </span>
+      <span class="part-label">Trailer</span>
+      <h3>Bedrock Sites</h3>
+      <p>Your online presence &mdash; the website that pulls in new business.</p>
+      <span class="tap-hint">Details</span>
+    </button>
+
+    <button type="button" class="truck-part" data-part="marketing" aria-pressed="false" onclick="bdTruckOpen('marketing')">
+      <span class="status-pill new">New</span>
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="18" width="38" height="28" rx="2"/>
+          <rect x="44" y="24" width="14" height="22" rx="1"/>
+          <circle cx="18" cy="52" r="4"/><circle cx="50" cy="52" r="4"/>
+          <line x1="10" y1="26" x2="40" y2="26"/>
+          <line x1="10" y1="32" x2="34" y2="32"/>
+          <line x1="10" y1="38" x2="28" y2="38"/>
+        </svg>
+      </span>
+      <span class="part-label">Truck wrap</span>
+      <h3>Bedrock Marketing</h3>
+      <p>The flyers, posts, and signs people see and remember.</p>
+      <span class="tap-hint">Details</span>
+    </button>
+
+    <button type="button" class="truck-part" data-part="seo" aria-pressed="false" onclick="bdTruckOpen('seo')">
+      <span class="status-pill">Beta</span>
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 38 L10 30 Q10 24 16 24 L48 24 Q54 24 54 30 L54 38"/>
+          <circle cx="20" cy="34" r="5" fill="currentColor"/>
+          <circle cx="44" cy="34" r="5" fill="currentColor"/>
+          <line x1="14" y1="42" x2="50" y2="42"/>
+          <line x1="8" y1="46" x2="20" y2="46"/>
+          <line x1="44" y1="46" x2="56" y2="46"/>
+        </svg>
+      </span>
+      <span class="part-label">Headlights</span>
+      <h3>Bedrock SEO</h3>
+      <p>Helps customers find you on Google &mdash; and even on AI search.</p>
+      <span class="tap-hint">Details</span>
+    </button>
+
+    <button type="button" class="truck-part" data-part="cfo" aria-pressed="false" onclick="bdTruckOpen('cfo')">
+      <span class="status-pill">Soon</span>
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="10" y="20" width="44" height="28" rx="2"/>
+          <line x1="10" y1="28" x2="54" y2="28"/>
+          <line x1="18" y1="16" x2="18" y2="20"/>
+          <line x1="46" y1="16" x2="46" y2="20"/>
+          <circle cx="22" cy="38" r="3"/><circle cx="32" cy="38" r="3"/><circle cx="42" cy="38" r="3"/>
+        </svg>
+      </span>
+      <span class="part-label">Engine</span>
+      <h3>Bedrock CFO</h3>
+      <p>The money side &mdash; bids, expenses, cash flow without an accountant.</p>
+      <span class="tap-hint">Details</span>
+    </button>
+
+    <button type="button" class="truck-part" data-part="profile" aria-pressed="false" onclick="bdTruckOpen('profile')">
+      <span class="status-pill new">Built-in</span>
+      <span class="icon" aria-hidden="true">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="32" cy="32" r="22"/>
+          <line x1="32" y1="12" x2="32" y2="20"/>
+          <line x1="32" y1="44" x2="32" y2="52"/>
+          <line x1="12" y1="32" x2="20" y2="32"/>
+          <line x1="44" y1="32" x2="52" y2="32"/>
+          <line x1="32" y1="32" x2="44" y2="22"/>
+          <circle cx="32" cy="32" r="3" fill="currentColor"/>
+        </svg>
+      </span>
+      <span class="part-label">Dashboard</span>
+      <h3>Shared Profile</h3>
+      <p>One business profile powers every Bedrock tool. Set up once.</p>
+      <span class="tap-hint">Details</span>
+    </button>
+
+  </div>
+
+  <div id="bdTruckDetail" class="truck-detail" role="region" aria-label="Selected product details">
+    <div class="truck-detail-inner" id="bdTruckDetailInner"></div>
+  </div>
+
+  <script>
+  (function(){
+    var DETAILS = {
+      sites: {
+        eyebrow:'Bedrock Sites · The Trailer',
+        title:'A real website. Live in under ten minutes.',
+        lead:'A clean, professional contractor website without the cost or the headache. Pick your style, drop in your photos, hit pay &mdash; we deploy it.',
+        list:[
+          'Pro design built for trades &mdash; not a Wix template',
+          'You edit your own copy and photos anytime',
+          'Hosting, domain, and SSL included',
+          'Show up properly on Google with built-in local SEO',
+        ],
+        kv:[ ['Status','Live'], ['Pricing','$200 build + $20/mo'], ['Time to live','Same day'] ],
+        cta: { label:'Build My Site Free', onclick:"showPage('builder',event)" },
+        secondary: { label:'See examples', onclick:"showPage('ourwork',event)" },
+      },
+      marketing: {
+        eyebrow:'Bedrock Marketing · The Wrap',
+        title:'Marketing material in five minutes.',
+        lead:'Upload your photos. Pick a format. Get a print-ready flyer, social post, door hanger, or yard sign &mdash; in your brand colors, with copy already written for you.',
+        list:[
+          'Brand kit setup once &mdash; colors, fonts, voice, logo',
+          'AI-generated headline + caption in your tone',
+          'Print-ready PNG and PDF outputs',
+          '3 layouts × 4 sizes &mdash; covers what contractors actually use',
+        ],
+        kv:[ ['Status','Just launched'], ['Pricing','TBD (bundle-friendly)'], ['Time to make an asset','~5 minutes'] ],
+        cta: { label:'Open Bedrock Marketing →', href:'/bedrock-marketing-v1.html' },
+        secondary: { label:'See full vision', href:'#bd-what', onclick:"showPage('home',event);return true" },
+      },
+      seo: {
+        eyebrow:'Bedrock SEO · The Headlights',
+        title:'Help customers actually find you.',
+        lead:'Most contractor sites are invisible on Google. Bedrock SEO audits your site, fixes the things that block you from showing up, and tracks where you rank for your service in your city.',
+        list:[
+          '12-point audit against the same rubric Google uses',
+          'GEO score &mdash; how AI models describe you',
+          'One-click fixes for missing schema, meta tags, and FAQs',
+          'Competitor gap analysis: who&rsquo;s beating you and why',
+        ],
+        kv:[ ['Status','In testing'], ['Try free audit','Yes'], ['Optimization service','Coming soon'] ],
+        cta: { label:'Run a Free SEO Audit', onclick:"showPage('optimizer',event)" },
+        secondary: null,
+      },
+      cfo: {
+        eyebrow:'Bedrock CFO · The Engine',
+        title:'A bookkeeper that fits in your pocket.',
+        lead:'A conversational AI agent that connects to your QuickBooks, categorizes your expenses, flags weird transactions, and helps you bid jobs with the right margin &mdash; without learning accounting.',
+        list:[
+          'Auto-categorize expenses and reconcile transactions',
+          'Bid intelligence: tell it the job, it tells you what to charge',
+          'Cash flow visibility: will payroll clear this month?',
+          'Plain-English answers, on your phone, after the job',
+        ],
+        kv:[ ['Status','Roadmap &mdash; late 2026'], ['Target price','$99–$199/mo'], ['Replaces','Part-time bookkeeper'] ],
+        cta: { label:'Get on the early list', href:'mailto:hello@bedrock-sites.com?subject=Bedrock%20CFO%20early%20list' },
+        secondary: null,
+      },
+      profile: {
+        eyebrow:'Shared Profile · The Dashboard',
+        title:'One profile. Every tool already knows you.',
+        lead:'You never enter the same info twice. Sites already has your trade and city. When you set up Marketing, it pulls those in. When you turn on SEO, it knows your keywords. When you add CFO, it knows your size.',
+        list:[
+          'Identity from your first signup &mdash; reused everywhere',
+          'Each new tool only asks for the new info it actually needs',
+          'Edit your profile anytime in your portal',
+          'The longer you use Bedrock, the smarter every tool gets',
+        ],
+        kv:[ ['Status','Built into every tool'], ['Editable','In your Portal'], ['Switching cost','High &mdash; on purpose'] ],
+        cta: { label:'Open My Portal →', href:'/portal.html#profile' },
+        secondary: null,
+      },
+    };
+
+    window.bdTruckOpen = function(key) {
+      var parts = document.querySelectorAll('#bd-truck .truck-part');
+      var alreadyActive = false;
+      parts.forEach(function(p){
+        if (p.getAttribute('data-part') === key) {
+          alreadyActive = p.classList.contains('active');
+        }
+      });
+
+      // collapse all
+      parts.forEach(function(p){ p.classList.remove('active'); p.setAttribute('aria-pressed','false'); });
+
+      var detail = document.getElementById('bdTruckDetail');
+      var inner  = document.getElementById('bdTruckDetailInner');
+
+      if (alreadyActive) {
+        detail.classList.remove('show');
+        inner.innerHTML = '';
+        return;
+      }
+
+      // activate the clicked part
+      var node = document.querySelector('#bd-truck .truck-part[data-part="'+key+'"]');
+      if (node) { node.classList.add('active'); node.setAttribute('aria-pressed','true'); }
+
+      var d = DETAILS[key]; if (!d) return;
+
+      // build CTA buttons
+      function ctaHtml(c, cls) {
+        if (!c) return '';
+        if (c.href) {
+          var onc = c.onclick ? (' onclick="'+c.onclick+'"') : '';
+          return '<a href="'+c.href+'"'+onc+' class="'+cls+'">'+c.label+'</a>';
+        }
+        var oc = c.onclick ? (' onclick="'+c.onclick+'"') : '';
+        return '<button type="button"'+oc+' class="'+cls+'">'+c.label+'</button>';
+      }
+      var ctaPrimary   = ctaHtml(d.cta, 'td-cta-gold');
+      var ctaSecondary = ctaHtml(d.secondary, 'td-cta-outline');
+
+      var listHtml = d.list.map(function(li){ return '<li>'+li+'</li>'; }).join('');
+      var kvHtml   = d.kv.map(function(kv){ return '<div class="td-kv"><span class="td-k">'+kv[0]+'</span><span class="td-v">'+kv[1]+'</span></div>'; }).join('');
+
+      inner.innerHTML = ''
+        + '<div class="td-main">'
+        + '  <div class="td-eyebrow">'+d.eyebrow+'</div>'
+        + '  <div class="td-title">'+d.title+'</div>'
+        + '  <p class="td-lead">'+d.lead+'</p>'
+        + '  <ul class="td-list">'+listHtml+'</ul>'
+        + '  <div class="td-cta-row">'+ctaPrimary+ctaSecondary+'</div>'
+        + '</div>'
+        + '<div class="td-aside">'+kvHtml+'</div>';
+
+      detail.classList.add('show');
+      // gentle scroll into view if it's far below
+      try {
+        var rect = detail.getBoundingClientRect();
+        if (rect.bottom > window.innerHeight) detail.scrollIntoView({ behavior:'smooth', block:'center' });
+      } catch(_){}
+    };
+  })();
+  </script>
+</section>
+
 <!-- WHAT IS BEDROCK -->
 <section id="bd-what" class="bd-section">
   <div class="bd-what-inner">

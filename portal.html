@@ -8,8 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D1B2E'/%3E%3Crect x='12' y='16' width='28' height='6' rx='2' fill='%23C9922A'/%3E%3Crect x='12' y='26' width='22' height='6' rx='2' fill='%23A8711A'/%3E%3Crect x='12' y='36' width='32' height='6' rx='2' fill='%232E5A8E'/%3E%3Crect x='12' y='46' width='24' height='6' rx='2' fill='%234A7DB5'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -24,19 +23,46 @@ html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
 
 /* ── NAV ── */
-nav{background:var(--dark);display:flex;justify-content:space-between;align-items:center;padding:1rem 5%;border-bottom:3px solid var(--accent);flex-shrink:0}
-.nav-logo{display:flex;flex-direction:row;align-items:center;gap:10px;text-decoration:none}
+nav{background:var(--dark);display:flex;justify-content:space-between;align-items:center;padding:1rem 5%;border-bottom:3px solid var(--accent);flex-shrink:0;gap:1rem;flex-wrap:wrap}
+.nav-l{display:flex;align-items:center;gap:1rem}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
 .nav-strata{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
 .nav-wm{display:flex;flex-direction:column;line-height:1}
 .nav-logo .wordmark{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;letter-spacing:-0.02em;color:#F5E6C8}
 .nav-logo .sub{font-size:0.54rem;font-weight:500;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-top:3px}
-.nav-right{display:flex;align-items:center;gap:1.5rem}
+.nav-home-link{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s;border-left:1px solid rgba(255,255,255,0.12);padding-left:1.25rem;margin-left:0.25rem}
+.nav-home-link:hover{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:1rem}
 .nav-user{font-size:0.64rem;font-weight:500;color:rgba(255,255,255,0.55);letter-spacing:0.06em}
 #btnLogout{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.7);background:transparent;border:1px solid rgba(255,255,255,0.2);padding:0.45rem 1rem;cursor:pointer;transition:all 0.2s;display:none}
 #btnLogout:hover{border-color:var(--accent);color:var(--accent)}
 
+/* ── NOTIFICATION BELL ── */
+.bell-wrap{position:relative;display:none}
+.bell-wrap.show{display:inline-flex;align-items:center}
+.bell-btn{background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,0.7);padding:0.4rem;border-radius:6px;transition:color .15s,background .15s;position:relative}
+.bell-btn:hover{color:var(--accent);background:rgba(255,255,255,0.04)}
+.bell-btn svg{width:20px;height:20px;display:block}
+.bell-badge{position:absolute;top:0;right:0;min-width:16px;height:16px;background:var(--accent);color:#fff;border-radius:99px;font-size:0.55rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--dark)}
+.bell-badge.zero{display:none}
+.bell-menu{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-top:2px solid var(--accent);min-width:330px;max-width:380px;box-shadow:0 10px 32px rgba(13,27,46,0.25);display:none;z-index:60;max-height:480px;overflow-y:auto}
+.bell-wrap.open .bell-menu{display:block}
+.bell-head{padding:0.85rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.bell-head-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:600;color:var(--dark)}
+.bell-mark-read{font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:none;border:none;cursor:pointer}
+.bell-mark-read:hover{text-decoration:underline}
+.bell-item{display:flex;align-items:flex-start;gap:0.65rem;padding:0.85rem 1rem;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text);transition:background .15s;cursor:pointer}
+.bell-item:hover{background:var(--offwhite)}
+.bell-item:last-child{border-bottom:none}
+.bell-item.unread{background:rgba(201,146,42,0.04)}
+.bell-icon{width:32px;height:32px;flex-shrink:0;border-radius:50%;background:var(--offwhite);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:0.85rem}
+.bell-text{flex:1}
+.bell-msg{font-size:0.78rem;color:var(--text);font-weight:500;margin-bottom:2px;line-height:1.35}
+.bell-meta{font-size:0.62rem;color:var(--text-muted)}
+.bell-empty{padding:2rem 1rem;text-align:center;color:var(--text-muted);font-size:0.78rem}
+
 /* ── LAYOUT ── */
-main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:3rem 5%}
+main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:2.5rem 5%}
 .page{display:none;width:100%}
 .page.active{display:block}
 
@@ -54,82 +80,191 @@ main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:3
 .btn-gold:hover{background:var(--accent-light)}
 .btn-gold:disabled{background:var(--border);color:var(--text-muted);cursor:not-allowed}
 .error-box{font-size:0.72rem;font-weight:400;color:var(--red);background:var(--red-bg);border-left:3px solid var(--red);padding:0.7rem 0.9rem;margin-bottom:1rem;display:none;line-height:1.55}
-.forgot-link{display:block;text-align:center;margin-top:1rem;font-size:0.68rem;font-weight:400;color:var(--text-muted);text-decoration:none;transition:color 0.2s}
+.forgot-link{display:block;text-align:center;margin-top:1rem;font-size:0.68rem;font-weight:400;color:var(--text-muted);text-decoration:none;transition:color 0.2s;cursor:pointer}
 .forgot-link:hover{color:var(--accent)}
-
-/* ── FORGOT PASSWORD PAGE ── */
 .back-link{font-size:0.64rem;font-weight:500;letter-spacing:0.08em;color:rgba(255,255,255,0.55);cursor:pointer;margin-bottom:1.5rem;display:inline-flex;align-items:center;gap:6px;transition:color 0.2s}
 .back-link:hover{color:var(--accent)}
 
-/* ── DASHBOARD PAGE ── */
-.dash-wrap{max-width:960px;margin:0 auto;width:100%}
-.dash-header{margin-bottom:2.5rem}
-.dash-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem}
-.dash-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:300;color:#fff;margin-bottom:0.4rem}
-.dash-sub{font-size:0.78rem;font-weight:300;color:rgba(255,255,255,0.55);line-height:1.75}
+/* ── DASHBOARD WRAPPER ── */
+.dash-wrap{max-width:1080px;margin:0 auto;width:100%}
 
-.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
-@media(max-width:700px){.dash-grid{grid-template-columns:1fr}}
+/* ── PERMANENT BANNER (above tabs) ── */
+.banner{background:#fff;border-top:3px solid var(--accent);padding:1.5rem 1.75rem 1.4rem;margin-bottom:1.25rem}
+.banner-head{margin-bottom:1.15rem}
+.banner-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:0.4rem}
+.banner-title{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:300;color:var(--dark);margin-bottom:0.3rem}
+.banner-sub{font-size:0.78rem;font-weight:300;color:var(--text-muted);line-height:1.65}
 
-.dash-card{background:#fff;padding:1.75rem 1.75rem 1.5rem;position:relative;border-top:3px solid var(--accent)}
+.banner-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:1rem}
+@media(max-width:880px){.banner-grid{grid-template-columns:1fr}}
+.banner-card{background:var(--offwhite);padding:1rem 1.15rem;border-left:3px solid var(--accent);border-radius:0}
+.banner-card .bc-label{font-size:0.52rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.55rem}
+.banner-card .bc-title{font-family:'Playfair Display',serif;font-size:0.95rem;font-weight:600;color:var(--dark);margin-bottom:0.5rem}
+.info-row{display:flex;gap:0.6rem;padding:4px 0;font-size:0.7rem;align-items:center}
+.info-key{color:var(--text-muted);min-width:74px;font-size:0.58rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:600;flex-shrink:0}
+.info-val{color:var(--text);font-weight:400;font-size:0.74rem;word-break:break-word}
+.quick-links{display:flex;flex-direction:column;gap:0.4rem}
+.quick-link{font-size:0.7rem;font-weight:500;color:var(--text);text-decoration:none;padding:0.45rem 0.6rem;background:#fff;border:1px solid var(--border);border-radius:4px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:border-color .15s;font-family:inherit;text-align:left;width:100%}
+.quick-link:hover{border-color:var(--accent);color:var(--accent)}
+.support-card .bc-title{margin-bottom:0.25rem}
+.support-card .support-sub{font-size:0.68rem;color:var(--text-muted);line-height:1.55;margin-bottom:0.65rem}
+
+/* ── TABS (top) with caret submenus ── */
+.tab-bar{display:flex;background:#fff;border-top:1px solid var(--border);border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;position:relative}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab-group{position:relative;display:inline-flex;align-items:center}
+.tab-btn{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.95rem 1.05rem;border:none;background:transparent;cursor:pointer;white-space:nowrap;color:var(--text-muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s;display:inline-flex;align-items:center;gap:5px}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-btn:hover:not(.active){color:var(--dark)}
+.tab-caret{font-size:0.65rem;opacity:0.6;transition:transform .15s}
+.tab-group:hover .tab-caret{transform:rotate(180deg);opacity:1}
+.tab-submenu{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--border);border-top:2px solid var(--accent);min-width:220px;box-shadow:0 8px 24px rgba(13,27,46,0.18);display:none;z-index:20;flex-direction:column}
+.tab-group:hover .tab-submenu,.tab-group.open .tab-submenu{display:flex}
+.tab-submenu-link{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--text);text-decoration:none;padding:0.7rem 1rem;border-bottom:1px solid var(--border);transition:background .15s;background:transparent;border-left:none;border-right:none;cursor:pointer;text-align:left;width:100%}
+.tab-submenu-link:last-child{border-bottom:none}
+.tab-submenu-link:hover{background:var(--offwhite);color:var(--accent)}
+.tab-submenu-link.active{background:rgba(201,146,42,0.08);color:var(--accent);font-weight:600}
+.tab-submenu-link .tsl-eyebrow{font-size:0.5rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:2px}
+
+/* sub-tab breadcrumb (active sub-tab indicator below tab bar) */
+.subtab-strip{display:flex;align-items:center;gap:0.5rem;padding:0.65rem 0;color:var(--text-muted);font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase}
+.subtab-strip .stp-sep{color:var(--accent)}
+.subtab-strip .stp-current{color:var(--accent)}
+
+/* ── PANE LAYOUT ── */
+.portal-pane{display:none;width:100%}
+.portal-pane.active{display:block}
+
+/* legacy / shared card */
+.dash-card{background:#fff;padding:1.75rem 1.75rem 1.5rem;position:relative;border-top:3px solid var(--accent);margin-bottom:1rem}
+.dash-card-full{background:#fff;padding:1.75rem;border-top:3px solid var(--dark);margin-bottom:1.5rem}
 .dc-label{font-size:0.55rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.75rem}
 .dc-title{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:300;color:var(--dark);margin-bottom:0.4rem}
 .dc-sub{font-size:0.72rem;font-weight:300;color:var(--text-muted);line-height:1.65;margin-bottom:1rem}
 .dc-url{font-size:0.74rem;font-weight:500;color:var(--accent);word-break:break-all;margin-bottom:1rem}
 .dc-url a{color:var(--accent);text-decoration:none}
 .dc-url a:hover{text-decoration:underline}
-
 .status-pill{display:inline-flex;align-items:center;gap:5px;font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.3rem 0.7rem;border-radius:2px}
 .status-pill.pending{background:#fef9e7;color:#b7791f}
 .status-pill.live{background:var(--green-bg);color:var(--green)}
 .status-pill.building{background:#e8f4fd;color:#185fa5}
 .status-pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
-
 .btn-dark{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#fff;background:var(--dark);border:none;padding:0.75rem 1.25rem;cursor:pointer;transition:background 0.2s;display:inline-block;text-decoration:none}
 .btn-dark:hover{background:var(--dark-mid)}
 .btn-outline{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--dark);background:transparent;border:1px solid var(--border);padding:0.75rem 1.25rem;cursor:pointer;transition:all 0.2s;display:inline-block;text-decoration:none}
 .btn-outline:hover{border-color:var(--dark)}
+.edit-cta-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
+.edit-cta-text .dc-title{margin-bottom:0.25rem}
+#saveConfirm{display:none;background:var(--green-bg);border-left:3px solid var(--green);padding:0.75rem 1rem;font-size:0.74rem;color:var(--green);font-weight:500;margin-top:1rem}
 
 /* Analytics card */
 .analytics-placeholder{background:var(--offwhite);border:1px dashed var(--border);padding:1.75rem;text-align:center;margin-top:0.5rem}
 .ap-icon{font-family:'Playfair Display',serif;font-size:2rem;color:var(--accent);margin-bottom:0.5rem;line-height:1;font-weight:300}
 .ap-title{font-size:0.72rem;font-weight:600;letter-spacing:0.06em;color:var(--dark);margin-bottom:0.3rem}
 .ap-sub{font-size:0.66rem;font-weight:300;color:var(--text-muted);line-height:1.6}
-
-/* Stat row for live analytics */
 .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);margin-top:0.5rem}
 .stat-cell{padding:0.85rem;text-align:center;border-right:1px solid var(--border)}
 .stat-cell:last-child{border-right:none}
 .stat-val{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:300;color:var(--dark)}
 .stat-lbl{font-size:0.52rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-top:2px}
 
-/* Account card */
-.info-row{display:flex;gap:0.75rem;padding:6px 0;border-bottom:1px solid var(--border);font-size:0.74rem}
-.info-row:last-child{border-bottom:none}
-.info-key{color:var(--text-muted);min-width:90px;font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;flex-shrink:0}
-.info-val{color:var(--text);font-weight:400}
-
-/* Full-width edit card */
-.dash-card-full{background:#fff;padding:1.75rem;border-top:3px solid var(--dark);margin-bottom:1.5rem}
-.edit-cta-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-.edit-cta-text .dc-title{margin-bottom:0.25rem}
-
-/* Save confirmation */
-#saveConfirm{display:none;background:var(--green-bg);border-left:3px solid var(--green);padding:0.75rem 1rem;font-size:0.74rem;color:var(--green);font-weight:500;margin-top:1rem}
-
-/* ── PORTAL TABS ── */
-.portal-tabs{display:flex;gap:0;border-bottom:2px solid rgba(255,255,255,0.1);margin-bottom:2rem;overflow-x:auto;scrollbar-width:none}
-.portal-tabs::-webkit-scrollbar{display:none}
-.portal-tab{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.8rem 1.1rem;border:none;background:transparent;cursor:pointer;white-space:nowrap;color:rgba(255,255,255,0.38);border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .2s}
-.portal-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.portal-tab:hover:not(.active){color:rgba(255,255,255,0.7)}
-.portal-pane{display:none}
-.portal-pane.active{display:block}
-.coming-soon-pane{background:#fff;padding:3rem 2rem;text-align:center;border-top:3px solid var(--accent);max-width:580px}
+/* Coming soon / placeholder pane */
+.coming-soon-pane{background:#fff;padding:3rem 2rem;text-align:center;border-top:3px solid var(--accent);max-width:580px;margin:0 auto}
 .cs-badge{display:inline-flex;align-items:center;gap:5px;font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;background:#e8f4fd;color:#185fa5;padding:0.3rem 0.75rem;border-radius:2px;margin-bottom:1.25rem}
-.nav-home-link{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s;border-left:1px solid rgba(255,255,255,0.12);padding-left:1.25rem;margin-left:0.25rem}
-.nav-home-link:hover{color:var(--accent)}
 
+/* ── PROFILE PANE ── */
+.profile-head{background:#fff;border-top:3px solid var(--accent);padding:1.5rem 1.5rem 1.25rem;margin-bottom:1.25rem}
+.profile-head .dc-label{margin-bottom:0.5rem}
+.meter{height:8px;background:var(--offwhite);border-radius:4px;overflow:hidden;border:1px solid var(--border);position:relative}
+.meter-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-light));transition:width .4s ease}
+.meter-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;gap:1rem}
+.meter-pct{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent)}
+.meter-label{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;color:var(--text-muted)}
+.profile-stages{display:flex;flex-direction:column;gap:1rem}
+.stage-card{background:#fff;border-top:3px solid var(--accent);overflow:hidden}
+.stage-card.locked{border-top-color:rgba(13,27,46,0.15)}
+.stage-card .stage-head{display:flex;justify-content:space-between;align-items:center;padding:1.1rem 1.5rem;cursor:pointer;background:#fff;border:none;width:100%;text-align:left;font:inherit}
+.stage-card .stage-head:hover:not(.locked){background:var(--offwhite)}
+.stage-head-l{display:flex;align-items:center;gap:0.85rem}
+.stage-num{width:32px;height:32px;border-radius:50%;background:var(--offwhite);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:600;font-size:0.95rem;flex-shrink:0;border:1px solid var(--border)}
+.stage-card.done .stage-num{background:var(--green-bg);color:var(--green);border-color:rgba(59,109,17,0.2)}
+.stage-card.in-progress .stage-num{background:var(--accent);color:#fff;border-color:var(--accent)}
+.stage-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:300;color:var(--dark);margin-bottom:0.15rem;line-height:1.2}
+.stage-sub{font-family:'DM Sans',sans-serif;font-size:0.7rem;color:var(--text-muted);line-height:1.4}
+.stage-pill{font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:0.25rem 0.55rem;border-radius:2px;background:var(--offwhite);color:var(--text-muted);margin-right:0.65rem}
+.stage-card.done .stage-pill{background:var(--green-bg);color:var(--green)}
+.stage-card.in-progress .stage-pill{background:rgba(201,146,42,0.15);color:#8b6310}
+.stage-chev{color:var(--text-muted);font-size:0.85rem;transition:transform .2s}
+.stage-card.open .stage-chev{transform:rotate(180deg)}
+.stage-body{display:none;padding:1.25rem 1.5rem 1.5rem;border-top:1px solid var(--border);background:var(--offwhite)}
+.stage-card.open .stage-body{display:block}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
+@media(max-width:640px){.profile-grid{grid-template-columns:1fr}}
+.profile-grid .field{margin-bottom:0}
+.profile-grid .field.full{grid-column:1/-1}
+.profile-grid .field textarea{resize:vertical;min-height:72px;font-family:inherit}
+.profile-grid .field input[type="text"],.profile-grid .field input[type="email"],.profile-grid .field input[type="tel"],.profile-grid .field input[type="number"],.profile-grid .field textarea,.profile-grid .field select{font-family:'DM Sans',sans-serif;font-size:0.84rem;font-weight:400;width:100%;padding:0.7rem 0.9rem;border:1px solid var(--border);background:#fff;color:var(--text);outline:none;transition:border-color 0.2s;border-radius:6px}
+.profile-grid .field input:focus,.profile-grid .field textarea:focus,.profile-grid .field select:focus{border-color:var(--dark)}
+.color-mini-row{display:flex;gap:0.5rem}
+.color-mini-row > div{flex:1;display:flex;flex-direction:column}
+.color-mini-row input[type="color"]{width:100%;height:40px;border:1px solid var(--border);border-radius:6px;cursor:pointer;padding:2px;background:#fff}
+.color-mini-row span{font-size:0.55rem;color:var(--text-muted);font-weight:600;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:4px}
+.stage-save-row{display:flex;justify-content:flex-end;align-items:center;gap:0.5rem;margin-top:1rem;flex-wrap:wrap}
+.stage-save-msg{font-size:0.66rem;color:var(--text-muted);min-width:120px;text-align:right}
+.stage-save-msg.ok{color:var(--green)}
+.stage-save-msg.err{color:var(--red)}
+.mkt-cta-inline{background:#fff;border:1px solid var(--accent);padding:0.85rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:0.75rem;flex-wrap:wrap;border-radius:6px}
+.mkt-cta-inline-txt{font-size:0.78rem;color:var(--text);line-height:1.45}
+.mkt-cta-inline-txt strong{display:block;font-size:0.66rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:2px}
+
+/* ── MARKETING CARDS ── */
+.mkt-card{background:#fff;border-top:3px solid var(--accent);padding:2rem 1.75rem}
+.mkt-card .dc-title{margin-bottom:0.35rem}
+.mkt-card .dc-sub{margin-bottom:1.25rem}
+.mkt-features{display:grid;grid-template-columns:1fr 1fr;gap:0.55rem;margin-bottom:1.5rem}
+@media(max-width:560px){.mkt-features{grid-template-columns:1fr}}
+.mkt-feat{font-size:0.74rem;color:var(--text);padding:0.55rem 0.8rem;background:var(--offwhite);border-left:3px solid var(--accent);line-height:1.5}
+.mkt-feat strong{display:block;font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:0.2rem}
+.mkt-launch{display:flex;gap:0.65rem;flex-wrap:wrap;align-items:center}
+
+/* ── SUBSCRIPTIONS / CART ── */
+.subs-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+@media(max-width:880px){.subs-grid{grid-template-columns:1fr}}
+.sub-card{background:#fff;border:1px solid var(--border);border-top:3px solid var(--border);padding:1.5rem 1.5rem 1.35rem;cursor:pointer;transition:all .15s;position:relative;display:flex;flex-direction:column;font:inherit;text-align:left;width:100%}
+.sub-card:hover{border-top-color:var(--accent)}
+.sub-card.active{border-top-color:var(--accent);box-shadow:0 4px 16px rgba(13,27,46,0.08)}
+.sub-card .sc-status{position:absolute;top:1rem;right:1rem;font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:2px;background:var(--offwhite);color:var(--text-muted)}
+.sub-card.active .sc-status{background:rgba(201,146,42,0.15);color:#8b6310}
+.sub-card .sc-name{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--dark);margin-bottom:0.25rem}
+.sub-card .sc-tag{font-size:0.62rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);margin-bottom:0.6rem}
+.sub-card .sc-desc{font-size:0.74rem;color:var(--text-muted);line-height:1.55;margin-bottom:1rem;flex:1}
+.sub-card .sc-price{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;color:var(--dark);line-height:1;margin-bottom:0.2rem}
+.sub-card .sc-price-unit{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--text-muted);font-weight:400;margin-left:4px}
+.sub-card .sc-extra{font-size:0.66rem;color:var(--text-muted);margin-bottom:0.85rem}
+.sub-toggle{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;padding:0.6rem 0.95rem;border:1px solid var(--border);background:#fff;color:var(--text);cursor:pointer;border-radius:4px;text-align:center;transition:all .15s}
+.sub-card.active .sub-toggle{background:var(--accent);color:#fff;border-color:var(--accent)}
+.sub-card:hover .sub-toggle{border-color:var(--dark)}
+.sub-card.active:hover .sub-toggle{background:var(--accent-light)}
+
+.cart-summary{background:#fff;border:1px solid var(--border);border-top:3px solid var(--dark);padding:1.5rem 1.75rem}
+.cart-line{display:flex;justify-content:space-between;align-items:center;padding:0.55rem 0;border-bottom:1px solid var(--border);font-size:0.78rem}
+.cart-line:last-child{border-bottom:none}
+.cart-line .cl-name{color:var(--text);font-weight:500}
+.cart-line .cl-price{color:var(--text);font-weight:600;font-family:'Playfair Display',serif;font-size:0.95rem}
+.cart-line.discount{color:var(--green)}
+.cart-line.discount .cl-name,.cart-line.discount .cl-price{color:var(--green)}
+.cart-line.total{padding-top:0.85rem;border-top:2px solid var(--dark);border-bottom:none;margin-top:0.5rem}
+.cart-line.total .cl-name{font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--dark)}
+.cart-line.total .cl-price{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;color:var(--dark)}
+.cart-empty{padding:1.5rem;text-align:center;font-size:0.78rem;color:var(--text-muted)}
+.cart-actions{display:flex;gap:0.6rem;margin-top:1.25rem;flex-wrap:wrap}
+.cart-actions .btn-gold,.cart-actions .btn-outline{width:auto;flex:1;min-width:180px;text-align:center}
+
+/* ── HOME LINK FIX ── */
+.nav-home-link[href="/"]{}
+nav{padding-left:0.5rem}
+
+/* footer */
 footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-top:1px solid rgba(201,146,42,0.15);flex-shrink:0}
 .f-note{font-size:0.58rem;font-weight:300;color:rgba(255,255,255,0.25)}
 .f-note a{color:rgba(255,255,255,0.35);text-decoration:underline}
@@ -138,44 +273,45 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 @media(max-width:768px){
   nav{padding:0.85rem 4%}
   .nav-user{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.58rem}
-  main{padding:2rem 4%}
+  main{padding:1.75rem 4%}
   .login-wrap{padding-top:1rem}
   .card{padding:1.75rem 1.25rem}
   .field input{font-size:16px!important}
   .stat-row{grid-template-columns:1fr 1fr}
   .stat-cell:nth-child(2){border-right:none}
   .stat-cell:nth-child(3){grid-column:1/-1;border-top:1px solid var(--border);border-right:none}
-  .portal-tab{padding:0.75rem 0.85rem;font-size:0.58rem}
+  .tab-btn{padding:0.78rem 0.85rem;font-size:0.58rem}
   .dash-card{padding:1.25rem 1.25rem 1rem}
   .dash-card-full{padding:1.25rem}
   .edit-cta-row{flex-direction:column;align-items:flex-start}
-  .dash-header{margin-bottom:1.5rem}
-  .portal-tabs{margin-bottom:1.5rem}
+  .banner{padding:1.25rem 1.25rem 1.15rem}
+  .banner-title{font-size:1.5rem}
   .coming-soon-pane{padding:2rem 1.25rem}
+  .bell-menu{right:-50%;min-width:280px}
 }
 @media(max-width:480px){
   nav{padding:0.75rem 4%}
   .nav-user{display:none}
   #btnLogout{padding:0.4rem 0.75rem;font-size:0.58rem}
-  main{padding:1.5rem 4%}
+  main{padding:1.25rem 4%}
   .stat-row{grid-template-columns:1fr}
   .stat-cell{border-right:none;border-bottom:1px solid var(--border)}
   .stat-cell:last-child{border-bottom:none}
   .stat-cell:nth-child(2){border-right:none}
   .stat-cell:nth-child(3){grid-column:auto;border-top:none}
-  .dash-grid{gap:1rem}
   .dash-card{padding:1rem}
   .dash-card-full{padding:1rem}
-  .portal-tab{padding:0.7rem 0.7rem;font-size:0.55rem;letter-spacing:0.06em}
+  .tab-btn{padding:0.65rem 0.6rem;font-size:0.5rem;letter-spacing:0.06em}
   .login-title{font-size:1.8rem}
   .card{padding:1.5rem 1rem}
+  .banner-card{padding:0.85rem 1rem}
 }
 </style>
 </head>
 <body>
 
 <nav>
-  <div style="display:flex;align-items:center">
+  <div class="nav-l">
     <a href="/" class="nav-logo">
       <div class="nav-strata" aria-hidden="true">
         <div style="width:28px;height:5px;border-radius:2px;background:#C9922A;"></div>
@@ -188,10 +324,24 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         <span class="sub">Digital</span>
       </div>
     </a>
-    <a href="/" class="nav-home-link">&#8592; Home</a>
+    <a href="/" class="nav-home-link">&#8592; Take me Home</a>
   </div>
   <div class="nav-right">
     <span id="demoBadge" style="display:none;font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--dark);background:var(--accent);padding:0.25rem 0.55rem;border-radius:3px">Demo</span>
+    <!-- NOTIFICATION BELL -->
+    <div class="bell-wrap" id="bellWrap">
+      <button class="bell-btn" onclick="toggleBell(event)" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span class="bell-badge zero" id="bellBadge">0</span>
+      </button>
+      <div class="bell-menu" id="bellMenu" role="menu">
+        <div class="bell-head">
+          <span class="bell-head-title">Notifications</span>
+          <button class="bell-mark-read" onclick="markAllRead()">Mark all read</button>
+        </div>
+        <div id="bellList"></div>
+      </div>
+    </div>
     <span class="nav-user" id="navUserEmail"></span>
     <button id="btnLogout" onclick="handleLogout()">Sign Out</button>
   </div>
@@ -206,13 +356,11 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <h1 class="login-title" id="loginTitle">Welcome back.</h1>
       <p class="login-sub" id="loginSubtext">Sign in to manage your website, view your analytics, and make changes to your site.</p>
 
-      <!-- Auth tabs -->
       <div style="display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid rgba(255,255,255,0.1)">
         <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border:none;background:transparent;color:var(--accent);border-bottom:2px solid var(--accent);margin-bottom:-2px;cursor:pointer">Sign In</button>
         <button id="tabCreate" onclick="switchAuthTab('create')" style="flex:1;padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border:none;background:transparent;color:rgba(255,255,255,0.4);border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer">Create Account</button>
       </div>
 
-      <!-- Sign In form -->
       <div id="formLogin">
         <div class="card">
           <div class="error-box" id="loginError"></div>
@@ -229,7 +377,6 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         </div>
       </div>
 
-      <!-- Create Account form -->
       <div id="formCreate" style="display:none">
         <div class="card">
           <div class="error-box" id="createError"></div>
@@ -270,9 +417,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <p class="login-sub">Enter your email and we'll send you a link to set a new password.</p>
       <div class="card">
         <div class="error-box" id="forgotError"></div>
-        <div id="forgotSuccess" style="display:none;background:var(--green-bg);border-left:3px solid var(--green);padding:0.7rem 0.9rem;margin-bottom:1rem;font-size:0.74rem;color:var(--green);font-weight:500;line-height:1.55">
-          Check your email — we've sent a password reset link.
-        </div>
+        <div id="forgotSuccess" style="display:none;background:var(--green-bg);border-left:3px solid var(--green);padding:0.7rem 0.9rem;margin-bottom:1rem;font-size:0.74rem;color:var(--green);font-weight:500;line-height:1.55"></div>
         <div class="field">
           <label for="forgotEmail">Email address</label>
           <input type="email" id="forgotEmail" placeholder="you@yourbusiness.com" autocomplete="email" onkeydown="if(event.key==='Enter')handleForgot()">
@@ -282,85 +427,101 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     </div>
   </div>
 
-  <!-- ── RESET PASSWORD ── -->
-  <div id="pageReset" class="page">
-    <div class="login-wrap">
-      <div class="login-eyebrow">New Password</div>
-      <h2 class="login-title" style="font-size:1.8rem">Set your password.</h2>
-      <p class="login-sub">Choose a new password for your Bedrock client account.</p>
-      <div class="card">
-        <div class="error-box" id="resetError"></div>
-        <div id="resetSuccess" style="display:none;background:var(--green-bg);border-left:3px solid var(--green);padding:0.7rem 0.9rem;margin-bottom:1rem;font-size:0.74rem;color:var(--green);font-weight:500;line-height:1.55">
-          Password updated. Taking you to sign in…
-        </div>
-        <div class="field">
-          <label for="resetPassword">New password</label>
-          <input type="password" id="resetPassword" placeholder="At least 8 characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')handleReset()">
-        </div>
-        <div class="field">
-          <label for="resetPasswordConfirm">Confirm password</label>
-          <input type="password" id="resetPasswordConfirm" placeholder="Re-enter your password" autocomplete="new-password" onkeydown="if(event.key==='Enter')handleReset()">
-        </div>
-        <button class="btn-gold" id="btnReset" onclick="handleReset()">Update Password</button>
-      </div>
-    </div>
-  </div>
-
   <!-- ── DASHBOARD ── -->
   <div id="pageDash" class="page">
     <div class="dash-wrap">
-      <div class="dash-header">
-        <div class="dash-eyebrow">Your Dashboard</div>
-        <div class="dash-title" id="dashBizName">Loading…</div>
-        <div class="dash-sub">Manage your website, view traffic, and make changes anytime.</div>
-      </div>
 
-      <!-- Portal tab bar -->
-      <div class="portal-tabs">
-        <button class="portal-tab active" data-tab="dashboard" onclick="switchPortalTab('dashboard')">Dashboard</button>
-        <button class="portal-tab" data-tab="editor" onclick="switchPortalTab('editor')">Website Editor</button>
-        <button class="portal-tab" data-tab="yoursite" onclick="switchPortalTab('yoursite')">Your Website</button>
-        <button class="portal-tab" data-tab="analytics" onclick="switchPortalTab('analytics')">Site Analytics</button>
-        <button class="portal-tab" data-tab="seo" onclick="switchPortalTab('seo')">SEO / GEO Optimizer</button>
-        <button class="portal-tab" data-tab="marketing" onclick="switchPortalTab('marketing')">Marketing</button>
-      </div>
-
-      <!-- DASHBOARD pane: account info + support -->
-      <div class="portal-pane active" id="pane-dashboard">
-        <div class="dash-grid">
-          <div class="dash-card">
-            <div class="dc-label">Your Account</div>
-            <div class="dc-title">Account Info</div>
-            <div style="margin-top:0.85rem">
-              <div class="info-row"><span class="info-key">Business</span><span class="info-val" id="acctBizName">—</span></div>
-              <div class="info-row"><span class="info-key">Name</span><span class="info-val" id="acctName">—</span></div>
-              <div class="info-row"><span class="info-key">Email</span><span class="info-val" id="acctEmail">—</span></div>
-              <div class="info-row"><span class="info-key">Phone</span><span class="info-val" id="acctPhone">—</span></div>
-              <div class="info-row"><span class="info-key">Trade</span><span class="info-val" id="acctTrade">—</span></div>
-              <div class="info-row"><span class="info-key">Member since</span><span class="info-val" id="acctSince">—</span></div>
-            </div>
-          </div>
-          <div class="dash-card">
-            <div class="dc-label">Quick Links</div>
-            <div class="dc-title">What would you like to do?</div>
-            <div style="display:flex;flex-direction:column;gap:0.65rem;margin-top:1rem">
-              <button onclick="switchPortalTab('editor')" class="btn-dark" style="text-align:left;width:100%">Edit My Site →</button>
-              <button onclick="switchPortalTab('yoursite')" class="btn-outline" style="text-align:left;width:100%">View Site Status →</button>
-              <button onclick="switchPortalTab('analytics')" class="btn-outline" style="text-align:left;width:100%">Site Analytics →</button>
-            </div>
-          </div>
+      <!-- PERMANENT BANNER (always visible above tabs) -->
+      <div class="banner">
+        <div class="banner-head">
+          <div class="banner-eyebrow">Your Portal</div>
+          <div class="banner-title" id="dashBizName">Loading…</div>
+          <div class="banner-sub">Everything you need to run your Bedrock business — website, marketing, SEO, profile, and billing.</div>
         </div>
-        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;padding:1.25rem 1.5rem;background:rgba(255,255,255,0.04);border:1px solid rgba(201,146,42,0.15);margin-top:0.5rem">
-          <div style="flex:1;min-width:200px">
-            <div style="font-size:0.62rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:0.25rem">Need help?</div>
-            <div style="font-size:0.74rem;font-weight:300;color:rgba(255,255,255,0.65);line-height:1.6">Questions about your site, billing, or anything else — we'll get back to you fast.</div>
+        <div class="banner-grid">
+          <!-- Account Info -->
+          <div class="banner-card">
+            <div class="bc-label">Account</div>
+            <div class="bc-title">Account Info</div>
+            <div class="info-row"><span class="info-key">Business</span><span class="info-val" id="acctBizName">—</span></div>
+            <div class="info-row"><span class="info-key">Name</span><span class="info-val" id="acctName">—</span></div>
+            <div class="info-row"><span class="info-key">Email</span><span class="info-val" id="acctEmail">—</span></div>
+            <div class="info-row"><span class="info-key">Phone</span><span class="info-val" id="acctPhone">—</span></div>
+            <div class="info-row"><span class="info-key">Trade</span><span class="info-val" id="acctTrade">—</span></div>
+            <div class="info-row"><span class="info-key">Member</span><span class="info-val" id="acctSince">—</span></div>
           </div>
-          <a href="mailto:support@bedrock-sites.com" class="btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.2)">Email Support</a>
+          <!-- Quick Links -->
+          <div class="banner-card">
+            <div class="bc-label">Quick Links</div>
+            <div class="bc-title">Jump to…</div>
+            <div class="quick-links">
+              <button type="button" class="quick-link" onclick="goTab('website','editor')"><span>Edit My Site</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="goTab('marketing','build')"><span>Build a Marketing Piece</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="goTab('profile','default')"><span>Complete My Profile</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="goTab('subs','cart')"><span>Manage Subscriptions</span><span>→</span></button>
+            </div>
+          </div>
+          <!-- Support -->
+          <div class="banner-card support-card">
+            <div class="bc-label">Need Help?</div>
+            <div class="bc-title">We've got you</div>
+            <div class="support-sub">Questions about your site, billing, marketing — anything. We answer fast.</div>
+            <a href="mailto:support@bedrock-sites.com" class="btn-outline" style="display:inline-block;width:100%;text-align:center">Email Support</a>
+          </div>
         </div>
       </div>
 
-      <!-- WEBSITE EDITOR pane -->
-      <div class="portal-pane" id="pane-editor">
+      <!-- TAB BAR with caret submenus -->
+      <div class="tab-bar" id="tabBar">
+
+        <div class="tab-group" data-top="website">
+          <button class="tab-btn" onclick="goTab('website','editor')">My Website <span class="tab-caret">▾</span></button>
+          <div class="tab-submenu">
+            <button type="button" class="tab-submenu-link" onclick="goTab('website','editor')"><span class="tsl-eyebrow">Edit</span>Site Editor</button>
+            <button type="button" class="tab-submenu-link" onclick="goTab('website','status')"><span class="tsl-eyebrow">Status</span>Your Website</button>
+            <button type="button" class="tab-submenu-link" onclick="goTab('website','analytics')"><span class="tsl-eyebrow">Stats</span>Site Analytics</button>
+          </div>
+        </div>
+
+        <div class="tab-group" data-top="seo">
+          <button class="tab-btn" onclick="goTab('seo','audit')">SEO / GEO <span class="tab-caret">▾</span></button>
+          <div class="tab-submenu">
+            <button type="button" class="tab-submenu-link" onclick="goTab('seo','audit')"><span class="tsl-eyebrow">Run</span>Free Audit</button>
+            <button type="button" class="tab-submenu-link" onclick="goTab('seo','reports')"><span class="tsl-eyebrow">View</span>Reports</button>
+          </div>
+        </div>
+
+        <div class="tab-group" data-top="marketing">
+          <button class="tab-btn" onclick="goTab('marketing','overview')">Marketing <span class="tab-caret">▾</span></button>
+          <div class="tab-submenu">
+            <button type="button" class="tab-submenu-link" onclick="goTab('marketing','overview')"><span class="tsl-eyebrow">Overview</span>Marketing Hub</button>
+            <button type="button" class="tab-submenu-link" onclick="goTab('marketing','brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
+            <button type="button" class="tab-submenu-link" onclick="goTab('marketing','build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
+            <button type="button" class="tab-submenu-link" onclick="goTab('marketing','integrations')"><span class="tsl-eyebrow">Soon</span>Social Integrations</button>
+          </div>
+        </div>
+
+        <div class="tab-group" data-top="profile">
+          <button class="tab-btn" onclick="goTab('profile','default')">My Profile</button>
+        </div>
+
+        <div class="tab-group" data-top="subs">
+          <button class="tab-btn" onclick="goTab('subs','cart')">My Subscriptions <span class="tab-caret">▾</span></button>
+          <div class="tab-submenu">
+            <button type="button" class="tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Edit</span>Plan &amp; Cart</button>
+            <button type="button" class="tab-submenu-link" onclick="goTab('subs','active')"><span class="tsl-eyebrow">View</span>Active Subscriptions</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SUB-TAB BREADCRUMB -->
+      <div class="subtab-strip" id="subStrip"></div>
+
+      <!-- ─────────── PANES ─────────── -->
+
+      <!-- WEBSITE: EDITOR -->
+      <div class="portal-pane" id="pane-website-editor">
         <div class="dash-card-full">
           <div class="edit-cta-row">
             <div class="edit-cta-text">
@@ -372,13 +533,13 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           </div>
           <div id="saveConfirm">Changes saved. We'll rebuild and redeploy your site shortly.</div>
         </div>
-        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;padding:1.25rem 1.5rem;background:rgba(255,255,255,0.04);border:1px solid rgba(201,146,42,0.15);margin-top:1rem">
-          <div style="flex:1;min-width:200px;font-size:0.72rem;font-weight:300;color:rgba(255,255,255,0.55);line-height:1.6">Small changes — text, hours, phone number — are always free. Photos, new sections, and redesigns are covered under your plan.</div>
+        <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;padding:1.25rem 1.5rem;background:#fff;border:1px solid var(--border);margin-top:1rem">
+          <div style="flex:1;min-width:200px;font-size:0.74rem;font-weight:400;color:var(--text-muted);line-height:1.6">Small changes — text, hours, phone number — are always free. Photos, new sections, and redesigns are covered under your plan.</div>
         </div>
       </div>
 
-      <!-- YOUR WEBSITE pane -->
-      <div class="portal-pane" id="pane-yoursite">
+      <!-- WEBSITE: STATUS -->
+      <div class="portal-pane" id="pane-website-status">
         <div class="dash-card" style="max-width:640px">
           <div class="dc-label">Your Website</div>
           <div class="dc-title" id="dashSiteTitle">—</div>
@@ -389,8 +550,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         </div>
       </div>
 
-      <!-- SITE ANALYTICS pane -->
-      <div class="portal-pane" id="pane-analytics">
+      <!-- WEBSITE: ANALYTICS -->
+      <div class="portal-pane" id="pane-website-analytics">
         <div class="dash-card" id="analyticsCard">
           <div class="dc-label">Site Analytics</div>
           <div class="dc-title">Traffic Overview</div>
@@ -404,11 +565,11 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         </div>
       </div>
 
-      <!-- SEO / GEO OPTIMIZER pane (coming soon) -->
-      <div class="portal-pane" id="pane-seo">
+      <!-- SEO: AUDIT -->
+      <div class="portal-pane" id="pane-seo-audit">
         <div class="coming-soon-pane">
-          <div class="cs-badge"><span>Coming Soon</span></div>
-          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">SEO / GEO Optimizer</div>
+          <div class="cs-badge"><span>In Testing</span></div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">SEO / GEO Audit</div>
           <div class="dc-sub" style="max-width:420px;margin:0 auto 1.5rem">Run a full audit of your site's search performance and AI-answer visibility. See exactly where you rank vs. competitors and what to fix first.</div>
           <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:320px;margin:0 auto;text-align:left">
             <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Keyword ranking by service + city</div>
@@ -416,21 +577,381 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Competitor gap analysis</div>
             <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">One-click fix recommendations</div>
           </div>
+          <button class="btn-gold" style="margin-top:1.5rem;display:inline-block;width:auto;padding:0.85rem 2rem" onclick="window.location.href='/#optimizer'">Run a Free Audit →</button>
         </div>
       </div>
 
-      <!-- MARKETING pane (coming soon) -->
-      <div class="portal-pane" id="pane-marketing">
+      <!-- SEO: REPORTS -->
+      <div class="portal-pane" id="pane-seo-reports">
         <div class="coming-soon-pane">
           <div class="cs-badge"><span>Coming Soon</span></div>
-          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Marketing</div>
-          <div class="dc-sub" style="max-width:420px;margin:0 auto 1.5rem">Campaigns, reputation management, review requests, and lead tracking — all in one place. Built for contractors who want more jobs, not more software to learn.</div>
-          <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:320px;margin:0 auto;text-align:left">
-            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Automated Google review requests</div>
-            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Lead tracking and follow-up reminders</div>
-            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Seasonal campaign templates</div>
-            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Performance reports delivered monthly</div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Your SEO Reports</div>
+          <div class="dc-sub" style="max-width:420px;margin:0 auto">Past audits, ranking changes over time, and what was fixed. Available once you've run your first audit.</div>
+        </div>
+      </div>
+
+      <!-- MARKETING: OVERVIEW -->
+      <div class="portal-pane" id="pane-marketing-overview">
+        <div class="mkt-card">
+          <div class="dc-label">Bedrock Marketing</div>
+          <div class="dc-title">Make a marketing piece in five minutes.</div>
+          <div class="dc-sub">Upload your photos, pick a format, and download a print-ready flyer, social post, door hanger, business card, postcard, banner, email signature, or yard sign — in your brand colors, with copy already written for you.</div>
+          <div class="mkt-features">
+            <div class="mkt-feat"><strong>Brand Kit</strong>Colors, fonts, voice, logo — set up once.</div>
+            <div class="mkt-feat"><strong>AI Copy</strong>Headline + caption written in your tone.</div>
+            <div class="mkt-feat"><strong>8 formats</strong>Social, flyer, door hanger, yard sign, business card, postcard, email sig, FB cover.</div>
+            <div class="mkt-feat"><strong>PNG · JPG · PDF</strong>For socials, email, or the print shop.</div>
           </div>
+          <div class="mkt-launch">
+            <button class="btn-gold" id="mktLaunchBtn" style="width:auto;padding:0.85rem 2rem" onclick="launchMarketing('wizard')">Open Marketing Hub →</button>
+            <button class="btn-outline" onclick="launchMarketing('brand')">Edit Brand Kit</button>
+            <button class="btn-outline" onclick="launchMarketing('build')">Build Materials</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARKETING: BRAND KIT shortcut -->
+      <div class="portal-pane" id="pane-marketing-brand">
+        <div class="mkt-card">
+          <div class="dc-label">Brand Kit</div>
+          <div class="dc-title">Set up your brand once. Use it forever.</div>
+          <div class="dc-sub">Your Brand Kit holds your colors, fonts, voice, logo, and business info. Every marketing piece you make pulls from it. Once saved here, the matching fields automatically sync to your Profile.</div>
+          <button class="btn-gold" style="width:auto;padding:0.85rem 2rem" onclick="launchMarketing('brand')">Open Brand Kit Editor →</button>
+        </div>
+      </div>
+
+      <!-- MARKETING: BUILD MATERIALS shortcut -->
+      <div class="portal-pane" id="pane-marketing-build">
+        <div class="mkt-card">
+          <div class="dc-label">Build Materials</div>
+          <div class="dc-title">Build a marketing piece in minutes.</div>
+          <div class="dc-sub">Pick what to make, drop in your photos, write or generate a headline, and download. Eight material types: social post, print flyer, door hanger, yard sign, business card, postcard, email signature banner, and Facebook cover.</div>
+          <button class="btn-gold" style="width:auto;padding:0.85rem 2rem" onclick="launchMarketing('build')">Open the Builder →</button>
+        </div>
+      </div>
+
+      <!-- MARKETING: INTEGRATIONS placeholder -->
+      <div class="portal-pane" id="pane-marketing-integrations">
+        <div class="coming-soon-pane">
+          <div class="cs-badge"><span>Coming Soon</span></div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Social &amp; Email Integrations</div>
+          <div class="dc-sub" style="max-width:420px;margin:0 auto 1.25rem">Schedule posts to Facebook, Instagram, and Nextdoor straight from Bedrock. Hook up your email list for blast sends. Coming after the asset library ships.</div>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="portal-pane" id="pane-profile-default">
+
+        <div class="profile-head">
+          <div class="dc-label">Your Business Profile</div>
+          <div class="dc-title" id="profileBizTitle">Your Business</div>
+          <div class="dc-sub">One profile powers every Bedrock tool. Each tool only asks for the new info it actually needs — and your Brand Kit auto-syncs into the Marketing section.</div>
+          <div class="meter-row">
+            <div class="meter-label">Profile completeness</div>
+            <div class="meter-pct" id="profileMeterPct">0%</div>
+          </div>
+          <div class="meter"><div class="meter-fill" id="profileMeterFill" style="width:0%"></div></div>
+          <div id="profileSavedHint" style="margin-top:0.8rem;font-size:0.66rem;color:var(--text-muted);display:none">
+            Last saved <span id="profileLastSaved">—</span>
+          </div>
+        </div>
+
+        <div class="profile-stages">
+
+          <!-- STAGE 1: IDENTITY -->
+          <div class="stage-card" id="stage-1">
+            <button class="stage-head" type="button" onclick="toggleStage(1)">
+              <div class="stage-head-l">
+                <div class="stage-num">1</div>
+                <div>
+                  <div class="stage-title">Identity</div>
+                  <div class="stage-sub">Who you are and how to reach you</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center"><span class="stage-pill" id="stage-1-pill">Required</span><span class="stage-chev">▾</span></div>
+            </button>
+            <div class="stage-body">
+              <div class="profile-grid">
+                <div class="field"><label>Business name</label><input type="text" id="pf_business_name"></div>
+                <div class="field"><label>Your name (owner)</label><input type="text" id="pf_contact_name"></div>
+                <div class="field"><label>Phone</label><input type="tel" id="pf_phone"></div>
+                <div class="field"><label>Email (your account login)</label><input type="email" id="pf_email" disabled></div>
+                <div class="field"><label>Trade</label><input type="text" id="pf_trade" placeholder="Plumbing, HVAC, Roofing…"></div>
+                <div class="field"><label>Year founded</label><input type="number" id="pf_ex_year_founded" placeholder="2008" min="1900" max="2030"></div>
+                <div class="field full"><label>City / main location</label><input type="text" id="pf_city" placeholder="Menomonee Falls, WI"></div>
+                <div class="field"><label>Street address (optional)</label><input type="text" id="pf_ex_street" placeholder="123 Main St."></div>
+                <div class="field"><label>State / ZIP</label><input type="text" id="pf_ex_state_zip" placeholder="WI 53051"></div>
+                <div class="field"><label>Owner role / title</label><input type="text" id="pf_ex_owner_title" placeholder="Owner, Master Plumber"></div>
+                <div class="field"><label>Website (if any)</label><input type="text" id="pf_ex_website" placeholder="smithplumbing.com"></div>
+              </div>
+              <div class="stage-save-row">
+                <span class="stage-save-msg" id="msg-1"></span>
+                <button class="btn-dark" onclick="saveStage(1)">Save Identity</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STAGE 2: SITES & SERVICE -->
+          <div class="stage-card" id="stage-2">
+            <button class="stage-head" type="button" onclick="toggleStage(2)">
+              <div class="stage-head-l">
+                <div class="stage-num">2</div>
+                <div>
+                  <div class="stage-title">Sites &amp; Service</div>
+                  <div class="stage-sub">Service area, hours, your story</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center"><span class="stage-pill" id="stage-2-pill">Sites</span><span class="stage-chev">▾</span></div>
+            </button>
+            <div class="stage-body">
+              <div class="profile-grid">
+                <div class="field full"><label>Service areas (comma-separated cities)</label><input type="text" id="pf_service_areas" placeholder="Milwaukee, Menomonee Falls, Brookfield"></div>
+                <div class="field"><label>Years in business</label><input type="number" id="pf_years_in_business" min="0" placeholder="12"></div>
+                <div class="field"><label>Certifications (comma-separated)</label><input type="text" id="pf_certifications" placeholder="Master Plumber, EPA 608"></div>
+                <div class="field"><label>License number</label><input type="text" id="pf_ex_license" placeholder="WI-PL-12345"></div>
+                <div class="field"><label>Insurance carrier (optional)</label><input type="text" id="pf_ex_insurance" placeholder="State Farm, Hartford…"></div>
+                <div class="field full"><label>Hours of operation</label><input type="text" id="pf_ex_hours" placeholder="Mon-Fri 8am-5pm, Sat by appt, 24/7 emergency"></div>
+                <div class="field full">
+                  <label>Emergency / after-hours service?</label>
+                  <select id="pf_ex_emergency">
+                    <option value="">— Pick one —</option>
+                    <option value="yes_24_7">Yes — 24/7</option>
+                    <option value="yes_weekday">Yes — weekday evenings only</option>
+                    <option value="yes_premium">Yes — at premium rate</option>
+                    <option value="no">No</option>
+                  </select>
+                </div>
+                <div class="field full"><label>Services you offer (comma-separated, ~5-10)</label><input type="text" id="pf_ex_services" placeholder="Water heater install, drain cleaning, sewer line, leak detection"></div>
+                <div class="field full"><label>About — who you are, in your own words</label><textarea id="pf_about_copy" placeholder="Family-owned, three generations of plumbers, serving Milwaukee since 2008…"></textarea></div>
+              </div>
+              <div class="stage-save-row">
+                <span class="stage-save-msg" id="msg-2"></span>
+                <button class="btn-dark" onclick="saveStage(2)">Save Sites Info</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STAGE 3: MARKETING & BRAND -->
+          <div class="stage-card" id="stage-3">
+            <button class="stage-head" type="button" onclick="toggleStage(3)">
+              <div class="stage-head-l">
+                <div class="stage-num">3</div>
+                <div>
+                  <div class="stage-title">Marketing &amp; Brand</div>
+                  <div class="stage-sub">Colors, voice, slogan, who you serve</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center"><span class="stage-pill" id="stage-3-pill">Marketing</span><span class="stage-chev">▾</span></div>
+            </button>
+            <div class="stage-body">
+              <!-- INLINE CTA TO MARKETING SITE -->
+              <div class="mkt-cta-inline">
+                <div class="mkt-cta-inline-txt">
+                  <strong>Build your Brand Kit in Bedrock Marketing</strong>
+                  Use the full Brand Kit editor — colors, fonts, logo upload, palettes, sample copy. Saves here automatically.
+                </div>
+                <button class="btn-gold" style="width:auto;padding:0.7rem 1.25rem" onclick="launchMarketing('brand')">Open Brand Kit →</button>
+              </div>
+              <div class="profile-grid">
+                <div class="field"><label>Slogan / tagline</label><input type="text" id="pf_slogan" placeholder="Fast. Reliable. Local."></div>
+                <div class="field">
+                  <label>Voice / tone</label>
+                  <select id="pf_brand_tone">
+                    <option value="">— Pick one —</option>
+                    <option value="Bold">Bold</option>
+                    <option value="Friendly">Friendly</option>
+                    <option value="Premium">Premium</option>
+                    <option value="Family-owned">Family-owned</option>
+                    <option value="Industrial">Industrial</option>
+                    <option value="Emergency-focused">Emergency-focused</option>
+                    <option value="Modern">Modern</option>
+                    <option value="Rugged">Rugged</option>
+                    <option value="Luxury">Luxury</option>
+                  </select>
+                </div>
+                <div class="field full">
+                  <label>Brand colors (Brand Kit syncs these automatically)</label>
+                  <div class="color-mini-row">
+                    <div><span>Primary</span><input type="color" id="pf_color_primary" value="#1B3557"></div>
+                    <div><span>Secondary</span><input type="color" id="pf_color_secondary" value="#FFFFFF"></div>
+                    <div><span>Accent</span><input type="color" id="pf_color_accent" value="#C9922A"></div>
+                  </div>
+                </div>
+                <div class="field full"><label>Target customer</label><input type="text" id="pf_target_customer" placeholder="Homeowners 35-65 who care about quality"></div>
+                <div class="field"><label>Facebook page (URL or handle)</label><input type="text" id="pf_ex_fb" placeholder="facebook.com/smithplumbing"></div>
+                <div class="field"><label>Instagram handle</label><input type="text" id="pf_ex_ig" placeholder="@smithplumbing"></div>
+                <div class="field"><label>Google Business URL</label><input type="text" id="pf_ex_gbiz" placeholder="g.page/smithplumbing"></div>
+                <div class="field">
+                  <label>Image style preference</label>
+                  <select id="pf_ex_img_style">
+                    <option value="">— Pick one —</option>
+                    <option value="modern">Modern, clean</option>
+                    <option value="rugged">Rugged, work-in-progress</option>
+                    <option value="premium">Premium, polished</option>
+                    <option value="family">Warm, family</option>
+                  </select>
+                </div>
+              </div>
+              <div class="stage-save-row">
+                <span class="stage-save-msg" id="msg-3"></span>
+                <button class="btn-dark" onclick="saveStage(3)">Save Brand Info</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STAGE 4: SEO -->
+          <div class="stage-card" id="stage-4">
+            <button class="stage-head" type="button" onclick="toggleStage(4)">
+              <div class="stage-head-l">
+                <div class="stage-num">4</div>
+                <div>
+                  <div class="stage-title">SEO</div>
+                  <div class="stage-sub">What you want to show up for on Google</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center"><span class="stage-pill" id="stage-4-pill">SEO</span><span class="stage-chev">▾</span></div>
+            </button>
+            <div class="stage-body">
+              <div class="profile-grid">
+                <div class="field full"><label>Target keywords (comma-separated)</label><input type="text" id="pf_target_keywords" placeholder="emergency plumber milwaukee, water heater repair, sewer line replacement"></div>
+                <div class="field"><label>Service radius (miles)</label><input type="number" id="pf_service_radius_mi" placeholder="25"></div>
+                <div class="field"><label>Best-selling service</label><input type="text" id="pf_ex_best_service" placeholder="Water heater installs"></div>
+                <div class="field full"><label>Top 3 competitors (URLs or names)</label><input type="text" id="pf_ex_competitors" placeholder="acmeplumbing.com, joe-plumber.com, fast-flow-plumbing.com"></div>
+                <div class="field"><label>Existing Google reviews (count)</label><input type="number" id="pf_ex_review_count" min="0" placeholder="32"></div>
+                <div class="field"><label>Existing Google star rating</label><input type="text" id="pf_ex_review_rating" placeholder="4.7"></div>
+              </div>
+              <div class="stage-save-row">
+                <span class="stage-save-msg" id="msg-4"></span>
+                <button class="btn-dark" onclick="saveStage(4)">Save SEO Info</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STAGE 5: OPERATIONS / CFO -->
+          <div class="stage-card" id="stage-5">
+            <button class="stage-head" type="button" onclick="toggleStage(5)">
+              <div class="stage-head-l">
+                <div class="stage-num">5</div>
+                <div>
+                  <div class="stage-title">Operations</div>
+                  <div class="stage-sub">For Bedrock CFO — bid sizing, payroll, cash flow</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center"><span class="stage-pill" id="stage-5-pill">CFO</span><span class="stage-chev">▾</span></div>
+            </button>
+            <div class="stage-body">
+              <div class="profile-grid">
+                <div class="field"><label>Employee count</label><input type="number" id="pf_employee_count" min="0" placeholder="4"></div>
+                <div class="field"><label>Average job ticket ($)</label><input type="number" id="pf_ex_avg_ticket" placeholder="1200"></div>
+                <div class="field">
+                  <label>Accounting software</label>
+                  <select id="pf_ex_acct_software">
+                    <option value="">— Pick one —</option>
+                    <option value="quickbooks_online">QuickBooks Online</option>
+                    <option value="quickbooks_desktop">QuickBooks Desktop</option>
+                    <option value="xero">Xero</option>
+                    <option value="wave">Wave</option>
+                    <option value="spreadsheet">Spreadsheets</option>
+                    <option value="none">None / paper</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label>Payroll frequency</label>
+                  <select id="pf_ex_payroll">
+                    <option value="">— Pick one —</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="biweekly">Bi-weekly</option>
+                    <option value="semimonthly">Semi-monthly</option>
+                    <option value="monthly">Monthly</option>
+                    <option value="solo">Solo — no payroll</option>
+                  </select>
+                </div>
+                <div class="field"><label>Bid-to-close ratio (rough %)</label><input type="number" id="pf_ex_bid_close" placeholder="55" min="0" max="100"></div>
+                <div class="field">
+                  <label>Subcontractors used?</label>
+                  <select id="pf_ex_subs">
+                    <option value="">— Pick one —</option>
+                    <option value="yes_often">Yes — often</option>
+                    <option value="yes_sometimes">Yes — sometimes</option>
+                    <option value="no">No — all in-house</option>
+                  </select>
+                </div>
+                <div class="field full"><label>Operations notes</label><textarea id="pf_ops_notes" placeholder="Anything else Bedrock CFO should know about how you run the business?"></textarea></div>
+              </div>
+              <div class="stage-save-row">
+                <span class="stage-save-msg" id="msg-5"></span>
+                <button class="btn-dark" onclick="saveStage(5)">Save Operations</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SUBSCRIPTIONS: CART -->
+      <div class="portal-pane" id="pane-subs-cart">
+        <div style="background:#fff;border-top:3px solid var(--accent);padding:1.5rem 1.75rem;margin-bottom:1.25rem">
+          <div class="dc-label">My Subscriptions</div>
+          <div class="dc-title">Pick what you want. Bundle and save.</div>
+          <div class="dc-sub" style="margin-bottom:0">Tap a product to add or remove it from your plan. Discounts apply automatically. <strong style="color:var(--accent);font-weight:600">All prices are placeholders — final pricing will be confirmed before any charge.</strong></div>
+        </div>
+
+        <div class="subs-grid" id="subsGrid">
+          <!-- WEBSITE -->
+          <button type="button" class="sub-card" data-prod="website" onclick="toggleProduct('website')">
+            <span class="sc-status">Live</span>
+            <div class="sc-tag">Website Builder</div>
+            <div class="sc-name">Bedrock Sites</div>
+            <div class="sc-desc">Your contractor website — clean design, mobile-friendly, hosted, SEO-ready. Edit any time from your portal.</div>
+            <div class="sc-price">$20<span class="sc-price-unit">/mo</span></div>
+            <div class="sc-extra">+ $200 one-time setup fee</div>
+            <div class="sub-toggle">+ Add to Plan</div>
+          </button>
+
+          <!-- MARKETING -->
+          <button type="button" class="sub-card" data-prod="marketing" onclick="toggleProduct('marketing')">
+            <span class="sc-status">New</span>
+            <div class="sc-tag">Marketing</div>
+            <div class="sc-name">Bedrock Marketing</div>
+            <div class="sc-desc">Brand Kit + builder for flyers, social, door hangers, yard signs, business cards, postcards, and more. AI copy included.</div>
+            <div class="sc-price">$20<span class="sc-price-unit">/mo</span></div>
+            <div class="sc-extra">No setup fee</div>
+            <div class="sub-toggle">+ Add to Plan</div>
+          </button>
+
+          <!-- CFO -->
+          <button type="button" class="sub-card" data-prod="cfo" onclick="toggleProduct('cfo')">
+            <span class="sc-status">Soon</span>
+            <div class="sc-tag">Operations</div>
+            <div class="sc-name">Bedrock CFO</div>
+            <div class="sc-desc">Conversational AI that connects to QuickBooks. Auto-categorizes expenses, helps you bid jobs, watches cash flow.</div>
+            <div class="sc-price">$70<span class="sc-price-unit">/mo</span></div>
+            <div class="sc-extra">Replaces a part-time bookkeeper</div>
+            <div class="sub-toggle">+ Add to Plan</div>
+          </button>
+        </div>
+
+        <div class="cart-summary" id="cartSummary">
+          <div class="dc-label">Your Plan</div>
+          <div class="dc-title" style="margin-bottom:1rem">Plan Summary</div>
+          <div id="cartLines">
+            <div class="cart-empty">No products selected. Tap a product above to add it.</div>
+          </div>
+          <div class="cart-actions" id="cartActions" style="display:none">
+            <button class="btn-gold" onclick="checkout()">Update My Subscription →</button>
+            <button class="btn-outline" onclick="clearCart()">Clear</button>
+          </div>
+          <div style="margin-top:1rem;font-size:0.66rem;color:var(--text-muted);line-height:1.6">Setup fees are billed once. Monthly fees recur until you cancel. You can change your plan any time.</div>
+        </div>
+      </div>
+
+      <!-- SUBSCRIPTIONS: ACTIVE -->
+      <div class="portal-pane" id="pane-subs-active">
+        <div class="coming-soon-pane">
+          <div class="cs-badge"><span>Coming Soon</span></div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Active Subscriptions</div>
+          <div class="dc-sub" style="max-width:420px;margin:0 auto 1.25rem">Your current Stripe subscriptions, payment history, and billing dates will appear here once you complete checkout.</div>
+          <button class="btn-outline" onclick="goTab('subs','cart')">← Back to Plan</button>
         </div>
       </div>
 
@@ -449,6 +970,8 @@ var currentSession = null;
 var currentLead    = null;
 var DEMO           = false;
 var SESSION_KEY    = 'bedrock_portal_session';
+var CART_KEY       = 'bedrock_cart_v1';
+var NOTIF_KEY      = 'bedrock_notifs_v1';
 
 // ── DEMO ──────────────────────────────────────────────────────────────────────
 function isDemoRequested() {
@@ -467,9 +990,18 @@ function startDemo() {
   var badge = document.getElementById('demoBadge'); if (badge) badge.style.display = 'inline-block';
   document.getElementById('btnLogout').style.display = 'block';
   document.getElementById('navUserEmail').textContent = DEMO_SESSION.user.email;
+  document.getElementById('bellWrap').classList.add('show');
   populateDashboard(DEMO_LEAD, DEMO_SESSION);
   fillDemoAnalytics();
+  // demo notifications
+  setNotifications([
+    { id:'n1', icon:'👤', msg:'Welcome! Complete your profile to unlock all features.',         meta:'Just now',     read:false, link:{tab:'profile',sub:'default'} },
+    { id:'n2', icon:'📣', msg:'Your new yard sign is ready to download in Bedrock Marketing.',   meta:'2 hours ago',  read:false, link:{tab:'marketing',sub:'build'} },
+    { id:'n3', icon:'📈', msg:'Site analytics: 38 visitors this week, up 24% vs. last week.',   meta:'Yesterday',    read:true,  link:{tab:'website',sub:'analytics'} },
+    { id:'n4', icon:'🔍', msg:'SEO audit ready — you scored 72/100. Tap to view recommendations.',meta:'2 days ago',   read:true,  link:{tab:'seo',sub:'audit'} },
+  ]);
   showPage('pageDash');
+  goTab('website','editor');
 }
 function fillDemoAnalytics() {
   var el = document.getElementById('analyticsContent'); if (!el) return;
@@ -482,62 +1014,25 @@ function fillDemoAnalytics() {
 
 // ── SESSION HELPERS ───────────────────────────────────────────────────────────
 function saveSession(d) {
-  try {
-    localStorage.setItem(SESSION_KEY, JSON.stringify({
-      access_token:  d.access_token,
-      refresh_token: d.refresh_token,
-      expires_at:    Date.now() + (d.expires_in || 3600) * 1000,
-      user:          d.user,
-    }));
-  } catch(e) {}
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ access_token:d.access_token, refresh_token:d.refresh_token, expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user })); } catch(e) {}
 }
 function loadStoredSession() {
-  try {
-    var raw = localStorage.getItem(SESSION_KEY);
-    if (!raw) return null;
-    var s = JSON.parse(raw);
-    if (!s.access_token || !s.expires_at || Date.now() > s.expires_at) {
-      localStorage.removeItem(SESSION_KEY);
-      return null;
-    }
-    return s;
-  } catch(e) { return null; }
+  try { var raw = localStorage.getItem(SESSION_KEY); if (!raw) return null; var s = JSON.parse(raw); if (!s.access_token || !s.expires_at || Date.now() > s.expires_at) { localStorage.removeItem(SESSION_KEY); return null; } return s; } catch(e) { return null; }
 }
-function clearSession() {
-  try { localStorage.removeItem(SESSION_KEY); } catch(e) {}
-}
+function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch(e) {} }
 
 // ── STARTUP ───────────────────────────────────────────────────────────────────
 (function init() {
   if (isDemoRequested()) { startDemo(); return; }
-
-  // Prefill email if carried over from main site
-  try {
-    var em = sessionStorage.getItem('bedrock_prefill_email');
-    if (em) { var f = document.getElementById('loginEmail'); if (f && !f.value) f.value = em; }
-  } catch(e) {}
-
+  try { var em = sessionStorage.getItem('bedrock_prefill_email'); if (em) { var f = document.getElementById('loginEmail'); if (f && !f.value) f.value = em; } } catch(e) {}
   var stored = loadStoredSession();
-  if (stored) {
-    currentSession = stored;
-    loadDashboard(stored);
-  }
+  if (stored) { currentSession = stored; loadDashboard(stored); }
 })();
 
 // ── PAGE ROUTING ──────────────────────────────────────────────────────────────
 function showPage(id) {
   document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
-  var el = document.getElementById(id);
-  if (el) el.classList.add('active');
-}
-
-function switchPortalTab(tab) {
-  document.querySelectorAll('.portal-tab').forEach(function(t) { t.classList.remove('active'); });
-  document.querySelectorAll('.portal-pane').forEach(function(p) { p.classList.remove('active'); });
-  var btn = document.querySelector('.portal-tab[data-tab="'+tab+'"]');
-  var pane = document.getElementById('pane-'+tab);
-  if (btn) btn.classList.add('active');
-  if (pane) pane.classList.add('active');
+  var el = document.getElementById(id); if (el) el.classList.add('active');
 }
 
 function switchAuthTab(tab) {
@@ -561,26 +1056,12 @@ function handleLogin() {
   var password = (document.getElementById('loginPassword').value || '');
   clearError('loginError');
   if (!email || !password) { showError('loginError', 'Please enter your email and password.'); return; }
-
-  var btn = document.getElementById('btnLogin');
-  btn.disabled = true; btn.textContent = 'Signing in…';
-
-  fetch('/.netlify/functions/portal-auth', {
-    method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ action: 'signin', email: email, password: password }),
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (d.success) {
-      saveSession(d);
-      currentSession = loadStoredSession();
-      loadDashboard(currentSession);
-    } else {
-      btn.disabled = false; btn.textContent = 'Sign In';
-      showError('loginError', d.error || 'Incorrect email or password. Please try again.');
-    }
-  }).catch(function() {
-    btn.disabled = false; btn.textContent = 'Sign In';
-    showError('loginError', 'Connection error — please try again.');
-  });
+  var btn = document.getElementById('btnLogin'); btn.disabled = true; btn.textContent = 'Signing in…';
+  fetch('/.netlify/functions/portal-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: 'signin', email: email, password: password }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (d.success) { saveSession(d); currentSession = loadStoredSession(); loadDashboard(currentSession); }
+      else { btn.disabled = false; btn.textContent = 'Sign In'; showError('loginError', d.error || 'Incorrect email or password. Please try again.'); }
+    }).catch(function() { btn.disabled = false; btn.textContent = 'Sign In'; showError('loginError', 'Connection error — please try again.'); });
 }
 
 // ── CREATE ACCOUNT ────────────────────────────────────────────────────────────
@@ -589,42 +1070,22 @@ function handleCreate() {
   var name  = (document.getElementById('createName').value  || '').trim();
   var email = (document.getElementById('createEmail').value || '').trim();
   var pass  = (document.getElementById('createPass').value  || '').trim();
-  var btn   = document.getElementById('btnCreate');
-  clearError('createError');
-
+  var btn   = document.getElementById('btnCreate'); clearError('createError');
   if (!biz)  { showError('createError', 'Business name is required.'); return; }
   if (!email || !email.includes('@')) { showError('createError', 'Enter a valid email address.'); return; }
   if (pass.length < 6) { showError('createError', 'Password must be at least 6 characters.'); return; }
-
   btn.disabled = true; btn.textContent = 'Creating account…';
-
-  fetch('/.netlify/functions/capture-lead', {
-    method: 'POST', headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ businessName:biz, contactName:name, email:email, password:pass, source:'signup' }),
-  }).then(function(r) { return r.json(); }).then(function(d) {
-    if (d.success !== false) {
-      document.getElementById('createSuccess').style.display = 'block';
-      // Auto sign-in after creation
-      return fetch('/.netlify/functions/portal-auth', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ action: 'signin', email: email, password: pass }),
-      }).then(function(r2) { return r2.json(); }).then(function(d2) {
-        if (d2.success) {
-          saveSession(d2);
-          currentSession = loadStoredSession();
-          setTimeout(function() { loadDashboard(currentSession); }, 900);
-        } else {
-          setTimeout(function() { switchAuthTab('login'); }, 900);
-        }
-      });
-    } else {
-      showError('createError', d.error || 'Could not create account — that email may already be registered. Try signing in.');
-      btn.disabled = false; btn.textContent = 'Create My Account';
-    }
-  }).catch(function() {
-    showError('createError', 'Connection error — please try again.');
-    btn.disabled = false; btn.textContent = 'Create My Account';
-  });
+  fetch('/.netlify/functions/capture-lead', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ businessName:biz, contactName:name, email:email, password:pass, source:'signup' }) })
+    .then(function(r) { return r.json(); }).then(function(d) {
+      if (d.success !== false) {
+        document.getElementById('createSuccess').style.display = 'block';
+        return fetch('/.netlify/functions/portal-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'signin', email:email, password:pass }) })
+          .then(function(r2) { return r2.json(); }).then(function(d2) {
+            if (d2.success) { saveSession(d2); currentSession = loadStoredSession(); setTimeout(function() { loadDashboard(currentSession); }, 900); }
+            else { setTimeout(function() { switchAuthTab('login'); }, 900); }
+          });
+      } else { showError('createError', d.error || 'Could not create account — that email may already be registered. Try signing in.'); btn.disabled = false; btn.textContent = 'Create My Account'; }
+    }).catch(function() { showError('createError', 'Connection error — please try again.'); btn.disabled = false; btn.textContent = 'Create My Account'; });
 }
 
 // ── FORGOT PASSWORD ───────────────────────────────────────────────────────────
@@ -632,22 +1093,18 @@ function handleForgot() {
   var email = (document.getElementById('forgotEmail').value || '').trim();
   clearError('forgotError');
   if (!email) { showError('forgotError', 'Please enter your email address.'); return; }
-  // Password reset emails are sent by Supabase via the admin dashboard.
-  // For now, direct clients to support.
-  document.getElementById('forgotSuccess').textContent =
-    'Email support@bedrock-sites.com and we\'ll send you a password reset link right away.';
+  document.getElementById('forgotSuccess').textContent = 'Email support@bedrock-sites.com and we\'ll send you a password reset link right away.';
   document.getElementById('forgotSuccess').style.display = 'block';
 }
 
 // ── LOGOUT ────────────────────────────────────────────────────────────────────
 function handleLogout() {
   if (DEMO) { window.location.href = 'portal.html'; return; }
-  clearSession();
-  currentSession = null; currentLead = null;
+  clearSession(); currentSession = null; currentLead = null;
   document.getElementById('btnLogout').style.display = 'none';
   document.getElementById('navUserEmail').textContent = '';
-  var btn = document.getElementById('btnLogin');
-  if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
+  document.getElementById('bellWrap').classList.remove('show');
+  var btn = document.getElementById('btnLogin'); if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
   showPage('pageLogin');
 }
 
@@ -656,56 +1113,49 @@ function loadDashboard(session) {
   if (!session) { showPage('pageLogin'); return; }
   document.getElementById('btnLogout').style.display = 'block';
   document.getElementById('navUserEmail').textContent = session.user ? session.user.email : '';
+  document.getElementById('bellWrap').classList.add('show');
 
-  fetch('/.netlify/functions/get-portal', {
-    headers: { Authorization: 'Bearer ' + session.access_token }
-  }).then(function(r) { return r.ok ? r.json() : null; }).then(function(data) {
-    var lead = data ? data.lead : null;
-    currentLead = lead;
-    populateDashboard(lead, session);
-    showPage('pageDash');
-  }).catch(function() {
-    populateDashboard(null, session);
-    showPage('pageDash');
-  });
+  fetch('/.netlify/functions/get-portal', { headers: { Authorization: 'Bearer ' + session.access_token } })
+    .then(function(r) { return r.ok ? r.json() : null; }).then(function(data) {
+      var lead = data ? data.lead : null;
+      currentLead = lead;
+      populateDashboard(lead, session);
+      // load notifications (UI-only — would come from a backend later)
+      loadStoredNotifications(session);
+      showPage('pageDash');
+      // default tab
+      var hash = (window.location.hash || '').replace('#','');
+      if (hash && hash.indexOf('profile') !== -1) goTab('profile','default');
+      else goTab('website','editor');
+    }).catch(function() {
+      populateDashboard(null, session);
+      loadStoredNotifications(session);
+      showPage('pageDash');
+      goTab('website','editor');
+    });
 }
 
-// ── POPULATE DASHBOARD ────────────────────────────────────────────────────────
+// ── POPULATE BANNER + WEBSITE STATUS ─────────────────────────────────────────
 function populateDashboard(lead, session) {
   var bizName = (lead && lead.business_name) ? lead.business_name : 'Your Business';
   document.getElementById('dashBizName').textContent = bizName;
   document.getElementById('dashSiteTitle').textContent = bizName;
+  document.getElementById('profileBizTitle').textContent = bizName;
 
   var status = (lead && lead.status) ? lead.status : 'new';
-  var statusMap = {
-    new:      { label:'Pending Review', cls:'pending' },
-    claim:    { label:'Claim Received', cls:'pending' },
-    paid:     { label:'Building',       cls:'building' },
-    deployed: { label:'Live',           cls:'live' },
-  };
+  var statusMap = { new:{label:'Pending Review',cls:'pending'}, claim:{label:'Claim Received',cls:'pending'}, paid:{label:'Building',cls:'building'}, deployed:{label:'Live',cls:'live'} };
   var s = statusMap[status] || { label:status, cls:'pending' };
-  document.getElementById('dashStatusWrap').innerHTML =
-    '<span class="status-pill ' + s.cls + '"><span class="dot"></span>' + s.label + '</span>';
+  document.getElementById('dashStatusWrap').innerHTML = '<span class="status-pill ' + s.cls + '"><span class="dot"></span>' + s.label + '</span>';
 
   var siteUrl = lead && lead.site_url;
   if (siteUrl) {
     document.getElementById('dashSiteUrl').innerHTML = '<a href="' + siteUrl + '" target="_blank" rel="noopener">' + siteUrl + '</a>';
-    var viewBtn = document.getElementById('dashViewBtn');
-    viewBtn.href = siteUrl; viewBtn.style.display = 'inline-block';
-    document.getElementById('dashSiteSub').textContent = 'Your site is live. Click Edit My Site above to make changes.';
-    document.getElementById('analyticsContent').innerHTML =
-      '<div class="stat-row">' +
-        '<div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">Page Views</div></div>' +
-        '<div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">Visitors</div></div>' +
-        '<div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">This Month</div></div>' +
-      '</div>' +
-      '<p style="font-size:0.64rem;font-weight:300;color:var(--text-muted);margin-top:0.75rem;line-height:1.6">Analytics data will populate as your site receives traffic. Powered by Cloudflare Web Analytics — no cookies.</p>';
+    var viewBtn = document.getElementById('dashViewBtn'); viewBtn.href = siteUrl; viewBtn.style.display = 'inline-block';
+    document.getElementById('dashSiteSub').textContent = 'Your site is live. Click Edit My Site to make changes.';
+    if (!DEMO) document.getElementById('analyticsContent').innerHTML =
+      '<div class="stat-row"><div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">Page Views</div></div><div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">Visitors</div></div><div class="stat-cell"><div class="stat-val">—</div><div class="stat-lbl">This Month</div></div></div><p style="font-size:0.64rem;font-weight:300;color:var(--text-muted);margin-top:0.75rem;line-height:1.6">Analytics data will populate as your site receives traffic. Powered by Cloudflare Web Analytics — no cookies.</p>';
   } else {
-    var subMessages = {
-      new:   'We\'ll reach out within 24 hours to confirm your order and get your site live.',
-      claim: 'Payment received — your site is being set up. We\'ll send your live link by email.',
-      paid:  'We\'re building your site now. You\'ll receive your live link within 24 hours.',
-    };
+    var subMessages = { new:'We\'ll reach out within 24 hours to confirm your order and get your site live.', claim:'Payment received — your site is being set up. We\'ll send your live link by email.', paid:'We\'re building your site now. You\'ll receive your live link within 24 hours.' };
     document.getElementById('dashSiteUrl').textContent = '';
     document.getElementById('dashSiteSub').textContent = subMessages[status] || 'Your site is in progress.';
   }
@@ -717,6 +1167,10 @@ function populateDashboard(lead, session) {
   document.getElementById('acctTrade').textContent   = (lead && lead.trade) || '—';
   var since = (lead && lead.created_at) ? new Date(lead.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
   document.getElementById('acctSince').textContent = since;
+
+  // pf_email field
+  var em = (lead && lead.email) || (session.user && session.user.email) || '';
+  var pfem = document.getElementById('pf_email'); if (pfem) pfem.value = em;
 }
 
 // ── LAUNCH EDITOR ─────────────────────────────────────────────────────────────
@@ -727,14 +1181,341 @@ function launchEditor() {
   window.location.href = '/?portalEdit=1';
 }
 
+// ── MARKETING LAUNCH ──────────────────────────────────────────────────────────
+function launchMarketing(view) {
+  var email = '';
+  if (currentSession && currentSession.user && currentSession.user.email) email = currentSession.user.email;
+  else if (currentLead && currentLead.email) email = currentLead.email;
+  var qp = [];
+  if (email) qp.push('email=' + encodeURIComponent(email));
+  if (currentSession && currentSession.access_token && !DEMO) qp.push('token=' + encodeURIComponent(currentSession.access_token));
+  var url = '/bedrock-marketing-v1.html' + (qp.length ? ('?' + qp.join('&')) : '');
+  if (view) url += (qp.length ? '&' : '?') + 'view=' + encodeURIComponent(view);
+  window.open(url, '_blank', 'noopener');
+}
+
+// ── TAB / SUBTAB NAV ──────────────────────────────────────────────────────────
+var CURRENT_TAB = { top:'website', sub:'editor' };
+
+var TAB_DEFS = {
+  website:   { label:'My Website',      subs:{ editor:'Site Editor', status:'Your Website', analytics:'Site Analytics' } },
+  seo:       { label:'SEO / GEO',       subs:{ audit:'Free Audit', reports:'Reports' } },
+  marketing: { label:'Marketing',       subs:{ overview:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', integrations:'Social Integrations' } },
+  profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
+  subs:      { label:'My Subscriptions',subs:{ cart:'Plan &amp; Cart', active:'Active Subscriptions' } },
+};
+
+function goTab(top, sub) {
+  if (!TAB_DEFS[top]) return;
+  if (!sub || !TAB_DEFS[top].subs[sub]) sub = Object.keys(TAB_DEFS[top].subs)[0];
+  CURRENT_TAB = { top:top, sub:sub };
+
+  // top tab styles
+  document.querySelectorAll('.tab-group').forEach(function(g){
+    var btn = g.querySelector('.tab-btn');
+    if (g.getAttribute('data-top') === top) btn.classList.add('active');
+    else btn.classList.remove('active');
+  });
+  // submenu active state
+  document.querySelectorAll('.tab-submenu-link').forEach(function(el){ el.classList.remove('active'); });
+  var activeSub = document.querySelector('.tab-group[data-top="'+top+'"] .tab-submenu .tab-submenu-link[onclick*="\''+sub+'\'"]');
+  if (activeSub) activeSub.classList.add('active');
+
+  // panes
+  document.querySelectorAll('.portal-pane').forEach(function(p){ p.classList.remove('active'); });
+  var paneId = 'pane-' + top + '-' + sub;
+  var pane = document.getElementById(paneId);
+  if (pane) pane.classList.add('active');
+
+  // breadcrumb
+  var strip = document.getElementById('subStrip');
+  var subLabel = TAB_DEFS[top].subs[sub];
+  if (Object.keys(TAB_DEFS[top].subs).length > 1) {
+    strip.innerHTML = '<span>' + TAB_DEFS[top].label + '</span><span class="stp-sep">›</span><span class="stp-current">' + subLabel + '</span>';
+  } else {
+    strip.innerHTML = '<span class="stp-current">' + TAB_DEFS[top].label + '</span>';
+  }
+
+  // close open submenus
+  document.querySelectorAll('.tab-group').forEach(function(g){ g.classList.remove('open'); });
+
+  // load profile lazily
+  if (top === 'profile') {
+    if (!PROFILE && !PROFILE_DRAFT) loadProfile();
+    else updateProfileMeter();
+  }
+  if (top === 'subs' && sub === 'cart') renderCart();
+}
+
+// ── PROFILE: LOAD / SAVE / METER ─────────────────────────────────────────────
+var PROFILE = null, PROFILE_DRAFT = null;
+var STAGE_TOP_FIELDS = {
+  1: ['business_name','contact_name','phone','trade','city'],
+  2: ['service_areas','years_in_business','about_copy','certifications'],
+  3: ['slogan','brand_tone','brand_colors','target_customer'],
+  4: ['target_keywords','service_radius_mi'],
+  5: ['employee_count','ops_notes'],
+};
+var STAGE_EXTRA_FIELDS = {
+  1: ['year_founded','street','state_zip','owner_title','website'],
+  2: ['license','insurance','hours','emergency','services'],
+  3: ['fb','ig','gbiz','img_style'],
+  4: ['best_service','competitors','review_count','review_rating'],
+  5: ['avg_ticket','acct_software','payroll','bid_close','subs'],
+};
+
+function readField(field) {
+  if (field === 'brand_colors') {
+    return {
+      primary:   (document.getElementById('pf_color_primary')   || {}).value || '#1B3557',
+      secondary: (document.getElementById('pf_color_secondary') || {}).value || '#FFFFFF',
+      accent:    (document.getElementById('pf_color_accent')    || {}).value || '#C9922A',
+    };
+  }
+  var el = document.getElementById('pf_' + field);
+  if (!el) return null;
+  var v = (el.value || '').trim();
+  if (field === 'service_areas' || field === 'certifications' || field === 'target_keywords') return v ? v.split(',').map(function(s){return s.trim();}).filter(Boolean) : [];
+  if (field === 'years_in_business' || field === 'service_radius_mi' || field === 'employee_count') { var n = parseInt(v,10); return isNaN(n) ? null : n; }
+  return v;
+}
+function readExtraField(field) {
+  var el = document.getElementById('pf_ex_' + field);
+  if (!el) return null;
+  var v = (el.value || '').trim();
+  if (field === 'year_founded' || field === 'review_count' || field === 'avg_ticket' || field === 'bid_close' || field === 'review_count') {
+    var n = parseInt(v, 10); return isNaN(n) ? null : n;
+  }
+  if (field === 'competitors' || field === 'services') return v ? v.split(',').map(function(s){return s.trim();}).filter(Boolean) : [];
+  return v;
+}
+
+function setTopField(field, val) {
+  if (field === 'brand_colors') {
+    var c = val || {};
+    if (c.primary)   document.getElementById('pf_color_primary').value   = c.primary;
+    if (c.secondary) document.getElementById('pf_color_secondary').value = c.secondary;
+    if (c.accent)    document.getElementById('pf_color_accent').value    = c.accent;
+    return;
+  }
+  var el = document.getElementById('pf_' + field); if (!el) return;
+  if (Array.isArray(val)) el.value = val.join(', ');
+  else el.value = (val == null ? '' : val);
+}
+function setExtraField(field, val) {
+  var el = document.getElementById('pf_ex_' + field); if (!el) return;
+  if (Array.isArray(val)) el.value = val.join(', ');
+  else el.value = (val == null ? '' : val);
+}
+
+function loadProfile() {
+  if (!currentSession) return;
+  if (DEMO) {
+    // populate demo fields
+    setTopField('business_name', DEMO_LEAD.business_name);
+    setTopField('contact_name',  DEMO_LEAD.contact_name);
+    setTopField('phone',         DEMO_LEAD.phone);
+    setTopField('trade',         DEMO_LEAD.trade);
+    setTopField('city',          DEMO_LEAD.city);
+    updateProfileMeter();
+    return;
+  }
+  fetch('/.netlify/functions/get-profile', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
+    .then(function(r){ return r.ok ? r.json() : null; }).then(function(data){
+      if (!data) return;
+      PROFILE = data.profile || null; PROFILE_DRAFT = data.draft || null;
+      var source = PROFILE || PROFILE_DRAFT || {};
+      Object.keys(STAGE_TOP_FIELDS).forEach(function(stage){ STAGE_TOP_FIELDS[stage].forEach(function(f){ setTopField(f, source[f]); }); });
+      var extra = (source.extra || {}) || {};
+      Object.keys(STAGE_EXTRA_FIELDS).forEach(function(stage){ STAGE_EXTRA_FIELDS[stage].forEach(function(f){ setExtraField(f, extra[f]); }); });
+      updateProfileMeter();
+      if (PROFILE && PROFILE.updated_at) {
+        try {
+          var d = new Date(PROFILE.updated_at);
+          document.getElementById('profileLastSaved').textContent = d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) + ' at ' + d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+          document.getElementById('profileSavedHint').style.display = 'block';
+        } catch(_){}
+      }
+    });
+}
+
+function isFilled(v) {
+  if (v === null || v === undefined) return false;
+  if (typeof v === 'string') return v.trim() !== '';
+  if (Array.isArray(v)) return v.length > 0;
+  if (typeof v === 'number') return true;
+  if (typeof v === 'object') {
+    var defaults = { primary:'#1B3557', secondary:'#FFFFFF', accent:'#C9922A' };
+    return v.primary !== defaults.primary || v.secondary !== defaults.secondary || v.accent !== defaults.accent;
+  }
+  return false;
+}
+
+function updateProfileMeter() {
+  var totalFilled = 0, total = 0;
+  Object.keys(STAGE_TOP_FIELDS).forEach(function(stage){
+    var top = STAGE_TOP_FIELDS[stage], ex = STAGE_EXTRA_FIELDS[stage] || [];
+    var allFields = top.concat(ex);
+    total += allFields.length;
+    var stageFilled = 0;
+    top.forEach(function(f){ if (isFilled(readField(f))) stageFilled++; });
+    ex.forEach(function(f){ if (isFilled(readExtraField(f))) stageFilled++; });
+    totalFilled += stageFilled;
+    var card = document.getElementById('stage-'+stage); if (!card) return;
+    card.classList.remove('done','in-progress');
+    var pill = document.getElementById('stage-'+stage+'-pill');
+    if (stageFilled === allFields.length) { card.classList.add('done'); if (pill) pill.textContent = '✓ Complete'; }
+    else if (stageFilled > 0) { card.classList.add('in-progress'); if (pill) pill.textContent = stageFilled + '/' + allFields.length; }
+    else if (pill) {
+      var defaults = { 1:'Required', 2:'Sites', 3:'Marketing', 4:'SEO', 5:'CFO' };
+      pill.textContent = defaults[stage] || '';
+    }
+  });
+  var pct = total ? Math.round(100 * totalFilled / total) : 0;
+  var fill = document.getElementById('profileMeterFill'); if (fill) fill.style.width = pct + '%';
+  var ptx  = document.getElementById('profileMeterPct');  if (ptx)  ptx.textContent  = pct + '%';
+}
+
+function toggleStage(n) {
+  var card = document.getElementById('stage-'+n); if (!card) return;
+  document.querySelectorAll('.stage-card').forEach(function(c){ if (c !== card) c.classList.remove('open'); });
+  card.classList.toggle('open');
+}
+
+function saveStage(n) {
+  if (!currentSession) return;
+  if (DEMO) { var m = document.getElementById('msg-'+n); m.textContent = 'Demo — not saved'; m.className = 'stage-save-msg'; return; }
+  var top = STAGE_TOP_FIELDS[n] || [], ex = STAGE_EXTRA_FIELDS[n] || [];
+  var payload = {};
+  top.forEach(function(f){ payload[f] = readField(f); });
+  if (ex.length) {
+    payload.extra = {};
+    ex.forEach(function(f){ payload.extra[f] = readExtraField(f); });
+  }
+  var msgEl = document.getElementById('msg-'+n); msgEl.textContent = 'Saving…'; msgEl.className = 'stage-save-msg';
+  fetch('/.netlify/functions/save-profile', {
+    method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+currentSession.access_token},
+    body: JSON.stringify(payload),
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.success) { msgEl.textContent = '✓ Saved'; msgEl.className = 'stage-save-msg ok'; PROFILE = d.profile || PROFILE; updateProfileMeter(); setTimeout(function(){ msgEl.textContent=''; }, 2000); }
+    else { msgEl.textContent = d.error || 'Save failed'; msgEl.className = 'stage-save-msg err'; }
+  }).catch(function(){ msgEl.textContent = 'Network error'; msgEl.className = 'stage-save-msg err'; });
+}
+
+document.addEventListener('input', function(e){
+  if (e.target && e.target.id && (e.target.id.indexOf('pf_') === 0)) updateProfileMeter();
+});
+
+// ── NOTIFICATIONS (UI-only for now) ──────────────────────────────────────────
+var NOTIFICATIONS = [];
+function setNotifications(arr) { NOTIFICATIONS = arr || []; renderNotifications(); persistNotifications(); }
+function loadStoredNotifications(session) {
+  try {
+    var raw = localStorage.getItem(NOTIF_KEY);
+    if (raw) { NOTIFICATIONS = JSON.parse(raw); renderNotifications(); return; }
+  } catch(_){}
+  // First load — seed with onboarding nudges
+  var seed = [];
+  if (currentLead && (!currentLead.site_url)) seed.push({ id:'profile-nudge', icon:'👤', msg:'Welcome! Complete your profile to unlock all features.', meta:'Just now', read:false, link:{tab:'profile',sub:'default'} });
+  seed.push({ id:'brand-nudge', icon:'🎨', msg:'Set up your Brand Kit in Marketing — colors and voice for every piece you make.', meta:'Just now', read:false, link:{tab:'marketing',sub:'brand'} });
+  NOTIFICATIONS = seed;
+  renderNotifications(); persistNotifications();
+}
+function persistNotifications() { try { localStorage.setItem(NOTIF_KEY, JSON.stringify(NOTIFICATIONS)); } catch(_){} }
+function renderNotifications() {
+  var list = document.getElementById('bellList'); if (!list) return;
+  if (!NOTIFICATIONS.length) { list.innerHTML = '<div class="bell-empty">You\'re all caught up.</div>'; }
+  else {
+    list.innerHTML = NOTIFICATIONS.map(function(n, i){
+      var unread = n.read ? '' : ' unread';
+      return '<a class="bell-item'+unread+'" onclick="clickNotif('+i+')"><div class="bell-icon">'+(n.icon||'•')+'</div><div class="bell-text"><div class="bell-msg">'+n.msg+'</div><div class="bell-meta">'+(n.meta||'')+'</div></div></a>';
+    }).join('');
+  }
+  var unread = NOTIFICATIONS.filter(function(n){ return !n.read; }).length;
+  var badge = document.getElementById('bellBadge');
+  if (badge) { badge.textContent = unread; badge.classList.toggle('zero', unread === 0); }
+}
+function toggleBell(e) { if (e) e.stopPropagation(); document.getElementById('bellWrap').classList.toggle('open'); }
+document.addEventListener('click', function(e){ if (!e.target.closest('#bellWrap')) document.getElementById('bellWrap').classList.remove('open'); });
+function markAllRead() { NOTIFICATIONS.forEach(function(n){ n.read = true; }); renderNotifications(); persistNotifications(); }
+function clickNotif(i) {
+  var n = NOTIFICATIONS[i]; if (!n) return;
+  n.read = true; renderNotifications(); persistNotifications();
+  document.getElementById('bellWrap').classList.remove('open');
+  if (n.link && n.link.tab) goTab(n.link.tab, n.link.sub || null);
+}
+
+// ── SUBSCRIPTIONS / CART ─────────────────────────────────────────────────────
+var CART = { website:false, marketing:false, cfo:false };
+var PRICES = { website:20, marketing:20, cfo:70 };
+var SETUP_FEES = { website:200, marketing:0, cfo:0 };
+var BUNDLE_TOTALS = {  // monthly total when this exact combo selected
+  'website':                20,
+  'marketing':              20,
+  'cfo':                    70,
+  'website+marketing':      35,
+  'website+cfo':            85,
+  'marketing+cfo':          80,
+  'website+marketing+cfo':  100,
+};
+function loadCart() {
+  try { var raw = localStorage.getItem(CART_KEY); if (raw) CART = Object.assign(CART, JSON.parse(raw)); } catch(_){}
+  paintCart();
+}
+function persistCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(CART)); } catch(_){} }
+function toggleProduct(p) {
+  CART[p] = !CART[p];
+  paintCart();
+  persistCart();
+}
+function paintCart() {
+  ['website','marketing','cfo'].forEach(function(p){
+    var card = document.querySelector('.sub-card[data-prod="'+p+'"]'); if (!card) return;
+    var toggle = card.querySelector('.sub-toggle');
+    if (CART[p]) { card.classList.add('active'); toggle.textContent = '✓ In Plan'; }
+    else { card.classList.remove('active'); toggle.textContent = '+ Add to Plan'; }
+  });
+  renderCart();
+}
+function renderCart() {
+  var selected = ['website','marketing','cfo'].filter(function(p){ return CART[p]; });
+  var linesEl = document.getElementById('cartLines'), actionsEl = document.getElementById('cartActions');
+  if (!linesEl) return;
+  if (!selected.length) { linesEl.innerHTML = '<div class="cart-empty">No products selected. Tap a product above to add it.</div>'; if (actionsEl) actionsEl.style.display = 'none'; return; }
+
+  // monthly retail
+  var monthlyRetail = selected.reduce(function(s,p){ return s + PRICES[p]; }, 0);
+  var setupTotal    = selected.reduce(function(s,p){ return s + (SETUP_FEES[p] || 0); }, 0);
+  var bundleKey     = selected.slice().sort().join('+');
+  var bundleMonthly = BUNDLE_TOTALS[bundleKey];
+  if (bundleMonthly == null) bundleMonthly = monthlyRetail;
+  var savings = monthlyRetail - bundleMonthly;
+
+  var names = { website:'Bedrock Sites (Website Builder)', marketing:'Bedrock Marketing', cfo:'Bedrock CFO' };
+  var lines = selected.map(function(p){
+    return '<div class="cart-line"><span class="cl-name">' + names[p] + '</span><span class="cl-price">$' + PRICES[p] + '<span style="font-size:0.65rem;color:var(--text-muted);font-weight:400;margin-left:3px">/mo</span></span></div>';
+  });
+  if (setupTotal > 0) {
+    lines.push('<div class="cart-line"><span class="cl-name">One-time setup' + (CART.website ? ' (Sites)' : '') + '</span><span class="cl-price">$' + setupTotal + '</span></div>');
+  }
+  if (savings > 0) lines.push('<div class="cart-line discount"><span class="cl-name">Bundle savings</span><span class="cl-price">−$' + savings + '/mo</span></div>');
+  lines.push('<div class="cart-line total"><span class="cl-name">Monthly total</span><span class="cl-price">$' + bundleMonthly + '<span style="font-size:0.66rem;font-family:DM Sans;color:var(--text-muted);font-weight:400;margin-left:4px;letter-spacing:0">/mo</span></span></div>');
+  if (setupTotal > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--text-muted);font-size:0.7rem">Plus today, one-time</span><span class="cl-price" style="font-size:1.1rem">$' + setupTotal + '</span></div>');
+
+  linesEl.innerHTML = lines.join('');
+  if (actionsEl) actionsEl.style.display = 'flex';
+}
+function clearCart() { CART = { website:false, marketing:false, cfo:false }; paintCart(); persistCart(); }
+function checkout() {
+  alert('Checkout flow coming soon. Once Stripe products are configured, this button will redirect to Stripe Checkout with the right bundle priced in.');
+}
+
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-function showError(id, msg) {
-  var el = document.getElementById(id); if (!el) return;
-  el.textContent = msg; el.style.display = 'block';
-}
-function clearError(id) {
-  var el = document.getElementById(id); if (el) { el.textContent = ''; el.style.display = 'none'; }
-}
+function showError(id, msg) { var el = document.getElementById(id); if (!el) return; el.textContent = msg; el.style.display = 'block'; }
+function clearError(id) { var el = document.getElementById(id); if (el) { el.textContent = ''; el.style.display = 'none'; } }
+
+// init cart on load
+window.addEventListener('load', function(){ loadCart(); });
 </script>
 </body>
 </html>
