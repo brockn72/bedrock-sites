@@ -488,6 +488,24 @@ footer a:hover{text-decoration:underline}
 
           <div id="kitStatus"></div>
 
+          <!-- NON-BLOCKING SUBSCRIPTION GATE -->
+          <div id="subGate" style="background:linear-gradient(135deg,rgba(201,146,42,0.08),rgba(13,27,46,0.04));border:1px solid var(--gold);border-radius:6px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:0.85rem;align-items:center;flex-wrap:wrap">
+            <div style="flex:1;min-width:240px;font-size:0.82rem;color:var(--navy-deep);line-height:1.55"><strong style="color:var(--gold)">Explore freely &mdash;</strong> a Marketing subscription is required to download or save your finished pieces. Build through the Brand Kit, drop in photos, and preview anything you like. You'll only be prompted when you hit Download.</div>
+            <a href="/portal.html#subs" target="_blank" style="font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:0.7rem 1.25rem;cursor:pointer;border-radius:4px;text-decoration:none">See Plans</a>
+          </div>
+
+          <!-- "ALREADY HAVE SOMETHING?" — AI brand material analysis -->
+          <div class="bk-card" id="bkUploadCard">
+            <h3>Already have something? Drop it in.</h3>
+            <div class="bk-card-sub">Have a logo, business card, flyer, or sign? Upload it &mdash; we'll analyze the colors, fonts, and tone, and pre-fill your Brand Kit. You can change anything after.</div>
+            <label style="display:flex;align-items:center;gap:1rem;padding:1.1rem;background:#fff;border:2px dashed var(--border-light);border-radius:8px;cursor:pointer;transition:border-color .15s" id="bkUploadLabel">
+              <div style="width:48px;height:48px;background:var(--off-white);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:1.4rem">↑</div>
+              <div style="flex:1;font-size:0.82rem;color:var(--slate);line-height:1.5"><strong style="display:block;color:var(--navy-deep);font-size:0.86rem;margin-bottom:2px">Drop or click to upload</strong>PNG, JPG, GIF, or WebP. We'll suggest colors, fonts, and tone in a few seconds.</div>
+              <input id="bkExtractFile" type="file" accept="image/png,image/jpeg,image/gif,image/webp" style="display:none" onchange="extractFromMaterial(event)">
+            </label>
+            <div id="bkExtractStatus" style="font-size:0.74rem;color:var(--slate);margin-top:0.65rem;display:none;line-height:1.5"></div>
+          </div>
+
           <div class="brand-kit-grid">
 
             <div class="bk-card">
@@ -846,7 +864,7 @@ async function startWithEmail(e) {
   try { sessionStorage.setItem('bedrock_marketing_email', email); } catch(_){}
 
   try {
-    var r = await fetch('/.netlify/functions/get-brand-kit?email=' + encodeURIComponent(email));
+    var r = await fetch('/.netlify/functions/get-brand-kit?email=' + encodeURIComponent(email), { headers: STATE.authToken ? { Authorization: 'Bearer ' + STATE.authToken } : {} });
     var data = await r.json();
     if (data.brand_kit) {
       hydrateKit(data.brand_kit);
@@ -1322,6 +1340,73 @@ async function generateCopy() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// MATERIAL EXTRACTION — AI analyzes uploaded logo/flyer/etc → pre-fills brand kit
+// ─────────────────────────────────────────────────────────────────────────────
+async function extractFromMaterial(e) {
+  var file = e.target.files && e.target.files[0]; if (!file) return;
+  var status = document.getElementById('bkExtractStatus');
+  status.style.display = 'block';
+  status.innerHTML = '<span class="spin dark"></span>Analyzing your material…';
+  var b64 = await fileToBase64(file);
+  try {
+    var r = await fetch('/.netlify/functions/analyze-brand-materials', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ image_base64: b64, context: { business_name: STATE.brandKit.business_name, trade: STATE.brandKit.trade } }),
+    });
+    var data = await r.json();
+    if (r.status === 503) {
+      status.innerHTML = data.error || 'AI analysis not configured yet — set your brand kit manually below.';
+      return;
+    }
+    if (data.analysis) {
+      var a = data.analysis;
+      if (a.colors) {
+        if (a.colors.primary)   { setVal('bk_color_primary',   a.colors.primary);   setVal('bk_color_primary_picker',   a.colors.primary);   STATE.brandKit.color_primary   = a.colors.primary; }
+        if (a.colors.secondary) { setVal('bk_color_secondary', a.colors.secondary); setVal('bk_color_secondary_picker', a.colors.secondary); STATE.brandKit.color_secondary = a.colors.secondary; }
+        if (a.colors.accent)    { setVal('bk_color_accent',    a.colors.accent);    setVal('bk_color_accent_picker',    a.colors.accent);    STATE.brandKit.color_accent    = a.colors.accent; }
+      }
+      if (a.fonts && a.fonts.display && FONT_STYLES[a.fonts.display]) selectFontStyle(a.fonts.display);
+      if (a.tone) selectTone(a.tone);
+      if (a.tagline_idea && !STATE.brandKit.tagline) { setVal('bk_tagline', a.tagline_idea); STATE.brandKit.tagline = a.tagline_idea; }
+      var summary = '✓ Analyzed.';
+      if (a.style) summary += ' ' + a.style;
+      if (a.notes) summary += ' ' + a.notes;
+      status.innerHTML = summary + ' <em>Edit anything below if you don\'t love it.</em>';
+      updateBrandSummary();
+    } else if (data.warning) {
+      status.textContent = data.warning;
+    } else {
+      status.textContent = data.error || 'AI returned no usable result — fill in the brand kit manually.';
+    }
+  } catch(err) {
+    status.textContent = 'Network error analyzing the image — try again or fill in the brand kit manually.';
+  }
+  e.target.value = '';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ASSET LIBRARY — auto-save every download to Supabase Storage when authed
+// ─────────────────────────────────────────────────────────────────────────────
+async function saveToAssetLibrary(dataUrl, ext) {
+  if (!STATE.authToken) return; // only save when logged in via portal
+  try {
+    await fetch('/.netlify/functions/upload-asset', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', Authorization:'Bearer ' + STATE.authToken },
+      body: JSON.stringify({
+        image_base64: dataUrl,
+        filename: filenameFor(ext),
+        kind: 'marketing_asset',
+        template: 'tmpl-' + STATE.template,
+        format: STATE.material,
+        copy: STATE.copy,
+        campaign: STATE.campaign_note || null,
+      }),
+    });
+  } catch(_) {}  // never block the download on a library save
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // DOWNLOAD — PNG / JPG / PDF
 // ─────────────────────────────────────────────────────────────────────────────
 async function captureCanvas() {
@@ -1342,7 +1427,9 @@ async function downloadFile(kind) {
       var mime = kind === 'png' ? 'image/png' : 'image/jpeg';
       var url  = canvas.toDataURL(mime, kind === 'jpg' ? 0.92 : undefined);
       triggerDownload(url, filenameFor(kind));
-      status.textContent = '✓ ' + kind.toUpperCase() + ' downloaded';
+      // Fire-and-forget: also save to Asset Library if user is authenticated.
+      saveToAssetLibrary(url, kind);
+      status.textContent = '✓ ' + kind.toUpperCase() + ' downloaded' + (STATE.authToken ? ' · saved to your Asset Library' : '');
       return;
     }
     // PDF
@@ -1361,7 +1448,8 @@ async function downloadFile(kind) {
       doc.addImage(imgData, 'PNG', 0, 0, dims.w, dims.h);
     }
     doc.save(filenameFor('pdf'));
-    status.textContent = '✓ PDF downloaded';
+    saveToAssetLibrary(imgData, 'pdf');
+    status.textContent = '✓ PDF downloaded' + (STATE.authToken ? ' · saved to your Asset Library' : '');
   } catch(e) {
     status.textContent = 'Could not render &mdash; try again.';
   }
@@ -1392,7 +1480,7 @@ function filenameFor(ext) {
       var input = document.getElementById('gateEmail'); if (input) input.value = qpEmail;
       STATE.email = qpEmail;
       try { sessionStorage.setItem('bedrock_marketing_email', qpEmail); } catch(_){}
-      fetch('/.netlify/functions/get-brand-kit?email=' + encodeURIComponent(qpEmail))
+      fetch('/.netlify/functions/get-brand-kit?email=' + encodeURIComponent(qpEmail), { headers: STATE.authToken ? { Authorization: 'Bearer ' + STATE.authToken } : {} })
         .then(function(r){ return r.json(); })
         .then(function(d){
           if (d.brand_kit) { hydrateKit(d.brand_kit); STATE.brandKitComplete = true; renderKitStatus('Loaded your saved Brand Kit.', 'ok'); }

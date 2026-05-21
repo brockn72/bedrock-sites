@@ -129,3 +129,42 @@ create policy "profile_update_own" on profiles
   for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "profile_insert_own" on profiles
   for insert with check (auth.uid() = user_id);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- assets: per-user asset library for marketing materials, logos, uploads.
+-- Files live in Supabase Storage bucket 'assets' (see manual setup note below).
+-- This table tracks metadata + path so we can list assets with signed URLs.
+-- ─────────────────────────────────────────────────────────────────────────────
+create table if not exists assets (
+  id           uuid         default gen_random_uuid() primary key,
+  user_id      uuid         not null references auth.users(id) on delete cascade,
+  created_at   timestamptz  default now(),
+  bucket       text         not null default 'assets',
+  path         text         not null,
+  filename     text,
+  media_type   text,
+  bytes        integer,
+  kind         text         default 'marketing_asset', -- marketing_asset | logo | reference | photo
+  template     text,
+  format       text,
+  campaign     text,
+  copy         jsonb
+);
+create index if not exists assets_user_idx on assets (user_id, created_at desc);
+create index if not exists assets_kind_idx on assets (kind);
+
+alter table assets enable row level security;
+drop policy if exists "assets_read_own"   on assets;
+drop policy if exists "assets_insert_own" on assets;
+drop policy if exists "assets_delete_own" on assets;
+create policy "assets_read_own"   on assets for select using (auth.uid() = user_id);
+create policy "assets_insert_own" on assets for insert with check (auth.uid() = user_id);
+create policy "assets_delete_own" on assets for delete using (auth.uid() = user_id);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- MANUAL STEP: create a Supabase Storage bucket named 'assets' for the actual
+-- file blobs. In Supabase dashboard → Storage → New bucket → Name: assets →
+-- Private (do NOT make public) → Create. The Netlify functions use the
+-- service role key to upload/sign URLs, so RLS on the bucket itself isn't
+-- strictly required, but you can add RLS later if you want client-side reads.
+-- ─────────────────────────────────────────────────────────────────────────────

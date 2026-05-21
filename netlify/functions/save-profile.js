@@ -95,9 +95,53 @@ exports.handler = async (event) => {
   }
 
   const rows = await res.json();
+  const profile = rows[0] || null;
+
+  // ── CROSS-PRODUCT SYNC: mirror profile fields into brand_kits ─────────────
+  // So when the contractor fills the profile in the portal, the marketing
+  // tool already sees their business name, colors, slogan, voice, etc.
+  // Only set fields the user actually provided in this patch (no overwriting
+  // with blanks unless they explicitly typed nothing where there used to be
+  // something).
+  const brandPatch = { email: email, user_id: userId, updated_at: new Date().toISOString() };
+  if (patch.business_name) brandPatch.business_name   = patch.business_name;
+  if (patch.trade)         brandPatch.trade           = patch.trade;
+  if (patch.city)          brandPatch.city            = patch.city;
+  if (patch.phone)         brandPatch.phone           = patch.phone;
+  if (patch.slogan)        brandPatch.tagline         = patch.slogan;
+  if (patch.brand_tone)    brandPatch.tone            = patch.brand_tone;
+  if (patch.target_customer) brandPatch.target_customer = patch.target_customer;
+  if (Array.isArray(patch.service_areas) && patch.service_areas.length) {
+    brandPatch.service_area = patch.service_areas.join(', ');
+  }
+  if (patch.brand_colors && typeof patch.brand_colors === 'object') {
+    if (patch.brand_colors.primary)   brandPatch.color_primary   = patch.brand_colors.primary;
+    if (patch.brand_colors.secondary) brandPatch.color_secondary = patch.brand_colors.secondary;
+    if (patch.brand_colors.accent)    brandPatch.color_accent    = patch.brand_colors.accent;
+  }
+
+  // Only call the brand_kits upsert if there's at least one meaningful field
+  if (Object.keys(brandPatch).length > 3) {
+    const bkRes = await fetch(`${supabaseUrl}/rest/v1/brand_kits?on_conflict=email`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer: 'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(brandPatch),
+    });
+    if (!bkRes.ok) {
+      const t = await bkRes.text();
+      console.error(`[save-profile] brand_kits sync ${bkRes.status} — ${t}`);
+      // do not fail the profile save just because brand_kits sync failed
+    }
+  }
+
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ success: true, profile: rows[0] || null }),
+    body: JSON.stringify({ success: true, profile: profile, synced_brand_kit: Object.keys(brandPatch).length > 3 }),
   };
 };

@@ -306,6 +306,86 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
   .card{padding:1.5rem 1rem}
   .banner-card{padding:0.85rem 1rem}
 }
+
+/* ── BOOT SCREEN (prevents login-page flash on session restore) ── */
+#pageBoot.page.active{display:flex;align-items:center;justify-content:center;min-height:60vh}
+.boot-spin{width:36px;height:36px;border:3px solid rgba(255,255,255,0.12);border-top-color:var(--accent);border-radius:50%;animation:bootSpin .9s linear infinite}
+@keyframes bootSpin{to{transform:rotate(360deg)}}
+
+/* ── NAV-PORTAL TABS (dark variant, sits in nav-right) ── */
+.nav-tabs{display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab-group{position:relative;display:inline-flex;align-items:center}
+.nav-tab-btn{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.55rem 0.85rem;border:none;background:transparent;cursor:pointer;white-space:nowrap;color:rgba(255,255,255,0.55);border-bottom:2px solid transparent;transition:color .15s;display:inline-flex;align-items:center;gap:4px}
+.nav-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-tab-btn:hover:not(.active){color:rgba(255,255,255,0.85)}
+.nav-tab-caret{font-size:0.6rem;opacity:0.6}
+.nav-tab-group:hover .nav-tab-caret{opacity:1}
+.nav-tab-submenu{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--border);border-top:2px solid var(--accent);min-width:230px;box-shadow:0 10px 28px rgba(0,0,0,0.4);display:none;z-index:200;flex-direction:column;margin-top:6px}
+.nav-tab-group:hover .nav-tab-submenu,.nav-tab-group.open .nav-tab-submenu{display:flex}
+.nav-tab-submenu-link{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--text);text-decoration:none;padding:0.7rem 1rem;border-bottom:1px solid var(--border);transition:background .15s;background:transparent;border-left:none;border-right:none;cursor:pointer;text-align:left;width:100%}
+.nav-tab-submenu-link:last-child{border-bottom:none}
+.nav-tab-submenu-link:hover{background:var(--offwhite);color:var(--accent)}
+.nav-tab-submenu-link.active{background:rgba(201,146,42,0.08);color:var(--accent);font-weight:600}
+.nav-tab-submenu-link .tsl-eyebrow{font-size:0.5rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:2px}
+/* Hide the old in-body tab-bar — replaced by nav-tabs */
+.tab-bar{display:none!important}
+
+@media(max-width:880px){
+  nav{flex-wrap:wrap}
+  .nav-tabs{order:99;width:100%;border-top:1px solid rgba(255,255,255,0.08);padding:0.35rem 0;margin-top:0.5rem;justify-content:flex-start}
+  .nav-tab-btn{padding:0.5rem 0.65rem;font-size:0.56rem}
+}
+
+/* ── SERVICES CHIPS (services-by-trade picker) ── */
+.svc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.svc-chip{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:500;background:#fff;border:1px solid var(--border);color:var(--text);padding:0.4rem 0.75rem;border-radius:999px;cursor:pointer;transition:all .12s;display:inline-flex;align-items:center;gap:5px}
+.svc-chip:hover{border-color:var(--accent)}
+.svc-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.svc-chip-x{background:rgba(255,255,255,0.2);border:none;color:#fff;width:14px;height:14px;border-radius:50%;font-size:9px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:0;margin-left:2px}
+.svc-add-row{display:flex;gap:6px;margin-top:6px}
+.svc-add-input{flex:1;font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:0.5rem 0.7rem;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);outline:none}
+.svc-add-input:focus{border-color:var(--dark)}
+
+/* ── Google Business sync ── */
+.gbiz-row{display:flex;gap:6px;align-items:stretch;margin-top:0.4rem;flex-wrap:wrap}
+.gbiz-row input{flex:1;min-width:200px;font-family:'DM Sans',sans-serif;font-size:0.82rem;padding:0.6rem 0.7rem;border:1px solid var(--border);background:#fff;color:var(--text);outline:none;border-radius:6px}
+.gbiz-sync-btn{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:var(--dark);color:#fff;border:none;padding:0.65rem 0.95rem;cursor:pointer;border-radius:6px;white-space:nowrap}
+.gbiz-sync-btn:hover{background:var(--dark-mid)}
+.gbiz-sync-btn:disabled{background:var(--border);color:var(--text-muted);cursor:not-allowed}
+.gbiz-msg{font-size:0.7rem;color:var(--text-muted);margin-top:6px;line-height:1.5}
+.gbiz-msg.ok{color:var(--green)}
+.gbiz-msg.err{color:var(--red)}
+
+/* ── SUBSCRIPTIONS additions ── */
+.trust-line{background:linear-gradient(135deg,rgba(201,146,42,0.08),rgba(46,90,142,0.05));border:1px solid var(--accent);border-radius:6px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:0.85rem;align-items:center}
+.trust-icon{flex-shrink:0;width:32px;height:32px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700}
+.trust-text{flex:1;font-size:0.84rem;color:var(--text);line-height:1.55}
+.trust-text strong{color:var(--accent)}
+
+.subs-faq{background:var(--offwhite);border-left:3px solid var(--accent);padding:1rem 1.25rem;margin:1.25rem 0;border-radius:0}
+.subs-faq-title{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:0.4rem}
+.subs-faq-q{font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--dark);font-weight:600;margin-bottom:0.3rem;line-height:1.3}
+.subs-faq-a{font-size:0.76rem;color:var(--text-muted);line-height:1.6}
+
+.bundle-card{background:linear-gradient(135deg,#0D1B2E 0%,#1B3557 100%);color:#fff;border:1px solid var(--accent);border-top:4px solid var(--accent);padding:2rem 1.85rem;margin:1.25rem 0;display:flex;align-items:center;justify-content:space-between;gap:2rem;flex-wrap:wrap;border-radius:0;position:relative;overflow:hidden}
+.bundle-card::before{content:'';position:absolute;top:0;right:0;width:200px;height:100%;background:radial-gradient(circle at 100% 50%,rgba(201,146,42,0.2),transparent 70%);pointer-events:none}
+.bundle-l{flex:1;min-width:240px;position:relative;z-index:1}
+.bundle-tag{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem}
+.bundle-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:600;color:#fff;margin-bottom:0.4rem;line-height:1.2}
+.bundle-desc{font-size:0.84rem;color:rgba(255,255,255,0.75);line-height:1.6;margin-bottom:0.85rem}
+.bundle-incl{display:flex;flex-wrap:wrap;gap:0.5rem}
+.bundle-incl span{font-size:0.62rem;font-weight:600;letter-spacing:0.06em;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);padding:0.3rem 0.7rem;border-radius:99px;color:rgba(255,255,255,0.85)}
+.bundle-r{text-align:right;position:relative;z-index:1;min-width:160px}
+.bundle-price{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:600;color:var(--accent);line-height:1}
+.bundle-price-unit{font-size:0.72rem;color:rgba(255,255,255,0.55);margin-left:4px;font-family:'DM Sans',sans-serif;font-weight:400}
+.bundle-save{font-size:0.62rem;color:rgba(255,255,255,0.7);margin-top:6px;font-style:italic}
+.bundle-cta{margin-top:0.85rem;font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0.75rem 1.4rem;cursor:pointer;border-radius:4px;text-decoration:none;display:inline-block}
+.bundle-cta:hover{background:var(--accent-light)}
+@media(max-width:780px){.bundle-r{text-align:left}}
+
+.years-calc{font-size:0.7rem;color:var(--text-muted);margin-top:6px;font-style:italic}
+.years-calc.has-val{color:var(--accent);font-weight:600}
 </style>
 </head>
 <body>
@@ -325,6 +405,45 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       </div>
     </a>
     <a href="/" class="nav-home-link">&#8592; Take me Home</a>
+  </div>
+  <!-- PORTAL TABS — now in nav, to the left of the bell -->
+  <div class="nav-tabs" id="navTabs" style="display:none">
+    <div class="nav-tab-group" data-top="website">
+      <button class="nav-tab-btn" onclick="goTab('website','editor')">My Website <span class="nav-tab-caret">▾</span></button>
+      <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','builder')"><span class="tsl-eyebrow">Build</span>Site Builder</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','editor')"><span class="tsl-eyebrow">Edit</span>Site Editor</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','optimizer')"><span class="tsl-eyebrow">SEO/GEO</span>My Site Optimizer</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','analytics')"><span class="tsl-eyebrow">Stats</span>Site Analytics</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','status')"><span class="tsl-eyebrow">Status</span>Your Website Info</button>
+      </div>
+    </div>
+    <div class="nav-tab-group" data-top="seo">
+      <button class="nav-tab-btn" onclick="goTab('seo','audit')">SEO / GEO <span class="nav-tab-caret">▾</span></button>
+      <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('seo','audit')"><span class="tsl-eyebrow">Run</span>Free Audit</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('seo','reports')"><span class="tsl-eyebrow">View</span>Reports</button>
+      </div>
+    </div>
+    <div class="nav-tab-group" data-top="marketing">
+      <button class="nav-tab-btn" onclick="goTab('marketing','overview')">Marketing <span class="nav-tab-caret">▾</span></button>
+      <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','overview')"><span class="tsl-eyebrow">Overview</span>Marketing Hub</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','integrations')"><span class="tsl-eyebrow">Soon</span>Social Integrations</button>
+      </div>
+    </div>
+    <div class="nav-tab-group" data-top="profile">
+      <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
+    </div>
+    <div class="nav-tab-group" data-top="subs">
+      <button class="nav-tab-btn" onclick="goTab('subs','cart')">My Subscriptions <span class="nav-tab-caret">▾</span></button>
+      <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Edit</span>Plan &amp; Cart</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','active')"><span class="tsl-eyebrow">View</span>Active Subscriptions</button>
+      </div>
+    </div>
   </div>
   <div class="nav-right">
     <span id="demoBadge" style="display:none;font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--dark);background:var(--accent);padding:0.25rem 0.55rem;border-radius:3px">Demo</span>
@@ -349,8 +468,13 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 
 <main>
 
+  <!-- ── BOOT (default; hides login flash on session restore) ── -->
+  <div id="pageBoot" class="page active">
+    <div class="boot-spin" aria-label="Loading"></div>
+  </div>
+
   <!-- ── LOGIN ── -->
-  <div id="pageLogin" class="page active">
+  <div id="pageLogin" class="page">
     <div class="login-wrap">
       <div class="login-eyebrow">Client Portal</div>
       <h1 class="login-title" id="loginTitle">Welcome back.</h1>
@@ -520,6 +644,37 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 
       <!-- ─────────── PANES ─────────── -->
 
+      <!-- WEBSITE: BUILDER (sends them to / to build a NEW site) -->
+      <div class="portal-pane" id="pane-website-builder">
+        <div class="mkt-card">
+          <div class="dc-label">Site Builder</div>
+          <div class="dc-title">Build a Bedrock site.</div>
+          <div class="dc-sub">If you don't have a Bedrock site yet, build one in under 15 minutes. Pick a style, drop in your photos, see your site before you pay.</div>
+          <div style="display:flex;gap:0.65rem;flex-wrap:wrap">
+            <a href="/?portalEdit=1" class="btn-gold" style="width:auto;padding:0.85rem 2rem;display:inline-block;text-align:center;text-decoration:none">Open the Builder →</a>
+            <a href="/#sites" class="btn-outline" style="width:auto;padding:0.85rem 1.5rem;display:inline-block;text-decoration:none">Learn more about Sites</a>
+          </div>
+        </div>
+        <div style="margin-top:1rem;font-size:0.7rem;color:var(--text-muted);line-height:1.6">Already built a site? Use <strong style="color:var(--accent)">Site Editor</strong> in this menu to make changes — don't run through the builder again, or you'll create a duplicate.</div>
+      </div>
+
+      <!-- WEBSITE: PRIVATE OPTIMIZER (runs the audit on the user's own site, not a sales demo) -->
+      <div class="portal-pane" id="pane-website-optimizer">
+        <div class="mkt-card">
+          <div class="dc-label">My Site Optimizer</div>
+          <div class="dc-title">Run the SEO/GEO audit on your site.</div>
+          <div class="dc-sub">This is your private version of the Optimizer. It tests <em id="myOptUrl">your Bedrock site</em> for the 12-point Google + AI search rubric, tracks score over time, and surfaces fixes ranked by impact. Distinct from the homepage Optimizer (that's a public sales tool).</div>
+          <div class="mkt-features">
+            <div class="mkt-feat"><strong>Local SEO</strong>Phone, address, schema, FAQ coverage.</div>
+            <div class="mkt-feat"><strong>Performance</strong>Mobile speed and page load.</div>
+            <div class="mkt-feat"><strong>GEO</strong>How AI describes your business.</div>
+            <div class="mkt-feat"><strong>Tracking</strong>Score over time, week by week.</div>
+          </div>
+          <button class="btn-gold" style="width:auto;padding:0.85rem 2rem" onclick="runMyOptimizer()">Run My Audit →</button>
+          <div id="myOptStatus" style="margin-top:0.75rem;font-size:0.72rem;color:var(--text-muted)"></div>
+        </div>
+      </div>
+
       <!-- WEBSITE: EDITOR -->
       <div class="portal-pane" id="pane-website-editor">
         <div class="dash-card-full">
@@ -676,13 +831,14 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
                 <div class="field"><label>Your name (owner)</label><input type="text" id="pf_contact_name"></div>
                 <div class="field"><label>Phone</label><input type="tel" id="pf_phone"></div>
                 <div class="field"><label>Email (your account login)</label><input type="email" id="pf_email" disabled></div>
-                <div class="field"><label>Trade</label><input type="text" id="pf_trade" placeholder="Plumbing, HVAC, Roofing…"></div>
-                <div class="field"><label>Year founded</label><input type="number" id="pf_ex_year_founded" placeholder="2008" min="1900" max="2030"></div>
-                <div class="field full"><label>City / main location</label><input type="text" id="pf_city" placeholder="Menomonee Falls, WI"></div>
-                <div class="field"><label>Street address (optional)</label><input type="text" id="pf_ex_street" placeholder="123 Main St."></div>
-                <div class="field"><label>State / ZIP</label><input type="text" id="pf_ex_state_zip" placeholder="WI 53051"></div>
-                <div class="field"><label>Owner role / title</label><input type="text" id="pf_ex_owner_title" placeholder="Owner, Master Plumber"></div>
-                <div class="field"><label>Website (if any)</label><input type="text" id="pf_ex_website" placeholder="smithplumbing.com"></div>
+                <div class="field"><label>Trade</label><select id="pf_trade" onchange="onTradeChange()"><option value="">— Pick your trade —</option></select></div>
+                <div class="field"><label>Year founded</label><input type="number" id="pf_ex_year_founded" placeholder="2008" min="1900" max="2030" oninput="recalcYears()"><div class="years-calc" id="yearsCalc"></div></div>
+                <div class="field full"><label>City / main location</label><input type="text" id="pf_city" placeholder="Menomonee Falls"></div>
+                <div class="field full"><label>Street address <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input type="text" id="pf_ex_street" placeholder="123 Main St."></div>
+                <div class="field"><label>State</label><input type="text" id="pf_ex_state" placeholder="WI" maxlength="2" style="text-transform:uppercase"></div>
+                <div class="field"><label>ZIP code</label><input type="text" id="pf_ex_zip" placeholder="53051" maxlength="10"></div>
+                <div class="field"><label>Owner role / title <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input type="text" id="pf_ex_owner_title" placeholder="Owner, Master Plumber"></div>
+                <div class="field"><label>Website <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input type="text" id="pf_ex_website" placeholder="smithplumbing.com"></div>
               </div>
               <div class="stage-save-row">
                 <span class="stage-save-msg" id="msg-1"></span>
@@ -705,11 +861,14 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             </button>
             <div class="stage-body">
               <div class="profile-grid">
-                <div class="field full"><label>Service areas (comma-separated cities)</label><input type="text" id="pf_service_areas" placeholder="Milwaukee, Menomonee Falls, Brookfield"></div>
-                <div class="field"><label>Years in business</label><input type="number" id="pf_years_in_business" min="0" placeholder="12"></div>
-                <div class="field"><label>Certifications (comma-separated)</label><input type="text" id="pf_certifications" placeholder="Master Plumber, EPA 608"></div>
-                <div class="field"><label>License number</label><input type="text" id="pf_ex_license" placeholder="WI-PL-12345"></div>
-                <div class="field"><label>Insurance carrier (optional)</label><input type="text" id="pf_ex_insurance" placeholder="State Farm, Hartford…"></div>
+                <div class="field full">
+                  <label>Service areas (cities you cover)</label>
+                  <input type="text" id="pf_service_areas" placeholder="Milwaukee, Menomonee Falls, Brookfield — comma separated">
+                  <div style="font-size:0.66rem;color:var(--text-muted);margin-top:4px">Tip: for a full zip-code radius picker, open the <a href="/?portalEdit=1" style="color:var(--accent);font-weight:600">Site Builder</a> &mdash; cities saved there sync here automatically.</div>
+                </div>
+                <div class="field"><label>Certifications <span style="color:var(--text-muted);font-weight:400">(optional, comma-separated)</span></label><input type="text" id="pf_certifications" placeholder="Master Plumber, EPA 608"></div>
+                <div class="field"><label>License number <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input type="text" id="pf_ex_license" placeholder="WI-PL-12345"></div>
+                <div class="field full"><label>Insurance carrier <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input type="text" id="pf_ex_insurance" placeholder="State Farm, Hartford…"></div>
                 <div class="field full"><label>Hours of operation</label><input type="text" id="pf_ex_hours" placeholder="Mon-Fri 8am-5pm, Sat by appt, 24/7 emergency"></div>
                 <div class="field full">
                   <label>Emergency / after-hours service?</label>
@@ -721,8 +880,17 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
                     <option value="no">No</option>
                   </select>
                 </div>
-                <div class="field full"><label>Services you offer (comma-separated, ~5-10)</label><input type="text" id="pf_ex_services" placeholder="Water heater install, drain cleaning, sewer line, leak detection"></div>
-                <div class="field full"><label>About — who you are, in your own words</label><textarea id="pf_about_copy" placeholder="Family-owned, three generations of plumbers, serving Milwaukee since 2008…"></textarea></div>
+                <div class="field full">
+                  <label>Services you offer</label>
+                  <div id="svcChips" class="svc-chips" aria-label="Selected services"></div>
+                  <div class="svc-add-row">
+                    <input type="text" class="svc-add-input" id="svcAddInput" placeholder="Type a service and press Enter to add" onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomService();}">
+                    <button class="btn-outline" type="button" onclick="addCustomService()" style="padding:0.5rem 0.9rem">Add</button>
+                  </div>
+                  <div id="svcSuggestions" class="svc-chips" style="margin-top:8px;opacity:0.75"></div>
+                  <div style="font-size:0.66rem;color:var(--text-muted);margin-top:6px">Pick from the suggestions or type your own.</div>
+                </div>
+                <div class="field full"><label>About &mdash; who you are, in your own words</label><textarea id="pf_about_copy" placeholder="Family-owned, three generations of plumbers, serving Milwaukee since 2008…"></textarea></div>
               </div>
               <div class="stage-save-row">
                 <span class="stage-save-msg" id="msg-2"></span>
@@ -817,8 +985,19 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
                 <div class="field"><label>Service radius (miles)</label><input type="number" id="pf_service_radius_mi" placeholder="25"></div>
                 <div class="field"><label>Best-selling service</label><input type="text" id="pf_ex_best_service" placeholder="Water heater installs"></div>
                 <div class="field full"><label>Top 3 competitors (URLs or names)</label><input type="text" id="pf_ex_competitors" placeholder="acmeplumbing.com, joe-plumber.com, fast-flow-plumbing.com"></div>
-                <div class="field"><label>Existing Google reviews (count)</label><input type="number" id="pf_ex_review_count" min="0" placeholder="32"></div>
-                <div class="field"><label>Existing Google star rating</label><input type="text" id="pf_ex_review_rating" placeholder="4.7"></div>
+                <div class="field full">
+                  <label>Sync from Google Business Page</label>
+                  <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:0.45rem;line-height:1.5">Paste your Google Maps business URL (or your Google Place ID). We'll pull your live rating and review count and feed them into Site Analytics.</div>
+                  <div class="gbiz-row">
+                    <input type="text" id="pf_ex_gbiz_url" placeholder="https://maps.google.com/?cid=... or Place ID">
+                    <button class="gbiz-sync-btn" id="gbizSyncBtn" type="button" onclick="syncGoogleBiz()">Sync from Google</button>
+                  </div>
+                  <div class="gbiz-msg" id="gbizMsg"></div>
+                  <div class="profile-grid" style="margin-top:0.85rem">
+                    <div class="field"><label>Star rating <span style="color:var(--text-muted);font-weight:400">(synced)</span></label><input type="text" id="pf_ex_review_rating" placeholder="4.7" readonly style="background:var(--offwhite)"></div>
+                    <div class="field"><label>Review count <span style="color:var(--text-muted);font-weight:400">(synced)</span></label><input type="number" id="pf_ex_review_count" placeholder="32" readonly style="background:var(--offwhite)"></div>
+                  </div>
+                </div>
               </div>
               <div class="stage-save-row">
                 <span class="stage-save-msg" id="msg-4"></span>
@@ -849,10 +1028,12 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
                     <option value="">— Pick one —</option>
                     <option value="quickbooks_online">QuickBooks Online</option>
                     <option value="quickbooks_desktop">QuickBooks Desktop</option>
+                    <option value="jobber">Jobber</option>
                     <option value="xero">Xero</option>
                     <option value="wave">Wave</option>
                     <option value="spreadsheet">Spreadsheets</option>
                     <option value="none">None / paper</option>
+                    <option value="other">Other</option>
                   </select>
                 </div>
                 <div class="field">
@@ -896,6 +1077,19 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           <div class="dc-sub" style="margin-bottom:0">Tap a product to add or remove it from your plan. Discounts apply automatically. <strong style="color:var(--accent);font-weight:600">All prices are placeholders — final pricing will be confirmed before any charge.</strong></div>
         </div>
 
+        <!-- TRUST LINE -->
+        <div class="trust-line">
+          <div class="trust-icon">✓</div>
+          <div class="trust-text"><strong>Try any tool today &mdash; add more anytime.</strong> Guaranteed to save you time or your money back. No setup contracts, no penalties for canceling, change your plan whenever.</div>
+        </div>
+
+        <!-- FAQ — clarifies that each tool is sold separately -->
+        <div class="subs-faq">
+          <div class="subs-faq-title">Before you pick</div>
+          <div class="subs-faq-q">Heads-up: Each tool is sold separately.</div>
+          <div class="subs-faq-a">Buying Bedrock Marketing does <strong>not</strong> include Sites or CFO &mdash; and vice versa. Each one solves a different problem and is priced independently. Want everything? Pick the <strong>Full Ecosystem bundle</strong> below for the biggest savings.</div>
+        </div>
+
         <div class="subs-grid" id="subsGrid">
           <!-- WEBSITE -->
           <button type="button" class="sub-card" data-prod="website" onclick="toggleProduct('website')">
@@ -931,12 +1125,44 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           </button>
         </div>
 
+        <!-- FULL ECOSYSTEM BUNDLE CARD -->
+        <button type="button" class="bundle-card" onclick="pickFullBundle()" style="width:100%;border:1px solid var(--accent);text-align:left;font:inherit;cursor:pointer">
+          <div class="bundle-l">
+            <div class="bundle-tag">★ Best Value</div>
+            <div class="bundle-name">Bedrock Digital &mdash; Full Ecosystem</div>
+            <div class="bundle-desc">Everything Bedrock makes, in one bundle. Website build + monthly hosting, Marketing builder, and the CFO operations agent. One profile, one bill, every tool ready when you are.</div>
+            <div class="bundle-incl">
+              <span>Bedrock Sites</span>
+              <span>Bedrock Marketing</span>
+              <span>Bedrock CFO</span>
+              <span>Shared Profile</span>
+              <span>Priority support</span>
+            </div>
+          </div>
+          <div class="bundle-r">
+            <div class="bundle-price">$100<span class="bundle-price-unit">/mo</span></div>
+            <div class="bundle-save">+ $200 one-time setup (Sites). Save $10/mo vs. buying separately.</div>
+            <span class="bundle-cta">Add the Full Ecosystem</span>
+          </div>
+        </button>
+
         <div class="cart-summary" id="cartSummary">
           <div class="dc-label">Your Plan</div>
           <div class="dc-title" style="margin-bottom:1rem">Plan Summary</div>
           <div id="cartLines">
             <div class="cart-empty">No products selected. Tap a product above to add it.</div>
           </div>
+
+          <!-- PROMO CODE -->
+          <div id="promoRow" style="margin-top:1rem;padding:0.85rem 1rem;background:var(--offwhite);border-radius:6px;display:none">
+            <div style="font-size:0.6rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted);margin-bottom:0.5rem">Promo Code</div>
+            <div style="display:flex;gap:6px;align-items:stretch;flex-wrap:wrap">
+              <input id="promoInput" type="text" placeholder="Enter code" style="flex:1;min-width:160px;font-family:'DM Sans',sans-serif;font-size:0.85rem;padding:0.6rem 0.7rem;border:1px solid var(--border);background:#fff;color:var(--text);outline:none;border-radius:4px;text-transform:uppercase">
+              <button class="btn-dark" type="button" onclick="applyPromo()" style="padding:0.6rem 1rem">Apply</button>
+            </div>
+            <div id="promoMsg" style="font-size:0.7rem;color:var(--text-muted);margin-top:6px"></div>
+          </div>
+
           <div class="cart-actions" id="cartActions" style="display:none">
             <button class="btn-gold" onclick="checkout()">Update My Subscription →</button>
             <button class="btn-outline" onclick="clearCart()">Clear</button>
@@ -991,6 +1217,7 @@ function startDemo() {
   document.getElementById('btnLogout').style.display = 'block';
   document.getElementById('navUserEmail').textContent = DEMO_SESSION.user.email;
   document.getElementById('bellWrap').classList.add('show');
+  showNavTabs(true);
   populateDashboard(DEMO_LEAD, DEMO_SESSION);
   fillDemoAnalytics();
   // demo notifications
@@ -1022,11 +1249,25 @@ function loadStoredSession() {
 function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch(e) {} }
 
 // ── STARTUP ───────────────────────────────────────────────────────────────────
+function showNavTabs(yes) {
+  var el = document.getElementById('navTabs'); if (!el) return;
+  el.style.display = yes ? 'flex' : 'none';
+}
+
 (function init() {
   if (isDemoRequested()) { startDemo(); return; }
   try { var em = sessionStorage.getItem('bedrock_prefill_email'); if (em) { var f = document.getElementById('loginEmail'); if (f && !f.value) f.value = em; } } catch(e) {}
   var stored = loadStoredSession();
-  if (stored) { currentSession = stored; loadDashboard(stored); }
+  if (stored) {
+    currentSession = stored;
+    // Immediately switch to dashboard to avoid the login-page flash.
+    showPage('pageDash');
+    showNavTabs(true);
+    loadDashboard(stored);
+  } else {
+    showPage('pageLogin');
+    showNavTabs(false);
+  }
 })();
 
 // ── PAGE ROUTING ──────────────────────────────────────────────────────────────
@@ -1104,16 +1345,18 @@ function handleLogout() {
   document.getElementById('btnLogout').style.display = 'none';
   document.getElementById('navUserEmail').textContent = '';
   document.getElementById('bellWrap').classList.remove('show');
+  showNavTabs(false);
   var btn = document.getElementById('btnLogin'); if (btn) { btn.disabled = false; btn.textContent = 'Sign In'; }
   showPage('pageLogin');
 }
 
 // ── LOAD DASHBOARD ────────────────────────────────────────────────────────────
 function loadDashboard(session) {
-  if (!session) { showPage('pageLogin'); return; }
+  if (!session) { showPage('pageLogin'); showNavTabs(false); return; }
   document.getElementById('btnLogout').style.display = 'block';
   document.getElementById('navUserEmail').textContent = session.user ? session.user.email : '';
   document.getElementById('bellWrap').classList.add('show');
+  showNavTabs(true);
 
   fetch('/.netlify/functions/get-portal', { headers: { Authorization: 'Bearer ' + session.access_token } })
     .then(function(r) { return r.ok ? r.json() : null; }).then(function(data) {
@@ -1198,7 +1441,7 @@ function launchMarketing(view) {
 var CURRENT_TAB = { top:'website', sub:'editor' };
 
 var TAB_DEFS = {
-  website:   { label:'My Website',      subs:{ editor:'Site Editor', status:'Your Website', analytics:'Site Analytics' } },
+  website:   { label:'My Website',      subs:{ builder:'Site Builder', editor:'Site Editor', optimizer:'My Site Optimizer', analytics:'Site Analytics', status:'Site Info' } },
   seo:       { label:'SEO / GEO',       subs:{ audit:'Free Audit', reports:'Reports' } },
   marketing: { label:'Marketing',       subs:{ overview:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', integrations:'Social Integrations' } },
   profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
@@ -1210,15 +1453,16 @@ function goTab(top, sub) {
   if (!sub || !TAB_DEFS[top].subs[sub]) sub = Object.keys(TAB_DEFS[top].subs)[0];
   CURRENT_TAB = { top:top, sub:sub };
 
-  // top tab styles
-  document.querySelectorAll('.tab-group').forEach(function(g){
-    var btn = g.querySelector('.tab-btn');
+  // top tab styles (nav-tab-group is the live one in the header)
+  document.querySelectorAll('.nav-tab-group').forEach(function(g){
+    var btn = g.querySelector('.nav-tab-btn');
+    if (!btn) return;
     if (g.getAttribute('data-top') === top) btn.classList.add('active');
     else btn.classList.remove('active');
   });
   // submenu active state
-  document.querySelectorAll('.tab-submenu-link').forEach(function(el){ el.classList.remove('active'); });
-  var activeSub = document.querySelector('.tab-group[data-top="'+top+'"] .tab-submenu .tab-submenu-link[onclick*="\''+sub+'\'"]');
+  document.querySelectorAll('.nav-tab-submenu-link').forEach(function(el){ el.classList.remove('active'); });
+  var activeSub = document.querySelector('.nav-tab-group[data-top="'+top+'"] .nav-tab-submenu .nav-tab-submenu-link[onclick*="\''+sub+'\'"]');
   if (activeSub) activeSub.classList.add('active');
 
   // panes
@@ -1237,7 +1481,7 @@ function goTab(top, sub) {
   }
 
   // close open submenus
-  document.querySelectorAll('.tab-group').forEach(function(g){ g.classList.remove('open'); });
+  document.querySelectorAll('.nav-tab-group').forEach(function(g){ g.classList.remove('open'); });
 
   // load profile lazily
   if (top === 'profile') {
@@ -1251,18 +1495,21 @@ function goTab(top, sub) {
 var PROFILE = null, PROFILE_DRAFT = null;
 var STAGE_TOP_FIELDS = {
   1: ['business_name','contact_name','phone','trade','city'],
-  2: ['service_areas','years_in_business','about_copy','certifications'],
+  2: ['service_areas','about_copy','certifications'],
   3: ['slogan','brand_tone','brand_colors','target_customer'],
   4: ['target_keywords','service_radius_mi'],
   5: ['employee_count','ops_notes'],
 };
 var STAGE_EXTRA_FIELDS = {
-  1: ['year_founded','street','state_zip','owner_title','website'],
+  1: ['year_founded','street','state','zip','owner_title','website'],
   2: ['license','insurance','hours','emergency','services'],
   3: ['fb','ig','gbiz','img_style'],
-  4: ['best_service','competitors','review_count','review_rating'],
+  4: ['best_service','competitors','review_count','review_rating','gbiz_url'],
   5: ['avg_ticket','acct_software','payroll','bid_close','subs'],
 };
+
+// Remove years_in_business from stage 2 — auto-calculated from year_founded
+// (kept in the schema but not editable via this UI any more)
 
 function readField(field) {
   if (field === 'brand_colors') {
@@ -1328,6 +1575,8 @@ function loadProfile() {
       Object.keys(STAGE_TOP_FIELDS).forEach(function(stage){ STAGE_TOP_FIELDS[stage].forEach(function(f){ setTopField(f, source[f]); }); });
       var extra = (source.extra || {}) || {};
       Object.keys(STAGE_EXTRA_FIELDS).forEach(function(stage){ STAGE_EXTRA_FIELDS[stage].forEach(function(f){ setExtraField(f, extra[f]); }); });
+      if (typeof recalcYears === 'function') recalcYears();
+      if (typeof paintServiceSuggestions === 'function') paintServiceSuggestions();
       updateProfileMeter();
       if (PROFILE && PROFILE.updated_at) {
         try {
@@ -1477,13 +1726,44 @@ function paintCart() {
   });
   renderCart();
 }
+// Placeholder promo codes — wire to real Stripe coupons before launch
+var PROMO_CODES = {
+  'BETA':    { kind:'waive_setup', label:'Beta — setup fee waived' },
+  'SAVE10':  { kind:'monthly_off', amount:10, label:'$10/mo off' },
+  'FOUNDER': { kind:'monthly_pct', pct:20, label:'Founder — 20% off monthly' },
+};
+var ACTIVE_PROMO = null;
+
+function applyPromo() {
+  var input = document.getElementById('promoInput');
+  var msg = document.getElementById('promoMsg');
+  var code = (input.value || '').trim().toUpperCase();
+  if (!code) { ACTIVE_PROMO = null; msg.textContent = ''; renderCart(); return; }
+  if (PROMO_CODES[code]) {
+    ACTIVE_PROMO = { code: code, def: PROMO_CODES[code] };
+    msg.style.color = 'var(--green)';
+    msg.textContent = '✓ "' + code + '" applied — ' + PROMO_CODES[code].label;
+  } else {
+    ACTIVE_PROMO = null;
+    msg.style.color = 'var(--red)';
+    msg.textContent = 'That code isn\'t valid. Try BETA, SAVE10, or FOUNDER.';
+  }
+  renderCart();
+}
+
 function renderCart() {
   var selected = ['website','marketing','cfo'].filter(function(p){ return CART[p]; });
   var linesEl = document.getElementById('cartLines'), actionsEl = document.getElementById('cartActions');
+  var promoRow = document.getElementById('promoRow');
   if (!linesEl) return;
-  if (!selected.length) { linesEl.innerHTML = '<div class="cart-empty">No products selected. Tap a product above to add it.</div>'; if (actionsEl) actionsEl.style.display = 'none'; return; }
+  if (!selected.length) {
+    linesEl.innerHTML = '<div class="cart-empty">No products selected. Tap a product above to add it.</div>';
+    if (actionsEl) actionsEl.style.display = 'none';
+    if (promoRow) promoRow.style.display = 'none';
+    return;
+  }
+  if (promoRow) promoRow.style.display = 'block';
 
-  // monthly retail
   var monthlyRetail = selected.reduce(function(s,p){ return s + PRICES[p]; }, 0);
   var setupTotal    = selected.reduce(function(s,p){ return s + (SETUP_FEES[p] || 0); }, 0);
   var bundleKey     = selected.slice().sort().join('+');
@@ -1499,13 +1779,35 @@ function renderCart() {
     lines.push('<div class="cart-line"><span class="cl-name">One-time setup' + (CART.website ? ' (Sites)' : '') + '</span><span class="cl-price">$' + setupTotal + '</span></div>');
   }
   if (savings > 0) lines.push('<div class="cart-line discount"><span class="cl-name">Bundle savings</span><span class="cl-price">−$' + savings + '/mo</span></div>');
-  lines.push('<div class="cart-line total"><span class="cl-name">Monthly total</span><span class="cl-price">$' + bundleMonthly + '<span style="font-size:0.66rem;font-family:DM Sans;color:var(--text-muted);font-weight:400;margin-left:4px;letter-spacing:0">/mo</span></span></div>');
-  if (setupTotal > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--text-muted);font-size:0.7rem">Plus today, one-time</span><span class="cl-price" style="font-size:1.1rem">$' + setupTotal + '</span></div>');
+
+  // ── Apply promo code ──
+  var finalMonthly = bundleMonthly;
+  var finalSetup   = setupTotal;
+  if (ACTIVE_PROMO) {
+    var d = ACTIVE_PROMO.def;
+    if (d.kind === 'waive_setup' && finalSetup > 0) {
+      lines.push('<div class="cart-line discount"><span class="cl-name">Promo "' + ACTIVE_PROMO.code + '" — setup waived</span><span class="cl-price">−$' + finalSetup + '</span></div>');
+      finalSetup = 0;
+    } else if (d.kind === 'monthly_off') {
+      var off = Math.min(d.amount, finalMonthly);
+      lines.push('<div class="cart-line discount"><span class="cl-name">Promo "' + ACTIVE_PROMO.code + '"</span><span class="cl-price">−$' + off + '/mo</span></div>');
+      finalMonthly -= off;
+    } else if (d.kind === 'monthly_pct') {
+      var pctOff = Math.round(finalMonthly * d.pct / 100);
+      lines.push('<div class="cart-line discount"><span class="cl-name">Promo "' + ACTIVE_PROMO.code + '" — ' + d.pct + '% off</span><span class="cl-price">−$' + pctOff + '/mo</span></div>');
+      finalMonthly -= pctOff;
+    }
+  }
+
+  lines.push('<div class="cart-line total"><span class="cl-name">Monthly total</span><span class="cl-price">$' + finalMonthly + '<span style="font-size:0.66rem;font-family:DM Sans;color:var(--text-muted);font-weight:400;margin-left:4px;letter-spacing:0">/mo</span></span></div>');
+  if (finalSetup > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--text-muted);font-size:0.7rem">Plus today, one-time</span><span class="cl-price" style="font-size:1.1rem">$' + finalSetup + '</span></div>');
+  else if (setupTotal > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--green);font-size:0.7rem">Setup fee waived</span><span class="cl-price" style="font-size:1.1rem;color:var(--green)">$0</span></div>');
 
   linesEl.innerHTML = lines.join('');
   if (actionsEl) actionsEl.style.display = 'flex';
 }
-function clearCart() { CART = { website:false, marketing:false, cfo:false }; paintCart(); persistCart(); }
+function clearCart() { CART = { website:false, marketing:false, cfo:false }; ACTIVE_PROMO = null; var pm = document.getElementById('promoMsg'); if (pm) pm.textContent = ''; var pi = document.getElementById('promoInput'); if (pi) pi.value = ''; paintCart(); persistCart(); }
+function pickFullBundle() { CART = { website:true, marketing:true, cfo:true }; paintCart(); persistCart(); document.getElementById('cartSummary').scrollIntoView({behavior:'smooth',block:'center'}); }
 function checkout() {
   alert('Checkout flow coming soon. Once Stripe products are configured, this button will redirect to Stripe Checkout with the right bundle priced in.');
 }
@@ -1515,7 +1817,240 @@ function showError(id, msg) { var el = document.getElementById(id); if (!el) ret
 function clearError(id) { var el = document.getElementById(id); if (el) { el.textContent = ''; el.style.display = 'none'; } }
 
 // init cart on load
-window.addEventListener('load', function(){ loadCart(); });
+window.addEventListener('load', function(){ loadCart(); initTradesAndServices(); });
+
+// ── TRADES + SERVICES ───────────────────────────────────────────────────────
+// Mirrors the builder's TRADES + SVCS so the profile uses the same list.
+var TRADES = [
+  {id:'contractor',label:'General Contractor / Remodeler'},
+  {id:'roofing',label:'Roofer'},
+  {id:'painter',label:'Painter (Interior / Exterior)'},
+  {id:'flooring',label:'Flooring / Tile Installer'},
+  {id:'landscaping',label:'Landscaper / Hardscaper'},
+  {id:'tree',label:'Tree Service / Arborist'},
+  {id:'pool',label:'Pool Service / Pool Install'},
+  {id:'plumber',label:'Plumber'},
+  {id:'electrician',label:'Electrician'},
+  {id:'hvac',label:'HVAC Technician'},
+  {id:'handyman',label:'Handyman / Property Maintenance'},
+  {id:'pest',label:'Pest Control'},
+  {id:'cleaning',label:'House / Commercial Cleaning'},
+  {id:'auto',label:'Auto Repair / Mechanic'},
+  {id:'detailing',label:'Auto Detailing / Mobile Wash'},
+  {id:'mover',label:'Moving / Hauling'},
+  {id:'event',label:'Event Services / Rentals'},
+  {id:'photographer',label:'Photographer / Videographer'},
+  {id:'restaurant',label:'Restaurant / Café / Food Truck'},
+  {id:'retail',label:'Retail Shop / Boutique'},
+  {id:'salon',label:'Salon / Barber / Spa'},
+  {id:'fitness',label:'Gym / Fitness / Personal Training'},
+  {id:'pet',label:'Pet Services (Grooming, Boarding, Training)'},
+  {id:'other',label:'Other / Custom'},
+];
+var SVCS = {
+  contractor:['Remodeling','New Construction','Additions','Decks & Patios','Custom Builds','Kitchen Remodel','Bathroom Remodel','Project Management'],
+  roofing:['Roof Replacement','Roof Repair','Storm Damage','Inspections','Gutter Install','Skylights','Metal Roofing','Commercial Roofing'],
+  painter:['Interior Painting','Exterior Painting','Cabinet Refinishing','Deck Staining','Wallpaper Removal','Color Consulting','Commercial Painting','Pressure Washing'],
+  flooring:['Hardwood Install','Tile Install','LVP / Laminate','Carpet Install','Refinishing','Heated Floors','Backsplash','Commercial Flooring'],
+  landscaping:['Lawn Care','Hardscaping','Pavers & Patios','Retaining Walls','Irrigation','Tree & Shrub Care','Landscape Design','Snow Removal'],
+  tree:['Tree Removal','Tree Pruning','Stump Grinding','Storm Cleanup','Cabling & Bracing','Health Assessments','Emergency Service','Lot Clearing'],
+  pool:['Pool Install','Weekly Service','Equipment Repair','Openings & Closings','Renovations','Salt System','Heater Install','Leak Detection'],
+  plumber:['Leak Repair','Drain Cleaning','Water Heater Install','Pipe Replacement','Emergency Service','Bathroom Remodel','Sewer Line','Water Filtration'],
+  electrician:['Wiring','Panel Upgrades','Outlet Installation','Lighting','Emergency Service','EV Charger','Generator Install','Commercial'],
+  hvac:['AC Install','Furnace Service','Duct Cleaning','Heat Pump','Emergency Service','Maintenance Plans','Air Quality','Commercial HVAC'],
+  handyman:['Drywall Repair','Furniture Assembly','TV Mounting','Door & Lock Repair','Caulking','Small Plumbing','Small Electrical','Honey-Do Lists'],
+  pest:['General Pest','Termite Inspection','Rodent Control','Bed Bugs','Mosquito Treatment','Wildlife Removal','Commercial Pest','Quarterly Plans'],
+  cleaning:['Recurring House Cleaning','Deep Cleaning','Move-In / Move-Out','Office / Commercial','Post-Construction','Window Cleaning','Carpet Cleaning','One-Time Service'],
+  auto:['Oil Changes','Brake Service','Tire & Alignment','Engine Diagnostics','Transmission','AC Repair','State Inspections','Pre-Purchase Inspections'],
+  detailing:['Full Detail','Interior Only','Exterior Only','Ceramic Coating','Paint Correction','Headlight Restoration','Engine Bay','Mobile Service'],
+  mover:['Local Moving','Long Distance','Packing Service','Loading Only','Junk Removal','Furniture Delivery','Senior Moves','Commercial Moves'],
+  event:['Tent Rentals','Tables & Chairs','Lighting','Bartending','Photo Booths','Linens','DJ / Sound','Full Event Setup'],
+  photographer:['Weddings','Family Portraits','Headshots','Real Estate','Events','Brand & Product','Commercial','Drone / Aerial'],
+  restaurant:['Dine-In','Takeout','Delivery','Catering','Private Events','Daily Specials','Seasonal Menu','Online Ordering'],
+  retail:['In-Store Shopping','Online Store','Custom Orders','Gift Cards','Local Delivery','Wholesale','Workshops & Classes','Seasonal Pop-Ups'],
+  salon:['Haircut & Style','Color & Highlights','Beard Trim','Manicure & Pedicure','Facials','Massage','Waxing','Wedding Services'],
+  fitness:['Personal Training','Group Classes','Open Gym','Nutrition Coaching','Online Programs','Youth Training','Sports Performance','Corporate Wellness'],
+  pet:['Grooming','Boarding','Daycare','Training','Walking','In-Home Sitting','Bath Only','Mobile Service'],
+  other:[],
+};
+
+var SELECTED_SERVICES = [];
+
+function initTradesAndServices() {
+  var sel = document.getElementById('pf_trade');
+  if (sel && sel.options.length <= 1) {
+    TRADES.forEach(function(t){
+      var o = document.createElement('option');
+      o.value = t.id; o.textContent = t.label;
+      sel.appendChild(o);
+    });
+  }
+}
+
+function onTradeChange() {
+  paintServiceSuggestions();
+}
+
+function paintServiceSuggestions() {
+  var sel = document.getElementById('pf_trade');
+  var sug = document.getElementById('svcSuggestions');
+  if (!sug) return;
+  var tradeId = sel ? sel.value : '';
+  var list = (SVCS[tradeId] || []);
+  if (!list.length) { sug.innerHTML = '<span style="font-size:0.66rem;color:var(--text-muted)">Pick a trade above to see suggested services.</span>'; return; }
+  sug.innerHTML = list.map(function(s){
+    var picked = SELECTED_SERVICES.indexOf(s) !== -1 ? ' active' : '';
+    return '<button type="button" class="svc-chip'+picked+'" onclick="toggleService(\''+s.replace(/'/g,"\\'")+'\')">' + s + '</button>';
+  }).join('');
+}
+
+function paintSelectedServices() {
+  var wrap = document.getElementById('svcChips'); if (!wrap) return;
+  wrap.innerHTML = SELECTED_SERVICES.map(function(s, i){
+    return '<span class="svc-chip active">' + s + '<button class="svc-chip-x" type="button" onclick="removeService('+i+')" aria-label="Remove">×</button></span>';
+  }).join('');
+  paintServiceSuggestions();
+  updateProfileMeter();
+}
+
+function toggleService(s) {
+  var i = SELECTED_SERVICES.indexOf(s);
+  if (i === -1) SELECTED_SERVICES.push(s); else SELECTED_SERVICES.splice(i, 1);
+  paintSelectedServices();
+}
+function removeService(i) { SELECTED_SERVICES.splice(i, 1); paintSelectedServices(); }
+function addCustomService() {
+  var input = document.getElementById('svcAddInput');
+  var v = (input.value || '').trim();
+  if (!v) return;
+  if (SELECTED_SERVICES.indexOf(v) === -1) SELECTED_SERVICES.push(v);
+  input.value = '';
+  paintSelectedServices();
+}
+
+// Hook the services chips into the readExtraField/setExtraField for stage 2 'services'
+var _origReadExtraField = readExtraField;
+readExtraField = function(field) {
+  if (field === 'services') return SELECTED_SERVICES.slice();
+  return _origReadExtraField(field);
+};
+var _origSetExtraField = setExtraField;
+setExtraField = function(field, val) {
+  if (field === 'services') {
+    SELECTED_SERVICES = Array.isArray(val) ? val.slice() : (typeof val === 'string' && val ? val.split(',').map(function(s){return s.trim();}) : []);
+    paintSelectedServices();
+    return;
+  }
+  return _origSetExtraField(field, val);
+};
+
+// ── YEAR-FOUNDED AUTO-CALC YEARS IN BUSINESS ─────────────────────────────────
+function recalcYears() {
+  var yf = parseInt((document.getElementById('pf_ex_year_founded') || {}).value, 10);
+  var out = document.getElementById('yearsCalc');
+  if (!yf || isNaN(yf)) { if (out) { out.textContent = ''; out.classList.remove('has-val'); } return; }
+  var thisYear = new Date().getFullYear();
+  var diff = thisYear - yf;
+  if (diff < 0) diff = 0;
+  if (out) { out.textContent = diff + ' year' + (diff === 1 ? '' : 's') + ' in business'; out.classList.add('has-val'); }
+  // Also persist into top-level years_in_business field on the profile so
+  // existing schema column stays populated and SEO/CFO tools can read it.
+  // (No DOM element to set since we removed the manual field — just stored
+  //  through the saveStage payload below.)
+  YEARS_IN_BIZ = diff;
+}
+var YEARS_IN_BIZ = null;
+
+// Patch readField for years_in_business to return the auto-calculated value
+var _origReadField = readField;
+readField = function(field) {
+  if (field === 'years_in_business') return YEARS_IN_BIZ;
+  return _origReadField(field);
+};
+
+// ── GOOGLE BUSINESS SYNC ─────────────────────────────────────────────────────
+async function syncGoogleBiz() {
+  var input = document.getElementById('pf_ex_gbiz_url');
+  var btn = document.getElementById('gbizSyncBtn');
+  var msg = document.getElementById('gbizMsg');
+  var url = (input.value || '').trim();
+  if (!url) { msg.textContent = 'Paste a Google Maps URL or Place ID first.'; msg.className = 'gbiz-msg err'; return; }
+  if (!currentSession) { msg.textContent = 'Please sign in to use this.'; msg.className = 'gbiz-msg err'; return; }
+  btn.disabled = true; btn.textContent = 'Syncing…'; msg.textContent = ''; msg.className = 'gbiz-msg';
+  try {
+    var r = await fetch('/.netlify/functions/google-business-sync', {
+      method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer '+currentSession.access_token},
+      body: JSON.stringify({ url: url })
+    });
+    var data = await r.json();
+    if (data.success) {
+      document.getElementById('pf_ex_review_rating').value = data.rating != null ? String(data.rating) : '';
+      document.getElementById('pf_ex_review_count').value  = data.review_count != null ? String(data.review_count) : '';
+      msg.textContent = '✓ Synced. ' + (data.name ? '"' + data.name + '" — ' : '') + data.rating + ' stars · ' + data.review_count + ' reviews. Click Save SEO Info to keep this.';
+      msg.className = 'gbiz-msg ok';
+      updateProfileMeter();
+    } else if (r.status === 503) {
+      msg.textContent = data.error || 'Google sync not configured yet — enter rating manually below.';
+      msg.className = 'gbiz-msg err';
+      document.getElementById('pf_ex_review_rating').removeAttribute('readonly');
+      document.getElementById('pf_ex_review_count').removeAttribute('readonly');
+    } else {
+      msg.textContent = data.error || 'Sync failed — double-check the URL or Place ID.';
+      msg.className = 'gbiz-msg err';
+    }
+  } catch(e) {
+    msg.textContent = 'Network error — try again.';
+    msg.className = 'gbiz-msg err';
+  }
+  btn.disabled = false; btn.textContent = 'Sync from Google';
+}
+
+// ── MY SITE OPTIMIZER (private) ──────────────────────────────────────────────
+function runMyOptimizer() {
+  var status = document.getElementById('myOptStatus');
+  if (!currentLead || !currentLead.site_url) {
+    status.innerHTML = 'You need a live Bedrock site first. <a href="/?portalEdit=1" style="color:var(--accent);font-weight:600">Open the Builder →</a>';
+    return;
+  }
+  // Pass the user's site URL into the homepage optimizer flow (which already works)
+  // and mark it as a private run via query param so we can later separate the analytics.
+  var u = '/#optimizer?site=' + encodeURIComponent(currentLead.site_url) + '&src=portal';
+  status.textContent = 'Opening Optimizer for ' + currentLead.site_url + '…';
+  window.location.href = u;
+}
+
+// ── AUTO-SAVE on field blur ──────────────────────────────────────────────────
+// Each profile field's id starts with 'pf_'. We map field → stage and debounce
+// saves so we don't hammer the network.
+function autoSaveStage(stage) {
+  if (AUTO_SAVE_TIMERS[stage]) clearTimeout(AUTO_SAVE_TIMERS[stage]);
+  AUTO_SAVE_TIMERS[stage] = setTimeout(function(){
+    saveStage(stage);
+  }, 700);
+}
+var AUTO_SAVE_TIMERS = {};
+
+function stageForFieldId(id) {
+  // strip pf_ prefix; lookup in STAGE_TOP_FIELDS and STAGE_EXTRA_FIELDS
+  var bare = id.replace(/^pf_/, '').replace(/^ex_/, '');
+  // brand color pickers all map to brand_colors → stage 3
+  if (bare.indexOf('color_') === 0) return 3;
+  for (var stage in STAGE_TOP_FIELDS) {
+    if (STAGE_TOP_FIELDS[stage].indexOf(bare) !== -1) return parseInt(stage,10);
+  }
+  for (var stage in STAGE_EXTRA_FIELDS) {
+    if (STAGE_EXTRA_FIELDS[stage].indexOf(bare) !== -1) return parseInt(stage,10);
+  }
+  return null;
+}
+
+document.addEventListener('blur', function(e){
+  if (DEMO) return;
+  if (!currentSession) return;
+  if (!e.target || !e.target.id || e.target.id.indexOf('pf_') !== 0) return;
+  var stage = stageForFieldId(e.target.id);
+  if (stage) autoSaveStage(stage);
+}, true);  // useCapture=true to catch blur (doesn't bubble)
 </script>
 </body>
 </html>
