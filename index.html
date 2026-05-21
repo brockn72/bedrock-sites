@@ -1528,7 +1528,10 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 .bd-review-cta p{font-family:'DM Sans',sans-serif;font-size:0.9rem;color:#4A5568;margin-bottom:1rem}
 
 /* LOGIN PAGE */
-#login{background:#0D1B2E;min-height:auto;display:flex;align-items:center;justify-content:center;padding:6rem 5% 5rem}
+/* #login is a .page — must NOT set display here (an ID rule would override .page{display:none}
+   and keep the login/create-account card visible on every page). Flex only when active. */
+#login{background:#0D1B2E;min-height:auto;align-items:center;justify-content:center;padding:6rem 5% 5rem}
+#login.active{display:flex}
 .bd-login-inner{max-width:1000px;width:100%}
 .bd-login-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:3.5rem;align-items:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:3rem 3.25rem}
 .bd-login-info .login-eyebrow{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;margin-bottom:0.85rem}
@@ -1746,9 +1749,22 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     #bd-whatwedo .wwd-plus{width:30px;height:30px;border:1.5px solid rgba(13,27,46,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#0D1B2E;flex-shrink:0;transition:transform .25s,border-color .2s,background .2s}
     #bd-whatwedo .wwd-acc.open .wwd-plus{transform:rotate(45deg);background:#C9922A;border-color:#C9922A;color:#fff}
     #bd-whatwedo .wwd-acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
-    #bd-whatwedo .wwd-acc.open .wwd-acc-body{max-height:620px}
+    #bd-whatwedo .wwd-acc.open .wwd-acc-body{max-height:780px}
     #bd-whatwedo .wwd-intro-tag{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;color:#0D1B2E;text-align:center;margin:-1.5rem auto 2.25rem;max-width:600px}
-    #bd-whatwedo .wwd-acc-body-inner{padding:0 0.25rem 1.5rem}
+    #bd-whatwedo .wwd-acc-body-inner{padding:0 0.25rem 1.5rem;display:grid;grid-template-columns:1fr 290px;gap:1.75rem;align-items:start}
+    @media(max-width:680px){#bd-whatwedo .wwd-acc-body-inner{grid-template-columns:1fr}}
+    /* expanded-item preview panel */
+    #bd-whatwedo .wwd-preview{border-radius:8px;overflow:hidden;border:1px solid rgba(13,27,46,0.14);background:#0D1B2E}
+    #bd-whatwedo .wwd-pv-cap{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#C9922A;padding:0.6rem 0.8rem 0.4rem}
+    #bd-whatwedo .wwd-pv-site{aspect-ratio:4/3;position:relative;overflow:hidden;background:#1a2418}
+    #bd-whatwedo .wwd-pv-site iframe{position:absolute;top:0;left:0;width:500%;height:500%;transform:scale(0.2);transform-origin:top left;border:none;pointer-events:none}
+    #bd-whatwedo .wwd-pv-post{aspect-ratio:4/3;background:#1F4E79 center/cover no-repeat;background-image:linear-gradient(180deg,rgba(13,27,46,0.18),rgba(13,27,46,0.9)),url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=520&q=70');display:flex;flex-direction:column;justify-content:flex-end;padding:0.9rem}
+    #bd-whatwedo .wwd-pv-post .pp-e{font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#C9922A}
+    #bd-whatwedo .wwd-pv-post .pp-h{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:#fff;line-height:1.15;margin:0.2rem 0}
+    #bd-whatwedo .wwd-pv-post .pp-c{align-self:flex-start;background:#C9922A;color:#0D1B2E;font-size:0.5rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:0.24rem 0.6rem;border-radius:3px;margin-top:0.3rem}
+    #bd-whatwedo .wwd-pv-soon{aspect-ratio:4/3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.65rem}
+    #bd-whatwedo .wwd-pv-soon svg{width:40px;height:40px;stroke:#C9922A;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+    #bd-whatwedo .wwd-pv-soon span{font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#C9922A;background:rgba(201,146,42,0.14);padding:0.25rem 0.65rem;border-radius:4px}
     #bd-whatwedo .wwd-acc-desc{font-family:'DM Sans',sans-serif;font-size:0.95rem;line-height:1.65;color:#4A5568;margin-bottom:0.85rem}
     #bd-whatwedo .wwd-acc-links{display:flex;gap:1.25rem;flex-wrap:wrap}
     #bd-whatwedo .wwd-acc-links a{font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#C9922A;text-decoration:none}
@@ -1783,10 +1799,16 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
-        <p class="wwd-acc-desc">A professional website built specifically for your trade &mdash; not a generic template you have to wrestle into shape. Most contractors lose work simply because they don't show up on Google, or their site looks like an afterthought next to the competition. With Bedrock Sites you answer a few plain questions, drop in your photos, and get a polished, mobile-ready site that's built to rank in local search. You preview the whole thing for free and only pay when you're ready to put it live. From there, editing it later takes minutes &mdash; no developer, no waiting.</p>
-        <div class="wwd-acc-links">
-          <a href="/sites.html">&rarr; Go to Bedrock Sites</a>
-          <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
+        <div class="wwd-acc-text">
+          <p class="wwd-acc-desc">A professional website built specifically for your trade &mdash; not a generic template you have to wrestle into shape. Most contractors lose work simply because they don't show up on Google, or their site looks like an afterthought next to the competition. With Bedrock Sites you answer a few plain questions, drop in your photos, and get a polished, mobile-ready site that's built to rank in local search. You preview the whole thing for free and only pay when you're ready to put it live. From there, editing it later takes minutes &mdash; no developer, no waiting.</p>
+          <div class="wwd-acc-links">
+            <a href="/sites.html">&rarr; Go to Bedrock Sites</a>
+            <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
+          </div>
+        </div>
+        <div class="wwd-preview">
+          <div class="wwd-pv-cap">Live Example &middot; Mad Ox Outdoors</div>
+          <div class="wwd-pv-site"><iframe id="madoxThumbWwd" sandbox="allow-same-origin allow-scripts" title="Mad Ox Outdoors site preview" aria-hidden="true" tabindex="-1"></iframe></div>
         </div>
       </div></div>
     </div>
@@ -1798,10 +1820,20 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
-        <p class="wwd-acc-desc">Marketing material that looks like you hired an agency &mdash; without the agency price or the back-and-forth. You set up your Brand Kit one time (colors, fonts, logo, and the voice your business speaks in), and after that everything you make is automatically on-brand. That matters because consistent, professional-looking marketing is what makes a small business look established and trustworthy enough to call. Build a flyer, social post, door hanger, yard sign, or business card in minutes and download it as a PDF, PNG, or JPG. It pulls from the same business profile as the rest of Bedrock, so you never enter your info twice.</p>
-        <div class="wwd-acc-links">
-          <a href="/bedrock-marketing-v1.html">&rarr; Go to Marketing Hub</a>
-          <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
+        <div class="wwd-acc-text">
+          <p class="wwd-acc-desc">Marketing material that looks like you hired an agency &mdash; without the agency price or the back-and-forth. You set up your Brand Kit one time (colors, fonts, logo, and the voice your business speaks in), and after that everything you make is automatically on-brand. That matters because consistent, professional-looking marketing is what makes a small business look established and trustworthy enough to call. Build a flyer, social post, door hanger, yard sign, or business card in minutes and download it as a PDF, PNG, or JPG. It pulls from the same business profile as the rest of Bedrock, so you never enter your info twice.</p>
+          <div class="wwd-acc-links">
+            <a href="/bedrock-marketing-v1.html">&rarr; Go to Marketing Hub</a>
+            <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
+          </div>
+        </div>
+        <div class="wwd-preview">
+          <div class="wwd-pv-cap">Sample Output &middot; Ridgeline Concrete</div>
+          <div class="wwd-pv-post">
+            <div class="pp-e">Ridgeline Concrete &middot; Bend, OR</div>
+            <div class="pp-h">Driveways done<br>before the frost.</div>
+            <div class="pp-c">Call Today</div>
+          </div>
         </div>
       </div></div>
     </div>
@@ -1813,7 +1845,16 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
-        <p class="wwd-acc-desc">The money and operations side of your business, simplified &mdash; this one is in development now. Bedrock CFO will connect to your accounting, billing, bidding, invoicing, and purchasing so it all lives in one place instead of scattered across apps and spreadsheets. It matters because most contractors are great at the work but quietly lose money to messy books, underpriced bids, and cash-flow surprises. It's being built to work with tools you already use, like Jobber and QuickBooks, and to answer plain-English questions about your business &mdash; "can I make payroll this month?" or "what should I charge to hit my margin?" When it's ready, it'll plug straight into the profile you've already built.</p>
+        <div class="wwd-acc-text">
+          <p class="wwd-acc-desc">The money and operations side of your business, simplified &mdash; this one is in development now. Bedrock CFO will connect to your accounting, billing, bidding, invoicing, and purchasing so it all lives in one place instead of scattered across apps and spreadsheets. It matters because most contractors are great at the work but quietly lose money to messy books, underpriced bids, and cash-flow surprises. It's being built to work with tools you already use, like Jobber and QuickBooks, and to answer plain-English questions about your business &mdash; "can I make payroll this month?" or "what should I charge to hit my margin?" When it's ready, it'll plug straight into the profile you've already built.</p>
+        </div>
+        <div class="wwd-preview">
+          <div class="wwd-pv-cap">In Development &middot; Bedrock CFO</div>
+          <div class="wwd-pv-soon">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span>Coming Soon</span>
+          </div>
+        </div>
       </div></div>
     </div>
 
@@ -6321,7 +6362,7 @@ function renderSampleThumbnails(){
   var tpl=document.getElementById('madox-site-html');
   if(!tpl)return;
   var html=tpl.textContent||tpl.innerHTML;
-  ['madoxThumbFrame','madoxThumbFrameHome','madoxThumbShowcase'].forEach(function(id){
+  ['madoxThumbFrame','madoxThumbFrameHome','madoxThumbShowcase','madoxThumbWwd'].forEach(function(id){
     var frame=document.getElementById(id);
     if(!frame||frame.getAttribute('data-rendered')==='1')return;
     try{
@@ -10369,6 +10410,7 @@ function closeMtbDrawer(){
       <input type="email" id="bdmSigninEmail" autocomplete="email" required>
       <label for="bdmSigninPass">Password</label>
       <input type="password" id="bdmSigninPass" autocomplete="current-password" required>
+      <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.85rem;font-family:'DM Sans',sans-serif;font-size:0.8rem;color:#4A5568;cursor:pointer"><input type="checkbox" id="bdmRemember" checked style="width:auto;margin:0;accent-color:#C9922A">Keep me signed in</label>
       <button type="submit" class="bdm-submit" id="bdmSigninBtn">Sign In</button>
       <p class="bdm-foot">New to Bedrock? <a onclick="authModalMode('create')">Create a free account</a></p>
     </form>
@@ -10406,9 +10448,11 @@ function authModalMode(mode){
 function bdmErr(id,msg){ var e=document.getElementById(id); if(e){ e.textContent=msg; e.classList.add('show'); } }
 function bdmClearErr(){ ['bdmSigninErr','bdmCreateErr'].forEach(function(id){ var e=document.getElementById(id); if(e)e.classList.remove('show'); }); }
 function bdmSaveSession(d){
+  var rm=document.getElementById('bdmRemember');
   try{ localStorage.setItem('bedrock_portal_session', JSON.stringify({
     access_token:d.access_token, refresh_token:d.refresh_token,
-    expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user
+    expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user,
+    remember: rm ? !!rm.checked : true
   })); }catch(e){}
 }
 function bdmDoSignin(e){

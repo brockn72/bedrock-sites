@@ -553,6 +553,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <label for="loginPassword">Password</label>
             <input type="password" id="loginPassword" placeholder="Your password" autocomplete="current-password" onkeydown="if(event.key==='Enter')handleLogin()">
           </div>
+          <label style="display:flex;align-items:center;gap:0.5rem;margin:0.25rem 0 1rem;font-family:'DM Sans',sans-serif;font-size:0.8rem;color:var(--text-muted);cursor:pointer"><input type="checkbox" id="rememberMe" checked style="width:auto;margin:0;accent-color:var(--accent)">Keep me signed in</label>
           <button class="btn-gold" id="btnLogin" onclick="handleLogin()">Sign In</button>
           <a class="forgot-link" onclick="showPage('pageForgot')">Forgot your password?</a>
         </div>
@@ -1577,12 +1578,35 @@ function fillDemoAnalytics() {
 
 // ── SESSION HELPERS ───────────────────────────────────────────────────────────
 function saveSession(d) {
-  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ access_token:d.access_token, refresh_token:d.refresh_token, expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user })); } catch(e) {}
+  var rm = document.getElementById('rememberMe');
+  // preserve an existing remember flag (e.g. set by the universal modal) if no checkbox here
+  var prev = readRawSession();
+  var remember = rm ? !!rm.checked : (prev && typeof prev.remember === 'boolean' ? prev.remember : true);
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ access_token:d.access_token, refresh_token:d.refresh_token, expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user, remember:remember })); } catch(e) {}
+}
+function readRawSession() {
+  try { var raw = localStorage.getItem(SESSION_KEY); return raw ? JSON.parse(raw) : null; } catch(e) { return null; }
 }
 function loadStoredSession() {
   try { var raw = localStorage.getItem(SESSION_KEY); if (!raw) return null; var s = JSON.parse(raw); if (!s.access_token || !s.expires_at || Date.now() > s.expires_at) { localStorage.removeItem(SESSION_KEY); return null; } return s; } catch(e) { return null; }
 }
 function clearSession() { try { localStorage.removeItem(SESSION_KEY); } catch(e) {} }
+// "Keep me signed in" — refresh an expired token instead of logging the user out.
+function refreshSessionAndContinue(raw) {
+  fetch('/.netlify/functions/portal-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'refresh', refresh_token: raw.refresh_token }) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.success && d.access_token) {
+        var ns = { access_token:d.access_token, refresh_token:d.refresh_token||raw.refresh_token, expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user||raw.user, remember:true };
+        try { localStorage.setItem(SESSION_KEY, JSON.stringify(ns)); } catch(e) {}
+        currentSession = ns;
+        showPage('pageDash'); showNavTabs(true); loadDashboard(ns);
+      } else {
+        clearSession(); showPage('pageLogin'); showNavTabs(false);
+      }
+    })
+    .catch(function(){ clearSession(); showPage('pageLogin'); showNavTabs(false); });
+}
 
 // ── STARTUP ───────────────────────────────────────────────────────────────────
 function showNavTabs(yes) {
@@ -1593,14 +1617,20 @@ function showNavTabs(yes) {
 (function init() {
   if (isDemoRequested()) { startDemo(); return; }
   try { var em = sessionStorage.getItem('bedrock_prefill_email'); if (em) { var f = document.getElementById('loginEmail'); if (f && !f.value) f.value = em; } } catch(e) {}
-  var stored = loadStoredSession();
-  if (stored) {
-    currentSession = stored;
-    // Immediately switch to dashboard to avoid the login-page flash.
+  var raw = readRawSession();
+  if (raw && raw.access_token && raw.expires_at && Date.now() < raw.expires_at) {
+    // Valid session — go straight to the dashboard (no login-page flash).
+    currentSession = raw;
     showPage('pageDash');
     showNavTabs(true);
-    loadDashboard(stored);
+    loadDashboard(raw);
+  } else if (raw && raw.refresh_token && raw.remember) {
+    // Expired but "Keep me signed in" — refresh the token instead of logging out.
+    showPage('pageBoot');
+    showNavTabs(false);
+    refreshSessionAndContinue(raw);
   } else {
+    if (raw) clearSession();
     showPage('pageLogin');
     showNavTabs(false);
     // Deep-link: /portal.html#create opens the Create Account form directly

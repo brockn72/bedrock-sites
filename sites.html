@@ -1526,7 +1526,10 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 .bd-review-cta p{font-family:'DM Sans',sans-serif;font-size:0.9rem;color:#4A5568;margin-bottom:1rem}
 
 /* LOGIN PAGE */
-#login{background:#0D1B2E;min-height:auto;display:flex;align-items:center;justify-content:center;padding:6rem 5% 5rem}
+/* #login is a .page — must NOT set display here (an ID rule would override .page{display:none}
+   and keep the login/create-account card visible on every page). Flex only when active. */
+#login{background:#0D1B2E;min-height:auto;align-items:center;justify-content:center;padding:6rem 5% 5rem}
+#login.active{display:flex}
 .bd-login-inner{max-width:1000px;width:100%}
 .bd-login-grid{display:grid;grid-template-columns:1.05fr 0.95fr;gap:3.5rem;align-items:center;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:3rem 3.25rem}
 .bd-login-info .login-eyebrow{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;margin-bottom:0.85rem}
@@ -9574,6 +9577,7 @@ function closeMtbDrawer(){
       <input type="email" id="bdmSigninEmail" autocomplete="email" required>
       <label for="bdmSigninPass">Password</label>
       <input type="password" id="bdmSigninPass" autocomplete="current-password" required>
+      <label style="display:flex;align-items:center;gap:0.5rem;margin-top:0.85rem;font-family:'DM Sans',sans-serif;font-size:0.8rem;color:#4A5568;cursor:pointer"><input type="checkbox" id="bdmRemember" checked style="width:auto;margin:0;accent-color:#C9922A">Keep me signed in</label>
       <button type="submit" class="bdm-submit" id="bdmSigninBtn">Sign In</button>
       <p class="bdm-foot">New to Bedrock? <a onclick="authModalMode('create')">Create a free account</a></p>
     </form>
@@ -9609,9 +9613,11 @@ function authModalMode(mode){
 function bdmErr(id,msg){ var e=document.getElementById(id); if(e){ e.textContent=msg; e.classList.add('show'); } }
 function bdmClearErr(){ ['bdmSigninErr','bdmCreateErr'].forEach(function(id){ var e=document.getElementById(id); if(e)e.classList.remove('show'); }); }
 function bdmSaveSession(d){
+  var rm=document.getElementById('bdmRemember');
   try{ localStorage.setItem('bedrock_portal_session', JSON.stringify({
     access_token:d.access_token, refresh_token:d.refresh_token,
-    expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user
+    expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user,
+    remember: rm ? !!rm.checked : true
   })); }catch(e){}
 }
 function bdmDoSignin(e){
