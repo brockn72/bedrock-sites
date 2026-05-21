@@ -2372,7 +2372,6 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         cards.forEach(function(c){ obs.observe(c); });
       })();
     </script>
-    </div>
 
     <!-- ACCOUNT CTA -->
     <div class="bd-section" style="background:linear-gradient(135deg,rgba(201,146,42,.14),rgba(255,255,255,.03));border:1px solid var(--accent);border-radius:12px;padding:2.5rem 2rem;text-align:center">
@@ -2721,50 +2720,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   </script>
 </section>
 
-<!-- FOOTER -->
-<footer id="bd-footer">
-  <div class="bd-footer-inner">
-    <div class="bd-footer-top">
-      <div class="bd-footer-brand">
-        <div class="f-logo">Bedrock Digital</div>
-        <div class="f-tagline">Spend more time on the job. Less time on everything else.</div>
-        <p>Websites, SEO, business tools &mdash; built for contractors, plumbers, electricians, and trade businesses. Fair pricing. No agency runaround.</p>
-        <div style="margin-top:0.9rem;display:flex;flex-direction:column;gap:0.3rem">
-          <!-- UPDATE: replace with your real business phone number before launch -->
-          <a href="tel:+16124757477" style="font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.6);text-decoration:none">(612) 475-7477</a>
-          <a href="mailto:support@bedrock-sites.com" style="font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.6);text-decoration:none">support@bedrock-sites.com</a>
-          <address style="font-style:normal;font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.4)">Rexburg, ID &middot; Serving contractors nationwide</address>
-        </div>
-      </div>
-      <div class="bd-footer-links">
-        <div class="f-col-title">Products</div>
-        <ul>
-          <li><a href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
-          <li><a href="#optimizer" onclick="showPage('optimizer',event)">Bedrock Optimizer</a></li>
-          <li><a href="mailto:support@bedrock-sites.com?subject=SEO%20Waitlist">Bedrock SEO</a></li>
-          <li><a href="mailto:support@bedrock-sites.com?subject=CFO%20Waitlist">Bedrock CFO</a></li>
-        </ul>
-      </div>
-      <div class="bd-footer-links">
-        <div class="f-col-title">Company</div>
-        <ul>
-          <li><a href="#about" onclick="showPage('about',event)">About Us</a></li>
-          <li><a href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
-          <li><a href="#reviews" onclick="showPage('reviews',event)">Reviews</a></li>
-          <li><a href="#login" onclick="showPage('login',event)">Client Login</a></li>
-          <li><a href="mailto:support@bedrock-sites.com">Contact</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="bd-footer-bottom">
-      <span class="f-copy">bedrock-sites.com &middot; &copy; 2026 Bedrock Digital &middot; Built for the trades</span>
-      <div class="f-legal">
-        <a href="/privacy" target="_blank">Privacy</a>
-        <a href="/terms" target="_blank">Terms</a>
-      </div>
-    </div>
-  </div>
-</footer>
+<!-- FOOTER moved out of #home — now a global footer after </main> so it shows on every page -->
 
 </div><!-- end #home -->
 
@@ -4361,6 +4317,50 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 </div>
 
 </main>
+
+<!-- GLOBAL FOOTER — outside all .page divs so it shows on the bottom of every page -->
+<footer id="bd-footer">
+  <div class="bd-footer-inner">
+    <div class="bd-footer-top">
+      <div class="bd-footer-brand">
+        <div class="f-logo">Bedrock Digital</div>
+        <div class="f-tagline">Spend more time on the job. Less time on everything else.</div>
+        <p>Websites, SEO, business tools &mdash; built for contractors, plumbers, electricians, and trade businesses. Fair pricing. No agency runaround.</p>
+        <div style="margin-top:0.9rem;display:flex;flex-direction:column;gap:0.3rem">
+          <a href="tel:+16124757477" style="font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.6);text-decoration:none">(612) 475-7477</a>
+          <a href="mailto:support@bedrock-sites.com" style="font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.6);text-decoration:none">support@bedrock-sites.com</a>
+          <address style="font-style:normal;font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.4)">Rexburg, ID &middot; Serving contractors nationwide</address>
+        </div>
+      </div>
+      <div class="bd-footer-links">
+        <div class="f-col-title">Products</div>
+        <ul>
+          <li><a href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
+          <li><a href="#optimizer" onclick="showPage('optimizer',event)">Bedrock Optimizer</a></li>
+          <li><a href="mailto:support@bedrock-sites.com?subject=SEO%20Waitlist">Bedrock SEO</a></li>
+          <li><a href="mailto:support@bedrock-sites.com?subject=CFO%20Waitlist">Bedrock CFO</a></li>
+        </ul>
+      </div>
+      <div class="bd-footer-links">
+        <div class="f-col-title">Company</div>
+        <ul>
+          <li><a href="#howitworks" onclick="showPage('howitworks',event)">How It Works</a></li>
+          <li><a href="#about" onclick="showPage('about',event)">About Us</a></li>
+          <li><a href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
+          <li><a href="#" onclick="event.preventDefault();openAuthModal('signin')">Sign In</a></li>
+          <li><a href="mailto:support@bedrock-sites.com">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bd-footer-bottom">
+      <span class="f-copy">bedrock-sites.com &middot; &copy; 2026 Bedrock Digital &middot; Built for the trades</span>
+      <div class="f-legal">
+        <a href="/privacy" target="_blank">Privacy</a>
+        <a href="/terms" target="_blank">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
 
 <script>
 // Optimizer globals hoisted early so any init error below cannot leave them undefined
