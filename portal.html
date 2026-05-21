@@ -406,29 +406,26 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     </a>
     <a href="/" class="nav-home-link">&#8592; Take me Home</a>
   </div>
-  <!-- PORTAL TABS — now in nav, to the left of the bell -->
+  <!-- PORTAL TABS — in nav, left of the bell. Each tab opens its own HUB. -->
   <div class="nav-tabs" id="navTabs" style="display:none">
+    <div class="nav-tab-group" data-top="dashboard">
+      <button class="nav-tab-btn" onclick="goTab('dashboard','default')">Dashboard</button>
+    </div>
     <div class="nav-tab-group" data-top="website">
-      <button class="nav-tab-btn" onclick="goTab('website','editor')">My Website <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="goTab('website','hub')">My Website <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','hub')"><span class="tsl-eyebrow">Overview</span>Website Hub</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','builder')"><span class="tsl-eyebrow">Build</span>Site Builder</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','editor')"><span class="tsl-eyebrow">Edit</span>Site Editor</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','optimizer')"><span class="tsl-eyebrow">SEO/GEO</span>My Site Optimizer</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','optimizer')"><span class="tsl-eyebrow">SEO/GEO</span>Site Optimizer</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','analytics')"><span class="tsl-eyebrow">Stats</span>Site Analytics</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','status')"><span class="tsl-eyebrow">Status</span>Your Website Info</button>
-      </div>
-    </div>
-    <div class="nav-tab-group" data-top="seo">
-      <button class="nav-tab-btn" onclick="goTab('seo','audit')">SEO / GEO <span class="nav-tab-caret">▾</span></button>
-      <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('seo','audit')"><span class="tsl-eyebrow">Run</span>Free Audit</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('seo','reports')"><span class="tsl-eyebrow">View</span>Reports</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','status')"><span class="tsl-eyebrow">Status</span>Site Info</button>
       </div>
     </div>
     <div class="nav-tab-group" data-top="marketing">
-      <button class="nav-tab-btn" onclick="goTab('marketing','overview')">Marketing <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="goTab('marketing','hub')">Marketing <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','overview')"><span class="tsl-eyebrow">Overview</span>Marketing Hub</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','hub')"><span class="tsl-eyebrow">Overview</span>Marketing Hub</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','integrations')"><span class="tsl-eyebrow">Soon</span>Social Integrations</button>
@@ -438,8 +435,9 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
     </div>
     <div class="nav-tab-group" data-top="subs">
-      <button class="nav-tab-btn" onclick="goTab('subs','cart')">My Subscriptions <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="goTab('subs','hub')">My Subscriptions <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','hub')"><span class="tsl-eyebrow">Overview</span>Billing Hub</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Edit</span>Plan &amp; Cart</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','active')"><span class="tsl-eyebrow">View</span>Active Subscriptions</button>
       </div>
@@ -555,44 +553,9 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
   <div id="pageDash" class="page">
     <div class="dash-wrap">
 
-      <!-- PERMANENT BANNER (always visible above tabs) -->
-      <div class="banner">
-        <div class="banner-head">
-          <div class="banner-eyebrow">Your Portal</div>
-          <div class="banner-title" id="dashBizName">Loading…</div>
-          <div class="banner-sub">Everything you need to run your Bedrock business — website, marketing, SEO, profile, and billing.</div>
-        </div>
-        <div class="banner-grid">
-          <!-- Account Info -->
-          <div class="banner-card">
-            <div class="bc-label">Account</div>
-            <div class="bc-title">Account Info</div>
-            <div class="info-row"><span class="info-key">Business</span><span class="info-val" id="acctBizName">—</span></div>
-            <div class="info-row"><span class="info-key">Name</span><span class="info-val" id="acctName">—</span></div>
-            <div class="info-row"><span class="info-key">Email</span><span class="info-val" id="acctEmail">—</span></div>
-            <div class="info-row"><span class="info-key">Phone</span><span class="info-val" id="acctPhone">—</span></div>
-            <div class="info-row"><span class="info-key">Trade</span><span class="info-val" id="acctTrade">—</span></div>
-            <div class="info-row"><span class="info-key">Member</span><span class="info-val" id="acctSince">—</span></div>
-          </div>
-          <!-- Quick Links -->
-          <div class="banner-card">
-            <div class="bc-label">Quick Links</div>
-            <div class="bc-title">Jump to…</div>
-            <div class="quick-links">
-              <button type="button" class="quick-link" onclick="goTab('website','editor')"><span>Edit My Site</span><span>→</span></button>
-              <button type="button" class="quick-link" onclick="goTab('marketing','build')"><span>Build a Marketing Piece</span><span>→</span></button>
-              <button type="button" class="quick-link" onclick="goTab('profile','default')"><span>Complete My Profile</span><span>→</span></button>
-              <button type="button" class="quick-link" onclick="goTab('subs','cart')"><span>Manage Subscriptions</span><span>→</span></button>
-            </div>
-          </div>
-          <!-- Support -->
-          <div class="banner-card support-card">
-            <div class="bc-label">Need Help?</div>
-            <div class="bc-title">We've got you</div>
-            <div class="support-sub">Questions about your site, billing, marketing — anything. We answer fast.</div>
-            <a href="mailto:support@bedrock-sites.com" class="btn-outline" style="display:inline-block;width:100%;text-align:center">Email Support</a>
-          </div>
-        </div>
+      <div style="margin-bottom:1.25rem">
+        <div class="banner-eyebrow" style="font-size:0.58rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:var(--accent);margin-bottom:0.4rem">Your Portal</div>
+        <div class="banner-title" id="dashBizName" style="font-family:'Playfair Display',serif;font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:300;color:#fff">Loading…</div>
       </div>
 
       <!-- TAB BAR with caret submenus -->
@@ -643,6 +606,139 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <div class="subtab-strip" id="subStrip"></div>
 
       <!-- ─────────── PANES ─────────── -->
+
+      <!-- ════════════ DASHBOARD HUB ════════════ -->
+      <div class="portal-pane active" id="pane-dashboard-default">
+        <div class="banner-grid" style="display:grid;grid-template-columns:1.2fr 1fr;gap:1rem;margin-bottom:1rem">
+          <!-- Account Info -->
+          <div class="banner-card">
+            <div class="bc-label">Account</div>
+            <div class="bc-title">Account Info</div>
+            <div class="info-row"><span class="info-key">Business</span><span class="info-val" id="acctBizName">—</span></div>
+            <div class="info-row"><span class="info-key">Name</span><span class="info-val" id="acctName">—</span></div>
+            <div class="info-row"><span class="info-key">Email</span><span class="info-val" id="acctEmail">—</span></div>
+            <div class="info-row"><span class="info-key">Phone</span><span class="info-val" id="acctPhone">—</span></div>
+            <div class="info-row"><span class="info-key">Trade</span><span class="info-val" id="acctTrade">—</span></div>
+            <div class="info-row"><span class="info-key">Member</span><span class="info-val" id="acctSince">—</span></div>
+          </div>
+          <!-- Quick Links -->
+          <div class="banner-card">
+            <div class="bc-label">Quick Links</div>
+            <div class="bc-title">Jump to…</div>
+            <div class="quick-links">
+              <button type="button" class="quick-link" onclick="goTab('website','hub')"><span>My Website</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="goTab('marketing','hub')"><span>Marketing Hub</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="goTab('profile','default')"><span>Complete My Profile</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="goTab('subs','hub')"><span>Billing &amp; Subscriptions</span><span>→</span></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="banner-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+          <!-- Get Help -->
+          <div class="banner-card support-card">
+            <div class="bc-label">Need Help?</div>
+            <div class="bc-title">We've got you</div>
+            <div class="support-sub">Questions about your site, billing, marketing, anything at all. We answer fast.</div>
+            <a href="mailto:support@bedrock-sites.com" class="btn-outline" style="display:inline-block;width:100%;text-align:center">Email Support</a>
+          </div>
+          <!-- Leave a Review -->
+          <div class="banner-card">
+            <div class="bc-label">Spread the word</div>
+            <div class="bc-title">Leave Bedrock a review</div>
+            <div class="support-sub" style="margin-bottom:0.6rem">Happy with Bedrock? A few honest words help other contractors find us.</div>
+            <textarea id="reviewText" placeholder="What's been good about working with Bedrock?" style="width:100%;font-family:'DM Sans',sans-serif;font-size:0.8rem;padding:0.6rem 0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;min-height:64px;outline:none"></textarea>
+            <div style="display:flex;gap:6px;align-items:center;margin-top:0.5rem;flex-wrap:wrap">
+              <select id="reviewStars" style="font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:0.5rem 0.6rem;border:1px solid var(--border);border-radius:6px">
+                <option value="5">★★★★★ 5</option>
+                <option value="4">★★★★ 4</option>
+                <option value="3">★★★ 3</option>
+                <option value="2">★★ 2</option>
+                <option value="1">★ 1</option>
+              </select>
+              <button class="btn-dark" type="button" onclick="submitReview()" style="flex:1;min-width:120px">Send Review</button>
+            </div>
+            <div id="reviewMsg" style="font-size:0.7rem;color:var(--text-muted);margin-top:6px"></div>
+          </div>
+        </div>
+
+        <!-- Feedback form -->
+        <div class="banner-card" style="margin-top:1rem">
+          <div class="bc-label">Tell us anything</div>
+          <div class="bc-title">Submit feedback</div>
+          <div class="support-sub" style="margin-bottom:0.6rem">Found a bug? Want a feature? Something confusing? Send it straight to Brock.</div>
+          <textarea id="feedbackText" placeholder="Your feedback, idea, or bug report…" style="width:100%;font-family:'DM Sans',sans-serif;font-size:0.8rem;padding:0.6rem 0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;min-height:80px;outline:none"></textarea>
+          <div style="display:flex;gap:6px;align-items:center;margin-top:0.5rem;flex-wrap:wrap">
+            <select id="feedbackType" style="font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:0.5rem 0.6rem;border:1px solid var(--border);border-radius:6px">
+              <option value="idea">Feature idea</option>
+              <option value="bug">Bug report</option>
+              <option value="confusing">Something's confusing</option>
+              <option value="other">Other</option>
+            </select>
+            <button class="btn-gold" type="button" onclick="submitFeedback()" style="flex:1;min-width:140px;width:auto">Send Feedback</button>
+          </div>
+          <div id="feedbackMsg" style="font-size:0.7rem;color:var(--text-muted);margin-top:6px"></div>
+        </div>
+      </div>
+
+      <!-- ════════════ MY WEBSITE HUB OVERVIEW ════════════ -->
+      <div class="portal-pane" id="pane-website-hub">
+        <div class="mkt-card">
+          <div class="dc-label">My Website</div>
+          <div class="dc-title">Your website, end to end.</div>
+          <div class="dc-sub">Build it, edit it, check how it's performing, and run the SEO/GEO audit — all in one place.</div>
+          <div class="mkt-features">
+            <div class="mkt-feat"><strong>Site Builder</strong>Don't have a site yet? Build one in 15 minutes.</div>
+            <div class="mkt-feat"><strong>Site Editor</strong>Change text, photos, services anytime.</div>
+            <div class="mkt-feat"><strong>Site Optimizer</strong>Run the SEO/GEO audit on your own site.</div>
+            <div class="mkt-feat"><strong>Analytics</strong>Page views and visitors once you're live.</div>
+          </div>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
+            <button class="btn-gold" style="width:auto;padding:0.8rem 1.5rem" onclick="goTab('website','editor')">Edit My Site →</button>
+            <button class="btn-outline" onclick="goTab('website','optimizer')">Run Site Optimizer</button>
+            <button class="btn-outline" onclick="goTab('website','analytics')">View Analytics</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════ MARKETING HUB OVERVIEW ════════════ -->
+      <div class="portal-pane" id="pane-marketing-hub">
+        <div class="mkt-card">
+          <div class="dc-label">Marketing Hub</div>
+          <div class="dc-title">Everything to market your business.</div>
+          <div class="dc-sub">Set up your Brand Kit once, then build flyers, social posts, door hangers, yard signs, business cards, and more. Opens in the full Bedrock Marketing workspace.</div>
+          <div class="mkt-features">
+            <div class="mkt-feat"><strong>Brand Kit</strong>Colors, fonts, voice, logo. One-time setup.</div>
+            <div class="mkt-feat"><strong>Build Materials</strong>8 formats, AI copy, PNG/JPG/PDF.</div>
+            <div class="mkt-feat"><strong>Asset Library</strong>Every piece you make, saved.</div>
+            <div class="mkt-feat"><strong>Integrations</strong>Social posting — coming soon.</div>
+          </div>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
+            <button class="btn-gold" style="width:auto;padding:0.8rem 1.5rem" onclick="launchMarketing('wizard')">Open Marketing Workspace →</button>
+            <button class="btn-outline" onclick="goTab('marketing','brand')">Brand Kit</button>
+            <button class="btn-outline" onclick="goTab('marketing','build')">Build Materials</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════ SUBSCRIPTIONS HUB OVERVIEW ════════════ -->
+      <div class="portal-pane" id="pane-subs-hub">
+        <div class="mkt-card">
+          <div class="dc-label">Billing &amp; Subscriptions</div>
+          <div class="dc-title">Your plan, your bill, in one place.</div>
+          <div class="dc-sub">See what you're subscribed to, change your plan, apply promo codes, and review billing — clean and simple.</div>
+          <div class="mkt-features">
+            <div class="mkt-feat"><strong>Plan &amp; Cart</strong>Add or remove tools, bundle and save.</div>
+            <div class="mkt-feat"><strong>Active Subscriptions</strong>What you're paying for now.</div>
+            <div class="mkt-feat"><strong>Promo Codes</strong>Discounts applied before checkout.</div>
+            <div class="mkt-feat"><strong>Money-back</strong>Save time or your money back.</div>
+          </div>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
+            <button class="btn-gold" style="width:auto;padding:0.8rem 1.5rem" onclick="goTab('subs','cart')">Manage My Plan →</button>
+            <button class="btn-outline" onclick="goTab('subs','active')">Active Subscriptions</button>
+          </div>
+        </div>
+      </div>
 
       <!-- WEBSITE: BUILDER (sends them to / to build a NEW site) -->
       <div class="portal-pane" id="pane-website-builder">
@@ -985,19 +1081,9 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
                 <div class="field"><label>Service radius (miles)</label><input type="number" id="pf_service_radius_mi" placeholder="25"></div>
                 <div class="field"><label>Best-selling service</label><input type="text" id="pf_ex_best_service" placeholder="Water heater installs"></div>
                 <div class="field full"><label>Top 3 competitors (URLs or names)</label><input type="text" id="pf_ex_competitors" placeholder="acmeplumbing.com, joe-plumber.com, fast-flow-plumbing.com"></div>
-                <div class="field full">
-                  <label>Sync from Google Business Page</label>
-                  <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:0.45rem;line-height:1.5">Paste your Google Maps business URL (or your Google Place ID). We'll pull your live rating and review count and feed them into Site Analytics.</div>
-                  <div class="gbiz-row">
-                    <input type="text" id="pf_ex_gbiz_url" placeholder="https://maps.google.com/?cid=... or Place ID">
-                    <button class="gbiz-sync-btn" id="gbizSyncBtn" type="button" onclick="syncGoogleBiz()">Sync from Google</button>
-                  </div>
-                  <div class="gbiz-msg" id="gbizMsg"></div>
-                  <div class="profile-grid" style="margin-top:0.85rem">
-                    <div class="field"><label>Star rating <span style="color:var(--text-muted);font-weight:400">(synced)</span></label><input type="text" id="pf_ex_review_rating" placeholder="4.7" readonly style="background:var(--offwhite)"></div>
-                    <div class="field"><label>Review count <span style="color:var(--text-muted);font-weight:400">(synced)</span></label><input type="number" id="pf_ex_review_count" placeholder="32" readonly style="background:var(--offwhite)"></div>
-                  </div>
-                </div>
+                <div class="field"><label>Google star rating <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input type="text" id="pf_ex_review_rating" placeholder="4.7"></div>
+                <div class="field"><label>Google review count <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input type="number" id="pf_ex_review_count" placeholder="32" min="0"></div>
+                <div class="field full"><label>Google Business page link <span style="color:var(--text-muted);font-weight:400">(optional)</span></label><input type="text" id="pf_ex_gbiz_url" placeholder="g.page/yourbusiness or your Google Maps link"></div>
               </div>
               <div class="stage-save-row">
                 <span class="stage-save-msg" id="msg-4"></span>
@@ -1225,10 +1311,10 @@ function startDemo() {
     { id:'n1', icon:'👤', msg:'Welcome! Complete your profile to unlock all features.',         meta:'Just now',     read:false, link:{tab:'profile',sub:'default'} },
     { id:'n2', icon:'📣', msg:'Your new yard sign is ready to download in Bedrock Marketing.',   meta:'2 hours ago',  read:false, link:{tab:'marketing',sub:'build'} },
     { id:'n3', icon:'📈', msg:'Site analytics: 38 visitors this week, up 24% vs. last week.',   meta:'Yesterday',    read:true,  link:{tab:'website',sub:'analytics'} },
-    { id:'n4', icon:'🔍', msg:'SEO audit ready — you scored 72/100. Tap to view recommendations.',meta:'2 days ago',   read:true,  link:{tab:'seo',sub:'audit'} },
+    { id:'n4', icon:'🔍', msg:'Site Optimizer ready — you scored 72/100. Tap to view recommendations.',meta:'2 days ago',read:true,  link:{tab:'website',sub:'optimizer'} },
   ]);
   showPage('pageDash');
-  goTab('website','editor');
+  goTab('dashboard','default');
 }
 function fillDemoAnalytics() {
   var el = document.getElementById('analyticsContent'); if (!el) return;
@@ -1267,6 +1353,10 @@ function showNavTabs(yes) {
   } else {
     showPage('pageLogin');
     showNavTabs(false);
+    // Deep-link: /portal.html#create opens the Create Account form directly
+    if ((window.location.hash || '').toLowerCase().indexOf('create') !== -1) {
+      switchAuthTab('create');
+    }
   }
 })();
 
@@ -1366,15 +1456,18 @@ function loadDashboard(session) {
       // load notifications (UI-only — would come from a backend later)
       loadStoredNotifications(session);
       showPage('pageDash');
-      // default tab
-      var hash = (window.location.hash || '').replace('#','');
-      if (hash && hash.indexOf('profile') !== -1) goTab('profile','default');
-      else goTab('website','editor');
+      // default tab — honor hash deep-links (#profile, #subs, #marketing, #website)
+      var hash = (window.location.hash || '').replace('#','').toLowerCase();
+      if (hash.indexOf('profile') !== -1) goTab('profile','default');
+      else if (hash.indexOf('subs') !== -1) goTab('subs','hub');
+      else if (hash.indexOf('marketing') !== -1) goTab('marketing','hub');
+      else if (hash.indexOf('website') !== -1) goTab('website','hub');
+      else goTab('dashboard','default');
     }).catch(function() {
       populateDashboard(null, session);
       loadStoredNotifications(session);
       showPage('pageDash');
-      goTab('website','editor');
+      goTab('dashboard','default');
     });
 }
 
@@ -1441,11 +1534,11 @@ function launchMarketing(view) {
 var CURRENT_TAB = { top:'website', sub:'editor' };
 
 var TAB_DEFS = {
-  website:   { label:'My Website',      subs:{ builder:'Site Builder', editor:'Site Editor', optimizer:'My Site Optimizer', analytics:'Site Analytics', status:'Site Info' } },
-  seo:       { label:'SEO / GEO',       subs:{ audit:'Free Audit', reports:'Reports' } },
-  marketing: { label:'Marketing',       subs:{ overview:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', integrations:'Social Integrations' } },
+  dashboard: { label:'Dashboard',       subs:{ default:'Dashboard' } },
+  website:   { label:'My Website',      subs:{ hub:'Website Hub', builder:'Site Builder', editor:'Site Editor', optimizer:'Site Optimizer', analytics:'Site Analytics', status:'Site Info' } },
+  marketing: { label:'Marketing',       subs:{ hub:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', integrations:'Social Integrations' } },
   profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
-  subs:      { label:'My Subscriptions',subs:{ cart:'Plan &amp; Cart', active:'Active Subscriptions' } },
+  subs:      { label:'My Subscriptions',subs:{ hub:'Billing Hub', cart:'Plan &amp; Cart', active:'Active Subscriptions' } },
 };
 
 function goTab(top, sub) {
@@ -1812,6 +1905,55 @@ function checkout() {
   alert('Checkout flow coming soon. Once Stripe products are configured, this button will redirect to Stripe Checkout with the right bundle priced in.');
 }
 
+// ── DASHBOARD: REVIEW + FEEDBACK FORMS ───────────────────────────────────────
+function dashContext() {
+  var email = (currentSession && currentSession.user && currentSession.user.email) ||
+              (currentLead && currentLead.email) || '';
+  var biz = (currentLead && currentLead.business_name) || '';
+  var name = (currentLead && currentLead.contact_name) || '';
+  return { email: email, business: biz, name: name };
+}
+
+function submitReview() {
+  var txt = (document.getElementById('reviewText').value || '').trim();
+  var stars = document.getElementById('reviewStars').value;
+  var msg = document.getElementById('reviewMsg');
+  if (!txt) { msg.style.color = 'var(--red)'; msg.textContent = 'Write a couple words first.'; return; }
+  if (DEMO) { msg.style.color = 'var(--text-muted)'; msg.textContent = 'Demo mode — not sent.'; return; }
+  var ctx = dashContext();
+  msg.style.color = 'var(--text-muted)'; msg.textContent = 'Sending…';
+  fetch('/.netlify/functions/submit-feedback', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ kind:'review', message: txt, stars: stars, email: ctx.email, business: ctx.business, name: ctx.name }),
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.success) {
+      msg.style.color = 'var(--green)';
+      msg.textContent = '✓ Thank you! Your review was sent.';
+      document.getElementById('reviewText').value = '';
+    } else { msg.style.color = 'var(--red)'; msg.textContent = d.error || 'Could not send — try again.'; }
+  }).catch(function(){ msg.style.color = 'var(--red)'; msg.textContent = 'Network error — try again.'; });
+}
+
+function submitFeedback() {
+  var txt = (document.getElementById('feedbackText').value || '').trim();
+  var type = document.getElementById('feedbackType').value;
+  var msg = document.getElementById('feedbackMsg');
+  if (!txt) { msg.style.color = 'var(--red)'; msg.textContent = 'Tell us something first.'; return; }
+  if (DEMO) { msg.style.color = 'var(--text-muted)'; msg.textContent = 'Demo mode — not sent.'; return; }
+  var ctx = dashContext();
+  msg.style.color = 'var(--text-muted)'; msg.textContent = 'Sending…';
+  fetch('/.netlify/functions/submit-feedback', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ kind:'feedback', feedback_type: type, message: txt, email: ctx.email, business: ctx.business, name: ctx.name }),
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d.success) {
+      msg.style.color = 'var(--green)';
+      msg.textContent = '✓ Sent. Thanks — Brock reads every one of these.';
+      document.getElementById('feedbackText').value = '';
+    } else { msg.style.color = 'var(--red)'; msg.textContent = d.error || 'Could not send — try again.'; }
+  }).catch(function(){ msg.style.color = 'var(--red)'; msg.textContent = 'Network error — try again.'; });
+}
+
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 function showError(id, msg) { var el = document.getElementById(id); if (!el) return; el.textContent = msg; el.style.display = 'block'; }
 function clearError(id) { var el = document.getElementById(id); if (el) { el.textContent = ''; el.style.display = 'none'; } }
@@ -1967,43 +2109,6 @@ readField = function(field) {
   if (field === 'years_in_business') return YEARS_IN_BIZ;
   return _origReadField(field);
 };
-
-// ── GOOGLE BUSINESS SYNC ─────────────────────────────────────────────────────
-async function syncGoogleBiz() {
-  var input = document.getElementById('pf_ex_gbiz_url');
-  var btn = document.getElementById('gbizSyncBtn');
-  var msg = document.getElementById('gbizMsg');
-  var url = (input.value || '').trim();
-  if (!url) { msg.textContent = 'Paste a Google Maps URL or Place ID first.'; msg.className = 'gbiz-msg err'; return; }
-  if (!currentSession) { msg.textContent = 'Please sign in to use this.'; msg.className = 'gbiz-msg err'; return; }
-  btn.disabled = true; btn.textContent = 'Syncing…'; msg.textContent = ''; msg.className = 'gbiz-msg';
-  try {
-    var r = await fetch('/.netlify/functions/google-business-sync', {
-      method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer '+currentSession.access_token},
-      body: JSON.stringify({ url: url })
-    });
-    var data = await r.json();
-    if (data.success) {
-      document.getElementById('pf_ex_review_rating').value = data.rating != null ? String(data.rating) : '';
-      document.getElementById('pf_ex_review_count').value  = data.review_count != null ? String(data.review_count) : '';
-      msg.textContent = '✓ Synced. ' + (data.name ? '"' + data.name + '" — ' : '') + data.rating + ' stars · ' + data.review_count + ' reviews. Click Save SEO Info to keep this.';
-      msg.className = 'gbiz-msg ok';
-      updateProfileMeter();
-    } else if (r.status === 503) {
-      msg.textContent = data.error || 'Google sync not configured yet — enter rating manually below.';
-      msg.className = 'gbiz-msg err';
-      document.getElementById('pf_ex_review_rating').removeAttribute('readonly');
-      document.getElementById('pf_ex_review_count').removeAttribute('readonly');
-    } else {
-      msg.textContent = data.error || 'Sync failed — double-check the URL or Place ID.';
-      msg.className = 'gbiz-msg err';
-    }
-  } catch(e) {
-    msg.textContent = 'Network error — try again.';
-    msg.className = 'gbiz-msg err';
-  }
-  btn.disabled = false; btn.textContent = 'Sync from Google';
-}
 
 // ── MY SITE OPTIMIZER (private) ──────────────────────────────────────────────
 function runMyOptimizer() {

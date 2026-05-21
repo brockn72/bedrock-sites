@@ -1611,6 +1611,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   <ul class="nav-links" id="hpNavLinks">
     <li><a id="nl-home" href="#home" onclick="showPage('home',event)">Home</a></li>
     <li><a id="nl-sites" href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
+    <li><a id="nl-marketing" href="/bedrock-marketing-v1.html">Marketing</a></li>
     <li><a id="nl-optimizer" href="#optimizer" onclick="showPage('optimizer',event)">Optimizer</a></li>
     <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li>
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
@@ -1619,6 +1620,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <a id="nlLoginLink" href="#login" onclick="showPage('login',event)">Client Login</a>
       <a id="nlProfileBtn" href="portal.html" title="My Portal" style="display:none;align-items:center;gap:0.45rem;text-decoration:none"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label">My Portal</span></a>
     </li>
+    <li><a id="nl-createacct" href="/portal.html#create" style="color:#fff;background:#C9922A;padding:0.5rem 1rem;border-radius:4px;font-weight:600">Create Account</a></li>
     <li><a id="nl-builder" href="#builder" onclick="showPage('builder',event)" class="nav-cta">Build My Site</a></li>
   </ul>
   <button id="hpMobileToggle" class="hp-mobile-toggle" onclick="toggleHpNav(this)" aria-label="Toggle menu">
@@ -2202,69 +2204,38 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   </div>
 </section>
 
-<!-- PRODUCTS — Roadmap-style -->
+<!-- WHY BEDROCK + ACCOUNT CTA -->
 <section id="bd-products">
   <div class="bd-products-inner">
     <div class="section-eyebrow">Why Bedrock Digital</div>
     <h2>One company that <em style="font-style:italic;color:var(--accent)">actually understands</em><br>how trade businesses work.</h2>
-    <p class="bd-products-sub">Most software is built for office workers. Bedrock is built for contractors. Every product talks to every other product through one shared business profile &mdash; so you never type the same thing twice, and every tool gets smarter the more you use it. Below is the current state of the build.</p>
+    <p class="bd-products-sub">Most software is built for office workers. Bedrock is built for contractors. Every tool runs off one shared business profile, so you never type the same thing twice, and the whole system gets smarter the more you use it.</p>
 
-    <div style="margin-bottom:3rem">
-      <div class="bd-product featured bd-section" style="max-width:100%;margin-bottom:1.25rem">
-        <div class="bd-product-status live">Live now</div>
-        <h3>Bedrock Sites</h3>
-        <p class="bd-product-desc">A professional website for your trade business. Built in one session, live the same day. No tech skills, no waiting weeks, no agency runaround.</p>
-        <ul class="bd-product-features">
-          <li>Built in under 15 minutes</li>
-          <li>Mobile-first, SEO-ready out of the box</li>
-          <li>$200 setup + $20/month &mdash; domain included</li>
-          <li>See your site before you pay a dime</li>
-        </ul>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;align-items:center">
-          <a href="#sites" onclick="showPage('sites',event)" class="bd-product-link">Learn More &rarr;</a>
-          <a href="#builder" onclick="showPage('builder',event)" style="font-family:'DM Sans',sans-serif;font-size:0.65rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;background:#C9922A;color:#fff;padding:0.6rem 1.2rem;border-radius:4px;text-decoration:none;transition:background 0.2s">Build My Site &rarr;</a>
-        </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin:2.5rem 0 3rem">
+      <div class="bd-section" style="background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.75rem 1.5rem">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:.75rem">01</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;margin-bottom:.45rem">Set up once</h3>
+        <p style="font-family:'DM Sans',sans-serif;font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.78)">Your business name, trade, service area, colors, and logo live in one profile. Enter it once and every tool already knows it.</p>
+      </div>
+      <div class="bd-section" style="background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.75rem 1.5rem">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:.75rem">02</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;margin-bottom:.45rem">Use what you need</h3>
+        <p style="font-family:'DM Sans',sans-serif;font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.78)">Website, marketing, SEO, finances. Start with one tool, add more when it makes sense. Each one stands on its own.</p>
+      </div>
+      <div class="bd-section" style="background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.75rem 1.5rem">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:.75rem">03</div>
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;margin-bottom:.45rem">Run it all from one portal</h3>
+        <p style="font-family:'DM Sans',sans-serif;font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.78)">One login. One dashboard. Your website, marketing, and billing in a single place built to stay simple.</p>
       </div>
     </div>
 
-    <div style="margin-bottom:1.5rem">
-      <div style="font-family:'DM Sans',sans-serif;font-size:0.55rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:1.25rem">Coming Next</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem">
-        <div class="bd-product bd-section">
-          <div class="bd-product-status live">Free tool</div>
-          <h3>Optimizer</h3>
-          <p class="bd-product-desc">A full diagnostic of your online presence &mdash; the same audit agencies charge hundreds for, in plain English.</p>
-          <ul class="bd-product-features">
-            <li>Deep SEO, speed &amp; mobile analysis</li>
-            <li>GEO readiness for AI search (ChatGPT, Siri)</li>
-            <li>A prioritized fix list &mdash; what it's costing you, ranked</li>
-          </ul>
-          <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-product-link">Run Free Scan &rarr;</a>
-        </div>
-
-        <div class="bd-product bd-section">
-          <div class="bd-product-status soon">Coming soon</div>
-          <h3>SEO</h3>
-          <p class="bd-product-desc">Get found on Google and AI search. Show up when homeowners ask for a recommendation.</p>
-          <ul class="bd-product-features">
-            <li>Local SEO for your service area</li>
-            <li>Google Business Profile management</li>
-            <li>GEO optimization for AI search</li>
-          </ul>
-          <a href="mailto:support@bedrock-sites.com?subject=SEO%20Waitlist" class="bd-product-link">Join Waitlist &rarr;</a>
-        </div>
-
-        <div class="bd-product bd-section">
-          <div class="bd-product-status soon">Coming soon</div>
-          <h3>CFO</h3>
-          <p class="bd-product-desc">Ask your business a question, get an answer. QuickBooks integration, expenses, cash flow &mdash; from your phone.</p>
-          <ul class="bd-product-features">
-            <li>QuickBooks auto-categorize</li>
-            <li>Cash flow in plain English</li>
-            <li>Replaces a part-time bookkeeper</li>
-          </ul>
-          <a href="mailto:support@bedrock-sites.com?subject=CFO%20Waitlist" class="bd-product-link">Join Waitlist &rarr;</a>
-        </div>
+    <!-- ACCOUNT CTA -->
+    <div class="bd-section" style="background:linear-gradient(135deg,rgba(201,146,42,.14),rgba(255,255,255,.03));border:1px solid var(--accent);border-radius:12px;padding:2.5rem 2rem;text-align:center">
+      <h3 style="font-family:'Cormorant Garamond',serif;font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700;color:#fff;margin-bottom:0.6rem">Create a free account. Preview every tool.</h3>
+      <p style="font-family:'DM Sans',sans-serif;font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.82);max-width:560px;margin:0 auto 1.5rem">It's free to create an account and look around. Build a website preview, set up a Brand Kit, run an SEO audit. You only pay when you decide to launch something.</p>
+      <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
+        <a href="/portal.html#create" class="bd-btn-gold" style="font-size:0.7rem">Create My Free Account</a>
+        <a href="#builder" onclick="showPage('builder',event)" class="bd-btn-outline" style="font-size:0.7rem">Build a Site Preview</a>
       </div>
     </div>
   </div>
@@ -2787,7 +2758,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   <section class="op-intro" id="opIntro">
     <div class="op-intro-inner">
       <div class="op-intro-eyebrow">How it works</div>
-      <h2>A real audit &mdash; not a sales gimmick.</h2>
+      <h2>A real audit. Tested, trusted, and accurate.</h2>
       <div class="op-steps">
         <div class="op-step">
           <div class="op-step-num">1</div>
@@ -3099,9 +3070,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <div class="tag tag-dark">Our Story</div>
         <h2 class="heading">I built Bedrock because nobody else did.</h2>
         <div class="divider"></div>
-        <p class="body-text">I started a lawn care company when I was sixteen. Did the work, knocked on doors, ran the books out of a notebook. Like every trade business, I needed a website &mdash; and I needed marketing, and I needed to track money, and I needed to show up on Google. None of those tools were built for me. Agencies wanted thousands and weeks. DIY platforms wanted hours I didn't have. Quickbooks felt like reading a foreign language.</p>
-        <p class="body-text">So I taped together a Facebook page and called it good. I lost jobs because of it. Customers couldn't find me, couldn't trust me, couldn't see my work. The marketing tools out there were built for office workers and tech companies &mdash; not for someone running a one-truck crew on a 90&deg; July afternoon.</p>
-        <p class="body-text">Years later I went looking again. Tools for trade businesses. Connected, simple, fair price. I couldn't find them. So I'm building them. Bedrock is what I wish had existed when I was 16 &mdash; a connected ecosystem for the people who keep their towns running. One profile. One company. Built specifically for you, not adapted from something else.</p>
+        <p class="body-text">I started out running a lawn care company, and later a landscaping company. I did the work, knocked on doors, and ran the books out of a notebook. Like every trade business, I needed a website. I needed marketing. I needed to track money and show up on Google. None of those tools were built for me. Agencies wanted thousands of dollars and weeks of time. DIY platforms wanted hours I didn't have. QuickBooks felt like reading a foreign language.</p>
+        <p class="body-text">So I taped together a Facebook page and called it good. I lost jobs because of it. Customers couldn't find me, couldn't trust me, and couldn't see my work. The tools out there were built for office workers and tech companies. They were never built for someone running a crew out of a truck.</p>
+        <p class="body-text">Years later I went looking again. Connected tools for trade businesses, simple, at a fair price. I couldn't find them, so I'm building them. Bedrock is what I wish had existed back then. A connected system for the people who keep their towns running. One profile. One company. Built specifically for you, not adapted from something else.</p>
       </div>
       <div>
         <div class="founder-mini">
@@ -3333,19 +3304,6 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   <div class="no-risk">
     <span>—</span>
     <span><strong>No charge until step 4.</strong> See your complete website at no cost. Love it — pay $200. Don't — walk away, no questions asked.</span>
-  </div>
-
-  <!-- Resume banner (v29) — appears only when a saved build is found in localStorage.
-       Mounted hidden; showResumeBannerIfSaved() reveals it on page load. -->
-  <div id="resumeBuildBanner" style="display:none;background:rgba(201,168,76,0.12);border:1px solid var(--accent);border-left:4px solid var(--accent);padding:1rem 1.5rem;margin:0 5%;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-    <div style="flex:1;min-width:240px">
-      <div style="font-size:0.76rem;font-weight:300;color:var(--text-mid);line-height:1.6">You have an unfinished build from <span id="resumeBuildAge" style="font-weight:600;color:var(--dark)"></span>. Pick up where you left off?</div>
-    </div>
-    <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap">
-      <button onclick="continueSavedBuild()" class="btn-gold" style="padding:0.6rem 1.2rem;font-size:0.62rem">Continue Build</button>
-      <button onclick="if(confirm('Start over? Your saved build will be erased.')){clearSavedBuild();}" style="font-family:'Montserrat',sans-serif;padding:0.6rem 1rem;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);background:transparent;border:1px solid var(--border);cursor:pointer">Start Fresh</button>
-      <button onclick="dismissResumeBanner()" title="Dismiss" style="background:transparent;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;line-height:1;padding:0 0.4rem">✕</button>
-    </div>
   </div>
 
   <div id="builderBody" class="builder-body">
@@ -3809,7 +3767,22 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     </div>
 
   </div>
-  <div style="background:var(--dark);border-top:1px solid rgba(255,255,255,0.1);padding:1.75rem 5%;text-align:center">
+
+  <!-- Resume banner (v29) — appears only when a saved build is found in localStorage.
+       Moved below the builder so it doesn't greet users at the top.
+       Mounted hidden; showResumeBannerIfSaved() reveals it on page load. -->
+  <div id="resumeBuildBanner" style="display:none;background:rgba(201,168,76,0.12);border:1px solid var(--accent);border-left:4px solid var(--accent);padding:1rem 1.5rem;margin:1.5rem 5% 0;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+    <div style="flex:1;min-width:240px">
+      <div style="font-size:0.76rem;font-weight:300;color:var(--text-mid);line-height:1.6">You have an unfinished build from <span id="resumeBuildAge" style="font-weight:600;color:var(--dark)"></span>. Pick up where you left off?</div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap">
+      <button onclick="continueSavedBuild()" class="btn-gold" style="padding:0.6rem 1.2rem;font-size:0.62rem">Continue Build</button>
+      <button onclick="if(confirm('Start over? Your saved build will be erased.')){clearSavedBuild();}" style="font-family:'Montserrat',sans-serif;padding:0.6rem 1rem;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);background:transparent;border:1px solid var(--border);cursor:pointer">Start Fresh</button>
+      <button onclick="dismissResumeBanner()" title="Dismiss" style="background:transparent;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;line-height:1;padding:0 0.4rem">✕</button>
+    </div>
+  </div>
+
+  <div style="background:var(--dark);border-top:1px solid rgba(255,255,255,0.1);padding:1.75rem 5%;text-align:center;margin-top:1.5rem">
     <p style="font-family:'DM Sans',sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.62);margin:0">Already a Bedrock client? <a href="#login" onclick="showPage('login',event)" style="color:var(--accent);text-decoration:none;font-weight:500">Open your Client Portal &rarr;</a></p>
   </div>
 </div>
