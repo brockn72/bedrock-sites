@@ -1604,16 +1604,15 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
 <!-- ===== NAV ===== -->
 <nav id="hp-nav">
-  <a class="nav-logo" href="#home" onclick="showPage('home',event)">
+  <a class="nav-logo" href="/">
     <div class="logo-strata"><span class="s1"></span><span class="s2"></span><span class="s3"></span><span class="s4"></span></div>
     <div class="logo-text"><span class="wordmark">Bedrock</span><span class="sub">Digital</span></div>
   </a>
   <ul class="nav-links" id="hpNavLinks">
-    <li><a id="nl-home" href="#home" onclick="showPage('home',event)">Home</a></li>
-    <li><a id="nl-sites" href="/sites.html">Bedrock Sites</a></li>
+    <li><a id="nl-home" href="/">Bedrock Home</a></li>
+    <li><a id="nl-sites" href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
     <li><a id="nl-marketing" href="/bedrock-marketing-v1.html">Marketing</a></li>
     <li><a id="nl-optimizer" href="#optimizer" onclick="showPage('optimizer',event)">Optimizer</a></li>
-    <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li>
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
     <li><a id="nl-reviews" href="#reviews" onclick="showPage('reviews',event)">Reviews</a></li>
     <li id="navLoginLi">
@@ -1621,7 +1620,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <a id="nlProfileBtn" href="portal.html" title="My Portal" style="display:none;align-items:center;gap:0.45rem;text-decoration:none"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label">My Portal</span></a>
     </li>
     <li><a id="nl-createacct" href="/portal.html#create" style="color:#fff;background:#C9922A;padding:0.5rem 1rem;border-radius:4px;font-weight:600">Create Account</a></li>
-    <li><a id="nl-builder" href="/sites.html#builder" class="nav-cta">Build My Site</a></li>
+    <li><a id="nl-builder" href="#builder" onclick="showPage('builder',event)" class="nav-cta">Build My Site</a></li>
   </ul>
   <button id="hpMobileToggle" class="hp-mobile-toggle" onclick="toggleHpNav(this)" aria-label="Toggle menu">
     <span></span><span></span><span></span>
@@ -1630,8 +1629,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
 <main>
 
-<!-- ===== BEDROCK DIGITAL HOMEPAGE ===== -->
-<div id="home" class="page active">
+<!-- ===== BEDROCK DIGITAL HOMEPAGE (kept for shared nav/SPA; not the landing on sites.html) ===== -->
+<div id="home" class="page">
 
 <!-- HERO -->
 <section id="bd-hero">
@@ -2919,7 +2918,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 </div><!-- end #optimizer -->
 
 <!-- ===== BEDROCK SITES MARKETING PAGE (Black Theme) ===== -->
-<div id="sites" class="page">
+<div id="sites" class="page active">
 
 <section style="min-height:100vh;background:var(--dark);display:flex;align-items:center;padding:6rem 5% 4rem;position:relative;overflow:hidden">
   <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(201,146,42,0.10) 0%,transparent 55%);pointer-events:none"></div>
@@ -5445,7 +5444,7 @@ function continueSavedBuild(){
 
 // NAV
 function toggleHpNav(btn){var nav=document.getElementById('hpNavLinks');nav.classList.toggle('open');btn.classList.toggle('open');}
-function showPage(id,e){if(id==='sites'||id==='builder'){if(e&&e.preventDefault)e.preventDefault();window.location.href='/sites.html'+(id==='builder'?'#builder':'');return;}if(e&&e.preventDefault)e.preventDefault();var _hnl=document.getElementById('hpNavLinks');var _hmb=document.getElementById('hpMobileToggle');if(_hnl)_hnl.classList.remove('open');if(_hmb)_hmb.classList.remove('open');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links a').forEach(a=>{a.classList.remove('active-link');a.removeAttribute('aria-current')});const nl=document.getElementById('nl-'+id);if(nl){nl.classList.add('active-link');nl.setAttribute('aria-current','page')}if(history&&history.pushState){try{var _newHash='#'+id;if(window.location.hash!==_newHash){history.pushState({bdPage:id},'',_newHash);}}catch(e){}}document.title=pageTitleFor(id);window.scrollTo({top:0,behavior:'smooth'});
+function showPage(id,e){if(e&&e.preventDefault)e.preventDefault();var _hnl=document.getElementById('hpNavLinks');var _hmb=document.getElementById('hpMobileToggle');if(_hnl)_hnl.classList.remove('open');if(_hmb)_hmb.classList.remove('open');document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.nav-links a').forEach(a=>{a.classList.remove('active-link');a.removeAttribute('aria-current')});const nl=document.getElementById('nl-'+id);if(nl){nl.classList.add('active-link');nl.setAttribute('aria-current','page')}if(history&&history.pushState){try{var _newHash='#'+id;if(window.location.hash!==_newHash){history.pushState({bdPage:id},'',_newHash);}}catch(e){}}document.title=pageTitleFor(id);window.scrollTo({top:0,behavior:'smooth'});
   // Builder welcome is now opt-in (triggered from the "How it works" link in the
   // builder hero) instead of auto-popping over the page on every entry.
   if(id==='builder'){window._bwmShown=true;}

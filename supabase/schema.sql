@@ -168,3 +168,25 @@ create policy "assets_delete_own" on assets for delete using (auth.uid() = user_
 -- service role key to upload/sign URLs, so RLS on the bucket itself isn't
 -- strictly required, but you can add RLS later if you want client-side reads.
 -- ─────────────────────────────────────────────────────────────────────────────
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- site_audits: history of SEO/GEO Optimizer runs on a client's own site,
+-- so the portal can show score-over-time tracking. One row per audit run.
+-- ─────────────────────────────────────────────────────────────────────────────
+create table if not exists site_audits (
+  id          uuid         default gen_random_uuid() primary key,
+  user_id     uuid         not null references auth.users(id) on delete cascade,
+  created_at  timestamptz  default now(),
+  site_url    text,
+  score       int,
+  label       text,
+  categories  jsonb,        -- [{name, pct}]
+  top_issues  jsonb         -- [{label, result, tier}]
+);
+create index if not exists site_audits_user_idx on site_audits (user_id, created_at desc);
+
+alter table site_audits enable row level security;
+drop policy if exists "site_audits_read_own"   on site_audits;
+drop policy if exists "site_audits_insert_own" on site_audits;
+create policy "site_audits_read_own"   on site_audits for select using (auth.uid() = user_id);
+create policy "site_audits_insert_own" on site_audits for insert with check (auth.uid() = user_id);
