@@ -328,22 +328,33 @@ footer a:hover{text-decoration:underline}
     <span class="nav-product">Marketing</span>
   </a>
   <div class="nav-right">
-    <div class="nav-dd" id="otherToolsDD">
-      <button type="button" class="nav-dd-trigger" onclick="toggleDD('otherToolsDD')">Other Bedrock Tools ▾</button>
-      <div class="nav-dd-menu">
-        <a class="nav-dd-item" href="/sites.html">
-          <span class="nav-dd-item-eyebrow">Live</span>Bedrock Sites &mdash; Website Builder
-        </a>
-        <a class="nav-dd-item" href="/?seo=1">
-          <span class="nav-dd-item-eyebrow">Beta</span>Bedrock SEO &mdash; Audit &amp; Optimization
-        </a>
-        <a class="nav-dd-item" href="mailto:hello@bedrock-sites.com?subject=Bedrock%20CFO%20early%20list">
-          <span class="nav-dd-item-eyebrow">Coming Soon</span>Bedrock CFO &mdash; Get on the list
-        </a>
+    <style>
+      .tnav-link{font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;padding:0.5rem 0.75rem;border-radius:6px;display:inline-flex;align-items:center;gap:0.4rem;transition:color .15s,background .15s;cursor:pointer}
+      .tnav-link:hover{color:#fff;background:rgba(255,255,255,0.07)}
+      .tnav-link.tnav-active{color:#C9922A}
+      .tnav-link.tnav-home{color:#C9922A;border:1px solid rgba(201,146,42,0.55)}
+      .tnav-link.tnav-home:hover{background:rgba(201,146,42,0.12);color:#C9922A}
+      .tnav-link.tnav-soon{color:rgba(255,255,255,0.4)}
+      .tnav-link.tnav-soon:hover{background:none;color:rgba(255,255,255,0.4)}
+    </style>
+    <a href="/portal.html" class="tnav-link tnav-home" title="My Portal">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      My Portal
+    </a>
+    <a href="/bedrock-website-v1.html" class="tnav-link">My Website</a>
+    <a href="/bedrock-marketing-v1.html" class="tnav-link tnav-active">Marketing</a>
+    <a class="tnav-link tnav-soon" onclick="alert('Bedrock CFO is coming soon.')">CFO</a>
+    <!-- hidden May 2026 — old nav (Other Bedrock Tools dropdown + Take me Home) replaced by the tool nav above -->
+    <div style="display:none">
+      <div class="nav-dd" id="otherToolsDD">
+        <button type="button" class="nav-dd-trigger" onclick="toggleDD('otherToolsDD')">Other Bedrock Tools ▾</button>
+        <div class="nav-dd-menu">
+          <a class="nav-dd-item" href="/sites.html"><span class="nav-dd-item-eyebrow">Live</span>Bedrock Sites &mdash; Website Builder</a>
+        </div>
       </div>
+      <a href="/" class="nav-link">← Take me Home</a>
+      <a href="/portal.html" class="nav-portal-btn">My Portal →</a>
     </div>
-    <a href="/" class="nav-link">← Take me Home</a>
-    <a href="/portal.html" class="nav-portal-btn">My Portal →</a>
   </div>
 </nav>
 
@@ -1481,6 +1492,17 @@ function filenameFor(ext) {
     var qpView  = (p.get('view') || '').trim();
     var VALID_VIEWS = ['wizard','brand','build','campaigns','library'];
     if (qpToken) STATE.authToken = qpToken;
+    // No email in the URL? If the user is signed in to the portal, use that
+    // session and go straight to the workspace — never the public landing page.
+    if (!qpEmail) {
+      try {
+        var _sess = JSON.parse(localStorage.getItem('bedrock_portal_session') || 'null');
+        if (_sess && _sess.user && _sess.user.email && (!_sess.expires_at || Date.now() < _sess.expires_at)) {
+          qpEmail = (_sess.user.email || '').trim().toLowerCase();
+          if (_sess.access_token) { qpToken = _sess.access_token; STATE.authToken = qpToken; }
+        }
+      } catch(_){}
+    }
     if (qpEmail && qpEmail.includes('@')) {
       var input = document.getElementById('gateEmail'); if (input) input.value = qpEmail;
       STATE.email = qpEmail;

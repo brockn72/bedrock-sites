@@ -1626,6 +1626,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   body.bd-embed{padding-bottom:0!important}
   body.bd-embed-builder #bdEmbedBar{display:flex}
   body.bd-embed-builder{padding-top:46px}
+  /* force the builder, hide every other page — no flash, nothing above the steps */
+  body.bd-embed-builder .page{display:none!important}
+  body.bd-embed-builder #builder{display:block!important}
 </style>
 <div id="bdEmbedBar">
   <button class="beb-back" type="button" onclick="location.href=(window.__bdBackTarget||'/bedrock-website-v1.html')">&larr; Back to Portal</button>
