@@ -765,7 +765,17 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <div class="portal-pane" id="pane-website-hub">
         <style>
           .wsh{display:grid;grid-template-columns:230px 1fr;gap:0;border:1px solid var(--border);background:#fff;min-height:560px}
-          @media(max-width:760px){.wsh{grid-template-columns:1fr}}
+          @media(max-width:760px){
+            .wsh{grid-template-columns:1fr}
+            .wsh-side{display:flex;overflow-x:auto;padding:0.55rem;gap:6px;scrollbar-width:none}
+            .wsh-side::-webkit-scrollbar{display:none}
+            .wsh-side-label{display:none}
+            .wsh-link{white-space:nowrap;width:auto;flex-shrink:0;padding:0.6rem 0.85rem}
+            .wsh-link.active{border-left:none;border-bottom:3px solid var(--accent);padding-left:0.85rem}
+            .wsh-main{padding:1.25rem}
+            .wsh-builder-frame{height:560px}
+            .wsh-yn button{min-width:0}
+          }
           .wsh-side{background:var(--dark);padding:1.25rem 0.75rem}
           .wsh-side-label{font-size:0.55rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);padding:0 0.75rem;margin-bottom:0.85rem}
           .wsh-link{display:block;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.72);padding:0.7rem 0.85rem;border-radius:6px;transition:all .15s}
