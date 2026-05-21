@@ -1106,18 +1106,18 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 /* Only shown on mobile (≤880px). Desktop nav is unchanged. */
 @media(max-width:880px){
   /* Reserve space at bottom so content isn't hidden behind the tab bar */
-  body{padding-bottom:62px}
+  body{padding-bottom:80px}
 
   #mobileTabBar{
     display:flex;
     position:fixed;
     bottom:0;left:0;right:0;
-    height:62px;
+    height:74px;
     background:var(--dark);
     border-top:2px solid var(--accent);
     z-index:999;
-    /* Ensure safe area on iPhones with home indicator */
     padding-bottom:env(safe-area-inset-bottom,0);
+    box-shadow:0 -4px 18px rgba(0,0,0,0.35);
   }
 
   .mtb-item{
@@ -1126,95 +1126,110 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:3px;
+    gap:5px;
     background:none;
     border:none;
     cursor:pointer;
-    padding:0 2px;
+    padding:0 3px;
     position:relative;
     font-family:'DM Sans',sans-serif;
     text-decoration:none;
     transition:background 0.15s;
     -webkit-tap-highlight-color:transparent;
   }
-  .mtb-item:hover,.mtb-item:active{background:rgba(201,168,76,0.08)}
-  .mtb-item.mtb-active{background:rgba(201,168,76,0.1)}
+  .mtb-item:active{background:rgba(201,168,76,0.1)}
   .mtb-item.mtb-active .mtb-label{color:var(--accent)}
   .mtb-item.mtb-active .mtb-icon{color:var(--accent)}
 
   .mtb-icon{
-    width:20px;height:20px;
+    width:22px;height:22px;
     display:flex;align-items:center;justify-content:center;
-    color:rgba(255,255,255,0.55);
+    color:rgba(255,255,255,0.6);
     transition:color 0.15s;
     flex-shrink:0;
   }
-  .mtb-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .mtb-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
   .mtb-label{
-    font-size:0.48rem;
+    font-size:0.55rem;
     font-weight:600;
-    letter-spacing:0.1em;
-    text-transform:uppercase;
-    color:rgba(255,255,255,0.5);
+    letter-spacing:0.04em;
+    color:rgba(255,255,255,0.62);
     transition:color 0.15s;
-    line-height:1;
-    white-space:nowrap;
+    line-height:1.15;
+    text-align:center;
+    max-width:66px;
   }
 
-  /* "More" item — opens a drawer */
-  #mtbMoreDrawer{
+  /* Middle "Create my account" — raised gold circle */
+  .mtb-cta{justify-content:flex-start;padding-top:0}
+  .mtb-cta-circle{
+    width:54px;height:54px;border-radius:50%;
+    background:var(--accent);
+    display:flex;align-items:center;justify-content:center;
+    margin-top:-26px;margin-bottom:3px;
+    box-shadow:0 5px 16px rgba(201,168,76,0.55);
+    border:3px solid var(--dark);
+  }
+  .mtb-cta-circle svg{width:22px;height:22px;stroke:var(--dark);fill:none;stroke-width:2.1;stroke-linecap:round;stroke-linejoin:round}
+  .mtb-cta-label{color:var(--accent);font-weight:700}
+
+  /* Drawer (used by both Tools and More) */
+  #mtbDrawer{
     display:none;
     position:fixed;
-    bottom:62px;left:0;right:0;
+    bottom:74px;left:0;right:0;
     background:var(--dark);
-    border-top:1px solid rgba(201,168,76,0.3);
+    border-top:2px solid var(--accent);
     z-index:998;
-    padding:0.5rem 0;
+    padding:0.4rem 0 0.6rem;
     animation:mtbSlideUp 0.18s ease-out;
+    max-height:70vh;overflow-y:auto;
   }
-  #mtbMoreDrawer.open{display:block}
+  #mtbDrawer.open{display:block}
   @keyframes mtbSlideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
+  .mtb-drawer-title{
+    font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;
+    letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);
+    padding:0.75rem 1.5rem 0.5rem;
+  }
   .mtb-drawer-item{
     display:flex;
     align-items:center;
     gap:0.85rem;
-    padding:0.85rem 1.5rem;
+    padding:0.95rem 1.5rem;
     border:none;
     background:none;
     width:100%;
-    font-family:'Montserrat',sans-serif;
-    font-size:0.78rem;
+    font-family:'DM Sans',sans-serif;
+    font-size:0.86rem;
     font-weight:500;
-    letter-spacing:0.06em;
-    color:rgba(255,255,255,0.8);
+    color:rgba(255,255,255,0.85);
     cursor:pointer;
     text-align:left;
     text-decoration:none;
-    border-bottom:1px solid rgba(255,255,255,0.06);
+    border-bottom:1px solid rgba(255,255,255,0.07);
     transition:background 0.12s,color 0.12s;
     -webkit-tap-highlight-color:transparent;
   }
   .mtb-drawer-item:last-child{border-bottom:none}
-  .mtb-drawer-item:hover,.mtb-drawer-item:active{background:rgba(201,168,76,0.08);color:var(--accent)}
-  .mtb-drawer-item .mtb-d-icon{width:18px;height:18px;flex-shrink:0;opacity:0.6}
+  .mtb-drawer-item:active{background:rgba(201,168,76,0.1);color:var(--accent)}
+  .mtb-drawer-item .mtb-d-arrow{margin-left:auto;color:var(--accent);font-size:0.9rem}
 
-  /* Overlay to dismiss drawer */
   #mtbOverlay{
     display:none;
     position:fixed;
     inset:0;
-    bottom:62px;
+    bottom:74px;
     z-index:997;
-    background:transparent;
+    background:rgba(0,0,0,0.35);
   }
   #mtbOverlay.open{display:block}
 }
 
 /* Hide tab bar on desktop */
 @media(min-width:881px){
-  #mobileTabBar,#mtbMoreDrawer,#mtbOverlay{display:none!important}
+  #mobileTabBar,#mtbDrawer,#mtbOverlay{display:none!important}
 }
 
 /* ===== MOBILE COMPARE TABLE — card-stack layout ===== */
@@ -9786,23 +9801,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
 
 <!-- MOBILE BOTTOM TAB BAR (hidden on desktop via CSS) -->
 <div id="mtbOverlay" onclick="closeMtbDrawer()"></div>
-<div id="mtbMoreDrawer">
-  <button class="mtb-drawer-item" onclick="mtbNav('sites');closeMtbDrawer()">
-    <svg class="mtb-d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-    Bedrock Sites
-  </button>
-  <button class="mtb-drawer-item" onclick="mtbNav('ourwork');closeMtbDrawer()">
-    <svg class="mtb-d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-    Our Work
-  </button>
-  <button class="mtb-drawer-item" onclick="mtbNav('reviews');closeMtbDrawer()">
-    <svg class="mtb-d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-    Reviews
-  </button>
-  <button class="mtb-drawer-item" onclick="mtbNav('login');closeMtbDrawer()">
-    <svg class="mtb-d-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-    Client Login
-  </button>
+<div id="mtbDrawer">
+  <div class="mtb-drawer-title" id="mtbDrawerTitle">Tools</div>
+  <div id="mtbDrawerBody"></div>
 </div>
 
 <nav id="mobileTabBar" aria-label="Mobile navigation">
@@ -9810,22 +9811,20 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     <span class="mtb-icon"><svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
     <span class="mtb-label">Home</span>
   </button>
-  <button class="mtb-item" id="mtb-optimizer" onclick="mtbNav('optimizer')" aria-label="Optimizer">
-    <span class="mtb-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
-    <span class="mtb-label">Optimizer</span>
+  <button class="mtb-item" id="mtb-howitworks" onclick="mtbNav('howitworks')" aria-label="How It Works">
+    <span class="mtb-icon"><svg viewBox="0 0 24 24"><path d="M3 12l4-4 5 5 9-9"/><path d="M14 4h7v7"/></svg></span>
+    <span class="mtb-label">How It Works</span>
   </button>
-  <button class="mtb-item" id="mtb-builder" onclick="mtbNav('builder')" aria-label="Build Your Site">
-    <span class="mtb-icon" style="width:38px;height:38px;background:var(--accent);border-radius:50%;margin-top:-18px;box-shadow:0 4px 12px rgba(201,168,76,0.5);color:var(--dark)">
-      <svg viewBox="0 0 24 24" style="width:16px;height:16px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-    </span>
-    <span class="mtb-label" style="color:var(--accent);margin-top:2px">Build</span>
+  <button class="mtb-item mtb-cta" id="mtb-create" onclick="openAuthModal('create')" aria-label="Create my account">
+    <span class="mtb-cta-circle"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
+    <span class="mtb-label mtb-cta-label">Create Account</span>
   </button>
-  <button class="mtb-item" id="mtb-about" onclick="mtbNav('about')" aria-label="About">
-    <span class="mtb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
-    <span class="mtb-label">About</span>
+  <button class="mtb-item" id="mtb-tools" onclick="openMtbDrawer('tools')" aria-label="Tools" aria-expanded="false">
+    <span class="mtb-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
+    <span class="mtb-label">Tools</span>
   </button>
-  <button class="mtb-item" id="mtb-more" onclick="toggleMtbDrawer()" aria-label="More pages" aria-expanded="false">
-    <span class="mtb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></span>
+  <button class="mtb-item" id="mtb-more" onclick="openMtbDrawer('more')" aria-label="More pages" aria-expanded="false">
+    <span class="mtb-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="12" cy="19" r="1.6"/></svg></span>
     <span class="mtb-label">More</span>
   </button>
 </nav>
@@ -9833,29 +9832,60 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
 <script>
 // MOBILE TAB BAR
 function mtbNav(id){
+  closeMtbDrawer();
   showPage(id);
   document.querySelectorAll('.mtb-item').forEach(function(el){el.classList.remove('mtb-active');});
   var btn=document.getElementById('mtb-'+id);
   if(btn)btn.classList.add('mtb-active');
 }
 
-function toggleMtbDrawer(){
-  var drawer=document.getElementById('mtbMoreDrawer');
-  var overlay=document.getElementById('mtbOverlay');
-  var btn=document.getElementById('mtb-more');
-  var isOpen=drawer.classList.contains('open');
-  drawer.classList.toggle('open',!isOpen);
-  overlay.classList.toggle('open',!isOpen);
-  if(btn)btn.setAttribute('aria-expanded',String(!isOpen));
+// Tools + More both open the same drawer with different content.
+var MTB_DRAWERS={
+  tools:{ title:'Bedrock Tools', items:[
+    {label:'Bedrock Sites — Website Builder', href:'/sites.html'},
+    {label:'Bedrock Marketing — Brand Kit & Materials', href:'/bedrock-marketing-v1.html'},
+    {label:'Optimizer — Free Site Scan', page:'optimizer'},
+    {label:'See All Tools', page:'tools'}
+  ]},
+  more:{ title:'More', items:[
+    {label:'Our Work', page:'ourwork'},
+    {label:'About Bedrock', page:'about'},
+    {label:'Reviews', page:'reviews'},
+    {label:'Sign In', modal:'signin'}
+  ]}
+};
+function openMtbDrawer(which){
+  var d=MTB_DRAWERS[which]; if(!d)return;
+  var open=document.getElementById('mtbDrawer').classList.contains('open');
+  var curBtn=document.getElementById('mtb-'+which);
+  // tapping the same tab again closes the drawer
+  if(open && document.getElementById('mtbDrawer').getAttribute('data-which')===which){ closeMtbDrawer(); return; }
+  document.getElementById('mtbDrawerTitle').textContent=d.title;
+  var body=document.getElementById('mtbDrawerBody');
+  body.innerHTML='';
+  d.items.forEach(function(it){
+    var b=document.createElement('button');
+    b.className='mtb-drawer-item';
+    b.innerHTML=it.label+'<span class="mtb-d-arrow">&rarr;</span>';
+    b.onclick=function(){
+      closeMtbDrawer();
+      if(it.href){ window.location.href=it.href; }
+      else if(it.modal){ openAuthModal(it.modal); }
+      else if(it.page){ mtbNav(it.page); }
+    };
+    body.appendChild(b);
+  });
+  document.getElementById('mtbDrawer').classList.add('open');
+  document.getElementById('mtbDrawer').setAttribute('data-which',which);
+  document.getElementById('mtbOverlay').classList.add('open');
+  if(curBtn)curBtn.setAttribute('aria-expanded','true');
 }
-
 function closeMtbDrawer(){
-  var drawer=document.getElementById('mtbMoreDrawer');
+  var drawer=document.getElementById('mtbDrawer');
   var overlay=document.getElementById('mtbOverlay');
-  var btn=document.getElementById('mtb-more');
-  drawer.classList.remove('open');
-  overlay.classList.remove('open');
-  if(btn)btn.setAttribute('aria-expanded','false');
+  if(drawer)drawer.classList.remove('open');
+  if(overlay)overlay.classList.remove('open');
+  ['mtb-tools','mtb-more'].forEach(function(id){var b=document.getElementById(id);if(b)b.setAttribute('aria-expanded','false');});
 }
 
 // Wrap showPage so tab bar stays in sync when nav links elsewhere call it
