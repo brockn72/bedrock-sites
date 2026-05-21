@@ -1622,10 +1622,10 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
     <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li>
     <li id="navLoginLi">
-      <a id="nlLoginLink" href="#login" onclick="showPage('login',event)">Sign In</a>
-      <a id="nlProfileBtn" href="portal.html" title="My Account" style="display:none;align-items:center;gap:0.45rem;text-decoration:none"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label">My Account</span></a>
+      <a id="nlLoginLink" href="#" onclick="event.preventDefault();openAuthModal('signin')">Sign In</a>
+      <a id="nlProfileBtn" href="portal.html" title="My Account" style="display:none;align-items:center;gap:0.5rem;text-decoration:none;border:1.5px solid #C9922A;border-radius:6px;padding:0.35rem 0.7rem;background:rgba(201,146,42,0.1)"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label" style="color:#C9922A;font-weight:700">My Account</span></a>
     </li>
-    <li><a id="nl-builder" href="#builder" onclick="showPage('builder',event)" class="nav-cta">Build My Site</a></li>
+    <li><a id="nl-builder" href="#" onclick="event.preventDefault();openAuthModal('create')" class="nav-cta">Create a Free Account</a></li>
     <!-- hidden May 2026 — kept for SPA routing; not shown in the simplified nav -->
     <li style="display:none"><a id="nl-reviews" href="#reviews" onclick="showPage('reviews',event)">Reviews</a></li>
     <li style="display:none"><a id="nl-marketing" href="/bedrock-marketing-v1.html">Marketing</a></li>
@@ -8340,8 +8340,10 @@ function _setNavLoggedIn(user){
   var loginLink=document.getElementById('nlLoginLink');
   var profileBtn=document.getElementById('nlProfileBtn');
   var avatar=document.getElementById('nlAvatar');
+  var buildBtn=document.getElementById('nl-builder');
   if(loginLink)loginLink.style.display='none';
   if(profileBtn)profileBtn.style.display='flex';
+  if(buildBtn&&buildBtn.parentElement)buildBtn.parentElement.style.display='none';
   if(avatar&&user){
     var email=(user.email||'');
     avatar.textContent=email.charAt(0).toUpperCase()||'U';
@@ -8351,8 +8353,10 @@ function _setNavLoggedIn(user){
 function _setNavLoggedOut(){
   var loginLink=document.getElementById('nlLoginLink');
   var profileBtn=document.getElementById('nlProfileBtn');
+  var buildBtn=document.getElementById('nl-builder');
   if(loginLink)loginLink.style.display='';
   if(profileBtn)profileBtn.style.display='none';
+  if(buildBtn&&buildBtn.parentElement)buildBtn.parentElement.style.display='';
 }
 
 // Run on load
@@ -9449,6 +9453,126 @@ function closeMtbDrawer(){
   steps.forEach(function(s){io.observe(s);});
   setActive(0);
 })();
+</script>
+
+<!-- ════════ UNIVERSAL SIGN IN / CREATE ACCOUNT MODAL ════════ -->
+<style>
+  .bdm-overlay{position:fixed;inset:0;background:rgba(13,27,46,0.85);z-index:10050;display:none;align-items:center;justify-content:center;padding:1.25rem}
+  .bdm-overlay.open{display:flex}
+  .bdm-box{background:#fff;max-width:430px;width:100%;position:relative;border-top:4px solid #C9922A;box-shadow:0 30px 70px rgba(0,0,0,0.55);overflow:hidden;animation:bdmPop .25s ease}
+  @keyframes bdmPop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .bdm-x{position:absolute;top:0.5rem;right:0.7rem;background:none;border:none;font-size:1.7rem;color:#4A5568;cursor:pointer;line-height:1;z-index:3;padding:0.2rem 0.5rem}
+  .bdm-x:hover{color:#0D1B2E}
+  .bdm-switch{display:flex;position:relative;margin:1.6rem 1.75rem 0.5rem;background:#FAF7F2;border:1px solid rgba(13,27,46,0.1);border-radius:7px;overflow:hidden}
+  .bdm-switch-btn{flex:1;padding:0.7rem;font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:none;cursor:pointer;color:#4A5568;position:relative;z-index:2;transition:color .2s}
+  .bdm-switch-btn.active{color:#fff}
+  .bdm-switch-slider{position:absolute;top:0;left:0;width:50%;height:100%;background:#0D1B2E;z-index:1;transition:transform .25s ease}
+  .bdm-switch-slider.create{transform:translateX(100%)}
+  .bdm-form{padding:1.25rem 1.75rem 1.85rem}
+  .bdm-form h3{font-family:'Playfair Display','Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#0D1B2E;margin:0 0 0.2rem}
+  .bdm-sub{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:#4A5568;margin:0 0 1rem}
+  .bdm-form label{display:block;font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#4A5568;margin:0.7rem 0 0.3rem}
+  .bdm-form input{width:100%;font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:0.7rem 0.85rem;border:1px solid rgba(13,27,46,0.15);border-radius:6px;outline:none;transition:border-color .15s}
+  .bdm-form input:focus{border-color:#0D1B2E}
+  .bdm-submit{width:100%;margin-top:1.1rem;font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:#C9922A;color:#fff;border:none;padding:0.9rem;cursor:pointer;border-radius:6px;transition:background .2s}
+  .bdm-submit:hover{background:#D4A843}
+  .bdm-submit:disabled{background:rgba(201,146,42,0.5);cursor:not-allowed}
+  .bdm-err{display:none;background:#fef2f2;border-left:3px solid #b91c1c;color:#b91c1c;font-family:'DM Sans',sans-serif;font-size:0.74rem;padding:0.6rem 0.8rem;border-radius:4px;line-height:1.5;margin-bottom:0.5rem}
+  .bdm-err.show{display:block}
+  .bdm-foot{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:#4A5568;text-align:center;margin:1rem 0 0}
+  .bdm-foot a{color:#C9922A;font-weight:600;cursor:pointer;text-decoration:underline}
+</style>
+<div class="bdm-overlay" id="bdAuthModal" aria-hidden="true">
+  <div class="bdm-box" role="dialog" aria-modal="true" aria-label="Sign in or create account">
+    <button class="bdm-x" type="button" onclick="closeAuthModal()" aria-label="Close">&times;</button>
+    <div class="bdm-switch">
+      <button type="button" id="bdmTabSignin" class="bdm-switch-btn active" onclick="authModalMode('signin')">Sign In</button>
+      <button type="button" id="bdmTabCreate" class="bdm-switch-btn" onclick="authModalMode('create')">Create Account</button>
+      <div class="bdm-switch-slider" id="bdmSlider"></div>
+    </div>
+    <form class="bdm-form" id="bdmSigninForm" onsubmit="bdmDoSignin(event)">
+      <h3>Welcome back.</h3>
+      <p class="bdm-sub">Sign in to your Bedrock account.</p>
+      <div class="bdm-err" id="bdmSigninErr"></div>
+      <label for="bdmSigninEmail">Email</label>
+      <input type="email" id="bdmSigninEmail" autocomplete="email" required>
+      <label for="bdmSigninPass">Password</label>
+      <input type="password" id="bdmSigninPass" autocomplete="current-password" required>
+      <button type="submit" class="bdm-submit" id="bdmSigninBtn">Sign In</button>
+      <p class="bdm-foot">New to Bedrock? <a onclick="authModalMode('create')">Create a free account</a></p>
+    </form>
+    <form class="bdm-form" id="bdmCreateForm" style="display:none" onsubmit="bdmDoCreate(event)">
+      <h3>Create your free account.</h3>
+      <p class="bdm-sub">Free to set up. No card required.</p>
+      <div class="bdm-err" id="bdmCreateErr"></div>
+      <label for="bdmCreateName">Your name</label>
+      <input type="text" id="bdmCreateName" autocomplete="name" required>
+      <label for="bdmCreateBiz">Business name</label>
+      <input type="text" id="bdmCreateBiz" autocomplete="organization" required>
+      <label for="bdmCreateEmail">Email</label>
+      <input type="email" id="bdmCreateEmail" autocomplete="email" required>
+      <label for="bdmCreatePass">Password</label>
+      <input type="password" id="bdmCreatePass" autocomplete="new-password" required minlength="6">
+      <button type="submit" class="bdm-submit" id="bdmCreateBtn">Create My Account</button>
+      <p class="bdm-foot">Already have an account? <a onclick="authModalMode('signin')">Sign in</a></p>
+    </form>
+  </div>
+</div>
+<script>
+window.AUTH_MODAL_ONSUCCESS = window.AUTH_MODAL_ONSUCCESS || function(){ window.location.href = '/portal.html'; };
+function openAuthModal(mode){ var m=document.getElementById('bdAuthModal'); if(!m)return; m.classList.add('open'); authModalMode(mode||'signin'); }
+function closeAuthModal(){ var m=document.getElementById('bdAuthModal'); if(m)m.classList.remove('open'); }
+function authModalMode(mode){
+  var create = mode==='create';
+  document.getElementById('bdmSigninForm').style.display = create?'none':'';
+  document.getElementById('bdmCreateForm').style.display = create?'':'none';
+  document.getElementById('bdmTabSignin').classList.toggle('active',!create);
+  document.getElementById('bdmTabCreate').classList.toggle('active',create);
+  document.getElementById('bdmSlider').classList.toggle('create',create);
+}
+function bdmErr(id,msg){ var e=document.getElementById(id); if(e){ e.textContent=msg; e.classList.add('show'); } }
+function bdmClearErr(){ ['bdmSigninErr','bdmCreateErr'].forEach(function(id){ var e=document.getElementById(id); if(e)e.classList.remove('show'); }); }
+function bdmSaveSession(d){
+  try{ localStorage.setItem('bedrock_portal_session', JSON.stringify({
+    access_token:d.access_token, refresh_token:d.refresh_token,
+    expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user
+  })); }catch(e){}
+}
+function bdmDoSignin(e){
+  e.preventDefault(); bdmClearErr();
+  var email=(document.getElementById('bdmSigninEmail').value||'').trim();
+  var pass=(document.getElementById('bdmSigninPass').value||'');
+  var btn=document.getElementById('bdmSigninBtn');
+  if(!email||!pass){ bdmErr('bdmSigninErr','Enter your email and password.'); return; }
+  btn.disabled=true; btn.textContent='Signing in…';
+  fetch('/.netlify/functions/portal-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'signin',email:email,password:pass})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.success){ bdmSaveSession(d); window.AUTH_MODAL_ONSUCCESS(d); }
+      else{ btn.disabled=false; btn.textContent='Sign In'; bdmErr('bdmSigninErr',d.error||'Incorrect email or password.'); }
+    }).catch(function(){ btn.disabled=false; btn.textContent='Sign In'; bdmErr('bdmSigninErr','Connection error — please try again.'); });
+}
+function bdmDoCreate(e){
+  e.preventDefault(); bdmClearErr();
+  var name=(document.getElementById('bdmCreateName').value||'').trim();
+  var biz=(document.getElementById('bdmCreateBiz').value||'').trim();
+  var email=(document.getElementById('bdmCreateEmail').value||'').trim();
+  var pass=(document.getElementById('bdmCreatePass').value||'').trim();
+  var btn=document.getElementById('bdmCreateBtn');
+  if(!biz){ bdmErr('bdmCreateErr','Business name is required.'); return; }
+  if(!email||email.indexOf('@')===-1){ bdmErr('bdmCreateErr','Enter a valid email.'); return; }
+  if(pass.length<6){ bdmErr('bdmCreateErr','Password must be at least 6 characters.'); return; }
+  btn.disabled=true; btn.textContent='Creating…';
+  fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({businessName:biz,contactName:name,email:email,password:pass,source:'signup'})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.success===false){ btn.disabled=false; btn.textContent='Create My Account'; bdmErr('bdmCreateErr',d.error||'That email may already be registered — try signing in.'); return; }
+      return fetch('/.netlify/functions/portal-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'signin',email:email,password:pass})})
+        .then(function(r2){return r2.json();}).then(function(d2){
+          if(d2.success){ bdmSaveSession(d2); window.AUTH_MODAL_ONSUCCESS(d2); }
+          else{ btn.disabled=false; btn.textContent='Create My Account'; authModalMode('signin'); bdmErr('bdmSigninErr','Account created — please sign in.'); }
+        });
+    }).catch(function(){ btn.disabled=false; btn.textContent='Create My Account'; bdmErr('bdmCreateErr','Connection error — please try again.'); });
+}
+document.addEventListener('click',function(e){ if(e.target&&e.target.id==='bdAuthModal') closeAuthModal(); });
 </script>
 </body>
 </html>

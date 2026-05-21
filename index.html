@@ -1305,10 +1305,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 .bd-btn-outline:hover{border-color:rgba(255,255,255,0.4);color:#fff}
 .bd-hero-strata{position:absolute;bottom:0;left:0;right:0;height:4px;display:flex;gap:0}
 .bd-hero-strata span{flex:1;height:100%}
+/* Solid unbroken gold separator line (was gold/navy/gold/navy — looked broken) */
 .bd-hero-strata span:nth-child(1){background:#C9922A}
-.bd-hero-strata span:nth-child(2){background:#1B3557}
-.bd-hero-strata span:nth-child(3){background:#F0C46A}
-.bd-hero-strata span:nth-child(4){background:#2E5A8E}
+.bd-hero-strata span:nth-child(2){background:#C9922A}
+.bd-hero-strata span:nth-child(3){background:#C9922A}
+.bd-hero-strata span:nth-child(4){background:#C9922A}
 
 /* STAT BAR */
 #bd-stats{background:#FAF7F2;border-top:1px solid rgba(13,27,46,0.08);border-bottom:1px solid rgba(13,27,46,0.08);padding:0}
@@ -1622,10 +1623,10 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
     <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li>
     <li id="navLoginLi">
-      <a id="nlLoginLink" href="#login" onclick="showPage('login',event)">Sign In</a>
-      <a id="nlProfileBtn" href="portal.html" title="My Account" style="display:none;align-items:center;gap:0.45rem;text-decoration:none"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label">My Account</span></a>
+      <a id="nlLoginLink" href="#" onclick="event.preventDefault();openAuthModal('signin')">Sign In</a>
+      <a id="nlProfileBtn" href="portal.html" title="My Account" style="display:none;align-items:center;gap:0.5rem;text-decoration:none;border:1.5px solid #C9922A;border-radius:6px;padding:0.35rem 0.7rem;background:rgba(201,146,42,0.1)"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label" style="color:#C9922A;font-weight:700">My Account</span></a>
     </li>
-    <li><a id="nl-builder" href="/sites.html#builder" class="nav-cta">Build My Site</a></li>
+    <li><a id="nl-builder" href="#" onclick="event.preventDefault();openAuthModal('create')" class="nav-cta">Create a Free Account</a></li>
     <!-- hidden May 2026 — Reviews moved to homepage Proof section -->
     <li id="nl-reviews-li" style="display:none"><a id="nl-reviews" href="#reviews" onclick="showPage('reviews',event)">Reviews</a></li>
     <!-- hidden May 2026 — Sites/Marketing/Optimizer now live under the Tools dropdown -->
@@ -1663,8 +1664,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <h1>Modern Business Solutions<br><em>for Contractors.</em></h1>
     <p class="bd-hero-sub">The Bedrock Ecosystem &mdash; one company, one connected system.</p>
     <div class="bd-hero-ctas">
-      <a href="#builder" onclick="showPage('builder',event)" class="bd-btn-gold">Build My Site Free</a>
-      <a href="#ourwork" onclick="showPage('ourwork',event)" class="bd-btn-outline">See Our Work</a>
+      <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-btn-gold">Test My Site for SEO</a>
+      <a href="/sites.html#builder" class="bd-btn-gold">Build My Website Free</a>
+      <a href="/bedrock-marketing-v1.html" class="bd-btn-gold">Create My Marketing Brand</a>
+      <!-- hidden May 2026 — "See Our Work" removed from hero; it has its own nav tab -->
+      <a href="#ourwork" onclick="showPage('ourwork',event)" class="bd-btn-outline" style="display:none">See Our Work</a>
     </div>
   </div>
   <div class="bd-hero-strata"><span></span><span></span><span></span><span></span></div>
@@ -1696,37 +1700,86 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 <!-- ════════ HERE'S WHAT WE DO — simple 3-item section + truck-analogy callout ════════ -->
 <section id="bd-whatwedo" class="bd-section" style="background:#FFFFFF;padding:5rem 5%;border-top:1px solid rgba(13,27,46,0.06);border-bottom:1px solid rgba(13,27,46,0.06)">
   <style>
-    #bd-whatwedo .wwd-inner{max-width:880px;margin:0 auto}
-    #bd-whatwedo .wwd-eyebrow{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:#C9922A;margin-bottom:0.85rem;text-align:center}
-    #bd-whatwedo h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4.5vw,3.2rem);font-weight:700;color:#0D1B2E;line-height:1.1;margin-bottom:2.5rem;text-align:center}
-    #bd-whatwedo .wwd-item{padding:1.6rem 0;border-bottom:1px solid rgba(13,27,46,0.1);display:flex;gap:1.5rem;align-items:baseline}
-    #bd-whatwedo .wwd-item:last-of-type{border-bottom:none}
-    #bd-whatwedo .wwd-label{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:#0D1B2E;flex-shrink:0;min-width:210px}
-    #bd-whatwedo .wwd-desc{font-family:'DM Sans',sans-serif;font-size:0.98rem;line-height:1.6;color:#4A5568}
-    #bd-whatwedo .wwd-soon{font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#C9922A;background:rgba(201,146,42,0.12);padding:0.2rem 0.5rem;border-radius:3px;margin-left:0.5rem;vertical-align:middle}
-    #bd-whatwedo .wwd-truck{margin-top:2.25rem;padding:1.5rem 1.75rem;background:#FAF7F2;border-left:3px solid #C9922A;border-radius:0 6px 6px 0}
-    #bd-whatwedo .wwd-truck p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.15rem;line-height:1.6;color:#1B3557;margin:0}
-    @media(max-width:640px){#bd-whatwedo .wwd-item{flex-direction:column;gap:0.35rem}#bd-whatwedo .wwd-label{min-width:0;font-size:1.5rem}}
+    #bd-whatwedo .wwd-inner{max-width:820px;margin:0 auto}
+    #bd-whatwedo h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4.5vw,3.2rem);font-weight:700;color:#0D1B2E;line-height:1.1;margin-bottom:0.85rem;text-align:center}
+    #bd-whatwedo .wwd-intro{font-family:'DM Sans',sans-serif;font-size:1rem;line-height:1.7;color:#4A5568;text-align:center;max-width:600px;margin:0 auto 2.25rem}
+    #bd-whatwedo .wwd-acc{border-bottom:1px solid rgba(13,27,46,0.1)}
+    #bd-whatwedo .wwd-acc:first-of-type{border-top:1px solid rgba(13,27,46,0.1)}
+    #bd-whatwedo .wwd-acc-head{display:flex;align-items:center;gap:1rem;width:100%;background:none;border:none;cursor:pointer;padding:1.4rem 0.25rem;text-align:left;font:inherit}
+    #bd-whatwedo .wwd-acc-head:hover{color:#C9922A}
+    #bd-whatwedo .wwd-acc-label{flex:1;font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;color:#0D1B2E}
+    #bd-whatwedo .wwd-acc.open .wwd-acc-label{color:#C9922A}
+    #bd-whatwedo .wwd-soon{font-size:0.58rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#C9922A;background:rgba(201,146,42,0.12);padding:0.2rem 0.5rem;border-radius:3px;margin-left:0.6rem;vertical-align:middle}
+    #bd-whatwedo .wwd-plus{width:30px;height:30px;border:1.5px solid rgba(13,27,46,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#0D1B2E;flex-shrink:0;transition:transform .25s,border-color .2s,background .2s}
+    #bd-whatwedo .wwd-acc.open .wwd-plus{transform:rotate(45deg);background:#C9922A;border-color:#C9922A;color:#fff}
+    #bd-whatwedo .wwd-acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+    #bd-whatwedo .wwd-acc.open .wwd-acc-body{max-height:240px}
+    #bd-whatwedo .wwd-acc-body-inner{padding:0 0.25rem 1.5rem}
+    #bd-whatwedo .wwd-acc-desc{font-family:'DM Sans',sans-serif;font-size:0.95rem;line-height:1.65;color:#4A5568;margin-bottom:0.85rem}
+    #bd-whatwedo .wwd-acc-links{display:flex;gap:1.25rem;flex-wrap:wrap}
+    #bd-whatwedo .wwd-acc-links a{font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#C9922A;text-decoration:none}
+    #bd-whatwedo .wwd-acc-links a:hover{text-decoration:underline}
+    #bd-whatwedo .wwd-truck{margin-top:2.25rem;padding:1.6rem 1.85rem;background:#0D1B2E;border-left:3px solid #C9922A;border-radius:0 8px 8px 0}
+    #bd-whatwedo .wwd-truck p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.12rem;line-height:1.65;color:#F5E6C8;margin:0}
+    #bd-whatwedo .wwd-truck strong{color:#C9922A;font-style:normal;font-weight:600}
   </style>
   <div class="wwd-inner">
-    <div class="wwd-eyebrow">What We Do</div>
+    <!-- hidden May 2026 — gold "What We Do" label removed (redundant with the heading) -->
+    <div class="wwd-eyebrow" style="display:none">What We Do</div>
     <h2>Here's what we do.</h2>
-    <div class="wwd-item">
-      <div class="wwd-label">Website</div>
-      <div class="wwd-desc">A professional site built for your trade, live in minutes.</div>
+    <p class="wwd-intro">Our software takes modern solutions and applies them to your business &mdash; saving you time and money.</p>
+
+    <div class="wwd-acc" id="wwdAcc0">
+      <button type="button" class="wwd-acc-head" onclick="wwdToggle(0)">
+        <span class="wwd-acc-label">Website</span>
+        <span class="wwd-plus">+</span>
+      </button>
+      <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
+        <div class="wwd-acc-desc">Professional site for your trade, live in minutes.</div>
+        <div class="wwd-acc-links">
+          <a href="/sites.html">&rarr; Go to Bedrock Sites</a>
+          <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
+        </div>
+      </div></div>
     </div>
-    <div class="wwd-item">
-      <div class="wwd-label">Marketing</div>
-      <div class="wwd-desc">Brand kit, social posts, and materials that look like you hired an agency.</div>
+
+    <div class="wwd-acc" id="wwdAcc1">
+      <button type="button" class="wwd-acc-head" onclick="wwdToggle(1)">
+        <span class="wwd-acc-label">Marketing</span>
+        <span class="wwd-plus">+</span>
+      </button>
+      <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
+        <div class="wwd-acc-desc">Brand kit, social posts, and materials that look like you hired an agency.</div>
+        <div class="wwd-acc-links">
+          <a href="/bedrock-marketing-v1.html">&rarr; Go to Marketing Hub</a>
+          <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
+        </div>
+      </div></div>
     </div>
-    <div class="wwd-item">
-      <div class="wwd-label">Finance &amp; Operations<span class="wwd-soon">Soon</span></div>
-      <div class="wwd-desc">Tools to track your business and run the money side &mdash; coming soon.</div>
+
+    <div class="wwd-acc" id="wwdAcc2">
+      <button type="button" class="wwd-acc-head" onclick="wwdToggle(2)">
+        <span class="wwd-acc-label">Finance &amp; Operations<span class="wwd-soon">Soon</span></span>
+        <span class="wwd-plus">+</span>
+      </button>
+      <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
+        <div class="wwd-acc-desc">Streamline your operations &mdash; coming soon.</div>
+      </div></div>
     </div>
+
     <div class="wwd-truck">
-      <p>Think of Bedrock Digital as your work truck. The engine is the CFO &mdash; it powers everything. The trailer is Bedrock Sites &mdash; it's how you show up. The frame is Bedrock Marketing &mdash; it holds it all together.</p>
+      <p>Think of Bedrock Digital as your <strong>toolbox.</strong> Each feature is a different tool &mdash; and nobody knows it better than you: you need the right tool for the right job. Bedrock Digital is how your tools interact with each other, making all of them more efficient and giving you a higher ROI on your time.</p>
     </div>
   </div>
+  <script>
+    function wwdToggle(i){
+      var el = document.getElementById('wwdAcc'+i);
+      if (!el) return;
+      var wasOpen = el.classList.contains('open');
+      document.querySelectorAll('#bd-whatwedo .wwd-acc').forEach(function(a){ a.classList.remove('open'); });
+      if (!wasOpen) el.classList.add('open');
+    }
+  </script>
 </section>
 
 <!-- INTERACTIVE WORK-TRUCK SECTION — hidden May 2026, replaced by the simpler #bd-whatwedo above -->
@@ -2192,8 +2245,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   <div style="text-align:center;margin-top:3.5rem"><a href="#builder" class="btn-gold" onclick="showPage('builder',event)" style="text-decoration:none" role="button">Put It to Work for You &rarr;</a></div>
 </section>
 
-<!-- OUR WORK SHOWCASE (compact, on home page) -->
-<section id="bd-showcase" style="background:var(--offwhite);padding:5rem 5%">
+<!-- OUR WORK SHOWCASE — hidden May 2026, Our Work has its own nav tab + is linked from the What We Do dropdowns -->
+<section id="bd-showcase" style="display:none;background:var(--offwhite);padding:5rem 5%">
   <div style="max-width:1200px;margin:0 auto">
     <div style="text-align:center;margin-bottom:2.5rem">
       <p class="tag tag-dark">Our Work</p>
@@ -2260,22 +2313,50 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <h2>One company that <em style="font-style:italic;color:var(--accent)">actually understands</em><br>how trade businesses work.</h2>
     <p class="bd-products-sub">Most software is built for office workers. Bedrock is built for contractors. Every tool runs off one shared business profile, so you never type the same thing twice, and the whole system gets smarter the more you use it.</p>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin:2.5rem 0 3rem">
-      <div class="bd-section" style="background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.75rem 1.5rem">
+    <style>
+      #bd-products .why3d{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin:2.5rem 0 3rem;perspective:1100px}
+      @media(max-width:760px){#bd-products .why3d{grid-template-columns:1fr}}
+      #bd-products .why3d-card{background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.75rem 1.5rem;
+        opacity:0;transform:rotateX(20deg) translateY(46px) scale(0.96);transform-origin:center top;
+        transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+      #bd-products .why3d-card.in{opacity:1;transform:rotateX(0) translateY(0) scale(1)}
+      @media(prefers-reduced-motion:reduce){#bd-products .why3d-card{opacity:1;transform:none;transition:none}}
+    </style>
+    <div class="why3d" id="why3d">
+      <div class="why3d-card" data-why3d="0">
         <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:.75rem">01</div>
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;margin-bottom:.45rem">Set up once</h3>
         <p style="font-family:'DM Sans',sans-serif;font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.78)">Your business name, trade, service area, colors, and logo live in one profile. Enter it once and every tool already knows it.</p>
       </div>
-      <div class="bd-section" style="background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.75rem 1.5rem">
+      <div class="why3d-card" data-why3d="1">
         <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:.75rem">02</div>
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;margin-bottom:.45rem">Use what you need</h3>
         <p style="font-family:'DM Sans',sans-serif;font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.78)">Website, marketing, SEO, finances. Start with one tool, add more when it makes sense. Each one stands on its own.</p>
       </div>
-      <div class="bd-section" style="background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:1.75rem 1.5rem">
+      <div class="why3d-card" data-why3d="2">
         <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--accent);line-height:1;margin-bottom:.75rem">03</div>
         <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:#fff;margin-bottom:.45rem">Run it all from one portal</h3>
         <p style="font-family:'DM Sans',sans-serif;font-size:.86rem;line-height:1.65;color:rgba(255,255,255,.78)">One login. One dashboard. Your website, marketing, and billing in a single place built to stay simple.</p>
       </div>
+    </div>
+    <script>
+      (function(){
+        var cards = document.querySelectorAll('#bd-products .why3d-card');
+        if (!cards.length) return;
+        if (!('IntersectionObserver' in window)) { cards.forEach(function(c){ c.classList.add('in'); }); return; }
+        var obs = new IntersectionObserver(function(entries){
+          entries.forEach(function(en){
+            if (en.isIntersecting) {
+              var i = parseInt(en.target.getAttribute('data-why3d'),10) || 0;
+              en.target.style.transitionDelay = (i * 0.14) + 's';
+              en.target.classList.add('in');
+              obs.unobserve(en.target);
+            }
+          });
+        }, { threshold: 0.35 });
+        cards.forEach(function(c){ obs.observe(c); });
+      })();
+    </script>
     </div>
 
     <!-- ACCOUNT CTA -->
@@ -2347,12 +2428,49 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="section-eyebrow">Proof</div>
     <h2>The numbers, and the contractors.</h2>
 
-    <div class="proof-stats">
-      <div class="proof-stat"><div class="ps-num">28%</div><div class="ps-label">of small businesses still have no website</div></div>
-      <div class="proof-stat"><div class="ps-num">75%</div><div class="ps-label">of people who search a local service visit within 24 hours</div></div>
-      <div class="proof-stat"><div class="ps-num">31%</div><div class="ps-label">have decided against a business that had no website</div></div>
+    <style>
+      #bd-proof .statwheel{max-width:560px;margin:2rem auto 1rem;text-align:center;position:relative;min-height:150px}
+      #bd-proof .psw-slide{display:none}
+      #bd-proof .psw-slide.active{display:block;animation:pswFade .45s ease}
+      @keyframes pswFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+      #bd-proof .psw-num{font-family:'Cormorant Garamond',serif;font-size:4.5rem;font-weight:700;color:#C9922A;line-height:1}
+      #bd-proof .psw-label{font-family:'DM Sans',sans-serif;font-size:0.95rem;line-height:1.6;color:rgba(255,255,255,0.82);margin-top:0.5rem;max-width:420px;margin-left:auto;margin-right:auto}
+      #bd-proof .psw-dots{display:flex;gap:7px;justify-content:center;margin-top:1.1rem}
+      #bd-proof .psw-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);border:none;cursor:pointer;padding:0;transition:background .2s}
+      #bd-proof .psw-dot.active{background:#C9922A}
+    </style>
+    <div class="statwheel" id="proofStatWheel">
+      <div class="psw-slide active"><div class="psw-num">28%</div><div class="psw-label">of small businesses still have no website</div></div>
+      <div class="psw-slide"><div class="psw-num">75%</div><div class="psw-label">of people who search a local service visit a business within 24 hours</div></div>
+      <div class="psw-slide"><div class="psw-num">28%</div><div class="psw-label">of those local searchers make a purchase within a day</div></div>
+      <div class="psw-slide"><div class="psw-num">31%</div><div class="psw-label">have decided against a business because it had no website</div></div>
+      <div class="psw-slide"><div class="psw-num">44%</div><div class="psw-label">of businesses without a website plan to get one</div></div>
+      <div class="psw-slide"><div class="psw-num">2.5M</div><div class="psw-label">home-service businesses in the US &mdash; most still aren't online</div></div>
+      <div class="psw-dots" id="pswDots"></div>
     </div>
-    <div class="proof-srcnote">Sources: SCORE, BrightLocal, Network Solutions &mdash; not our numbers, the industry's.</div>
+    <div class="proof-srcnote">Sources: SCORE, BrightLocal, Network Solutions, Go-Globe &mdash; not our numbers, the industry's.</div>
+    <script>
+      (function(){
+        var slides = document.querySelectorAll('#bd-proof .psw-slide');
+        var dotsWrap = document.getElementById('pswDots');
+        if (!slides.length || !dotsWrap) return;
+        var idx = 0, timer = null;
+        for (var i=0;i<slides.length;i++){
+          var d = document.createElement('button');
+          d.className = 'psw-dot' + (i===0?' active':'');
+          d.onclick = (function(n){ return function(){ go(n); restart(); }; })(i);
+          dotsWrap.appendChild(d);
+        }
+        function go(n){
+          idx = n;
+          slides.forEach(function(s,i){ s.classList.toggle('active', i===idx); });
+          dotsWrap.querySelectorAll('.psw-dot').forEach(function(dot,i){ dot.classList.toggle('active', i===idx); });
+        }
+        function tick(){ go((idx+1)%slides.length); }
+        function restart(){ if(timer) clearInterval(timer); timer = setInterval(tick, 4000); }
+        restart();
+      })();
+    </script>
 
     <div class="proof-rev" id="proofReviews" style="margin-top:2.5rem">
       <div class="rev-slide active" data-rev="0">
@@ -3281,13 +3399,17 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       .ow-bk-font{flex:1;background:var(--offwhite);border-radius:5px;padding:0.5rem 0.65rem}
       .ow-bk-font .fk{font-size:0.5rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)}
       .ow-bk-font .fv{font-size:1rem;color:var(--dark)}
-      /* sample social post */
-      .ow-post{aspect-ratio:1/1;background:linear-gradient(160deg,#1F4E79,#0D1B2E);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem}
-      .ow-post::before{content:'';position:absolute;top:-30%;right:-20%;width:240px;height:240px;background:radial-gradient(circle,rgba(201,146,42,0.3),transparent 70%)}
+      /* sample brand kit polish */
+      .ow-bk-sw{box-shadow:0 2px 6px rgba(13,27,46,0.12)}
+      /* sample social post — real photo background */
+      .ow-post{aspect-ratio:1/1;background:#1F4E79 center/cover no-repeat;background-image:linear-gradient(180deg,rgba(13,27,46,0.15) 0%,rgba(13,27,46,0.55) 55%,rgba(13,27,46,0.92) 100%),url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=640&q=70');position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem}
+      .ow-post-logo{position:absolute;top:1rem;left:1rem;display:flex;align-items:center;gap:7px;background:rgba(13,27,46,0.78);padding:0.4rem 0.7rem;border-radius:5px}
+      .ow-post-logo .opl-mark{width:22px;height:22px;border-radius:4px;background:#C9922A;color:#0D1B2E;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:0.72rem}
+      .ow-post-logo .opl-name{font-family:'Playfair Display',serif;font-size:0.74rem;font-weight:600;color:#fff}
       .ow-post-eyebrow{font-size:0.56rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;position:relative}
-      .ow-post-head{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700;color:#fff;line-height:1.15;margin:0.4rem 0;position:relative}
-      .ow-post-sub{font-size:0.78rem;color:rgba(255,255,255,0.8);position:relative;margin-bottom:0.85rem}
-      .ow-post-cta{align-self:flex-start;background:#C9922A;color:#fff;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.5rem 1rem;border-radius:4px;position:relative}
+      .ow-post-head{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:700;color:#fff;line-height:1.15;margin:0.4rem 0;position:relative;text-shadow:0 2px 12px rgba(0,0,0,0.4)}
+      .ow-post-sub{font-size:0.78rem;color:rgba(255,255,255,0.88);position:relative;margin-bottom:0.85rem}
+      .ow-post-cta{align-self:flex-start;background:#C9922A;color:#0D1B2E;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.55rem 1.1rem;border-radius:4px;position:relative}
     </style>
     <div style="text-align:center;margin-bottom:2.5rem">
       <p class="tag tag-dark">Marketing &middot; Sample Output</p>
@@ -3321,10 +3443,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <div class="ow-showcase">
         <div class="ow-showcase-label">Sample Social Post</div>
         <div class="ow-post">
-          <div class="ow-post-eyebrow">Ridgeline Concrete &middot; Bend, OR</div>
-          <div class="ow-post-head">Driveways done before the frost.</div>
-          <div class="ow-post-sub">Booking October pours now. Free estimates this week.</div>
-          <div class="ow-post-cta">Call Today</div>
+          <div class="ow-post-logo"><span class="opl-mark">RC</span><span class="opl-name">Ridgeline Concrete</span></div>
+          <div class="ow-post-eyebrow">Bend, OR &middot; Licensed &amp; Insured</div>
+          <div class="ow-post-head">Driveways done<br>before the frost.</div>
+          <div class="ow-post-sub">Booking October pours now &mdash; free estimates this week.</div>
+          <div class="ow-post-cta">Call (541) 555-0148</div>
         </div>
         <div class="ow-showcase-cap"><strong>Ready in minutes</strong>Pick a format, drop in your photos, download a PNG, JPG, or PDF.</div>
       </div>
@@ -3485,17 +3608,18 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="hiw-step">
       <div class="hiw-num">1</div>
       <div class="hiw-body">
-        <h3>Create your free account</h3>
-        <p>Sign up in seconds &mdash; no credit card, no commitment. Your account is your home base: the Bedrock portal where your website, marketing, profile, and billing all live together.</p>
+        <h3>Build your profile</h3>
+        <p>Create your free account and tell us about your business &mdash; trade, service area, contact info. Takes a couple minutes, no credit card. This one profile powers every tool that follows.</p>
         <a class="hiw-link" href="/portal.html#create">Create my account &rarr;</a>
       </div>
     </div>
     <div class="hiw-step">
       <div class="hiw-num">2</div>
       <div class="hiw-body">
-        <h3>Build your website</h3>
-        <p>Open Bedrock Sites and build a professional website for your trade in about 15 minutes. Pick a style, drop in your photos, answer a few plain questions. Preview the whole site free &mdash; you only pay when you decide to launch it.</p>
-        <a class="hiw-link" href="/sites.html#builder">Build my site &rarr;</a>
+        <h3>Analyze your current website &mdash; or build a new one</h3>
+        <p>Already have a website? Run the free Optimizer to see exactly how it performs on Google and AI search, with a ranked list of fixes. Don't have one yet? Build a professional site for your trade in about 15 minutes and preview it free.</p>
+        <a class="hiw-link" href="#optimizer" onclick="showPage('optimizer',event)">Analyze my site &rarr;</a>
+        <a class="hiw-link" href="/sites.html#builder" style="margin-left:1.25rem">Build a new one &rarr;</a>
       </div>
     </div>
     <div class="hiw-step">
@@ -3509,9 +3633,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="hiw-step">
       <div class="hiw-num">4</div>
       <div class="hiw-body">
-        <h3>Track it and grow</h3>
-        <p>Run the free Optimizer to see how your site performs on Google and AI search. Watch your visitor analytics from the portal. As your business grows, add tools like Bedrock CFO for the money side &mdash; coming soon. One profile gets smarter the more you use it.</p>
-        <a class="hiw-link" href="#optimizer" onclick="showPage('optimizer',event)">Run a free scan &rarr;</a>
+        <h3>Streamline your operations</h3>
+        <p>Connect your accounting, billing, bidding, invoicing, and purchasing &mdash; all in one place. Works with Jobber, QuickBooks, and more. Bedrock CFO is in development now.</p>
+        <span class="hiw-link" style="color:rgba(255,255,255,0.4);cursor:default">Coming soon</span>
       </div>
     </div>
   </div>
@@ -3555,7 +3679,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
     <!-- OPTIMIZER — free scan, the forward hook -->
     <div class="tool-card optimizer">
-      <div class="tool-eyebrow">Free Scan &middot; No Account Needed</div>
+      <div class="tool-eyebrow">Completely Free Scan</div>
       <h2>Bedrock Optimizer</h2>
       <p>Paste in any contractor website and get a real audit &mdash; the same checks Google and AI search use to decide who shows up. Score out of 100, plus a ranked list of what's costing you jobs.</p>
       <ul class="tool-points">
@@ -6142,6 +6266,7 @@ function renderAudit(d){
   var ring=_opEl('opRing');
   ring.style.background='conic-gradient('+color+' '+(d.score*3.6)+'deg, rgba(255,255,255,0.08) '+(d.score*3.6)+'deg)';
   var n=_opEl('opScoreNum'),cur=0,target=d.score;
+  n.style.color=color;  // score number reflects quality: red / amber / green
   clearInterval(n._t);
   n._t=setInterval(function(){cur+=Math.max(1,Math.ceil((target-cur)/8));if(cur>=target){cur=target;clearInterval(n._t);}n.textContent=cur;},28);
   _opEl('opScoreLabel').textContent=d.label;
@@ -6155,6 +6280,7 @@ function renderAudit(d){
     div.innerHTML='<div class="op-cat-top"><span class="op-cat-name">'+c.name+'</span><span class="op-cat-pct">'+c.pct+'%</span></div><div class="op-cat-bar"><div class="op-cat-fill"></div></div>';
     cats.appendChild(div);
     var fill=div.querySelector('.op-cat-fill');fill.style.background=_opColor(c.pct);
+    var pctEl=div.querySelector('.op-cat-pct');if(pctEl)pctEl.style.color=_opColor(c.pct);
     setTimeout(function(){fill.style.width=c.pct+'%';},150);
   });
 
@@ -6208,7 +6334,7 @@ function _opRenderChart(d){
     var pct=c.max?Math.round(c.score/c.max*100):0;
     var b=bench[c.name]||{avg:35,target:75};
     html+='<div class="op-chart-row">'+
-      '<div class="op-chart-cat">'+_opEsc(c.name)+' <span>'+c.score+' / '+c.max+' pts</span></div>'+
+      '<div class="op-chart-cat">'+_opEsc(c.name)+' <span style="color:'+_opColor(pct)+'">'+c.score+' / '+c.max+' pts</span></div>'+
       '<div class="op-chart-bars">'+
         _opBarRow('Your site',pct,(pct>=b.target?'bf-green':'bf-red'))+
         _opBarRow('Avg. contractor',b.avg,'bf-avg')+
@@ -9777,6 +9903,128 @@ function closeMtbDrawer(){
   steps.forEach(function(s){io.observe(s);});
   setActive(0);
 })();
+</script>
+
+<!-- ════════ UNIVERSAL SIGN IN / CREATE ACCOUNT MODAL ════════ -->
+<style>
+  .bdm-overlay{position:fixed;inset:0;background:rgba(13,27,46,0.85);z-index:10050;display:none;align-items:center;justify-content:center;padding:1.25rem}
+  .bdm-overlay.open{display:flex}
+  .bdm-box{background:#fff;max-width:430px;width:100%;position:relative;border-top:4px solid #C9922A;box-shadow:0 30px 70px rgba(0,0,0,0.55);overflow:hidden;animation:bdmPop .25s ease}
+  @keyframes bdmPop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .bdm-x{position:absolute;top:0.5rem;right:0.7rem;background:none;border:none;font-size:1.7rem;color:#4A5568;cursor:pointer;line-height:1;z-index:3;padding:0.2rem 0.5rem}
+  .bdm-x:hover{color:#0D1B2E}
+  .bdm-switch{display:flex;position:relative;margin:1.6rem 1.75rem 0.5rem;background:#FAF7F2;border:1px solid rgba(13,27,46,0.1);border-radius:7px;overflow:hidden}
+  .bdm-switch-btn{flex:1;padding:0.7rem;font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:none;cursor:pointer;color:#4A5568;position:relative;z-index:2;transition:color .2s}
+  .bdm-switch-btn.active{color:#fff}
+  .bdm-switch-slider{position:absolute;top:0;left:0;width:50%;height:100%;background:#0D1B2E;z-index:1;transition:transform .25s ease}
+  .bdm-switch-slider.create{transform:translateX(100%)}
+  .bdm-form{padding:1.25rem 1.75rem 1.85rem}
+  .bdm-form h3{font-family:'Playfair Display','Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:#0D1B2E;margin:0 0 0.2rem}
+  .bdm-sub{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:#4A5568;margin:0 0 1rem}
+  .bdm-form label{display:block;font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#4A5568;margin:0.7rem 0 0.3rem}
+  .bdm-form input{width:100%;font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:0.7rem 0.85rem;border:1px solid rgba(13,27,46,0.15);border-radius:6px;outline:none;transition:border-color .15s}
+  .bdm-form input:focus{border-color:#0D1B2E}
+  .bdm-submit{width:100%;margin-top:1.1rem;font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:#C9922A;color:#fff;border:none;padding:0.9rem;cursor:pointer;border-radius:6px;transition:background .2s}
+  .bdm-submit:hover{background:#D4A843}
+  .bdm-submit:disabled{background:rgba(201,146,42,0.5);cursor:not-allowed}
+  .bdm-err{display:none;background:#fef2f2;border-left:3px solid #b91c1c;color:#b91c1c;font-family:'DM Sans',sans-serif;font-size:0.74rem;padding:0.6rem 0.8rem;border-radius:4px;line-height:1.5;margin-bottom:0.5rem}
+  .bdm-err.show{display:block}
+  .bdm-foot{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:#4A5568;text-align:center;margin:1rem 0 0}
+  .bdm-foot a{color:#C9922A;font-weight:600;cursor:pointer;text-decoration:underline}
+</style>
+<div class="bdm-overlay" id="bdAuthModal" aria-hidden="true">
+  <div class="bdm-box" role="dialog" aria-modal="true" aria-label="Sign in or create account">
+    <button class="bdm-x" type="button" onclick="closeAuthModal()" aria-label="Close">&times;</button>
+    <div class="bdm-switch">
+      <button type="button" id="bdmTabSignin" class="bdm-switch-btn active" onclick="authModalMode('signin')">Sign In</button>
+      <button type="button" id="bdmTabCreate" class="bdm-switch-btn" onclick="authModalMode('create')">Create Account</button>
+      <div class="bdm-switch-slider" id="bdmSlider"></div>
+    </div>
+    <form class="bdm-form" id="bdmSigninForm" onsubmit="bdmDoSignin(event)">
+      <h3>Welcome back.</h3>
+      <p class="bdm-sub">Sign in to your Bedrock account.</p>
+      <div class="bdm-err" id="bdmSigninErr"></div>
+      <label for="bdmSigninEmail">Email</label>
+      <input type="email" id="bdmSigninEmail" autocomplete="email" required>
+      <label for="bdmSigninPass">Password</label>
+      <input type="password" id="bdmSigninPass" autocomplete="current-password" required>
+      <button type="submit" class="bdm-submit" id="bdmSigninBtn">Sign In</button>
+      <p class="bdm-foot">New to Bedrock? <a onclick="authModalMode('create')">Create a free account</a></p>
+    </form>
+    <form class="bdm-form" id="bdmCreateForm" style="display:none" onsubmit="bdmDoCreate(event)">
+      <h3>Create your free account.</h3>
+      <p class="bdm-sub">Free to set up. No card required.</p>
+      <div class="bdm-err" id="bdmCreateErr"></div>
+      <label for="bdmCreateName">Your name</label>
+      <input type="text" id="bdmCreateName" autocomplete="name" required>
+      <label for="bdmCreateBiz">Business name</label>
+      <input type="text" id="bdmCreateBiz" autocomplete="organization" required>
+      <label for="bdmCreateEmail">Email</label>
+      <input type="email" id="bdmCreateEmail" autocomplete="email" required>
+      <label for="bdmCreatePass">Password</label>
+      <input type="password" id="bdmCreatePass" autocomplete="new-password" required minlength="6">
+      <button type="submit" class="bdm-submit" id="bdmCreateBtn">Create My Account</button>
+      <p class="bdm-foot">Already have an account? <a onclick="authModalMode('signin')">Sign in</a></p>
+    </form>
+  </div>
+</div>
+<script>
+// Universal auth modal. AUTH_MODAL_ONSUCCESS is overridable per page
+// (default: send the user to the portal).
+window.AUTH_MODAL_ONSUCCESS = window.AUTH_MODAL_ONSUCCESS || function(){ window.location.href = '/portal.html'; };
+function openAuthModal(mode){ var m=document.getElementById('bdAuthModal'); if(!m)return; m.classList.add('open'); authModalMode(mode||'signin'); }
+function closeAuthModal(){ var m=document.getElementById('bdAuthModal'); if(m)m.classList.remove('open'); }
+function authModalMode(mode){
+  var create = mode==='create';
+  document.getElementById('bdmSigninForm').style.display = create?'none':'';
+  document.getElementById('bdmCreateForm').style.display = create?'':'none';
+  document.getElementById('bdmTabSignin').classList.toggle('active',!create);
+  document.getElementById('bdmTabCreate').classList.toggle('active',create);
+  document.getElementById('bdmSlider').classList.toggle('create',create);
+}
+function bdmErr(id,msg){ var e=document.getElementById(id); if(e){ e.textContent=msg; e.classList.add('show'); } }
+function bdmClearErr(){ ['bdmSigninErr','bdmCreateErr'].forEach(function(id){ var e=document.getElementById(id); if(e)e.classList.remove('show'); }); }
+function bdmSaveSession(d){
+  try{ localStorage.setItem('bedrock_portal_session', JSON.stringify({
+    access_token:d.access_token, refresh_token:d.refresh_token,
+    expires_at:Date.now()+(d.expires_in||3600)*1000, user:d.user
+  })); }catch(e){}
+}
+function bdmDoSignin(e){
+  e.preventDefault(); bdmClearErr();
+  var email=(document.getElementById('bdmSigninEmail').value||'').trim();
+  var pass=(document.getElementById('bdmSigninPass').value||'');
+  var btn=document.getElementById('bdmSigninBtn');
+  if(!email||!pass){ bdmErr('bdmSigninErr','Enter your email and password.'); return; }
+  btn.disabled=true; btn.textContent='Signing in…';
+  fetch('/.netlify/functions/portal-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'signin',email:email,password:pass})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.success){ bdmSaveSession(d); window.AUTH_MODAL_ONSUCCESS(d); }
+      else{ btn.disabled=false; btn.textContent='Sign In'; bdmErr('bdmSigninErr',d.error||'Incorrect email or password.'); }
+    }).catch(function(){ btn.disabled=false; btn.textContent='Sign In'; bdmErr('bdmSigninErr','Connection error — please try again.'); });
+}
+function bdmDoCreate(e){
+  e.preventDefault(); bdmClearErr();
+  var name=(document.getElementById('bdmCreateName').value||'').trim();
+  var biz=(document.getElementById('bdmCreateBiz').value||'').trim();
+  var email=(document.getElementById('bdmCreateEmail').value||'').trim();
+  var pass=(document.getElementById('bdmCreatePass').value||'').trim();
+  var btn=document.getElementById('bdmCreateBtn');
+  if(!biz){ bdmErr('bdmCreateErr','Business name is required.'); return; }
+  if(!email||email.indexOf('@')===-1){ bdmErr('bdmCreateErr','Enter a valid email.'); return; }
+  if(pass.length<6){ bdmErr('bdmCreateErr','Password must be at least 6 characters.'); return; }
+  btn.disabled=true; btn.textContent='Creating…';
+  fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({businessName:biz,contactName:name,email:email,password:pass,source:'signup'})})
+    .then(function(r){return r.json();}).then(function(d){
+      if(d.success===false){ btn.disabled=false; btn.textContent='Create My Account'; bdmErr('bdmCreateErr',d.error||'That email may already be registered — try signing in.'); return; }
+      return fetch('/.netlify/functions/portal-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'signin',email:email,password:pass})})
+        .then(function(r2){return r2.json();}).then(function(d2){
+          if(d2.success){ bdmSaveSession(d2); window.AUTH_MODAL_ONSUCCESS(d2); }
+          else{ btn.disabled=false; btn.textContent='Create My Account'; authModalMode('signin'); bdmErr('bdmSigninErr','Account created — please sign in.'); }
+        });
+    }).catch(function(){ btn.disabled=false; btn.textContent='Create My Account'; bdmErr('bdmCreateErr','Connection error — please try again.'); });
+}
+document.addEventListener('click',function(e){ if(e.target&&e.target.id==='bdAuthModal') closeAuthModal(); });
 </script>
 </body>
 </html>

@@ -316,7 +316,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .nav-tabs{display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none}
 .nav-tabs::-webkit-scrollbar{display:none}
 .nav-tab-group{position:relative;display:inline-flex;align-items:center}
-.nav-tab-btn{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.55rem 0.85rem;border:none;background:transparent;cursor:pointer;white-space:nowrap;color:rgba(255,255,255,0.55);border-bottom:2px solid transparent;transition:color .15s;display:inline-flex;align-items:center;gap:4px}
+.nav-tab-btn{font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:0.55rem 0.85rem;border:none;background:transparent;cursor:pointer;white-space:nowrap;color:#fff;border-bottom:2px solid transparent;transition:color .15s;display:inline-flex;align-items:center;gap:4px}
 .nav-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 .nav-tab-btn:hover:not(.active){color:rgba(255,255,255,0.85)}
 .nav-tab-caret{font-size:0.6rem;opacity:0.6}
@@ -401,10 +401,14 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .onboard-item:hover{background:var(--offwhite)}
 .onboard-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;transition:all .15s}
 .onboard-item.done .onboard-check{background:var(--green);border-color:var(--green)}
+.onboard-item.progress .onboard-check{background:#e8a33d;border-color:#e8a33d}
 .onboard-item-txt{flex:1}
-.onboard-item-name{font-size:0.86rem;font-weight:600;color:var(--dark)}
+.onboard-item-name{font-size:0.88rem;font-weight:600;color:var(--dark);line-height:1.3;margin-bottom:4px}
 .onboard-item.done .onboard-item-name{color:var(--text-muted);text-decoration:line-through}
-.onboard-item-sub{font-size:0.7rem;color:var(--text-muted)}
+.onboard-item-sub{font-size:0.72rem;color:var(--text-muted);line-height:1.45}
+.onboard-item{padding:0.95rem 0!important}
+.onboard-getstarted{margin-top:1rem;font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0.85rem 1.6rem;cursor:pointer;border-radius:6px}
+.onboard-getstarted:hover{background:var(--accent-light)}
 .onboard-arrow{color:var(--accent);font-size:0.9rem}
 .onboard-done-msg{background:var(--green-bg);border-left:3px solid var(--green);padding:0.85rem 1rem;font-size:0.8rem;color:var(--green);font-weight:500;border-radius:4px}
 
@@ -449,40 +453,39 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     </a>
     <a href="/" class="nav-home-link">&#8592; Take me Home</a>
   </div>
-  <!-- PORTAL TABS — in nav, left of the bell. Each tab opens its own HUB. -->
+  <!-- PORTAL TABS — in nav, left of the bell. Each tab goes straight to its destination. -->
   <div class="nav-tabs" id="navTabs" style="display:none">
     <div class="nav-tab-group" data-top="dashboard">
       <button class="nav-tab-btn" onclick="goTab('dashboard','default')">Dashboard</button>
     </div>
+    <div class="nav-tab-group" data-top="profile">
+      <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
+    </div>
     <div class="nav-tab-group" data-top="website">
       <button class="nav-tab-btn" onclick="goTab('website','hub')">My Website <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','editor')"><span class="tsl-eyebrow">Manage</span>My Site</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','optimizer')"><span class="tsl-eyebrow">SEO/GEO</span>Run the Optimizer</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','analytics')"><span class="tsl-eyebrow">Stats</span>View Analytics</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="wsGo('start')"><span class="tsl-eyebrow">Manage</span>My Site</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="wsGo('optimizer')"><span class="tsl-eyebrow">SEO/GEO</span>Run the Optimizer</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="wsGo('analytics')"><span class="tsl-eyebrow">Stats</span>View Analytics</button>
       </div>
     </div>
     <div class="nav-tab-group" data-top="marketing">
-      <button class="nav-tab-btn" onclick="goTab('marketing','hub')">Marketing <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="launchMarketing('wizard')">Marketing <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','library')"><span class="tsl-eyebrow">Saved</span>Asset Library</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','integrations')"><span class="tsl-eyebrow">Soon</span>Integrations</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('library')"><span class="tsl-eyebrow">Saved</span>Asset Library</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('wizard')"><span class="tsl-eyebrow">Soon</span>Integrations</button>
       </div>
     </div>
     <div class="nav-tab-group" data-top="cfo">
       <button class="nav-tab-btn" onclick="goTab('cfo','default')">CFO</button>
     </div>
-    <div class="nav-tab-group" data-top="profile">
-      <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
-    </div>
     <div class="nav-tab-group" data-top="subs">
-      <button class="nav-tab-btn" onclick="goTab('subs','hub')">My Subscriptions <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="goTab('subs','cart')">My Subscriptions <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','hub')"><span class="tsl-eyebrow">Overview</span>Billing Hub</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Edit</span>Plan &amp; Cart</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','active')"><span class="tsl-eyebrow">View</span>Active Subscriptions</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Manage</span>Manage My Plan</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','active')"><span class="tsl-eyebrow">History</span>Billing History</button>
       </div>
     </div>
   </div>
@@ -682,6 +685,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             </button>
           </div>
           <div class="onboard-done-msg" id="onboardDoneMsg" style="display:none">✓ You're all set up. Welcome to Bedrock — everything's ready to go.</div>
+          <button type="button" class="onboard-getstarted" id="onboardGetStarted" onclick="goTab('profile','default')">Get Started with Bedrock →</button>
         </div>
 
         <div class="banner-grid" style="display:grid;grid-template-columns:1.2fr 1fr;gap:1rem;margin-bottom:1rem">
@@ -742,7 +746,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         <div class="banner-card" style="margin-top:1rem">
           <div class="bc-label">Tell us anything</div>
           <div class="bc-title">Submit feedback</div>
-          <div class="support-sub" style="margin-bottom:0.6rem">Found a bug? Want a feature? Something confusing? Send it straight to Brock.</div>
+          <div class="support-sub" style="margin-bottom:0.6rem">Found a bug? Want a feature? Something confusing? Send it straight to the Bedrock Digital team.</div>
           <textarea id="feedbackText" placeholder="Your feedback, idea, or bug report…" style="width:100%;font-family:'DM Sans',sans-serif;font-size:0.8rem;padding:0.6rem 0.7rem;border:1px solid var(--border);border-radius:6px;resize:vertical;min-height:80px;outline:none"></textarea>
           <div style="display:flex;gap:6px;align-items:center;margin-top:0.5rem;flex-wrap:wrap">
             <select id="feedbackType" style="font-family:'DM Sans',sans-serif;font-size:0.78rem;padding:0.5rem 0.6rem;border:1px solid var(--border);border-radius:6px">
@@ -759,20 +763,104 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 
       <!-- ════════════ MY WEBSITE HUB OVERVIEW ════════════ -->
       <div class="portal-pane" id="pane-website-hub">
-        <div class="mkt-card">
-          <div class="dc-label">My Website</div>
-          <div class="dc-title">Your website, end to end.<span class="help-tip">?<span class="help-bubble">Everything about your Bedrock site — build a new one, edit your live site, run the SEO audit, and check visitor analytics.</span></span></div>
-          <div class="dc-sub">Build it, edit it, check how it's performing, and run the SEO/GEO audit — all in one place.</div>
-          <div class="mkt-features">
-            <div class="mkt-feat"><strong>Site Builder</strong>Don't have a site yet? Build one in 15 minutes.</div>
-            <div class="mkt-feat"><strong>Site Editor</strong>Change text, photos, services anytime.</div>
-            <div class="mkt-feat"><strong>Site Optimizer</strong>Run the SEO/GEO audit on your own site.</div>
-            <div class="mkt-feat"><strong>Analytics</strong>Page views and visitors once you're live.</div>
-          </div>
-          <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
-            <button class="btn-gold" style="width:auto;padding:0.8rem 1.5rem" onclick="goTab('website','editor')">Edit My Site →</button>
-            <button class="btn-outline" onclick="goTab('website','optimizer')">Run Site Optimizer</button>
-            <button class="btn-outline" onclick="goTab('website','analytics')">View Analytics</button>
+        <style>
+          .wsh{display:grid;grid-template-columns:230px 1fr;gap:0;border:1px solid var(--border);background:#fff;min-height:560px}
+          @media(max-width:760px){.wsh{grid-template-columns:1fr}}
+          .wsh-side{background:var(--dark);padding:1.25rem 0.75rem}
+          .wsh-side-label{font-size:0.55rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);padding:0 0.75rem;margin-bottom:0.85rem}
+          .wsh-link{display:block;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.72);padding:0.7rem 0.85rem;border-radius:6px;transition:all .15s}
+          .wsh-link:hover{background:rgba(255,255,255,0.05);color:#fff}
+          .wsh-link.active{background:rgba(201,146,42,0.16);color:var(--accent);border-left:3px solid var(--accent);padding-left:calc(0.85rem - 3px)}
+          .wsh-main{padding:1.75rem}
+          .wsh-view{display:none}
+          .wsh-view.active{display:block}
+          .wsh-h{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:300;color:var(--dark);margin-bottom:0.35rem}
+          .wsh-sub{font-size:0.82rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.5rem}
+          .wsh-yn{display:flex;gap:0.85rem;flex-wrap:wrap}
+          .wsh-yn button{flex:1;min-width:180px;background:var(--offwhite);border:1.5px solid var(--border);border-radius:8px;padding:1.5rem 1.25rem;cursor:pointer;text-align:left;transition:all .15s;font:inherit}
+          .wsh-yn button:hover{border-color:var(--accent);background:#fff}
+          .wsh-yn button.sel{border-color:var(--accent);background:#fff;box-shadow:0 4px 14px rgba(13,27,46,0.07)}
+          .wsh-yn .yn-t{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:600;color:var(--dark);margin-bottom:0.25rem}
+          .wsh-yn .yn-d{font-size:0.74rem;color:var(--text-muted);line-height:1.5}
+          .wsh-builder-frame{width:100%;height:680px;border:1px solid var(--border);border-radius:6px;margin-top:1rem;background:#fff}
+        </style>
+        <div class="wsh">
+          <aside class="wsh-side">
+            <div class="wsh-side-label">My Website</div>
+            <button type="button" class="wsh-link active" data-wsh="start" onclick="wsNav('start')">Start Here</button>
+            <button type="button" class="wsh-link" data-wsh="optimizer" onclick="wsNav('optimizer')">SEO / GEO Optimizer</button>
+            <button type="button" class="wsh-link" data-wsh="analytics" onclick="wsNav('analytics')">Analytics</button>
+            <button type="button" class="wsh-link" data-wsh="tools" onclick="wsNav('tools')">More Website Tools</button>
+          </aside>
+          <div class="wsh-main">
+
+            <!-- START HERE -->
+            <div class="wsh-view active" id="wsh-start">
+              <div class="wsh-h">Let's get your website sorted.</div>
+              <div class="wsh-sub">First question &mdash; do you already have a website?</div>
+              <div class="wsh-yn">
+                <button type="button" id="wshYesBtn" onclick="wsStart('yes')">
+                  <div class="yn-t">Yes, I have one →</div>
+                  <div class="yn-d">We'll run the SEO/GEO Optimizer on your existing site and show you what to fix.</div>
+                </button>
+                <button type="button" id="wshNoBtn" onclick="wsStart('no')">
+                  <div class="yn-t">No, I need one →</div>
+                  <div class="yn-d">Build a professional site right here, in the portal. Free preview, pay only when you launch.</div>
+                </button>
+              </div>
+              <div id="wsh-start-yes" style="display:none;margin-top:1.25rem">
+                <div class="notebox ok" style="background:var(--green-bg);border-left:3px solid var(--green);color:var(--green);padding:0.85rem 1rem;font-size:0.8rem;border-radius:4px">Great &mdash; head to the <strong>SEO / GEO Optimizer</strong> to scan your current site.</div>
+                <button class="btn-gold" style="width:auto;padding:0.8rem 1.6rem;margin-top:0.85rem" onclick="wsNav('optimizer')">Open the Optimizer →</button>
+              </div>
+              <div id="wsh-start-no" style="display:none;margin-top:1.25rem">
+                <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.5rem">The Bedrock site builder &mdash; right here in your portal:</div>
+                <iframe id="wshBuilderFrame" class="wsh-builder-frame" title="Bedrock site builder" loading="lazy"></iframe>
+              </div>
+            </div>
+
+            <!-- OPTIMIZER -->
+            <div class="wsh-view" id="wsh-optimizer">
+              <div class="wsh-h">SEO / GEO Optimizer</div>
+              <div class="wsh-sub">Runs the 12-point Google + AI-search audit on your site, scores it 0&ndash;100, and tracks the score over time. Your private tracker &mdash; separate from the public homepage Optimizer.</div>
+              <div class="gbiz-row" style="margin-bottom:0.5rem">
+                <input type="text" id="optUrlInput" placeholder="yourbusiness.com">
+                <button class="btn-gold" id="optRunBtn" style="width:auto;padding:0.65rem 1.4rem" onclick="runMyOptimizer()">Run Audit</button>
+              </div>
+              <div id="optStatus" style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem"></div>
+              <div id="optResult"></div>
+              <div class="dash-card" id="optHistoryCard" style="display:none;margin-top:1rem">
+                <div class="dc-label">Audit History</div>
+                <div class="dc-title" style="font-size:1.1rem;margin-bottom:0.75rem">Your score over time</div>
+                <div id="optHistory"></div>
+              </div>
+            </div>
+
+            <!-- ANALYTICS -->
+            <div class="wsh-view" id="wsh-analytics">
+              <div class="wsh-h">Site Analytics</div>
+              <div class="wsh-sub">Page views and visitor stats for your live Bedrock site. Powered by Cloudflare Web Analytics &mdash; no cookies, no cross-site tracking.</div>
+              <div id="wshAnalyticsBody">
+                <div class="analytics-placeholder">
+                  <div class="ap-icon">◈</div>
+                  <div class="ap-title">Analytics available once your site is live</div>
+                  <div class="ap-sub">After your site is deployed, page views and visitor stats appear here.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- MORE TOOLS -->
+            <div class="wsh-view" id="wsh-tools">
+              <div class="wsh-h">More Website Tools</div>
+              <div class="wsh-sub">More is on the way. Here's what's coming to the My Website hub.</div>
+              <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:420px">
+                <div style="font-size:0.78rem;color:var(--text-muted);padding:0.6rem 0.85rem;background:var(--offwhite);border-left:3px solid var(--accent)">Site Editor &mdash; edit text, photos, and services in place</div>
+                <div style="font-size:0.78rem;color:var(--text-muted);padding:0.6rem 0.85rem;background:var(--offwhite);border-left:3px solid var(--accent)">Domain &amp; SSL management</div>
+                <div style="font-size:0.78rem;color:var(--text-muted);padding:0.6rem 0.85rem;background:var(--offwhite);border-left:3px solid var(--accent)">Google Business Profile connection</div>
+                <div style="font-size:0.78rem;color:var(--text-muted);padding:0.6rem 0.85rem;background:var(--offwhite);border-left:3px solid var(--accent)">Lead &amp; contact-form inbox</div>
+              </div>
+              <button class="btn-outline" style="margin-top:1rem" onclick="launchEditor()">Open the full Site Editor →</button>
+            </div>
+
           </div>
         </div>
       </div>
@@ -830,25 +918,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         <div style="margin-top:1rem;font-size:0.7rem;color:var(--text-muted);line-height:1.6">Already built a site? Use <strong style="color:var(--accent)">Site Editor</strong> in this menu to make changes — don't run through the builder again, or you'll create a duplicate.</div>
       </div>
 
-      <!-- WEBSITE: PRIVATE OPTIMIZER (runs the audit on the user's own site, not a sales demo) -->
-      <div class="portal-pane" id="pane-website-optimizer">
-        <div class="mkt-card">
-          <div class="dc-label">My Site Optimizer</div>
-          <div class="dc-title">SEO/GEO audit for your site.</div>
-          <div class="dc-sub">Runs the 12-point Google + AI-search audit on your own site, scores it 0&ndash;100, and keeps a record each time so you can watch the score climb. This is your private tracker &mdash; separate from the public homepage Optimizer.</div>
-          <div class="gbiz-row" style="margin-bottom:0.5rem">
-            <input type="text" id="optUrlInput" placeholder="yourbusiness.com">
-            <button class="btn-gold" id="optRunBtn" style="width:auto;padding:0.65rem 1.4rem" onclick="runMyOptimizer()">Run Audit</button>
-          </div>
-          <div id="optStatus" style="font-size:0.72rem;color:var(--text-muted);margin-bottom:0.5rem"></div>
-          <div id="optResult"></div>
-        </div>
-        <div class="dash-card" id="optHistoryCard" style="display:none;margin-top:1rem">
-          <div class="dc-label">Audit History</div>
-          <div class="dc-title" style="font-size:1.1rem;margin-bottom:0.75rem">Your score over time</div>
-          <div id="optHistory"></div>
-        </div>
-      </div>
+      <!-- WEBSITE: PRIVATE OPTIMIZER — hidden May 2026, moved into the My Website Hub (wsh-optimizer view) -->
+      <div class="portal-pane" id="pane-website-optimizer" style="display:none"></div>
 
       <!-- WEBSITE: EDITOR -->
       <div class="portal-pane" id="pane-website-editor">
@@ -996,6 +1067,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 
       <!-- PROFILE -->
       <div class="portal-pane" id="pane-profile-default">
+
+        <button type="button" onclick="goTab('dashboard','default')" style="background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;letter-spacing:0.08em;color:var(--accent);padding:0;margin-bottom:1rem">&larr; Back to Dashboard</button>
 
         <div class="profile-head">
           <div class="dc-label">Your Business Profile</div>
@@ -1872,7 +1945,7 @@ function saveStage(n) {
     method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+currentSession.access_token},
     body: JSON.stringify(payload),
   }).then(function(r){ return r.json(); }).then(function(d){
-    if (d.success) { msgEl.textContent = '✓ Saved'; msgEl.className = 'stage-save-msg ok'; PROFILE = d.profile || PROFILE; updateProfileMeter(); setTimeout(function(){ msgEl.textContent=''; }, 2000); }
+    if (d.success) { msgEl.textContent = '✓ Saved'; msgEl.className = 'stage-save-msg ok'; PROFILE = d.profile || PROFILE; updateProfileMeter(); if (typeof onboardMarkDone==='function') onboardMarkDone('profile'); setTimeout(function(){ msgEl.textContent=''; }, 2000); }
     else { msgEl.textContent = d.error || 'Save failed'; msgEl.className = 'stage-save-msg err'; }
   }).catch(function(){ msgEl.textContent = 'Network error'; msgEl.className = 'stage-save-msg err'; });
 }
@@ -2081,7 +2154,7 @@ function submitFeedback() {
   }).then(function(r){ return r.json(); }).then(function(d){
     if (d.success) {
       msg.style.color = 'var(--green)';
-      msg.textContent = '✓ Sent. Thanks — Brock reads every one of these.';
+      msg.textContent = '✓ Sent. Thanks — the Bedrock Digital team reads every one of these.';
       document.getElementById('feedbackText').value = '';
     } else { msg.style.color = 'var(--red)'; msg.textContent = d.error || 'Could not send — try again.'; }
   }).catch(function(){ msg.style.color = 'var(--red)'; msg.textContent = 'Network error — try again.'; });
@@ -2103,42 +2176,73 @@ function dismissWelcome() {
 // ── ONBOARDING CHECKLIST ─────────────────────────────────────────────────────
 var ONBOARD_KEY = 'bedrock_onboard_v1';
 var ONBOARD_STEPS = ['profile','website','marketing','subscription'];
+// Each step is 'todo' | 'progress' | 'done'. A green check requires real
+// completion; opening a section without finishing shows a yellow dash.
 function loadOnboard() {
-  try { var raw = localStorage.getItem(ONBOARD_KEY); if (raw) return JSON.parse(raw); } catch(_){}
-  return { profile:false, website:false, marketing:false, subscription:false };
+  try {
+    var raw = localStorage.getItem(ONBOARD_KEY);
+    if (raw) {
+      var o = JSON.parse(raw);
+      // migrate old boolean format → tri-state
+      ONBOARD_STEPS.forEach(function(s){ if (o[s] === true) o[s] = 'done'; else if (o[s] === false || o[s] == null) o[s] = 'todo'; });
+      return o;
+    }
+  } catch(_){}
+  return { profile:'todo', website:'todo', marketing:'todo', subscription:'todo' };
 }
 function saveOnboard(o) { try { localStorage.setItem(ONBOARD_KEY, JSON.stringify(o)); } catch(_){} }
 function renderOnboard() {
   var o = loadOnboard();
-  // auto-detect signals where we can
-  if (currentLead && currentLead.site_url) o.website = true;
+  // Auto-promote to 'done' from real completion signals.
+  if (currentLead && currentLead.site_url) o.website = 'done';
+  try {
+    var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
+    if (cart.website || cart.marketing || cart.cfo) o.subscription = 'done';
+  } catch(_){}
   var done = 0;
   ONBOARD_STEPS.forEach(function(step){
     var item = document.querySelector('.onboard-item[data-step="'+step+'"]');
     if (!item) return;
-    if (o[step]) { item.classList.add('done'); done++; }
-    else item.classList.remove('done');
+    item.classList.remove('done','progress');
+    var check = item.querySelector('.onboard-check');
+    if (o[step] === 'done') { item.classList.add('done'); if (check) check.innerHTML = '&#10003;'; done++; }
+    else if (o[step] === 'progress') { item.classList.add('progress'); if (check) check.innerHTML = '&ndash;'; }
+    else { if (check) check.innerHTML = ''; }
   });
   var prog = document.getElementById('onboardProg');
   if (prog) prog.textContent = done + ' of 4 done';
   var doneMsg = document.getElementById('onboardDoneMsg');
   var list = document.getElementById('onboardList');
+  var gs = document.getElementById('onboardGetStarted');
   if (done === 4) {
     if (doneMsg) doneMsg.style.display = 'block';
     if (list) list.style.display = 'none';
+    if (gs) gs.style.display = 'none';
   } else {
     if (doneMsg) doneMsg.style.display = 'none';
     if (list) list.style.display = '';
+    if (gs) gs.style.display = '';
   }
   saveOnboard(o);
 }
 function onboardGo(step) {
   var o = loadOnboard();
-  o[step] = true;
+  // Opening a step marks it in-progress (not done) until it's actually completed.
+  if (o[step] !== 'done') o[step] = 'progress';
   saveOnboard(o);
   renderOnboard();
-  var dest = { profile:['profile','default'], website:['website','hub'], marketing:['marketing','hub'], subscription:['subs','hub'] }[step];
-  if (dest) goTab(dest[0], dest[1]);
+  var dest = { profile:['profile','default'], website:['website','hub'], marketing:['marketing','hub'], subscription:['subs','cart'] }[step];
+  if (dest) {
+    if (step === 'marketing') { launchMarketing('wizard'); return; }
+    goTab(dest[0], dest[1]);
+  }
+}
+// Mark a step done from elsewhere (e.g. a profile stage save).
+function onboardMarkDone(step) {
+  var o = loadOnboard();
+  o[step] = 'done';
+  saveOnboard(o);
+  renderOnboard();
 }
 
 function initPortalUX() {
@@ -2301,6 +2405,35 @@ readField = function(field) {
   if (field === 'years_in_business') return YEARS_IN_BIZ;
   return _origReadField(field);
 };
+
+// ── MY WEBSITE HUB — sidebar navigation ──────────────────────────────────────
+function wsNav(section) {
+  document.querySelectorAll('#pane-website-hub .wsh-link').forEach(function(l){
+    l.classList.toggle('active', l.getAttribute('data-wsh') === section);
+  });
+  document.querySelectorAll('#pane-website-hub .wsh-view').forEach(function(v){ v.classList.remove('active'); });
+  var view = document.getElementById('wsh-' + section);
+  if (view) view.classList.add('active');
+  if (section === 'optimizer') { prefillOptUrl(); loadAuditHistory(); }
+  if (section === 'analytics') { wsRenderAnalytics(); }
+}
+function wsStart(answer) {
+  var yes = document.getElementById('wshYesBtn'), no = document.getElementById('wshNoBtn');
+  if (yes) yes.classList.toggle('sel', answer === 'yes');
+  if (no)  no.classList.toggle('sel', answer === 'no');
+  document.getElementById('wsh-start-yes').style.display = answer === 'yes' ? 'block' : 'none';
+  document.getElementById('wsh-start-no').style.display  = answer === 'no'  ? 'block' : 'none';
+  if (answer === 'no') {
+    var f = document.getElementById('wshBuilderFrame');
+    if (f && !f.getAttribute('src')) f.setAttribute('src', '/sites.html#builder');
+  }
+}
+function wsGo(section) { goTab('website','hub'); wsNav(section); }
+function wsRenderAnalytics() {
+  var src = document.getElementById('analyticsContent');
+  var dst = document.getElementById('wshAnalyticsBody');
+  if (src && dst && src.querySelector && src.querySelector('.stat-row')) dst.innerHTML = src.innerHTML;
+}
 
 // ── MY SITE OPTIMIZER (private — runs audit, saves history) ──────────────────
 function optScoreColor(s) {
