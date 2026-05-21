@@ -1609,18 +1609,28 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="logo-text"><span class="wordmark">Bedrock</span><span class="sub">Digital</span></div>
   </a>
   <ul class="nav-links" id="hpNavLinks">
-    <li><a id="nl-home" href="/">Bedrock Home</a></li>
-    <li><a id="nl-sites" href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
-    <li><a id="nl-marketing" href="/bedrock-marketing-v1.html">Marketing</a></li>
-    <li><a id="nl-optimizer" href="#optimizer" onclick="showPage('optimizer',event)">Optimizer</a></li>
-    <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
-    <li><a id="nl-reviews" href="#reviews" onclick="showPage('reviews',event)">Reviews</a></li>
-    <li id="navLoginLi">
-      <a id="nlLoginLink" href="#login" onclick="showPage('login',event)">Client Login</a>
-      <a id="nlProfileBtn" href="portal.html" title="My Portal" style="display:none;align-items:center;gap:0.45rem;text-decoration:none"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label">My Portal</span></a>
+    <li><a id="nl-home" href="/">Home</a></li>
+    <li><a id="nl-howitworks" href="/#howitworks">How It Works</a></li>
+    <li class="nav-home-wrap">
+      <a id="nl-tools" href="/#tools">Tools</a>
+      <ul class="nav-jumps">
+        <li><a href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
+        <li><a href="/bedrock-marketing-v1.html">Bedrock Marketing</a></li>
+        <li><a href="#optimizer" onclick="showPage('optimizer',event)">Optimizer &mdash; Free Scan</a></li>
+      </ul>
     </li>
-    <li><a id="nl-createacct" href="/portal.html#create" style="color:#fff;background:#C9922A;padding:0.5rem 1rem;border-radius:4px;font-weight:600">Create Account</a></li>
+    <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
+    <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li>
+    <li id="navLoginLi">
+      <a id="nlLoginLink" href="#login" onclick="showPage('login',event)">Sign In</a>
+      <a id="nlProfileBtn" href="portal.html" title="My Account" style="display:none;align-items:center;gap:0.45rem;text-decoration:none"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label">My Account</span></a>
+    </li>
     <li><a id="nl-builder" href="#builder" onclick="showPage('builder',event)" class="nav-cta">Build My Site</a></li>
+    <!-- hidden May 2026 — kept for SPA routing; not shown in the simplified nav -->
+    <li style="display:none"><a id="nl-reviews" href="#reviews" onclick="showPage('reviews',event)">Reviews</a></li>
+    <li style="display:none"><a id="nl-marketing" href="/bedrock-marketing-v1.html">Marketing</a></li>
+    <li style="display:none"><a id="nl-optimizer" href="#optimizer" onclick="showPage('optimizer',event)">Optimizer</a></li>
+    <li style="display:none"><a id="nl-createacct" href="/portal.html#create">Create Account</a></li>
   </ul>
   <button id="hpMobileToggle" class="hp-mobile-toggle" onclick="toggleHpNav(this)" aria-label="Toggle menu">
     <span></span><span></span><span></span>

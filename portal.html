@@ -386,6 +386,49 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 
 .years-calc{font-size:0.7rem;color:var(--text-muted);margin-top:6px;font-style:italic}
 .years-calc.has-val{color:var(--accent);font-weight:600}
+
+/* ── SUBSCRIPTIONS: light backdrop for readability (cards were floating on the dark portal bg) ── */
+.portal-pane.subs-pane-bg.active{background:#FAF7F2;padding:1.5rem;border-radius:10px;border:1px solid rgba(13,27,46,0.06)}
+@media(max-width:480px){.portal-pane.subs-pane-bg.active{padding:1rem}}
+
+/* ── ONBOARDING CHECKLIST ── */
+.onboard{background:#fff;border-top:3px solid var(--accent);padding:1.5rem 1.75rem;margin-bottom:1.25rem}
+.onboard-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.onboard-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600;color:var(--dark)}
+.onboard-prog{font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent)}
+.onboard-item{display:flex;align-items:center;gap:0.85rem;padding:0.7rem 0;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;width:100%;text-align:left;font:inherit}
+.onboard-item:last-child{border-bottom:none}
+.onboard-item:hover{background:var(--offwhite)}
+.onboard-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;transition:all .15s}
+.onboard-item.done .onboard-check{background:var(--green);border-color:var(--green)}
+.onboard-item-txt{flex:1}
+.onboard-item-name{font-size:0.86rem;font-weight:600;color:var(--dark)}
+.onboard-item.done .onboard-item-name{color:var(--text-muted);text-decoration:line-through}
+.onboard-item-sub{font-size:0.7rem;color:var(--text-muted)}
+.onboard-arrow{color:var(--accent);font-size:0.9rem}
+.onboard-done-msg{background:var(--green-bg);border-left:3px solid var(--green);padding:0.85rem 1rem;font-size:0.8rem;color:var(--green);font-weight:500;border-radius:4px}
+
+/* ── HELP TOOLTIPS ── */
+.help-tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--offwhite);border:1px solid var(--border);color:var(--text-muted);font-size:0.6rem;font-weight:700;cursor:help;margin-left:0.5rem;position:relative;vertical-align:middle}
+.help-tip:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.help-tip .help-bubble{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;font-size:0.7rem;font-weight:400;line-height:1.5;letter-spacing:0;text-transform:none;padding:0.6rem 0.8rem;border-radius:6px;width:230px;box-shadow:0 6px 20px rgba(0,0,0,0.3);opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s;z-index:80;text-align:left}
+.help-tip:hover .help-bubble{opacity:1;visibility:visible}
+.help-tip .help-bubble::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--dark)}
+
+/* ── WELCOME MODAL ── */
+.welcome-overlay{position:fixed;inset:0;background:rgba(13,27,46,0.82);z-index:9000;display:none;align-items:center;justify-content:center;padding:1.25rem}
+.welcome-overlay.show{display:flex}
+.welcome-modal{background:#fff;max-width:480px;width:100%;border-top:4px solid var(--accent);padding:2.25rem 2rem 1.85rem;box-shadow:0 24px 60px rgba(0,0,0,0.5)}
+.welcome-modal .wm-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem}
+.welcome-modal h2{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:300;color:var(--dark);margin-bottom:0.4rem;line-height:1.2}
+.welcome-modal .wm-sub{font-size:0.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.25rem}
+.welcome-modal .wm-list{list-style:none;padding:0;margin:0 0 1.25rem}
+.welcome-modal .wm-list li{display:flex;gap:0.7rem;padding:0.55rem 0;font-size:0.82rem;color:var(--dark);line-height:1.5;align-items:flex-start}
+.welcome-modal .wm-list li::before{content:'';width:7px;height:7px;background:var(--accent);border-radius:50%;flex-shrink:0;margin-top:0.45rem}
+.welcome-modal .wm-note{font-size:0.72rem;color:var(--text-muted);background:var(--offwhite);border-left:3px solid var(--accent);padding:0.6rem 0.8rem;margin-bottom:1.25rem;line-height:1.5}
+.welcome-modal .wm-actions{display:flex;gap:0.6rem;justify-content:flex-end;flex-wrap:wrap}
+.wm-skip{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:0.7rem 1.1rem;cursor:pointer;border-radius:4px}
+.wm-skip:hover{border-color:var(--dark);color:var(--dark)}
 </style>
 </head>
 <body>
@@ -414,22 +457,22 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     <div class="nav-tab-group" data-top="website">
       <button class="nav-tab-btn" onclick="goTab('website','hub')">My Website <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','hub')"><span class="tsl-eyebrow">Overview</span>Website Hub</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','builder')"><span class="tsl-eyebrow">Build</span>Site Builder</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','editor')"><span class="tsl-eyebrow">Edit</span>Site Editor</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','optimizer')"><span class="tsl-eyebrow">SEO/GEO</span>Site Optimizer</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','analytics')"><span class="tsl-eyebrow">Stats</span>Site Analytics</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','status')"><span class="tsl-eyebrow">Status</span>Site Info</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','editor')"><span class="tsl-eyebrow">Manage</span>My Site</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','optimizer')"><span class="tsl-eyebrow">SEO/GEO</span>Run the Optimizer</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('website','analytics')"><span class="tsl-eyebrow">Stats</span>View Analytics</button>
       </div>
     </div>
     <div class="nav-tab-group" data-top="marketing">
       <button class="nav-tab-btn" onclick="goTab('marketing','hub')">Marketing <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','hub')"><span class="tsl-eyebrow">Overview</span>Marketing Hub</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','integrations')"><span class="tsl-eyebrow">Soon</span>Social Integrations</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','library')"><span class="tsl-eyebrow">Saved</span>Asset Library</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('marketing','integrations')"><span class="tsl-eyebrow">Soon</span>Integrations</button>
       </div>
+    </div>
+    <div class="nav-tab-group" data-top="cfo">
+      <button class="nav-tab-btn" onclick="goTab('cfo','default')">CFO</button>
     </div>
     <div class="nav-tab-group" data-top="profile">
       <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
@@ -609,6 +652,38 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 
       <!-- ════════════ DASHBOARD HUB ════════════ -->
       <div class="portal-pane active" id="pane-dashboard-default">
+
+        <!-- ONBOARDING CHECKLIST -->
+        <div class="onboard" id="onboardCard">
+          <div class="onboard-head">
+            <div class="onboard-title">Get started with Bedrock<span class="help-tip">?<span class="help-bubble">Your Dashboard is home base — account info, quick links, and this checklist to get your business set up.</span></span></div>
+            <div class="onboard-prog" id="onboardProg">0 of 4 done</div>
+          </div>
+          <div id="onboardList">
+            <button type="button" class="onboard-item" data-step="profile" onclick="onboardGo('profile')">
+              <span class="onboard-check">&#10003;</span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Complete my profile</span><span class="onboard-item-sub">Tell Bedrock about your business so every tool is pre-filled</span></span>
+              <span class="onboard-arrow">&rarr;</span>
+            </button>
+            <button type="button" class="onboard-item" data-step="website" onclick="onboardGo('website')">
+              <span class="onboard-check">&#10003;</span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Build my website</span><span class="onboard-item-sub">Get a professional site live for your trade</span></span>
+              <span class="onboard-arrow">&rarr;</span>
+            </button>
+            <button type="button" class="onboard-item" data-step="marketing" onclick="onboardGo('marketing')">
+              <span class="onboard-check">&#10003;</span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Set up marketing</span><span class="onboard-item-sub">Build your Brand Kit and start making materials</span></span>
+              <span class="onboard-arrow">&rarr;</span>
+            </button>
+            <button type="button" class="onboard-item" data-step="subscription" onclick="onboardGo('subscription')">
+              <span class="onboard-check">&#10003;</span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Manage my subscription</span><span class="onboard-item-sub">Pick the tools you want and review your plan</span></span>
+              <span class="onboard-arrow">&rarr;</span>
+            </button>
+          </div>
+          <div class="onboard-done-msg" id="onboardDoneMsg" style="display:none">✓ You're all set up. Welcome to Bedrock — everything's ready to go.</div>
+        </div>
+
         <div class="banner-grid" style="display:grid;grid-template-columns:1.2fr 1fr;gap:1rem;margin-bottom:1rem">
           <!-- Account Info -->
           <div class="banner-card">
@@ -686,7 +761,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <div class="portal-pane" id="pane-website-hub">
         <div class="mkt-card">
           <div class="dc-label">My Website</div>
-          <div class="dc-title">Your website, end to end.</div>
+          <div class="dc-title">Your website, end to end.<span class="help-tip">?<span class="help-bubble">Everything about your Bedrock site — build a new one, edit your live site, run the SEO audit, and check visitor analytics.</span></span></div>
           <div class="dc-sub">Build it, edit it, check how it's performing, and run the SEO/GEO audit — all in one place.</div>
           <div class="mkt-features">
             <div class="mkt-feat"><strong>Site Builder</strong>Don't have a site yet? Build one in 15 minutes.</div>
@@ -706,7 +781,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <div class="portal-pane" id="pane-marketing-hub">
         <div class="mkt-card">
           <div class="dc-label">Marketing Hub</div>
-          <div class="dc-title">Everything to market your business.</div>
+          <div class="dc-title">Everything to market your business.<span class="help-tip">?<span class="help-bubble">Set up your Brand Kit once, then make flyers, social posts, signs, and more — opens the full Bedrock Marketing workspace.</span></span></div>
           <div class="dc-sub">Set up your Brand Kit once, then build flyers, social posts, door hangers, yard signs, business cards, and more. Opens in the full Bedrock Marketing workspace.</div>
           <div class="mkt-features">
             <div class="mkt-feat"><strong>Brand Kit</strong>Colors, fonts, voice, logo. One-time setup.</div>
@@ -723,7 +798,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       </div>
 
       <!-- ════════════ SUBSCRIPTIONS HUB OVERVIEW ════════════ -->
-      <div class="portal-pane" id="pane-subs-hub">
+      <div class="portal-pane subs-pane-bg" id="pane-subs-hub">
         <div class="mkt-card">
           <div class="dc-label">Billing &amp; Subscriptions</div>
           <div class="dc-title">Your plan, your bill, in one place.</div>
@@ -891,6 +966,31 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           <div class="cs-badge"><span>Coming Soon</span></div>
           <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Social &amp; Email Integrations</div>
           <div class="dc-sub" style="max-width:420px;margin:0 auto 1.25rem">Schedule posts to Facebook, Instagram, and Nextdoor straight from Bedrock. Hook up your email list for blast sends. Coming after the asset library ships.</div>
+        </div>
+      </div>
+
+      <!-- MARKETING: ASSET LIBRARY -->
+      <div class="portal-pane" id="pane-marketing-library">
+        <div class="mkt-card">
+          <div class="dc-label">Asset Library</div>
+          <div class="dc-title">Everything you've made, in one place.</div>
+          <div class="dc-sub">Every flyer, post, sign, and image you create or upload in Bedrock Marketing is saved here automatically. Re-download, duplicate, or tweak older pieces without starting over.</div>
+          <button class="btn-gold" style="width:auto;padding:0.85rem 2rem" onclick="launchMarketing('library')">Open Asset Library →</button>
+        </div>
+      </div>
+
+      <!-- ════════════ CFO HUB (placeholder) ════════════ -->
+      <div class="portal-pane" id="pane-cfo-default">
+        <div class="coming-soon-pane">
+          <div class="cs-badge"><span>Coming Soon</span></div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Bedrock CFO</div>
+          <div class="dc-sub" style="max-width:440px;margin:0 auto 1.5rem">The money side, without the headache. Bedrock CFO will connect to your books, auto-categorize expenses, help you bid jobs with the right margin, and answer plain-English questions about your business.</div>
+          <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:340px;margin:0 auto 1.5rem;text-align:left">
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">QuickBooks &amp; Jobber connection — auto-categorize expenses</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Bid intelligence — what to charge to hit your margin</div>
+            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Cash flow in plain English — "can I make payroll?"</div>
+          </div>
+          <button class="btn-outline" onclick="goTab('profile','default')">Fill in the Operations section of your Profile →</button>
         </div>
       </div>
 
@@ -1160,10 +1260,10 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       </div>
 
       <!-- SUBSCRIPTIONS: CART -->
-      <div class="portal-pane" id="pane-subs-cart">
+      <div class="portal-pane subs-pane-bg" id="pane-subs-cart">
         <div style="background:#fff;border-top:3px solid var(--accent);padding:1.5rem 1.75rem;margin-bottom:1.25rem">
           <div class="dc-label">My Subscriptions</div>
-          <div class="dc-title">Pick what you want. Bundle and save.</div>
+          <div class="dc-title">Pick what you want. Bundle and save.<span class="help-tip">?<span class="help-bubble">Choose the Bedrock tools you want. Add more anytime — bundle discounts apply automatically before checkout.</span></span></div>
           <div class="dc-sub" style="margin-bottom:0">Tap a product to add or remove it from your plan. Discounts apply automatically. <strong style="color:var(--accent);font-weight:600">All prices are placeholders — final pricing will be confirmed before any charge.</strong></div>
         </div>
 
@@ -1262,7 +1362,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       </div>
 
       <!-- SUBSCRIPTIONS: ACTIVE -->
-      <div class="portal-pane" id="pane-subs-active">
+      <div class="portal-pane subs-pane-bg" id="pane-subs-active">
         <div class="coming-soon-pane">
           <div class="cs-badge"><span>Coming Soon</span></div>
           <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Active Subscriptions</div>
@@ -1275,6 +1375,27 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
   </div>
 
 </main>
+
+<!-- WELCOME / TUTORIAL MODAL — first portal load only (localStorage flag) -->
+<div class="welcome-overlay" id="welcomeOverlay">
+  <div class="welcome-modal">
+    <div class="wm-eyebrow">Welcome to Bedrock</div>
+    <h2>Here's how Bedrock works.</h2>
+    <div class="wm-sub">Bedrock Digital is one connected system for your whole business. Quick tour before you dive in:</div>
+    <ul class="wm-list">
+      <li><strong>Dashboard</strong> &mdash; your home base, with a checklist to get set up.</li>
+      <li><strong>My Website</strong> &mdash; build, edit, and audit your site.</li>
+      <li><strong>Marketing</strong> &mdash; your Brand Kit and tools to make flyers, posts, and signs.</li>
+      <li><strong>My Profile</strong> &mdash; fill it once, every tool uses it.</li>
+      <li><strong>My Subscriptions</strong> &mdash; pick your tools and manage billing.</li>
+    </ul>
+    <div class="wm-note">Click the tabs at the top to navigate. Hover any tab for quick links to what's inside.</div>
+    <div class="wm-actions">
+      <button class="wm-skip" onclick="dismissWelcome()">Skip</button>
+      <button class="btn-gold" style="width:auto;padding:0.75rem 1.5rem" onclick="dismissWelcome()">Got it, take me in</button>
+    </div>
+  </div>
+</div>
 
 <footer>
   <p class="f-note">© 2026 Bedrock Digital &nbsp;|&nbsp; <a href="/terms.html">Terms</a> &nbsp;·&nbsp; <a href="/privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="mailto:support@bedrock-sites.com">Support</a></p>
@@ -1319,6 +1440,7 @@ function startDemo() {
   ]);
   showPage('pageDash');
   goTab('dashboard','default');
+  initPortalUX();
 }
 function fillDemoAnalytics() {
   var el = document.getElementById('analyticsContent'); if (!el) return;
@@ -1451,6 +1573,9 @@ function loadDashboard(session) {
   document.getElementById('navUserEmail').textContent = session.user ? session.user.email : '';
   document.getElementById('bellWrap').classList.add('show');
   showNavTabs(true);
+  // Switch to the dashboard IMMEDIATELY — before the get-portal fetch — so the
+  // login screen never flashes while data loads. Data fills in when the fetch returns.
+  showPage('pageDash');
 
   fetch('/.netlify/functions/get-portal', { headers: { Authorization: 'Bearer ' + session.access_token } })
     .then(function(r) { return r.ok ? r.json() : null; }).then(function(data) {
@@ -1467,11 +1592,13 @@ function loadDashboard(session) {
       else if (hash.indexOf('marketing') !== -1) goTab('marketing','hub');
       else if (hash.indexOf('website') !== -1) goTab('website','hub');
       else goTab('dashboard','default');
+      initPortalUX();
     }).catch(function() {
       populateDashboard(null, session);
       loadStoredNotifications(session);
       showPage('pageDash');
       goTab('dashboard','default');
+      initPortalUX();
     });
 }
 
@@ -1539,8 +1666,9 @@ var CURRENT_TAB = { top:'website', sub:'editor' };
 
 var TAB_DEFS = {
   dashboard: { label:'Dashboard',       subs:{ default:'Dashboard' } },
-  website:   { label:'My Website',      subs:{ hub:'Website Hub', builder:'Site Builder', editor:'Site Editor', optimizer:'Site Optimizer', analytics:'Site Analytics', status:'Site Info' } },
-  marketing: { label:'Marketing',       subs:{ hub:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', integrations:'Social Integrations' } },
+  website:   { label:'My Website',      subs:{ hub:'Website Hub', editor:'My Site', optimizer:'Site Optimizer', analytics:'Site Analytics', builder:'Site Builder', status:'Site Info' } },
+  marketing: { label:'Marketing',       subs:{ hub:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', library:'Asset Library', integrations:'Integrations' } },
+  cfo:       { label:'CFO',             subs:{ default:'CFO' } },
   profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
   subs:      { label:'My Subscriptions',subs:{ hub:'Billing Hub', cart:'Plan &amp; Cart', active:'Active Subscriptions' } },
 };
@@ -1957,6 +2085,65 @@ function submitFeedback() {
       document.getElementById('feedbackText').value = '';
     } else { msg.style.color = 'var(--red)'; msg.textContent = d.error || 'Could not send — try again.'; }
   }).catch(function(){ msg.style.color = 'var(--red)'; msg.textContent = 'Network error — try again.'; });
+}
+
+// ── WELCOME MODAL (first portal load only) ───────────────────────────────────
+var WELCOME_KEY = 'bedrock_welcomed_v1';
+function maybeShowWelcome() {
+  try { if (localStorage.getItem(WELCOME_KEY)) return; } catch(_){}
+  var ov = document.getElementById('welcomeOverlay');
+  if (ov) ov.classList.add('show');
+}
+function dismissWelcome() {
+  var ov = document.getElementById('welcomeOverlay');
+  if (ov) ov.classList.remove('show');
+  try { localStorage.setItem(WELCOME_KEY, '1'); } catch(_){}
+}
+
+// ── ONBOARDING CHECKLIST ─────────────────────────────────────────────────────
+var ONBOARD_KEY = 'bedrock_onboard_v1';
+var ONBOARD_STEPS = ['profile','website','marketing','subscription'];
+function loadOnboard() {
+  try { var raw = localStorage.getItem(ONBOARD_KEY); if (raw) return JSON.parse(raw); } catch(_){}
+  return { profile:false, website:false, marketing:false, subscription:false };
+}
+function saveOnboard(o) { try { localStorage.setItem(ONBOARD_KEY, JSON.stringify(o)); } catch(_){} }
+function renderOnboard() {
+  var o = loadOnboard();
+  // auto-detect signals where we can
+  if (currentLead && currentLead.site_url) o.website = true;
+  var done = 0;
+  ONBOARD_STEPS.forEach(function(step){
+    var item = document.querySelector('.onboard-item[data-step="'+step+'"]');
+    if (!item) return;
+    if (o[step]) { item.classList.add('done'); done++; }
+    else item.classList.remove('done');
+  });
+  var prog = document.getElementById('onboardProg');
+  if (prog) prog.textContent = done + ' of 4 done';
+  var doneMsg = document.getElementById('onboardDoneMsg');
+  var list = document.getElementById('onboardList');
+  if (done === 4) {
+    if (doneMsg) doneMsg.style.display = 'block';
+    if (list) list.style.display = 'none';
+  } else {
+    if (doneMsg) doneMsg.style.display = 'none';
+    if (list) list.style.display = '';
+  }
+  saveOnboard(o);
+}
+function onboardGo(step) {
+  var o = loadOnboard();
+  o[step] = true;
+  saveOnboard(o);
+  renderOnboard();
+  var dest = { profile:['profile','default'], website:['website','hub'], marketing:['marketing','hub'], subscription:['subs','hub'] }[step];
+  if (dest) goTab(dest[0], dest[1]);
+}
+
+function initPortalUX() {
+  renderOnboard();
+  maybeShowWelcome();
 }
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────

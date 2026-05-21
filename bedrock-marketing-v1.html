@@ -1475,6 +1475,8 @@ function filenameFor(ext) {
     var p = new URLSearchParams(window.location.search);
     var qpEmail = (p.get('email') || '').trim().toLowerCase();
     var qpToken = (p.get('token') || '').trim();
+    var qpView  = (p.get('view') || '').trim();
+    var VALID_VIEWS = ['wizard','brand','build','campaigns','library'];
     if (qpToken) STATE.authToken = qpToken;
     if (qpEmail && qpEmail.includes('@')) {
       var input = document.getElementById('gateEmail'); if (input) input.value = qpEmail;
@@ -1487,7 +1489,8 @@ function filenameFor(ext) {
           selectFontStyle(STATE.brandKit.font_style); selectTone(STATE.brandKit.tone);
           paintMatGrid(); updateBrandSummary();
           showPage('pageHub');
-          navTo(STATE.brandKitComplete ? 'wizard' : 'brand');
+          if (VALID_VIEWS.indexOf(qpView) !== -1) navTo(qpView);
+          else navTo(STATE.brandKitComplete ? 'wizard' : 'brand');
         })
         .catch(function(){
           selectFontStyle(STATE.brandKit.font_style); selectTone(STATE.brandKit.tone);
