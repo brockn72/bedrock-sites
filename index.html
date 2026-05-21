@@ -1617,6 +1617,12 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
 </head>
 <body>
+<!-- Embed mode: strip all chrome when loaded as ?embed=optimizer (used by the My Website hub) -->
+<script>if(/[?&]embed=optimizer/.test(location.search)){document.body.className+=' bd-embed bd-embed-optimizer';}</script>
+<style>
+  body.bd-embed #hp-nav,body.bd-embed #mobileTabBar,body.bd-embed #mtbDrawer,body.bd-embed #mtbOverlay,body.bd-embed #bd-footer{display:none!important}
+  body.bd-embed{padding-bottom:0!important}
+</style>
 
 <!-- ===== NAV ===== -->
 <nav id="hp-nav">
@@ -1626,7 +1632,13 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   </a>
   <ul class="nav-links" id="hpNavLinks">
     <li><a id="nl-home" href="#home" onclick="showPage('home',event)">Home</a></li>
-    <li><a id="nl-howitworks" href="#howitworks" onclick="showPage('howitworks',event)">How It Works</a></li>
+    <li class="nav-home-wrap">
+      <a id="nl-howitworks" href="#howitworks" onclick="showPage('howitworks',event)">How It Works</a>
+      <ul class="nav-jumps">
+        <li><a href="#hiw-pricing" onclick="showPage('howitworks',event);setTimeout(function(){var p=document.getElementById('hiw-pricing');if(p)p.scrollIntoView({behavior:'smooth'});},250)">Pricing</a></li>
+        <li><a href="#hiw-faq" onclick="showPage('howitworks',event);setTimeout(function(){var f=document.getElementById('hiw-faq');if(f)f.scrollIntoView({behavior:'smooth'});},250)">FAQ</a></li>
+      </ul>
+    </li>
     <li class="nav-home-wrap">
       <a id="nl-tools" href="#tools" onclick="showPage('tools',event)">Tools</a>
       <ul class="nav-jumps">
@@ -1680,7 +1692,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <p class="bd-hero-sub">The Bedrock Ecosystem &mdash; one company, one connected system.</p>
     <div class="bd-hero-ctas">
       <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-btn-gold">Test My Site for SEO</a>
-      <a href="/sites.html#builder" class="bd-btn-gold">Build My Website Free</a>
+      <a href="/sites.html?embed=builder" class="bd-btn-gold">Build My Website Free</a>
       <a href="/bedrock-marketing-v1.html" class="bd-btn-gold">Create My Marketing Brand</a>
       <!-- hidden May 2026 — "See Our Work" removed from hero; it has its own nav tab -->
       <a href="#ourwork" onclick="showPage('ourwork',event)" class="bd-btn-outline" style="display:none">See Our Work</a>
@@ -1727,8 +1739,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     #bd-whatwedo .wwd-soon{font-size:0.58rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#C9922A;background:rgba(201,146,42,0.12);padding:0.2rem 0.5rem;border-radius:3px;margin-left:0.6rem;vertical-align:middle}
     #bd-whatwedo .wwd-plus{width:30px;height:30px;border:1.5px solid rgba(13,27,46,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:#0D1B2E;flex-shrink:0;transition:transform .25s,border-color .2s,background .2s}
     #bd-whatwedo .wwd-acc.open .wwd-plus{transform:rotate(45deg);background:#C9922A;border-color:#C9922A;color:#fff}
-    #bd-whatwedo .wwd-acc-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
-    #bd-whatwedo .wwd-acc.open .wwd-acc-body{max-height:240px}
+    #bd-whatwedo .wwd-acc-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+    #bd-whatwedo .wwd-acc.open .wwd-acc-body{max-height:620px}
+    #bd-whatwedo .wwd-intro-tag{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;color:#0D1B2E;text-align:center;margin:-1.5rem auto 2.25rem;max-width:600px}
     #bd-whatwedo .wwd-acc-body-inner{padding:0 0.25rem 1.5rem}
     #bd-whatwedo .wwd-acc-desc{font-family:'DM Sans',sans-serif;font-size:0.95rem;line-height:1.65;color:#4A5568;margin-bottom:0.85rem}
     #bd-whatwedo .wwd-acc-links{display:flex;gap:1.25rem;flex-wrap:wrap}
@@ -1743,6 +1756,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="wwd-eyebrow" style="display:none">What We Do</div>
     <h2>Here's what we do.</h2>
     <p class="wwd-intro">Our software takes modern solutions and applies them to your business &mdash; saving you time and money.</p>
+    <p class="wwd-intro-tag">It's that simple. Here's how we do it.</p>
 
     <div class="wwd-acc" id="wwdAcc0">
       <button type="button" class="wwd-acc-head" onclick="wwdToggle(0)">
@@ -1750,7 +1764,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
-        <div class="wwd-acc-desc">Professional site for your trade, live in minutes.</div>
+        <p class="wwd-acc-desc">A professional website built specifically for your trade &mdash; not a generic template you have to wrestle into shape. Most contractors lose work simply because they don't show up on Google, or their site looks like an afterthought next to the competition. With Bedrock Sites you answer a few plain questions, drop in your photos, and get a polished, mobile-ready site that's built to rank in local search. You preview the whole thing for free and only pay when you're ready to put it live. From there, editing it later takes minutes &mdash; no developer, no waiting.</p>
         <div class="wwd-acc-links">
           <a href="/sites.html">&rarr; Go to Bedrock Sites</a>
           <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
@@ -1764,7 +1778,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
-        <div class="wwd-acc-desc">Brand kit, social posts, and materials that look like you hired an agency.</div>
+        <p class="wwd-acc-desc">Marketing material that looks like you hired an agency &mdash; without the agency price or the back-and-forth. You set up your Brand Kit one time (colors, fonts, logo, and the voice your business speaks in), and after that everything you make is automatically on-brand. That matters because consistent, professional-looking marketing is what makes a small business look established and trustworthy enough to call. Build a flyer, social post, door hanger, yard sign, or business card in minutes and download it as a PDF, PNG, or JPG. It pulls from the same business profile as the rest of Bedrock, so you never enter your info twice.</p>
         <div class="wwd-acc-links">
           <a href="/bedrock-marketing-v1.html">&rarr; Go to Marketing Hub</a>
           <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
@@ -1778,7 +1792,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
-        <div class="wwd-acc-desc">Streamline your operations &mdash; coming soon.</div>
+        <p class="wwd-acc-desc">The money and operations side of your business, simplified &mdash; this one is in development now. Bedrock CFO will connect to your accounting, billing, bidding, invoicing, and purchasing so it all lives in one place instead of scattered across apps and spreadsheets. It matters because most contractors are great at the work but quietly lose money to messy books, underpriced bids, and cash-flow surprises. It's being built to work with tools you already use, like Jobber and QuickBooks, and to answer plain-English questions about your business &mdash; "can I make payroll this month?" or "what should I charge to hit my margin?" When it's ready, it'll plug straight into the profile you've already built.</p>
       </div></div>
     </div>
 
@@ -2418,14 +2432,27 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   </div>
 </section>
 
-<!-- PROOF — stats + reviews (consolidated here May 2026) -->
+<!-- PROOF — stats (cream) + reviews (navy), split May 2026 -->
 <section id="bd-proof">
   <style>
-    #bd-proof .proof-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem;max-width:900px;margin:2rem auto 3rem}
-    @media(max-width:680px){#bd-proof .proof-stats{grid-template-columns:1fr;gap:0.85rem}}
-    #bd-proof .proof-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:1.75rem 1.25rem;text-align:center}
-    #bd-proof .proof-stat .ps-num{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:700;color:#C9922A;line-height:1}
-    #bd-proof .proof-stat .ps-label{font-family:'DM Sans',sans-serif;font-size:0.82rem;line-height:1.55;color:rgba(255,255,255,0.72);margin-top:0.5rem}
+    #bd-proof{padding:0;background:#FAF7F2}
+    /* STATS — cream block */
+    #bd-proof .proof-stats-block{background:#FAF7F2;padding:4.5rem 5% 4rem;text-align:center}
+    #bd-proof .proof-stats-block .section-eyebrow{color:#C9922A}
+    #bd-proof .proof-stats-block h2{color:#0D1B2E}
+    #bd-proof .statwheel{max-width:560px;margin:2rem auto 1rem;text-align:center;position:relative;min-height:150px}
+    #bd-proof .psw-slide{display:none}
+    #bd-proof .psw-slide.active{display:block;animation:pswFade .45s ease}
+    @keyframes pswFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    #bd-proof .psw-num{font-family:'Cormorant Garamond',serif;font-size:4.5rem;font-weight:700;color:#C9922A;line-height:1}
+    #bd-proof .psw-label{font-family:'DM Sans',sans-serif;font-size:0.95rem;line-height:1.6;color:#4A5568;margin-top:0.5rem;max-width:420px;margin-left:auto;margin-right:auto}
+    #bd-proof .psw-dots{display:flex;gap:7px;justify-content:center;margin-top:1.1rem}
+    #bd-proof .psw-dot{width:8px;height:8px;border-radius:50%;background:rgba(13,27,46,0.18);border:none;cursor:pointer;padding:0;transition:background .2s}
+    #bd-proof .psw-dot.active{background:#C9922A}
+    #bd-proof .proof-srcnote{text-align:center;font-family:'DM Sans',sans-serif;font-size:0.66rem;color:rgba(13,27,46,0.4);margin-top:0.5rem}
+    /* REVIEWS — navy block */
+    #bd-proof .proof-reviews-block{background:#0D1B2E;padding:3.5rem 5% 4rem;text-align:center}
+    #bd-proof .proof-rev-label{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.24em;text-transform:uppercase;color:#C9922A;margin-bottom:1.75rem}
     #bd-proof .proof-rev{max-width:640px;margin:0 auto;text-align:center;position:relative;min-height:170px}
     #bd-proof .rev-slide{display:none}
     #bd-proof .rev-slide.active{display:block;animation:revFade .4s ease}
@@ -2436,23 +2463,15 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     #bd-proof .rev-dots{display:flex;gap:7px;justify-content:center;margin-top:1.25rem}
     #bd-proof .rev-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);border:none;cursor:pointer;padding:0;transition:background .2s}
     #bd-proof .rev-dot.active{background:#C9922A}
-    #bd-proof .proof-srcnote{text-align:center;font-family:'DM Sans',sans-serif;font-size:0.66rem;color:rgba(255,255,255,0.4);margin-top:0.5rem}
+    #bd-proof .proof-faq-link{margin-top:2rem;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:rgba(255,255,255,0.6)}
+    #bd-proof .proof-faq-link a{color:#C9922A;font-weight:600;text-decoration:none;cursor:pointer}
+    #bd-proof .proof-faq-link a:hover{text-decoration:underline}
   </style>
-  <div class="bd-proof-inner">
+
+  <!-- STATS — cream -->
+  <div class="proof-stats-block">
     <div class="section-eyebrow">Proof</div>
     <h2>The numbers, and the contractors.</h2>
-
-    <style>
-      #bd-proof .statwheel{max-width:560px;margin:2rem auto 1rem;text-align:center;position:relative;min-height:150px}
-      #bd-proof .psw-slide{display:none}
-      #bd-proof .psw-slide.active{display:block;animation:pswFade .45s ease}
-      @keyframes pswFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-      #bd-proof .psw-num{font-family:'Cormorant Garamond',serif;font-size:4.5rem;font-weight:700;color:#C9922A;line-height:1}
-      #bd-proof .psw-label{font-family:'DM Sans',sans-serif;font-size:0.95rem;line-height:1.6;color:rgba(255,255,255,0.82);margin-top:0.5rem;max-width:420px;margin-left:auto;margin-right:auto}
-      #bd-proof .psw-dots{display:flex;gap:7px;justify-content:center;margin-top:1.1rem}
-      #bd-proof .psw-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.25);border:none;cursor:pointer;padding:0;transition:background .2s}
-      #bd-proof .psw-dot.active{background:#C9922A}
-    </style>
     <div class="statwheel" id="proofStatWheel">
       <div class="psw-slide active"><div class="psw-num">28%</div><div class="psw-label">of small businesses still have no website</div></div>
       <div class="psw-slide"><div class="psw-num">75%</div><div class="psw-label">of people who search a local service visit a business within 24 hours</div></div>
@@ -2463,30 +2482,34 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <div class="psw-dots" id="pswDots"></div>
     </div>
     <div class="proof-srcnote">Sources: SCORE, BrightLocal, Network Solutions, Go-Globe &mdash; not our numbers, the industry's.</div>
-    <script>
-      (function(){
-        var slides = document.querySelectorAll('#bd-proof .psw-slide');
-        var dotsWrap = document.getElementById('pswDots');
-        if (!slides.length || !dotsWrap) return;
-        var idx = 0, timer = null;
-        for (var i=0;i<slides.length;i++){
-          var d = document.createElement('button');
-          d.className = 'psw-dot' + (i===0?' active':'');
-          d.onclick = (function(n){ return function(){ go(n); restart(); }; })(i);
-          dotsWrap.appendChild(d);
-        }
-        function go(n){
-          idx = n;
-          slides.forEach(function(s,i){ s.classList.toggle('active', i===idx); });
-          dotsWrap.querySelectorAll('.psw-dot').forEach(function(dot,i){ dot.classList.toggle('active', i===idx); });
-        }
-        function tick(){ go((idx+1)%slides.length); }
-        function restart(){ if(timer) clearInterval(timer); timer = setInterval(tick, 4000); }
-        restart();
-      })();
-    </script>
+  </div>
+  <script>
+    (function(){
+      var slides = document.querySelectorAll('#bd-proof .psw-slide');
+      var dotsWrap = document.getElementById('pswDots');
+      if (!slides.length || !dotsWrap) return;
+      var idx = 0, timer = null;
+      for (var i=0;i<slides.length;i++){
+        var d = document.createElement('button');
+        d.className = 'psw-dot' + (i===0?' active':'');
+        d.onclick = (function(n){ return function(){ go(n); restart(); }; })(i);
+        dotsWrap.appendChild(d);
+      }
+      function go(n){
+        idx = n;
+        slides.forEach(function(s,i){ s.classList.toggle('active', i===idx); });
+        dotsWrap.querySelectorAll('.psw-dot').forEach(function(dot,i){ dot.classList.toggle('active', i===idx); });
+      }
+      function tick(){ go((idx+1)%slides.length); }
+      function restart(){ if(timer) clearInterval(timer); timer = setInterval(tick, 4000); }
+      restart();
+    })();
+  </script>
 
-    <div class="proof-rev" id="proofReviews" style="margin-top:2.5rem">
+  <!-- REVIEWS — navy -->
+  <div class="proof-reviews-block">
+    <div class="proof-rev-label">Reviews</div>
+    <div class="proof-rev" id="proofReviews">
       <div class="rev-slide active" data-rev="0">
         <div class="rev-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
         <div class="rev-text">"I needed a site that looked legit and showed up on Google. Bedrock had it live the same day I signed up. I'm a landscaper, not a web guy &mdash; they made it painless."</div>
@@ -2494,6 +2517,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
       <div class="rev-dots" id="revDots"></div>
     </div>
+    <div class="proof-faq-link">Any questions? <a onclick="showPage('howitworks',event);setTimeout(function(){var f=document.getElementById('hiw-faq');if(f)f.scrollIntoView({behavior:'smooth'});},250)">Check our FAQ &rarr;</a></div>
   </div>
   <script>
     (function(){
@@ -2541,7 +2565,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   .bd-faq-group-title{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:#0D1B2E;line-height:1.2}
   .bd-faq-group-sub{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:#4A5568;margin-left:auto}
 </style>
-<section id="bd-faq" aria-labelledby="bd-faq-heading" style="background:#FAF7F2;padding:5rem 5%">
+<!-- hidden May 2026 — full FAQ moved to the How It Works page (#hiw-faq); kept here, not deleted -->
+<section id="bd-faq" aria-labelledby="bd-faq-heading" style="display:none;background:#FAF7F2;padding:5rem 5%">
   <div style="max-width:820px;margin:0 auto">
     <div class="section-eyebrow" style="color:rgba(13,27,46,0.35);text-align:center;margin-bottom:0.5rem">Common Questions</div>
     <h2 id="bd-faq-heading" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#0D1B2E;margin-bottom:0.5rem;text-align:center">Frequently Asked Questions</h2>
@@ -2678,13 +2703,19 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 <section id="bd-cta">
   <div class="bd-cta-inner">
     <h2>Get your time back.<br><em style="font-style:italic;color:var(--accent)">Focus on the parts of your business that matter most.</em></h2>
-    <p>Pick the tool that fixes the biggest pain. Free to try. $0 until you love it.</p>
-    <!-- Rotating CTA -->
-    <a id="bdCtaRotateLink" href="#builder" onclick="bdCtaRotateClick(event)" class="bd-btn-gold" style="display:inline-block;min-width:280px;text-align:center">Build my free site &rarr;</a>
-    <div style="margin-top:0.85rem;display:flex;justify-content:center;gap:0.45rem">
-      <span class="bd-cta-dot" data-i="0" style="width:7px;height:7px;border-radius:50%;background:#C9922A;opacity:1;transition:opacity .3s;cursor:pointer" onclick="bdCtaRotateGo(0)"></span>
-      <span class="bd-cta-dot" data-i="1" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.4);opacity:1;transition:opacity .3s;cursor:pointer" onclick="bdCtaRotateGo(1)"></span>
-      <span class="bd-cta-dot" data-i="2" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.4);opacity:1;transition:opacity .3s;cursor:pointer" onclick="bdCtaRotateGo(2)"></span>
+    <p>Create a free account and explore every Bedrock tool. $0 until you decide to launch something.</p>
+    <a href="#" onclick="event.preventDefault();openAuthModal('create')" class="bd-btn-gold" style="display:inline-block;min-width:280px;text-align:center">Create a Free Account &rarr;</a>
+    <ul style="list-style:none;padding:0;margin:1.5rem auto 0;max-width:440px;text-align:left;display:flex;flex-direction:column;gap:0.6rem">
+      <li style="font-family:'DM Sans',sans-serif;font-size:0.86rem;color:rgba(255,255,255,0.82);display:flex;gap:0.6rem;align-items:flex-start"><span style="color:#C9922A;font-weight:700">&#10003;</span>All tools are free to explore</li>
+      <li style="font-family:'DM Sans',sans-serif;font-size:0.86rem;color:rgba(255,255,255,0.82);display:flex;gap:0.6rem;align-items:flex-start"><span style="color:#C9922A;font-weight:700">&#10003;</span>We only ask for your information once</li>
+      <li style="font-family:'DM Sans',sans-serif;font-size:0.86rem;color:rgba(255,255,255,0.82);display:flex;gap:0.6rem;align-items:flex-start"><span style="color:#C9922A;font-weight:700">&#10003;</span>Build your profile so the Bedrock ecosystem can get to know your business</li>
+    </ul>
+    <!-- hidden May 2026 — rotating CTA replaced by the Create a Free Account CTA above -->
+    <div style="display:none">
+      <a id="bdCtaRotateLink" href="#builder" onclick="bdCtaRotateClick(event)">Build my free site</a>
+      <span class="bd-cta-dot" data-i="0" onclick="bdCtaRotateGo(0)"></span>
+      <span class="bd-cta-dot" data-i="1" onclick="bdCtaRotateGo(1)"></span>
+      <span class="bd-cta-dot" data-i="2" onclick="bdCtaRotateGo(2)"></span>
     </div>
   </div>
   <script>
@@ -3103,7 +3134,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <h2>Stop losing jobs to a <em>broken website.</em></h2>
         <p>See your new site before you pay a dime. $0 until you love it. Live the same day.</p>
         <a class="op-cta-btn" id="opBuildBtn" onclick="goBuildFromAudit()">Build My Site &rarr;</a>
-        <div class="op-cta-secondary">Have a question first? Call or text Brock: <a href="tel:+16124757477">(612) 475-7477</a></div>
+        <div class="op-cta-secondary">Have a question first? Email us: <a href="mailto:support@bedrock-sites.com">support@bedrock-sites.com</a></div>
         <div class="op-rescan"><a onclick="resetAudit()">&larr; Scan a different site</a></div>
       </div>
     </section>
@@ -3266,7 +3297,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <div class="divider"></div>
         <p class="body-text">I started out running a lawn care company, and later a landscaping company. I did the work, knocked on doors, and ran the books out of a notebook. Like every trade business, I needed a website. I needed marketing. I needed to track money and show up on Google. None of those tools were built for me. Agencies wanted thousands of dollars and weeks of time. DIY platforms wanted hours I didn't have. QuickBooks felt like reading a foreign language.</p>
         <p class="body-text">So I taped together a Facebook page and called it good. I lost jobs because of it. Customers couldn't find me, couldn't trust me, and couldn't see my work. The tools out there were built for office workers and tech companies. They were never built for someone running a crew out of a truck.</p>
-        <p class="body-text">Years later I went looking again. Connected tools for trade businesses, simple, at a fair price. I couldn't find them, so I'm building them. Bedrock is what I wish had existed back then. A connected system for the people who keep their towns running. One profile. One company. Built specifically for you, not adapted from something else.</p>
+        <p class="body-text">Later, I spent time working as a small business consultant for more than 20 startup businesses. That's where it really clicked. I learned what small business owners actually need, what makes a business run efficiently, and what makes one stand out from the pack &mdash; and I watched the same gaps show up over and over.</p>
+        <p class="body-text">So I went looking again: connected tools for trade businesses, simple, at a fair price. I couldn't find them, so I'm building them. Bedrock is what I wish had existed back then. A connected system for the people who keep their towns running. One profile. One company. Built specifically for you, not adapted from something else.</p>
       </div>
       <div>
         <div class="founder-mini">
@@ -3358,20 +3390,31 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       .ow-showcase-label{font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);padding:1rem 1.25rem 0}
       .ow-showcase-cap{padding:0.5rem 1.25rem 1.25rem;font-size:0.78rem;color:var(--text-muted);line-height:1.55}
       .ow-showcase-cap strong{color:var(--dark);display:block;font-family:'Playfair Display',serif;font-weight:600;font-size:0.95rem;margin-bottom:2px}
-      /* sample brand kit */
-      .ow-bk{padding:1.25rem;display:flex;flex-direction:column;gap:0.85rem}
-      .ow-bk-row{display:flex;gap:0.75rem;align-items:center}
-      .ow-bk-logo{width:54px;height:54px;border-radius:8px;background:#1F4E79;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;flex-shrink:0}
-      .ow-bk-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;color:var(--dark)}
-      .ow-bk-tag{font-size:0.72rem;color:var(--text-muted)}
-      .ow-bk-swatches{display:flex;gap:6px}
-      .ow-bk-sw{flex:1;height:32px;border-radius:5px;border:1px solid rgba(0,0,0,0.08);display:flex;align-items:flex-end;justify-content:center;font-size:0.5rem;font-weight:700;color:rgba(255,255,255,0.85);padding-bottom:2px;letter-spacing:0.04em}
-      .ow-bk-fonts{display:flex;gap:0.75rem}
-      .ow-bk-font{flex:1;background:var(--offwhite);border-radius:5px;padding:0.5rem 0.65rem}
-      .ow-bk-font .fk{font-size:0.5rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted)}
-      .ow-bk-font .fv{font-size:1rem;color:var(--dark)}
-      /* sample brand kit polish */
-      .ow-bk-sw{box-shadow:0 2px 6px rgba(13,27,46,0.12)}
+      /* sample brand kit — detailed deliverable */
+      .ow-bk{padding:1.4rem;display:flex;flex-direction:column;gap:1.15rem}
+      .ow-bk-sec-label{font-size:0.52rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem}
+      .ow-bk-logobox{display:flex;gap:0.6rem}
+      .ow-bk-logo-light,.ow-bk-logo-dark{flex:1;border-radius:6px;padding:0.95rem 0.5rem;display:flex;align-items:center;gap:0.45rem;justify-content:center}
+      .ow-bk-logo-light{background:#FAF7F2;border:1px solid rgba(0,0,0,0.08)}
+      .ow-bk-logo-dark{background:#1F4E79}
+      .ow-bk-mark{width:32px;height:32px;border-radius:6px;background:#1F4E79;color:#fff;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:0.95rem;flex-shrink:0}
+      .ow-bk-logo-dark .ow-bk-mark{background:#C9922A;color:#1F4E79}
+      .ow-bk-wordmark{font-family:'Playfair Display',serif;font-weight:700;font-size:0.9rem;line-height:1;color:#1F4E79}
+      .ow-bk-wordmark small{display:block;font-family:'DM Sans',sans-serif;font-weight:600;font-size:0.4rem;letter-spacing:0.15em;color:#C9922A;margin-top:3px}
+      .ow-bk-logo-dark .ow-bk-wordmark{color:#fff}
+      .ow-bk-pal{display:flex;gap:5px}
+      .ow-bk-ch{flex:1;text-align:center}
+      .ow-bk-ch .sw{height:44px;border-radius:5px;border:1px solid rgba(0,0,0,0.07);box-shadow:0 2px 6px rgba(13,27,46,0.1)}
+      .ow-bk-ch .hx{font-family:'DM Sans',sans-serif;font-size:0.48rem;font-weight:700;color:var(--dark);margin-top:4px}
+      .ow-bk-ch .nm{font-family:'DM Sans',sans-serif;font-size:0.45rem;color:var(--text-muted)}
+      .ow-bk-type{display:flex;flex-direction:column;gap:0.55rem}
+      .ow-bk-trow{background:var(--offwhite);border-radius:6px;padding:0.7rem 0.85rem}
+      .ow-bk-trow .tk{font-size:0.45rem;font-weight:700;letter-spacing:0.13em;text-transform:uppercase;color:var(--accent)}
+      .ow-bk-trow .tv{color:var(--dark);margin-top:3px}
+      .ow-bk-voice{background:#1F4E79;border-radius:6px;padding:0.85rem 1rem}
+      .ow-bk-voice .vtag{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:#fff}
+      .ow-bk-voice .vwords{margin-top:0.5rem;display:flex;gap:5px;flex-wrap:wrap}
+      .ow-bk-voice .vwords span{font-family:'DM Sans',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#0D1B2E;background:#C9922A;padding:0.22rem 0.5rem;border-radius:3px}
       /* sample social post — real photo background */
       .ow-post{aspect-ratio:1/1;background:#1F4E79 center/cover no-repeat;background-image:linear-gradient(180deg,rgba(13,27,46,0.15) 0%,rgba(13,27,46,0.55) 55%,rgba(13,27,46,0.92) 100%),url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=640&q=70');position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:1.5rem}
       .ow-post-logo{position:absolute;top:1rem;left:1rem;display:flex;align-items:center;gap:7px;background:rgba(13,27,46,0.78);padding:0.4rem 0.7rem;border-radius:5px}
@@ -3391,24 +3434,41 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="ow-mkt-grid">
       <!-- sample brand kit -->
       <div class="ow-showcase">
-        <div class="ow-showcase-label">Sample Brand Kit</div>
+        <div class="ow-showcase-label">Sample Brand Kit &middot; Ridgeline Concrete Co.</div>
         <div class="ow-bk">
-          <div class="ow-bk-row">
-            <div class="ow-bk-logo">RC</div>
-            <div><div class="ow-bk-name">Ridgeline Concrete</div><div class="ow-bk-tag">Poured right. Built to last.</div></div>
+          <div>
+            <div class="ow-bk-sec-label">Logo</div>
+            <div class="ow-bk-logobox">
+              <div class="ow-bk-logo-light"><span class="ow-bk-mark">R</span><span class="ow-bk-wordmark">Ridgeline<small>CONCRETE CO.</small></span></div>
+              <div class="ow-bk-logo-dark"><span class="ow-bk-mark">R</span><span class="ow-bk-wordmark">Ridgeline<small>CONCRETE CO.</small></span></div>
+            </div>
           </div>
-          <div class="ow-bk-swatches">
-            <div class="ow-bk-sw" style="background:#1F4E79">PRIMARY</div>
-            <div class="ow-bk-sw" style="background:#3D3D3D">SECONDARY</div>
-            <div class="ow-bk-sw" style="background:#C9922A">ACCENT</div>
+          <div>
+            <div class="ow-bk-sec-label">Color Palette</div>
+            <div class="ow-bk-pal">
+              <div class="ow-bk-ch"><div class="sw" style="background:#1F4E79"></div><div class="hx">#1F4E79</div><div class="nm">Slate Blue</div></div>
+              <div class="ow-bk-ch"><div class="sw" style="background:#0D1B2E"></div><div class="hx">#0D1B2E</div><div class="nm">Deep Navy</div></div>
+              <div class="ow-bk-ch"><div class="sw" style="background:#C9922A"></div><div class="hx">#C9922A</div><div class="nm">Trade Gold</div></div>
+              <div class="ow-bk-ch"><div class="sw" style="background:#6B7280"></div><div class="hx">#6B7280</div><div class="nm">Concrete</div></div>
+              <div class="ow-bk-ch"><div class="sw" style="background:#FAF7F2"></div><div class="hx">#FAF7F2</div><div class="nm">Off-White</div></div>
+            </div>
           </div>
-          <div class="ow-bk-fonts">
-            <div class="ow-bk-font"><div class="fk">Display</div><div class="fv" style="font-family:'Playfair Display',serif">Aa</div></div>
-            <div class="ow-bk-font"><div class="fk">Body</div><div class="fv" style="font-family:'DM Sans',sans-serif">Aa</div></div>
-            <div class="ow-bk-font"><div class="fk">Voice</div><div class="fv" style="font-size:0.78rem">Rugged</div></div>
+          <div>
+            <div class="ow-bk-sec-label">Typography</div>
+            <div class="ow-bk-type">
+              <div class="ow-bk-trow"><div class="tk">Headline &mdash; Playfair Display, 700</div><div class="tv" style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700">Poured to last a lifetime</div></div>
+              <div class="ow-bk-trow"><div class="tk">Body &mdash; DM Sans, 400</div><div class="tv" style="font-family:'DM Sans',sans-serif;font-size:0.78rem;line-height:1.55">Driveways, patios, and foundations done right the first time &mdash; serving Bend, OR since 2009.</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="ow-bk-sec-label">Voice &amp; Tagline</div>
+            <div class="ow-bk-voice">
+              <div class="vtag">"Poured right. Built to last."</div>
+              <div class="vwords"><span>Rugged</span><span>Honest</span><span>Local</span><span>No-nonsense</span></div>
+            </div>
           </div>
         </div>
-        <div class="ow-showcase-cap"><strong>One kit, every piece</strong>Colors, fonts, logo, and voice — set once, applied to everything you make.</div>
+        <div class="ow-showcase-cap"><strong>One kit, every piece</strong>Logo, colors, fonts, and voice &mdash; set once, then applied automatically to every flyer, post, and sign you make.</div>
       </div>
       <!-- sample social post -->
       <div class="ow-showcase">
@@ -3590,7 +3650,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <h3>Analyze your current website &mdash; or build a new one</h3>
         <p>Already have a website? Run the free Optimizer to see exactly how it performs on Google and AI search, with a ranked list of fixes. Don't have one yet? Build a professional site for your trade in about 15 minutes and preview it free.</p>
         <a class="hiw-link" href="#optimizer" onclick="showPage('optimizer',event)">Analyze my site &rarr;</a>
-        <a class="hiw-link" href="/sites.html#builder" style="margin-left:1.25rem">Build a new one &rarr;</a>
+        <a class="hiw-link" href="/sites.html?embed=builder" style="margin-left:1.25rem">Build a new one &rarr;</a>
       </div>
     </div>
     <div class="hiw-step">
@@ -3610,6 +3670,129 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
     </div>
   </div>
+  <!-- PRICING -->
+  <section id="hiw-pricing" style="background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.08);padding:4rem 5%">
+    <style>
+      #hiw-pricing .hp-inner{max-width:980px;margin:0 auto;text-align:center}
+      #hiw-pricing h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.9rem,3.5vw,2.6rem);font-weight:700;color:#fff;margin-bottom:0.6rem}
+      #hiw-pricing .hp-sub{font-family:'DM Sans',sans-serif;font-size:0.95rem;color:rgba(255,255,255,0.7);max-width:560px;margin:0 auto 2.5rem;line-height:1.7}
+      #hiw-pricing .hp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1rem}
+      @media(max-width:760px){#hiw-pricing .hp-grid{grid-template-columns:1fr}}
+      #hiw-pricing .hp-card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:1.75rem 1.4rem;text-align:left}
+      #hiw-pricing .hp-card.featured{border-color:#C9922A;background:linear-gradient(180deg,rgba(201,146,42,.16),rgba(255,255,255,.02))}
+      #hiw-pricing .hp-name{font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#C9922A;margin-bottom:0.6rem}
+      #hiw-pricing .hp-price{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:#fff;line-height:1}
+      #hiw-pricing .hp-price span{font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:400;color:rgba(255,255,255,0.5)}
+      #hiw-pricing .hp-note{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.7);line-height:1.6;margin-top:0.6rem}
+      #hiw-pricing .hp-fine{font-family:'DM Sans',sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.55);margin-top:0.5rem}
+      #hiw-pricing .hp-fine strong{color:#C9922A}
+    </style>
+    <div class="hp-inner">
+      <h2>Simple, flexible pricing.</h2>
+      <p class="hp-sub">It's a subscription service &mdash; pick the tools you want and add more anytime. No long contracts, cancel whenever.</p>
+      <div class="hp-grid">
+        <div class="hp-card">
+          <div class="hp-name">Bedrock Sites</div>
+          <div class="hp-price">$20<span>/mo</span></div>
+          <div class="hp-note">A professional website for your trade. One-time $200 build fee, then $20/month for hosting, edits, and support.</div>
+        </div>
+        <div class="hp-card">
+          <div class="hp-name">Bedrock Marketing</div>
+          <div class="hp-price">$30<span>/mo</span></div>
+          <div class="hp-note">Brand Kit plus unlimited flyers, social posts, signs, and print materials &mdash; all on-brand.</div>
+        </div>
+        <div class="hp-card">
+          <div class="hp-name">Bedrock CFO</div>
+          <div class="hp-price">$70<span>/mo</span></div>
+          <div class="hp-note">The money and operations side &mdash; accounting, bidding, invoicing. In development now.</div>
+        </div>
+      </div>
+      <div class="hp-grid" style="grid-template-columns:1fr 1fr">
+        <div class="hp-card">
+          <div class="hp-name">Sites + Marketing Bundle</div>
+          <div class="hp-price">$40<span>/mo</span></div>
+          <div class="hp-note">Website and Marketing together &mdash; save versus buying each on its own.</div>
+        </div>
+        <div class="hp-card featured">
+          <div class="hp-name">Full Ecosystem &middot; Best Value</div>
+          <div class="hp-price">$100<span>/mo</span></div>
+          <div class="hp-note">Every Bedrock tool &mdash; Sites, Marketing, and CFO. The $200 site build fee is waived.</div>
+        </div>
+      </div>
+      <p class="hp-fine">Pricing is confirmed in your portal before any charge. <strong>You only pay when you're ready.</strong></p>
+    </div>
+  </section>
+
+  <!-- FAQ — moved here from the homepage May 2026 -->
+  <section id="hiw-faq" aria-labelledby="hiw-faq-heading" style="background:#FAF7F2;padding:5rem 5%">
+    <div style="max-width:820px;margin:0 auto">
+      <div class="section-eyebrow" style="color:rgba(13,27,46,0.35);text-align:center;margin-bottom:0.5rem">Common Questions</div>
+      <h2 id="hiw-faq-heading" style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:700;color:#0D1B2E;margin-bottom:0.5rem;text-align:center">Frequently Asked Questions</h2>
+      <p style="font-family:'DM Sans',sans-serif;font-size:0.88rem;color:#4A5568;text-align:center;margin-bottom:2.5rem;max-width:560px;margin-left:auto;margin-right:auto">Tap any question to expand the answer.</p>
+
+      <div class="bd-faq-group">
+        <div class="bd-faq-group-head">
+          <span class="bd-faq-group-mark">01</span>
+          <span class="bd-faq-group-title">About Bedrock Digital</span>
+          <span class="bd-faq-group-sub">The company &amp; ecosystem</span>
+        </div>
+        <div class="bd-faq-list">
+          <details class="bd-faq-item"><summary class="bd-faq-q">What is Bedrock Digital?</summary><div class="bd-faq-a"><p>Bedrock Digital is a software company built specifically for trade businesses &mdash; plumbers, electricians, HVAC, landscapers, roofers, and other skilled trades. We make a connected ecosystem of tools (website, marketing, SEO, finance) that share one business profile so the contractor never has to set up the same information twice.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">What's the difference between Bedrock Digital and a regular web/marketing agency?</summary><div class="bd-faq-a"><p>Agencies build one thing at a time and charge you a separate fee each time. Bedrock builds a connected platform &mdash; your site, marketing, SEO, and CFO tools all talk to each other through one profile. Same flat price every month, no surprise invoices, no back-and-forth.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Do I have to buy everything to start?</summary><div class="bd-faq-a"><p>No. Every Bedrock tool is sold separately. Start with just Sites, just Marketing, or just the Optimizer. Add more anytime &mdash; everything you've already entered pre-fills the next tool. Bundles are available if you want more than one.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Where is Bedrock Digital based?</summary><div class="bd-faq-a"><p>Bedrock is a US-based small business. Founder is currently based in Rexburg, ID, relocating to the Milwaukee area in 2026. We serve contractors nationwide.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">How do I get support if something goes wrong?</summary><div class="bd-faq-a"><p>Email <a href="mailto:support@bedrock-sites.com">support@bedrock-sites.com</a> &mdash; you'll usually get a real reply same day. No tickets, no phone trees.</p></div></details>
+        </div>
+      </div>
+
+      <div class="bd-faq-group">
+        <div class="bd-faq-group-head">
+          <span class="bd-faq-group-mark">02</span>
+          <span class="bd-faq-group-title">Bedrock Sites &mdash; Website Builder</span>
+          <span class="bd-faq-group-sub">Live now</span>
+        </div>
+        <div class="bd-faq-list">
+          <details class="bd-faq-item"><summary class="bd-faq-q">How much does a contractor website cost with Bedrock?</summary><div class="bd-faq-a"><p>Flat <strong>$200 one-time setup fee</strong> plus <strong>$20/month</strong> for hosting, updates, and support. No surprise fees, no annual contracts, no agency markups. You see your complete site before you pay a cent.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">How fast can I be live?</summary><div class="bd-faq-a"><p>Most sites are ready to preview in under 20 minutes. After you approve and pay, your site typically goes live within a few hours &mdash; same day you decide.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Do I need any tech skills?</summary><div class="bd-faq-a"><p>None. Answer a few plain questions about your business, our system builds a complete professional site, you preview it, make any edits you want, then pay when you're happy.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Can I use my own domain?</summary><div class="bd-faq-a"><p>Yes. Use a domain you already own or we'll help you register a new one. All Bedrock sites include SSL, fast reliable hosting, and custom domain setup &mdash; all in the $20/month plan.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">What trades is it built for?</summary><div class="bd-faq-a"><p>Plumbers, electricians, HVAC, landscapers, roofers, painters, flooring, concrete, general contracting &mdash; if you do hands-on work and need customers to find you online, this is built for you.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Can I edit my site after it's live?</summary><div class="bd-faq-a"><p>Yes &mdash; through your Client Portal. Change text, hours, phone, photos, services. Small changes are always free. Saved changes redeploy automatically.</p></div></details>
+        </div>
+      </div>
+
+      <div class="bd-faq-group">
+        <div class="bd-faq-group-head">
+          <span class="bd-faq-group-mark">03</span>
+          <span class="bd-faq-group-title">Bedrock Marketing</span>
+          <span class="bd-faq-group-sub">Brand kit + asset builder</span>
+        </div>
+        <div class="bd-faq-list">
+          <details class="bd-faq-item"><summary class="bd-faq-q">What does Bedrock Marketing actually do?</summary><div class="bd-faq-a"><p>You set up your Brand Kit once &mdash; colors, fonts, voice, logo &mdash; then turn out flyers, social posts, door hangers, yard signs, business cards, postcards, email signature banners, and Facebook covers in minutes. Each piece uses your brand automatically. Download as PNG, JPG, or PDF.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Does the AI write my copy?</summary><div class="bd-faq-a"><p>Only when you ask it to. There's a "Generate copy with AI" button that writes a headline + subhead + call-to-action in your brand voice. You can also type everything manually &mdash; the button is optional.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Can I upload my existing logo and materials?</summary><div class="bd-faq-a"><p>Yes. Upload your logo, and Bedrock will use it on every piece. We're also rolling out a feature to analyze any existing brochure or flyer you upload and pull your colors, fonts, and tone automatically.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Do my materials have to be printed by Bedrock?</summary><div class="bd-faq-a"><p>No. You download the file (PNG, JPG, or PDF) and use it however you want &mdash; take the PDF to a local print shop, post the PNG to Facebook, attach the JPG to an email. Your file, your use.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Does Marketing include Sites or vice versa?</summary><div class="bd-faq-a"><p>No &mdash; each tool is sold separately. They work better together (shared profile) but they're independent products. You can also bundle.</p></div></details>
+        </div>
+      </div>
+
+      <div class="bd-faq-group">
+        <div class="bd-faq-group-head">
+          <span class="bd-faq-group-mark">04</span>
+          <span class="bd-faq-group-title">Bedrock Optimizer &amp; SEO</span>
+          <span class="bd-faq-group-sub">Search visibility</span>
+        </div>
+        <div class="bd-faq-list">
+          <details class="bd-faq-item"><summary class="bd-faq-q">What does the Optimizer do?</summary><div class="bd-faq-a"><p>It runs a 12-point audit on your website &mdash; mobile speed, local SEO signals, schema markup, page structure, FAQ coverage, and AI-search (GEO) readiness. You get a score out of 100 plus a prioritized fix list. Free.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Can I run the Optimizer on a site I didn't build with Bedrock?</summary><div class="bd-faq-a"><p>Yes &mdash; that's the whole point. Paste in any contractor website URL and we audit it. If you build with Bedrock later, your portal version of the Optimizer also tracks improvements over time.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Will Bedrock also do the SEO fixes for me?</summary><div class="bd-faq-a"><p>That's Bedrock SEO &mdash; the full optimization service. It's the paid version: we implement the schema, page structure, meta tags, and Google Business Profile work the audit flagged. Coming next.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">What's "GEO" mean?</summary><div class="bd-faq-a"><p>Generative Engine Optimization &mdash; whether AI assistants (ChatGPT, Gemini, Siri) describe your business correctly when someone asks "who's a good plumber in Milwaukee?". It uses FAQ schema, About content, and structured data signals. Bedrock includes GEO setup in every site.</p></div></details>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
   <div class="hiw-cta">
     <h2>Ready to get started?</h2>
     <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
@@ -3646,6 +3829,42 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <h1>Explore what Bedrock <em>can do for you.</em></h1>
     <p>Every Bedrock tool is free to try. Start with a free site scan, build a website preview, or set up your Brand Kit &mdash; no card needed to look around.</p>
   </div>
+
+  <!-- VISUAL — product icon strip -->
+  <div class="tools-iconrow">
+    <style>
+      #tools .tools-iconrow{background:#FAF7F2;padding:3rem 5% 1rem;text-align:center}
+      #tools .tir-caption{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;color:#0D1B2E;margin-bottom:1.75rem}
+      #tools .tir-grid{display:flex;justify-content:center;gap:0;max-width:680px;margin:0 auto;position:relative}
+      #tools .tir-grid::before{content:'';position:absolute;top:34px;left:14%;right:14%;height:2px;background:repeating-linear-gradient(90deg,#C9922A 0 6px,transparent 6px 12px);z-index:0}
+      #tools .tir-item{flex:1;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0.6rem}
+      #tools .tir-ico{width:68px;height:68px;border-radius:50%;background:#0D1B2E;border:2px solid #C9922A;display:flex;align-items:center;justify-content:center}
+      #tools .tir-ico svg{width:30px;height:30px;stroke:#C9922A;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+      #tools .tir-label{font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0D1B2E}
+      #tools .tir-soon{display:block;font-size:0.56rem;font-weight:600;letter-spacing:0.12em;color:#C9922A;margin-top:2px}
+      @media(max-width:520px){#tools .tir-ico{width:54px;height:54px}#tools .tir-ico svg{width:24px;height:24px}#tools .tir-label{font-size:0.6rem}#tools .tir-grid::before{top:27px}}
+    </style>
+    <div class="tir-caption">Four tools. One connected system.</div>
+    <div class="tir-grid">
+      <div class="tir-item">
+        <div class="tir-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div class="tir-label">Website</div>
+      </div>
+      <div class="tir-item">
+        <div class="tir-ico"><svg viewBox="0 0 24 24"><path d="M3 11l18-8v18l-7-3"/><path d="M3 11v6h4l3 4V8z"/></svg></div>
+        <div class="tir-label">Marketing</div>
+      </div>
+      <div class="tir-item">
+        <div class="tir-ico"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="tir-label">Optimizer</div>
+      </div>
+      <div class="tir-item">
+        <div class="tir-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="tir-label">Finance<span class="tir-soon">Soon</span></div>
+      </div>
+    </div>
+  </div>
+
   <div class="tools-wrap">
 
     <!-- OPTIMIZER — free scan, the forward hook -->
@@ -3673,7 +3892,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </ul>
       <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
         <a href="/sites.html" class="bd-btn-gold" style="font-size:0.7rem">See Bedrock Sites &rarr;</a>
-        <a href="/sites.html#builder" class="bd-btn-outline" style="font-size:0.7rem;color:#0D1B2E;border-color:rgba(13,27,46,0.25)">Build a Free Preview</a>
+        <a href="/sites.html?embed=builder" class="bd-btn-outline" style="font-size:0.7rem;color:#0D1B2E;border-color:rgba(13,27,46,0.25)">Build a Free Preview</a>
       </div>
     </div>
 
@@ -3713,7 +3932,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <input type="password" id="mkLoginPass" placeholder="Password" aria-label="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')goToPortal()">
         <p id="mkLoginErr" style="color:#c0392b;font-size:0.82rem;margin:0.25rem 0 0;min-height:1.1em"></p>
         <button class="bd-btn-gold" onclick="goToPortal()">Sign In</button>
-        <p class="bd-login-help">Need help? <a href="mailto:support@bedrock-sites.com">Contact support</a> or call Brock directly.</p>
+        <p class="bd-login-help">Need help? Email <a href="mailto:support@bedrock-sites.com">support@bedrock-sites.com</a> &mdash; we usually reply the same day.</p>
       </div>
     </div>
   </div>
@@ -9932,6 +10151,18 @@ function closeMtbDrawer(){
   },{rootMargin:'-45% 0px -45% 0px',threshold:0});
   steps.forEach(function(s){io.observe(s);});
   setActive(0);
+})();
+</script>
+
+<script>
+// Embed mode — force the optimizer once the page's own init has run.
+(function(){
+  try{
+    if(/[?&]embed=optimizer/.test(location.search) && typeof showPage==='function'){
+      showPage('optimizer');
+      window.scrollTo(0,0);
+    }
+  }catch(_){}
 })();
 </script>
 

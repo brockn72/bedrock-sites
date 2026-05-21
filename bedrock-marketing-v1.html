@@ -1485,6 +1485,9 @@ function filenameFor(ext) {
       var input = document.getElementById('gateEmail'); if (input) input.value = qpEmail;
       STATE.email = qpEmail;
       try { sessionStorage.setItem('bedrock_marketing_email', qpEmail); } catch(_){}
+      // Launched from the portal with an email — show the hub immediately so the
+      // public landing/gate never flashes while the brand kit loads.
+      showPage('pageHub');
       fetch('/.netlify/functions/get-brand-kit?email=' + encodeURIComponent(qpEmail), { headers: STATE.authToken ? { Authorization: 'Bearer ' + STATE.authToken } : {} })
         .then(function(r){ return r.json(); })
         .then(function(d){

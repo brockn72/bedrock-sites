@@ -313,7 +313,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 @keyframes bootSpin{to{transform:rotate(360deg)}}
 
 /* ── NAV-PORTAL TABS (dark variant, sits in nav-right) ── */
-.nav-tabs{display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none}
+/* overflow:visible on desktop so hover dropdowns aren't clipped; mobile re-enables x-scroll */
+.nav-tabs{display:flex;align-items:center;gap:0;overflow:visible;scrollbar-width:none}
 .nav-tabs::-webkit-scrollbar{display:none}
 .nav-tab-group{position:relative;display:inline-flex;align-items:center}
 .nav-tab-btn{font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;padding:0.55rem 0.85rem;border:none;background:transparent;cursor:pointer;white-space:nowrap;color:#fff;border-bottom:2px solid transparent;transition:color .15s;display:inline-flex;align-items:center;gap:4px}
@@ -333,7 +334,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 
 @media(max-width:880px){
   nav{flex-wrap:wrap}
-  .nav-tabs{order:99;width:100%;border-top:1px solid rgba(255,255,255,0.08);padding:0.35rem 0;margin-top:0.5rem;justify-content:flex-start}
+  .nav-tabs{order:99;width:100%;border-top:1px solid rgba(255,255,255,0.08);padding:0.35rem 0;margin-top:0.5rem;justify-content:flex-start;overflow-x:auto}
   .nav-tab-btn{padding:0.5rem 0.65rem;font-size:0.56rem}
 }
 
@@ -358,7 +359,10 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .gbiz-msg.err{color:var(--red)}
 
 /* ── SUBSCRIPTIONS additions ── */
-.trust-line{background:linear-gradient(135deg,rgba(201,146,42,0.08),rgba(46,90,142,0.05));border:1px solid var(--accent);border-radius:6px;padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:0.85rem;align-items:center}
+.trust-line{background:#0D1B2E;border:1px solid var(--accent);border-radius:6px;padding:1.15rem 1.35rem;margin-bottom:1.25rem;display:flex;gap:0.85rem;align-items:center}
+.trust-line .trust-icon{color:#C9922A;font-weight:700;font-size:1.1rem;flex-shrink:0}
+.trust-line .trust-text{color:#fff}
+.trust-line .trust-text strong{color:#C9922A}
 .trust-icon{flex-shrink:0;width:32px;height:32px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700}
 .trust-text{flex:1;font-size:0.84rem;color:var(--text);line-height:1.55}
 .trust-text strong{color:var(--accent)}
@@ -401,7 +405,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .onboard-item:hover{background:var(--offwhite)}
 .onboard-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:#fff;transition:all .15s}
 .onboard-item.done .onboard-check{background:var(--green);border-color:var(--green)}
-.onboard-item.progress .onboard-check{background:#e8a33d;border-color:#e8a33d}
+.onboard-item.progress .onboard-check{background:#2F6FBF;border-color:#2F6FBF;font-weight:700}
 .onboard-item-txt{flex:1}
 .onboard-item-name{font-size:0.88rem;font-weight:600;color:var(--dark);line-height:1.3;margin-bottom:4px}
 .onboard-item.done .onboard-item-name{color:var(--text-muted);text-decoration:line-through}
@@ -462,11 +466,11 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
     </div>
     <div class="nav-tab-group" data-top="website">
-      <button class="nav-tab-btn" onclick="goTab('website','hub')">My Website <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="location.href='/bedrock-website-v1.html'">My Website <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="wsGo('start')"><span class="tsl-eyebrow">Manage</span>My Site</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="wsGo('optimizer')"><span class="tsl-eyebrow">SEO/GEO</span>Run the Optimizer</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="wsGo('analytics')"><span class="tsl-eyebrow">Stats</span>View Analytics</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=start'"><span class="tsl-eyebrow">Manage</span>My Site</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=optimizer'"><span class="tsl-eyebrow">SEO/GEO</span>SEO / GEO Optimizer</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=analytics'"><span class="tsl-eyebrow">Stats</span>Analytics</button>
       </div>
     </div>
     <div class="nav-tab-group" data-top="marketing">
@@ -1381,7 +1385,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <div class="sc-tag">Marketing</div>
             <div class="sc-name">Bedrock Marketing</div>
             <div class="sc-desc">Brand Kit + builder for flyers, social, door hangers, yard signs, business cards, postcards, and more. AI copy included.</div>
-            <div class="sc-price">$20<span class="sc-price-unit">/mo</span></div>
+            <div class="sc-price">$30<span class="sc-price-unit">/mo</span></div>
             <div class="sc-extra">No setup fee</div>
             <div class="sub-toggle">+ Add to Plan</div>
           </button>
@@ -1414,7 +1418,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           </div>
           <div class="bundle-r">
             <div class="bundle-price">$100<span class="bundle-price-unit">/mo</span></div>
-            <div class="bundle-save">+ $200 one-time setup (Sites). Save $10/mo vs. buying separately.</div>
+            <div class="bundle-save">$200 site setup fee waived. Save $20/mo vs. buying all three separately.</div>
             <span class="bundle-cta">Add the Full Ecosystem</span>
           </div>
         </button>
@@ -1932,6 +1936,9 @@ function updateProfileMeter() {
   var pct = total ? Math.round(100 * totalFilled / total) : 0;
   var fill = document.getElementById('profileMeterFill'); if (fill) fill.style.width = pct + '%';
   var ptx  = document.getElementById('profileMeterPct');  if (ptx)  ptx.textContent  = pct + '%';
+  // Expose for the onboarding checklist — "Complete My Profile" only goes green at 100%.
+  window.PROFILE_PCT = pct;
+  if (typeof renderOnboard === 'function') renderOnboard();
 }
 
 function toggleStage(n) {
@@ -1955,7 +1962,7 @@ function saveStage(n) {
     method:'POST', headers:{'Content-Type':'application/json',Authorization:'Bearer '+currentSession.access_token},
     body: JSON.stringify(payload),
   }).then(function(r){ return r.json(); }).then(function(d){
-    if (d.success) { msgEl.textContent = '✓ Saved'; msgEl.className = 'stage-save-msg ok'; PROFILE = d.profile || PROFILE; updateProfileMeter(); if (typeof onboardMarkDone==='function') onboardMarkDone('profile'); setTimeout(function(){ msgEl.textContent=''; }, 2000); }
+    if (d.success) { msgEl.textContent = '✓ Saved'; msgEl.className = 'stage-save-msg ok'; PROFILE = d.profile || PROFILE; updateProfileMeter(); setTimeout(function(){ msgEl.textContent=''; }, 2000); }
     else { msgEl.textContent = d.error || 'Save failed'; msgEl.className = 'stage-save-msg err'; }
   }).catch(function(){ msgEl.textContent = 'Network error'; msgEl.className = 'stage-save-msg err'; });
 }
@@ -2005,15 +2012,15 @@ function clickNotif(i) {
 
 // ── SUBSCRIPTIONS / CART ─────────────────────────────────────────────────────
 var CART = { website:false, marketing:false, cfo:false };
-var PRICES = { website:20, marketing:20, cfo:70 };
+var PRICES = { website:20, marketing:30, cfo:70 };
 var SETUP_FEES = { website:200, marketing:0, cfo:0 };
 var BUNDLE_TOTALS = {  // monthly total when this exact combo selected
   'website':                20,
-  'marketing':              20,
+  'marketing':              30,
   'cfo':                    70,
-  'website+marketing':      35,
+  'website+marketing':      40,
   'website+cfo':            85,
-  'marketing+cfo':          80,
+  'marketing+cfo':          95,
   'website+marketing+cfo':  100,
 };
 function loadCart() {
@@ -2074,20 +2081,27 @@ function renderCart() {
   if (promoRow) promoRow.style.display = 'block';
 
   var monthlyRetail = selected.reduce(function(s,p){ return s + PRICES[p]; }, 0);
-  var setupTotal    = selected.reduce(function(s,p){ return s + (SETUP_FEES[p] || 0); }, 0);
+  var rawSetup      = selected.reduce(function(s,p){ return s + (SETUP_FEES[p] || 0); }, 0);
   var bundleKey     = selected.slice().sort().join('+');
   var bundleMonthly = BUNDLE_TOTALS[bundleKey];
   if (bundleMonthly == null) bundleMonthly = monthlyRetail;
   var savings = monthlyRetail - bundleMonthly;
+  // Selecting Website + Marketing + CFO individually auto-applies the Full Ecosystem.
+  var isFullEco  = selected.length === 3;
+  var setupTotal = isFullEco ? 0 : rawSetup;   // Full Ecosystem waives the $200 site setup fee
 
   var names = { website:'Bedrock Sites (Website Builder)', marketing:'Bedrock Marketing', cfo:'Bedrock CFO' };
   var lines = selected.map(function(p){
     return '<div class="cart-line"><span class="cl-name">' + names[p] + '</span><span class="cl-price">$' + PRICES[p] + '<span style="font-size:0.65rem;color:var(--text-muted);font-weight:400;margin-left:3px">/mo</span></span></div>';
   });
+  if (isFullEco) {
+    lines.unshift('<div class="cart-line" style="background:#0D1B2E;border-radius:6px;padding:0.7rem 0.85rem;margin-bottom:0.35rem"><span class="cl-name" style="color:#C9922A;font-weight:700">★ Full Ecosystem &mdash; all three tools</span><span class="cl-price" style="color:#fff">$100<span style="font-size:0.65rem;color:rgba(255,255,255,0.55);font-weight:400;margin-left:3px">/mo</span></span></div>');
+  }
   if (setupTotal > 0) {
     lines.push('<div class="cart-line"><span class="cl-name">One-time setup' + (CART.website ? ' (Sites)' : '') + '</span><span class="cl-price">$' + setupTotal + '</span></div>');
   }
   if (savings > 0) lines.push('<div class="cart-line discount"><span class="cl-name">Bundle savings</span><span class="cl-price">−$' + savings + '/mo</span></div>');
+  if (isFullEco && rawSetup > 0) lines.push('<div class="cart-line discount"><span class="cl-name">Full Ecosystem &mdash; $' + rawSetup + ' site setup waived</span><span class="cl-price">−$' + rawSetup + '</span></div>');
 
   // ── Apply promo code ──
   var finalMonthly = bundleMonthly;
@@ -2110,7 +2124,7 @@ function renderCart() {
 
   lines.push('<div class="cart-line total"><span class="cl-name">Monthly total</span><span class="cl-price">$' + finalMonthly + '<span style="font-size:0.66rem;font-family:DM Sans;color:var(--text-muted);font-weight:400;margin-left:4px;letter-spacing:0">/mo</span></span></div>');
   if (finalSetup > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--text-muted);font-size:0.7rem">Plus today, one-time</span><span class="cl-price" style="font-size:1.1rem">$' + finalSetup + '</span></div>');
-  else if (setupTotal > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--green);font-size:0.7rem">Setup fee waived</span><span class="cl-price" style="font-size:1.1rem;color:var(--green)">$0</span></div>');
+  else if (rawSetup > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--green);font-size:0.7rem">Setup fee waived</span><span class="cl-price" style="font-size:1.1rem;color:var(--green)">$0</span></div>');
 
   linesEl.innerHTML = lines.join('');
   if (actionsEl) actionsEl.style.display = 'flex';
@@ -2201,6 +2215,12 @@ function loadOnboard() {
   return { profile:'todo', website:'todo', marketing:'todo', subscription:'todo' };
 }
 function saveOnboard(o) { try { localStorage.setItem(ONBOARD_KEY, JSON.stringify(o)); } catch(_){} }
+function updateOnboardBell(incomplete) {
+  var badge = document.getElementById('bellBadge');
+  if (!badge) return;
+  if (incomplete > 0) { badge.textContent = incomplete; badge.classList.remove('zero'); }
+  else { badge.textContent = '0'; badge.classList.add('zero'); }
+}
 function renderOnboard() {
   var o = loadOnboard();
   // Auto-promote to 'done' from real completion signals.
@@ -2209,16 +2229,25 @@ function renderOnboard() {
     var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
     if (cart.website || cart.marketing || cart.cfo) o.subscription = 'done';
   } catch(_){}
-  var done = 0;
+  // Profile: green check ONLY at 100% completeness; partial = in-progress.
+  var ppct = (typeof window.PROFILE_PCT === 'number') ? window.PROFILE_PCT : 0;
+  if (ppct >= 100) o.profile = 'done';
+  else if (o.profile === 'done') o.profile = (ppct > 0 ? 'progress' : 'todo');
+  else if (ppct > 0) o.profile = 'progress';
+  var done = 0, incomplete = 0;
   ONBOARD_STEPS.forEach(function(step){
     var item = document.querySelector('.onboard-item[data-step="'+step+'"]');
     if (!item) return;
     item.classList.remove('done','progress');
     var check = item.querySelector('.onboard-check');
     if (o[step] === 'done') { item.classList.add('done'); if (check) check.innerHTML = '&#10003;'; done++; }
-    else if (o[step] === 'progress') { item.classList.add('progress'); if (check) check.innerHTML = '&ndash;'; }
-    else { if (check) check.innerHTML = ''; }
+    else {
+      incomplete++;
+      if (o[step] === 'progress') { item.classList.add('progress'); if (check) check.innerHTML = '&ndash;'; }
+      else { if (check) check.innerHTML = ''; }
+    }
   });
+  updateOnboardBell(incomplete);
   var prog = document.getElementById('onboardProg');
   if (prog) prog.textContent = done + ' of 4 done';
   var doneMsg = document.getElementById('onboardDoneMsg');

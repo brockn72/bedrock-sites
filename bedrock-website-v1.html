@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Website — Bedrock Digital</title>
+<meta name="description" content="Your Bedrock website hub — build a site, run the SEO/GEO Optimizer, and track analytics.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#0D1B2E;--slate:#1F4E79;--gold:#C9922A;--gold-lt:#D4A843;--cream:#FAF7F2;--ink:#0D1B2E;--muted:#4A5568;--border:#E3E0DA;--green:#3a7d2c;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased}
+
+  /* ── HEADER ── */
+  .ws-header{display:flex;align-items:center;justify-content:space-between;background:var(--navy);padding:0.85rem 1.5rem;border-bottom:2px solid var(--gold)}
+  .ws-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none}
+  .ws-logo .wl-strata{display:flex;flex-direction:column;gap:2px}
+  .ws-logo .wl-strata span{display:block;height:3px;border-radius:1px}
+  .ws-logo .wl-strata span:nth-child(1){width:22px;background:var(--gold)}
+  .ws-logo .wl-strata span:nth-child(2){width:17px;background:#A8711A}
+  .ws-logo .wl-strata span:nth-child(3){width:25px;background:var(--slate)}
+  .ws-logo .wl-text{font-family:'Cormorant Garamond',serif;line-height:1}
+  .ws-logo .wl-text b{display:block;font-size:1.1rem;font-weight:700;color:#fff;letter-spacing:0.01em}
+  .ws-logo .wl-text small{display:block;font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:var(--gold);margin-top:2px}
+  .ws-headnav{display:flex;align-items:center;gap:0.4rem}
+  .ws-headnav a{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;padding:0.55rem 0.85rem;border-radius:5px;transition:color .15s,background .15s}
+  .ws-headnav a:hover{color:#fff;background:rgba(255,255,255,0.06)}
+  .ws-headnav a.portal{color:var(--gold);border:1px solid var(--gold)}
+  .ws-headnav a.portal:hover{background:var(--gold);color:var(--navy)}
+
+  /* ── HUB LAYOUT ── */
+  .ws-hub{display:grid;grid-template-columns:248px 1fr;min-height:calc(100vh - 60px)}
+  .ws-sidebar{background:var(--navy);padding:1.5rem 0.85rem}
+  .ws-side-label{font-size:0.56rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);padding:0 0.85rem;margin-bottom:1rem}
+  .ws-navitem{display:block;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.72);padding:0.78rem 0.9rem;border-radius:7px;margin-bottom:3px;transition:all .15s}
+  .ws-navitem:hover{background:rgba(255,255,255,0.05);color:#fff}
+  .ws-navitem.active{background:rgba(201,146,42,0.16);color:var(--gold);border-left:3px solid var(--gold);padding-left:calc(0.9rem - 3px)}
+  .ws-side-foot{margin-top:1.5rem;padding:0.9rem;background:rgba(255,255,255,0.04);border-radius:8px;font-size:0.72rem;color:rgba(255,255,255,0.55);line-height:1.55}
+  .ws-side-foot a{color:var(--gold);text-decoration:none;font-weight:600}
+
+  .ws-main{padding:2.25rem}
+  .ws-panel{display:none}
+  .ws-panel.active{display:block;animation:wsFade .25s ease}
+  @keyframes wsFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .ws-eyebrow{font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.5rem}
+  .ws-h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--ink);line-height:1.15;margin-bottom:0.4rem}
+  .ws-sub{font-size:0.9rem;color:var(--muted);line-height:1.6;margin-bottom:1.75rem;max-width:620px}
+
+  /* ── START HERE — yes/no ── */
+  .ws-q{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--ink);margin-bottom:1rem}
+  .ws-yn{display:flex;gap:1rem;flex-wrap:wrap}
+  .ws-yn-card{flex:1;min-width:240px;background:#fff;border:1.5px solid var(--border);border-top:3px solid var(--gold);border-radius:10px;padding:1.6rem 1.4rem;cursor:pointer;text-align:left;transition:all .15s;font:inherit}
+  .ws-yn-card:hover{border-color:var(--gold);box-shadow:0 8px 24px rgba(13,27,46,0.1);transform:translateY(-2px)}
+  .ws-yn-card .ync-t{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--ink);margin-bottom:0.4rem}
+  .ws-yn-card .ync-d{font-size:0.82rem;color:var(--muted);line-height:1.6}
+  .ws-yn-card .ync-go{display:inline-block;margin-top:0.9rem;font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold)}
+  .ws-startnote{margin-top:1.75rem;font-size:0.78rem;color:var(--muted);background:#fff;border-left:3px solid var(--gold);padding:0.85rem 1.1rem;border-radius:0 6px 6px 0;line-height:1.6}
+
+  /* ── OPTIMIZER iframe ── */
+  .ws-frame-wrap{border:1px solid var(--border);border-radius:8px;overflow:hidden;background:#fff}
+  .ws-frame{width:100%;height:calc(100vh - 230px);min-height:560px;border:none;display:block}
+
+  /* ── ANALYTICS / TOOLS placeholder ── */
+  .ws-placeholder{background:#fff;border:1px solid var(--border);border-radius:10px;padding:3rem 2rem;text-align:center;max-width:560px;margin:0 auto}
+  .ws-ph-badge{display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);background:rgba(201,146,42,0.12);padding:0.3rem 0.7rem;border-radius:4px;margin-bottom:1rem}
+  .ws-ph-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--ink);margin-bottom:0.5rem}
+  .ws-ph-sub{font-size:0.85rem;color:var(--muted);line-height:1.65}
+  .ws-toollist{display:flex;flex-direction:column;gap:0.55rem;max-width:460px;margin:1.5rem auto 0;text-align:left}
+  .ws-toollist div{font-size:0.8rem;color:var(--muted);padding:0.6rem 0.9rem;background:var(--cream);border-left:3px solid var(--gold);border-radius:0 5px 5px 0}
+  .ws-btn{display:inline-block;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold);color:var(--navy);border:none;padding:0.85rem 1.6rem;border-radius:6px;cursor:pointer;text-decoration:none;margin-top:1.25rem;transition:background .15s}
+  .ws-btn:hover{background:var(--gold-lt)}
+  .ws-btn.outline{background:transparent;border:1.5px solid var(--gold);color:var(--gold)}
+
+  /* ── MOBILE ── */
+  @media(max-width:760px){
+    .ws-hub{grid-template-columns:1fr}
+    .ws-sidebar{display:flex;overflow-x:auto;padding:0.6rem;gap:6px;scrollbar-width:none}
+    .ws-sidebar::-webkit-scrollbar{display:none}
+    .ws-side-label,.ws-side-foot{display:none}
+    .ws-navitem{white-space:nowrap;width:auto;flex-shrink:0;margin-bottom:0;font-size:0.74rem;padding:0.6rem 0.85rem}
+    .ws-navitem.active{border-left:none;border-bottom:3px solid var(--gold);padding-left:0.85rem}
+    .ws-main{padding:1.5rem 1.1rem}
+    .ws-frame{height:calc(100vh - 260px)}
+    .ws-headnav a{padding:0.5rem 0.6rem;font-size:0.58rem}
+  }
+</style>
+</head>
+<body>
+
+<header class="ws-header">
+  <a class="ws-logo" href="/">
+    <span class="wl-strata"><span></span><span></span><span></span></span>
+    <span class="wl-text"><b>Bedrock</b><small>My Website</small></span>
+  </a>
+  <nav class="ws-headnav">
+    <a href="/">Home</a>
+    <a href="/bedrock-marketing-v1.html">Marketing</a>
+    <a class="portal" href="/portal.html">My Portal</a>
+  </nav>
+</header>
+
+<div class="ws-hub">
+  <aside class="ws-sidebar">
+    <div class="ws-side-label">My Website</div>
+    <button type="button" class="ws-navitem active" data-p="start" onclick="wsGo('start')">Start Here</button>
+    <button type="button" class="ws-navitem" data-p="optimizer" onclick="wsGo('optimizer')">SEO / GEO Optimizer</button>
+    <button type="button" class="ws-navitem" data-p="analytics" onclick="wsGo('analytics')">Analytics</button>
+    <button type="button" class="ws-navitem" data-p="tools" onclick="wsGo('tools')">More Website Tools</button>
+    <div class="ws-side-foot">Your website, end to end. Questions? <a href="mailto:support@bedrock-sites.com">Email support</a>.</div>
+  </aside>
+
+  <main class="ws-main">
+
+    <!-- START HERE -->
+    <section class="ws-panel active" id="ws-start">
+      <div class="ws-eyebrow">Start Here</div>
+      <h1 class="ws-h1">Let's get your website sorted.</h1>
+      <p class="ws-sub">Whether you already have a site or you're starting from scratch, we'll take it from here.</p>
+      <div class="ws-q">Do you already have a website?</div>
+      <div class="ws-yn">
+        <button type="button" class="ws-yn-card" onclick="wsGo('optimizer')">
+          <div class="ync-t">Yes, I have one &rarr;</div>
+          <div class="ync-d">We'll run the SEO / GEO Optimizer on your current site &mdash; the full analysis, the same one on the homepage &mdash; and show you exactly what to fix.</div>
+          <span class="ync-go">Run the Optimizer &rarr;</span>
+        </button>
+        <button type="button" class="ws-yn-card" onclick="wsBuild()">
+          <div class="ync-t">No, I need one &rarr;</div>
+          <div class="ync-d">Open the Bedrock site builder &mdash; a full-page builder where you pick a style, add your photos, and preview a professional site for your trade. Free until you launch.</div>
+          <span class="ync-go">Open the Builder &rarr;</span>
+        </button>
+      </div>
+      <div class="ws-startnote">The builder opens as its own full page so you have room to work. Build it once &mdash; after that, edits sync back here and you never start over.</div>
+    </section>
+
+    <!-- SEO / GEO OPTIMIZER -->
+    <section class="ws-panel" id="ws-optimizer">
+      <div class="ws-eyebrow">SEO / GEO Optimizer</div>
+      <h1 class="ws-h1">Audit your site for search &amp; AI.</h1>
+      <p class="ws-sub">This runs the exact same full analysis as the free Optimizer on the Bedrock homepage &mdash; every check, the score breakdown, the charts, and the detailed fix list. Enter your site below.</p>
+      <div class="ws-frame-wrap">
+        <iframe id="wsOptFrame" class="ws-frame" title="Bedrock SEO/GEO Optimizer" data-src="/index.html?embed=optimizer"></iframe>
+      </div>
+    </section>
+
+    <!-- ANALYTICS -->
+    <section class="ws-panel" id="ws-analytics">
+      <div class="ws-eyebrow">Analytics</div>
+      <h1 class="ws-h1">Site analytics.</h1>
+      <p class="ws-sub">Page views and visitor stats for your live Bedrock site.</p>
+      <div class="ws-placeholder">
+        <div class="ws-ph-badge">Coming Soon</div>
+        <div class="ws-ph-title">Analytics appear once your site is live</div>
+        <div class="ws-ph-sub">After your Bedrock site is deployed, visitor counts, top pages, and traffic trends will show here &mdash; cookie-free, no cross-site tracking.</div>
+      </div>
+    </section>
+
+    <!-- MORE WEBSITE TOOLS -->
+    <section class="ws-panel" id="ws-tools">
+      <div class="ws-eyebrow">More Website Tools</div>
+      <h1 class="ws-h1">More for your website.</h1>
+      <p class="ws-sub">Build or edit your site anytime, plus tools on the way.</p>
+      <div class="ws-toollist">
+        <div>Site Editor &mdash; change text, photos, hours, and services in the builder</div>
+        <div>Domain &amp; SSL management &mdash; coming soon</div>
+        <div>Google Business Profile connection &mdash; coming soon</div>
+        <div>Lead &amp; contact-form inbox &mdash; coming soon</div>
+      </div>
+      <div style="text-align:left;max-width:460px;margin:0 auto">
+        <button type="button" class="ws-btn" onclick="wsBuild()">Open the Builder / Editor &rarr;</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+function wsGo(panel){
+  document.querySelectorAll('.ws-navitem').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-p')===panel); });
+  document.querySelectorAll('.ws-panel').forEach(function(p){ p.classList.remove('active'); });
+  var el=document.getElementById('ws-'+panel);
+  if(el) el.classList.add('active');
+  // lazy-load the optimizer iframe the first time it's opened
+  if(panel==='optimizer'){
+    var f=document.getElementById('wsOptFrame');
+    if(f && !f.getAttribute('src')) f.setAttribute('src', f.getAttribute('data-src'));
+  }
+  window.scrollTo(0,0);
+}
+// "No, I need one" / editor — full-page builder (its own URL, no cramped window)
+function wsBuild(){ window.location.href='/sites.html?embed=builder'; }
+// honor ?panel= deep links (e.g. from the portal dropdown)
+(function(){
+  try{
+    var p=new URLSearchParams(location.search).get('panel');
+    if(p && document.getElementById('ws-'+p)) wsGo(p);
+  }catch(_){}
+})();
+</script>
+</body>
+</html>
