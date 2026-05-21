@@ -1628,7 +1628,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   body.bd-embed-builder{padding-top:46px}
 </style>
 <div id="bdEmbedBar">
-  <button class="beb-back" type="button" onclick="if(history.length>1){history.back()}else{location.href='/bedrock-website-v1.html'}">&larr; Back</button>
+  <button class="beb-back" type="button" onclick="location.href=(window.__bdBackTarget||'/bedrock-website-v1.html')">&larr; Back to Portal</button>
   <span class="beb-title">Bedrock Site Builder</span>
   <span style="width:54px"></span>
 </div>
@@ -3266,7 +3266,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 <!-- ===== CLIENT LOGIN PAGE ===== -->
 <div id="login" class="page">
   <div class="bd-login-inner">
-    <div class="bd-login-grid">
+    <!-- hidden May 2026 — full "Welcome back / Client Portal" sign-in block replaced by the
+         universal Sign In / Create Account modal (nav handles it). Kept, not deleted. -->
+    <div class="bd-login-grid" style="display:none">
       <div class="bd-login-info">
         <div class="login-eyebrow">Client Portal</div>
         <h1>Welcome back.</h1>
@@ -3283,8 +3285,16 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <input type="password" id="mkLoginPass" placeholder="Password" aria-label="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')goToPortal()">
         <p id="mkLoginErr" style="color:#c0392b;font-size:0.82rem;margin:0.25rem 0 0;min-height:1.1em"></p>
         <button class="bd-btn-gold" onclick="goToPortal()">Sign In</button>
-        <p class="bd-login-help">Need help? <a href="mailto:support@bedrock-sites.com">Contact support</a> or call Brock directly.</p>
+        <p class="bd-login-help">Need help? <a href="mailto:support@bedrock-sites.com">Contact support</a>.</p>
       </div>
+    </div>
+    <!-- small Create Account card — the modal does the real work -->
+    <div style="max-width:440px;margin:0 auto;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-top:3px solid #C9922A;border-radius:12px;padding:2.5rem 2rem;text-align:center">
+      <div style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#C9922A;margin-bottom:0.75rem">Get Started</div>
+      <h1 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:#fff;line-height:1.15;margin-bottom:0.6rem">Create your free account.</h1>
+      <p style="font-family:'DM Sans',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.72);line-height:1.65;margin-bottom:1.5rem">Free to set up, free to explore every tool. You only pay when you launch something.</p>
+      <a href="#" onclick="event.preventDefault();openAuthModal('create')" class="bd-btn-gold" style="display:inline-block;min-width:240px;text-align:center">Create a Free Account</a>
+      <p style="font-family:'DM Sans',sans-serif;font-size:0.8rem;color:rgba(255,255,255,0.6);margin-top:1.1rem">Already have an account? <a href="#" onclick="event.preventDefault();openAuthModal('signin')" style="color:#C9922A;font-weight:600;text-decoration:none">Sign in</a></p>
     </div>
   </div>
 </div><!-- end #login -->
@@ -3294,9 +3304,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   <button type="button" id="builderStartOver" onclick="refreshStartOver()" title="Erase your saved progress and reload a fresh builder" aria-label="Refresh and start over" style="position:fixed;left:14px;bottom:14px;z-index:9000;font-family:'Montserrat',sans-serif;font-size:0.56rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.62);background:rgba(13,27,46,0.78);border:1px solid rgba(255,255,255,0.2);padding:0.5rem 0.8rem;border-radius:7px;cursor:pointer;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)">&#8635;&nbsp; Start Over</button>
   <div class="builder-hero">
     <div class="tag">Builder</div>
-    <h1>Build Your Site.<br><em>Free Preview. Pay Only When You Love It.</em></h1>
-    <p>Four short steps. We do the heavy lifting around your story. You preview the full site free, edit anything you want, and pay only when you're ready to launch. <a href="#" onclick="event.preventDefault();maybeShowWelcomeModal()" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;cursor:pointer">See how it works</a></p>
-    <p style="font-size:0.78rem;font-weight:400;color:rgba(255,255,255,0.6);margin-top:0.5rem;font-style:italic">Most people finish in 5&ndash;20 minutes depending on how much detail they want to include.</p>
+    <h1>Build your site.<br><em>Free preview only &mdash; pay when you love it.</em></h1>
+    <p>Four short steps, about 5&ndash;20 minutes. Preview the full site free, edit anything, and pay only when you're ready to launch. <a href="#" onclick="event.preventDefault();maybeShowWelcomeModal()" style="color:var(--accent);text-decoration:underline;text-underline-offset:3px;cursor:pointer">See how it works</a></p>
   </div>
   <div class="no-risk">
     <span>—</span>
@@ -9502,13 +9511,19 @@ function closeMtbDrawer(){
 </script>
 
 <script>
-// Embed mode — force the builder once the page's own init has run.
+// Embed mode — force the builder, and route the back button to the portal/hub
+// so it never lands on the Bedrock Sites marketing page or an old homepage.
 (function(){
   try{
-    if(/[?&]embed=builder/.test(location.search) && typeof showPage==='function'){
-      showPage('builder');
-      window.scrollTo(0,0);
-    }
+    if(!/[?&]embed=builder/.test(location.search)) return;
+    if(typeof showPage==='function') showPage('builder');
+    window.scrollTo(0,0);
+    var ref = document.referrer || '';
+    var backTarget = /\/(bedrock-website-v1|portal)\.html/.test(ref) ? ref : '/bedrock-website-v1.html';
+    window.__bdBackTarget = backTarget;
+    // Collapse the SPA hash entry showPage pushed, then catch any back press.
+    history.replaceState({bdEmbed:1}, '', '/sites.html?embed=builder');
+    window.addEventListener('popstate', function(){ window.location.replace(backTarget); });
   }catch(_){}
 })();
 </script>

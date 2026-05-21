@@ -322,7 +322,9 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .nav-tab-btn:hover:not(.active){color:rgba(255,255,255,0.85)}
 .nav-tab-caret{font-size:0.6rem;opacity:0.6}
 .nav-tab-group:hover .nav-tab-caret{opacity:1}
-.nav-tab-submenu{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--border);border-top:2px solid var(--accent);min-width:230px;box-shadow:0 10px 28px rgba(0,0,0,0.4);display:none;z-index:200;flex-direction:column;margin-top:6px}
+.nav-tab-submenu{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--border);border-top:2px solid var(--accent);min-width:230px;box-shadow:0 10px 28px rgba(0,0,0,0.4);display:none;z-index:200;flex-direction:column;margin-top:0}
+/* transparent bridge so the cursor never crosses a dead zone between tab and menu */
+.nav-tab-submenu::before{content:'';position:absolute;top:-10px;left:0;right:0;height:10px}
 .nav-tab-group:hover .nav-tab-submenu,.nav-tab-group.open .nav-tab-submenu{display:flex}
 .nav-tab-submenu-link{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--text);text-decoration:none;padding:0.7rem 1rem;border-bottom:1px solid var(--border);transition:background .15s;background:transparent;border-left:none;border-right:none;cursor:pointer;text-align:left;width:100%}
 .nav-tab-submenu-link:last-child{border-bottom:none}
@@ -1444,17 +1446,45 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <button class="btn-gold" onclick="checkout()">Update My Subscription →</button>
             <button class="btn-outline" onclick="clearCart()">Clear</button>
           </div>
-          <div style="margin-top:1rem;font-size:0.66rem;color:var(--text-muted);line-height:1.6">Setup fees are billed once. Monthly fees recur until you cancel. You can change your plan any time.</div>
+          <div style="margin-top:1rem;font-size:0.66rem;color:var(--text-muted);line-height:1.6">Setup fees are billed once. Monthly fees recur until you cancel. You can change your plan any time.<br>Payments are secured by Stripe. You'll be taken to Stripe's external checkout to complete your purchase.</div>
         </div>
       </div>
 
-      <!-- SUBSCRIPTIONS: ACTIVE -->
+      <!-- SUBSCRIPTIONS: MANAGE MY SUBSCRIPTION -->
       <div class="portal-pane subs-pane-bg" id="pane-subs-active">
-        <div class="coming-soon-pane">
-          <div class="cs-badge"><span>Coming Soon</span></div>
-          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Active Subscriptions</div>
-          <div class="dc-sub" style="max-width:420px;margin:0 auto 1.25rem">Your current Stripe subscriptions, payment history, and billing dates will appear here once you complete checkout.</div>
-          <button class="btn-outline" onclick="goTab('subs','cart')">← Back to Plan</button>
+        <style>
+          .ms-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem 1.6rem;margin-bottom:1rem}
+          .ms-card.plan{border-top:3px solid var(--accent)}
+          .ms-label{font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:0.6rem}
+          .ms-planrow{display:flex;flex-wrap:wrap;gap:1.5rem;align-items:flex-end;justify-content:space-between}
+          .ms-plan-name{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:600;color:var(--dark)}
+          .ms-plan-tools{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem}
+          .ms-plan-tools span{font-size:0.62rem;font-weight:600;letter-spacing:0.04em;background:var(--offwhite);border:1px solid var(--border);padding:0.25rem 0.6rem;border-radius:99px;color:var(--text)}
+          .ms-cost{text-align:right}
+          .ms-cost .mc-amt{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--dark);line-height:1}
+          .ms-cost .mc-amt span{font-size:0.8rem;font-weight:400;color:var(--text-muted)}
+          .ms-cost .mc-next{font-size:0.7rem;color:var(--text-muted);margin-top:4px}
+          .ms-table{width:100%;border-collapse:collapse;font-size:0.78rem}
+          .ms-table th{text-align:left;font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);padding:0.5rem 0.6rem;border-bottom:1px solid var(--border)}
+          .ms-table td{padding:0.7rem 0.6rem;border-bottom:1px solid var(--border);color:var(--text)}
+          .ms-table tr:last-child td{border-bottom:none}
+          .ms-status{font-size:0.6rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:0.2rem 0.5rem;border-radius:3px}
+          .ms-status.paid{background:var(--green-bg);color:var(--green)}
+          .ms-empty{text-align:center;color:var(--text-muted);font-size:0.8rem;padding:1.5rem 1rem;line-height:1.6}
+          .ms-addgrid{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
+          @media(max-width:600px){.ms-addgrid{grid-template-columns:1fr}}
+          .ms-addcard{border:1px solid var(--border);border-radius:8px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:0.4rem}
+          .ms-addcard .ac-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;color:var(--dark)}
+          .ms-addcard .ac-price{font-size:0.74rem;color:var(--accent);font-weight:700}
+          .ms-addcard .ac-desc{font-size:0.72rem;color:var(--text-muted);line-height:1.5;flex:1}
+          .ms-addbtn{font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0.65rem;border-radius:5px;cursor:pointer;margin-top:0.3rem}
+          .ms-addbtn:hover{background:var(--accent-light)}
+        </style>
+        <div class="mkt-card">
+          <div class="dc-label">Manage My Subscription</div>
+          <div class="dc-title">Your plan &amp; billing.</div>
+          <div class="dc-sub" style="margin-bottom:1.25rem">Everything about what you're paying for, in one place.</div>
+          <div id="manageSubsBody"></div>
         </div>
       </div>
 
@@ -1801,6 +1831,7 @@ function goTab(top, sub) {
     else updateProfileMeter();
   }
   if (top === 'subs' && sub === 'cart') renderCart();
+  if (top === 'subs' && sub === 'active') renderManageSubs();
   if (top === 'website' && sub === 'optimizer') { prefillOptUrl(); loadAuditHistory(); }
 }
 
@@ -2130,6 +2161,69 @@ function renderCart() {
   if (actionsEl) actionsEl.style.display = 'flex';
 }
 function clearCart() { CART = { website:false, marketing:false, cfo:false }; ACTIVE_PROMO = null; var pm = document.getElementById('promoMsg'); if (pm) pm.textContent = ''; var pi = document.getElementById('promoInput'); if (pi) pi.value = ''; paintCart(); persistCart(); }
+
+// ── MANAGE MY SUBSCRIPTION ───────────────────────────────────────────────────
+function renderManageSubs() {
+  var body = document.getElementById('manageSubsBody'); if (!body) return;
+  var selected = ['website','marketing','cfo'].filter(function(p){ return CART[p]; });
+  var names = { website:'Bedrock Sites', marketing:'Bedrock Marketing', cfo:'Bedrock CFO' };
+  var descs = {
+    website:'Your contractor website — hosted, mobile-ready, SEO-ready.',
+    marketing:'Brand Kit plus flyers, social posts, signs, and more.',
+    cfo:'Conversational finance &amp; operations agent. In development.'
+  };
+  if (!selected.length) {
+    body.innerHTML = '<div class="ms-empty">You don\'t have an active plan yet.<br><button class="ms-addbtn" style="margin-top:0.85rem;padding:0.7rem 1.4rem" onclick="goTab(\'subs\',\'cart\')">Choose your tools &rarr;</button></div>';
+    return;
+  }
+  var bundleKey = selected.slice().sort().join('+');
+  var monthly = BUNDLE_TOTALS[bundleKey];
+  if (monthly == null) monthly = selected.reduce(function(s,p){ return s + PRICES[p]; }, 0);
+  var isFullEco = selected.length === 3;
+  var planName = isFullEco ? 'Full Ecosystem'
+    : (selected.length === 2 ? selected.map(function(p){ return names[p]; }).join(' + ')
+    : names[selected[0]]);
+  var nb = new Date(); nb.setMonth(nb.getMonth() + 1);
+  var nbStr = nb.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+
+  var html = '';
+  html += '<div class="ms-card plan"><div class="ms-label">Current Plan</div><div class="ms-planrow">';
+  html += '<div><div class="ms-plan-name">' + planName + '</div><div class="ms-plan-tools">' +
+          selected.map(function(p){ return '<span>' + names[p] + '</span>'; }).join('') + '</div></div>';
+  html += '<div class="ms-cost"><div class="mc-amt">$' + monthly + '<span>/mo</span></div>' +
+          '<div class="mc-next">Next billing: ' + nbStr + '</div></div>';
+  html += '</div><div style="margin-top:1.1rem;display:flex;gap:0.6rem;flex-wrap:wrap">' +
+          '<button class="btn-gold" style="width:auto;padding:0.7rem 1.3rem" onclick="goTab(\'subs\',\'cart\')">Change My Plan</button>' +
+          '<button class="btn-outline" onclick="goTab(\'subs\',\'cart\')">Cancel or Pause</button></div></div>';
+
+  html += '<div class="ms-card"><div class="ms-label">Billing History</div>';
+  html += '<table class="ms-table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+  html += '<tr><td colspan="4" class="ms-empty">No charges yet — your billing history will appear here after your first payment.</td></tr>';
+  html += '</tbody></table></div>';
+
+  var notSel = ['website','marketing','cfo'].filter(function(p){ return !CART[p]; });
+  if (notSel.length) {
+    html += '<div class="ms-card"><div class="ms-label">Add More Tools</div>' +
+            '<div class="dc-sub" style="margin-bottom:0.85rem">Add another tool anytime — bundle pricing applies automatically.</div>' +
+            '<div class="ms-addgrid">';
+    notSel.forEach(function(p){
+      html += '<div class="ms-addcard"><div class="ac-name">' + names[p] + '</div>' +
+              '<div class="ac-price">$' + PRICES[p] + '/mo</div>' +
+              '<div class="ac-desc">' + descs[p] + '</div>' +
+              '<button class="ms-addbtn" onclick="addToolFromManage(\'' + p + '\')">+ Add to My Plan</button></div>';
+    });
+    html += '</div></div>';
+  } else {
+    html += '<div class="ms-card"><div class="ms-empty">You\'re on the Full Ecosystem — you have every Bedrock tool.</div></div>';
+  }
+  body.innerHTML = html;
+}
+function addToolFromManage(p) {
+  CART[p] = true;
+  persistCart();
+  paintCart();
+  goTab('subs','cart');
+}
 function pickFullBundle() { CART = { website:true, marketing:true, cfo:true }; paintCart(); persistCart(); document.getElementById('cartSummary').scrollIntoView({behavior:'smooth',block:'center'}); }
 function checkout() {
   alert('Checkout flow coming soon. Once Stripe products are configured, this button will redirect to Stripe Checkout with the right bundle priced in.');
