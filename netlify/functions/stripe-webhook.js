@@ -1,5 +1,6 @@
 const { createHmac, timingSafeEqual } = require('crypto');
 const { deploySite } = require('../lib/deploy-site');
+const { sendOnboardingEmail } = require('../lib/onboarding-email');
 
 function verifyStripeSignature(rawBody, sigHeader, secret) {
   if (!sigHeader) return false;
@@ -216,54 +217,14 @@ exports.handler = async (event) => {
       });
     }
 
-    // Welcome email to customer
-    if (resendKey && customerEmail && deployedUrl) {
-      const fromEmail  = process.env.RESEND_FROM  || 'hello@bedrock-sites.com';
-      const portalUrl  = process.env.SITE_URL ? `${process.env.SITE_URL}/portal.html` : 'https://bedrock-sites.com/portal.html';
-      const customerHtml = `
-        <div style="font-family:sans-serif;max-width:560px;color:#111">
-          <h2 style="font-size:1.4rem;margin-bottom:0.5rem">Your site is live.</h2>
-          <p style="color:#555;font-size:0.9rem;margin-bottom:1.5rem">Here's everything you need to know.</p>
-
-          <div style="background:#f5f5f0;border-left:3px solid #c9a84c;padding:1rem 1.25rem;margin-bottom:1.5rem">
-            <div style="font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin-bottom:0.25rem">Your website</div>
-            <a href="${deployedUrl}" style="font-size:1rem;font-weight:500;color:#111">${deployedUrl}</a>
-            <div style="font-size:0.75rem;color:#888;margin-top:0.4rem">DNS may take up to 24 hours to fully propagate worldwide.</div>
-          </div>
-
-          <table style="border-collapse:collapse;width:100%;margin-bottom:1.5rem">
-            <tr>
-              <td style="padding:8px 12px 8px 0;color:#666;font-size:0.85rem;width:140px;vertical-align:top">Your first $20 charge</td>
-              <td style="padding:8px 0;font-size:0.85rem">30 days from today — we give you a full month free to get settled in.</td>
-            </tr>
-            <tr>
-              <td style="padding:8px 12px 8px 0;color:#666;font-size:0.85rem;vertical-align:top">Edit your site</td>
-              <td style="padding:8px 0;font-size:0.85rem">Log in to your portal anytime to update your info, photos, or hours.</td>
-            </tr>
-            <tr>
-              <td style="padding:8px 12px 8px 0;color:#666;font-size:0.85rem;vertical-align:top">Questions?</td>
-              <td style="padding:8px 0;font-size:0.85rem">Reply to this email or reach us at <a href="mailto:hello@bedrock-sites.com" style="color:#111">hello@bedrock-sites.com</a>.</td>
-            </tr>
-          </table>
-
-          <a href="${portalUrl}" style="display:inline-block;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:#fff;background:#111;padding:0.85rem 1.75rem;text-decoration:none">Log in to your portal →</a>
-
-          <p style="font-size:0.7rem;color:#aaa;margin-top:2rem">Bedrock Sites · <a href="https://bedrock-sites.com" style="color:#aaa">bedrock-sites.com</a></p>
-        </div>
-      `;
-
-      await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from:    fromEmail,
-          to:      [customerEmail],
-          subject: `Your site is live — ${businessName}`,
-          html:    customerHtml,
-        }),
+    // Welcome email to customer — day 0 of the onboarding sequence. Days 2
+    // and 7 are sent by onboarding-email-scheduler.js (daily scheduled fn).
+    if (customerEmail && deployedUrl) {
+      await sendOnboardingEmail({
+        to:           customerEmail,
+        name:         businessName,
+        site_url:     deployedUrl,
+        delay_index:  0,
       });
     }
   }

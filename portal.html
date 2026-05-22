@@ -21,6 +21,12 @@
 }
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+/* Toast — same pattern as donnaToast in the Donna tool */
+.pt-toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:24px;background:var(--dark);color:#fff;font-size:0.84rem;font-weight:500;padding:0.7rem 1.15rem;border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,0.25);z-index:300;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;border-left:3px solid var(--accent);max-width:90vw}
+.pt-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.pt-toast.ok{border-left-color:#3b6d11}
+.pt-toast.err{border-left-color:#b91c1c}
+@media(max-width:760px){.pt-toast{bottom:14px;left:12px;right:12px;transform:translateY(8px);max-width:none}.pt-toast.show{transform:translateY(0)}}
 
 /* ── NAV ── */
 nav{background:var(--dark);display:flex;justify-content:space-between;align-items:center;padding:1rem 5%;border-bottom:3px solid var(--accent);flex-shrink:0;gap:1rem;flex-wrap:wrap}
@@ -1084,12 +1090,12 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         </div>
       </div>
 
-      <!-- SEO: REPORTS -->
-      <div class="portal-pane" id="pane-seo-reports">
+      <!-- SEO: REPORTS — legacy pane, unreachable via current navigation. Kept (display:none) since the SEO / GEO Optimizer lives inside My Website now and tracks its own audit history there. -->
+      <div class="portal-pane" id="pane-seo-reports" style="display:none">
         <div class="coming-soon-pane">
-          <div class="cs-badge"><span>Coming Soon</span></div>
           <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Your SEO Reports</div>
-          <div class="dc-sub" style="max-width:420px;margin:0 auto">Past audits, ranking changes over time, and what was fixed. Available once you've run your first audit.</div>
+          <div class="dc-sub" style="max-width:460px;margin:0 auto 1rem">Audit history lives inside the SEO / GEO Optimizer in your My Website hub — open it from the top nav to run a new audit and see past scores.</div>
+          <button class="btn-outline" onclick="location.href='/bedrock-website-v1.html?panel=optimizer'">Open SEO / GEO Optimizer →</button>
         </div>
       </div>
 
@@ -1152,18 +1158,16 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         </div>
       </div>
 
-      <!-- ════════════ CFO HUB (placeholder) ════════════ -->
-      <div class="portal-pane" id="pane-cfo-default">
+      <!-- ════════════ LEGACY CFO HUB ════════════ -->
+      <!-- Original single "CFO" tab — now split into Operations (Donna) and Finance, both live and accessible from the top nav. Pane is unreachable via current TAB_DEFS (no 'cfo' entry); kept display:none for safety per the no-delete rule. -->
+      <div class="portal-pane" id="pane-cfo-default" style="display:none">
         <div class="coming-soon-pane">
-          <div class="cs-badge"><span>Coming Soon</span></div>
-          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Bedrock Operations</div>
-          <div class="dc-sub" style="max-width:440px;margin:0 auto 1.5rem">The money and admin side, without the headache. Bedrock Operations and Finance connect to your books, draft your estimates and invoices, and show you which jobs actually make money.</div>
-          <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:340px;margin:0 auto 1.5rem;text-align:left">
-            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">QuickBooks &amp; Jobber connection — auto-categorize expenses</div>
-            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Bid intelligence — what to charge to hit your margin</div>
-            <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Cash flow in plain English — "can I make payroll?"</div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Operations &amp; Finance are now their own tools</div>
+          <div class="dc-sub" style="max-width:460px;margin:0 auto 1.25rem">The old "CFO" tab is split into <strong>Bedrock Operations · Donna</strong> (drafts estimates, invoices, receipts, schedules) and <strong>Bedrock Finance · Analytics</strong> (live dashboards from QuickBooks and Donna). Both are live and waiting for you.</div>
+          <div style="display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap">
+            <button class="btn-gold" style="width:auto;padding:0.7rem 1.2rem" onclick="launchDonna()">Open Donna →</button>
+            <button class="btn-outline" onclick="launchFinance()">Open Finance →</button>
           </div>
-          <button class="btn-outline" onclick="goTab('profile','default')">Fill in the Operations section of your Profile →</button>
         </div>
       </div>
 
@@ -2511,7 +2515,7 @@ function addToolFromManage(p) {
 // Open the Stripe-hosted Customer Portal — update payment method, change or
 // cancel a plan, view invoices. create-billing-portal.js builds the session.
 function openBillingPortal(btn) {
-  if (DEMO || !currentSession || !currentSession.access_token) { alert('Sign in to manage your billing.'); return; }
+  if (DEMO || !currentSession || !currentSession.access_token) { portalToast('Sign in to manage your billing.', 'err'); return; }
   if (btn) { btn.disabled = true; btn.textContent = 'Opening…'; }
   function restore(){ if (btn) { btn.disabled = false; btn.textContent = 'Manage Billing'; } }
   fetch('/.netlify/functions/create-billing-portal', {
@@ -2521,9 +2525,9 @@ function openBillingPortal(btn) {
     .then(function(r){ return r.json(); })
     .then(function(d){
       if (d && d.url) { window.location.href = d.url; }
-      else { alert(d && d.error ? d.error : 'Billing portal isn’t available yet.'); restore(); }
+      else { portalToast(d && d.error ? d.error : 'Billing portal isn’t available yet.', 'err'); restore(); }
     })
-    .catch(function(){ alert('Could not reach the billing portal. Try again in a moment.'); restore(); });
+    .catch(function(){ portalToast('Could not reach the billing portal. Try again in a moment.', 'err'); restore(); });
 }
 function pickFullBundle() { CART = { website:true, marketing:true, cfo:true }; paintCart(); persistCart(); document.getElementById('cartSummary').scrollIntoView({behavior:'smooth',block:'center'}); }
 function checkout() {
@@ -2694,8 +2698,20 @@ function renderOnboard() {
   }
   saveOnboard(o);
 }
+// Toast — short floating message. Replaces alert() in connection / billing flows.
+function portalToast(msg, kind) {
+  var el = document.getElementById('ptToast');
+  if (!el) { el = document.createElement('div'); el.id = 'ptToast'; el.className = 'pt-toast'; document.body.appendChild(el); }
+  el.className = 'pt-toast' + (kind ? (' ' + kind) : '');
+  el.textContent = msg;
+  setTimeout(function(){ el.classList.add('show'); }, 10);
+  clearTimeout(window._ptTimer);
+  window._ptTimer = setTimeout(function(){ el.classList.remove('show'); }, 4000);
+}
 function connectTool(name) {
-  alert(name + ' setup isn\'t available yet. Bedrock never shows a connection as live until it\'s actually verified — and one connection works for both Operations and Finance.');
+  // The old My Connections section is hidden; route them to My Integrations.
+  portalToast(name + ' connects in My Account → My Integrations.', 'info');
+  goTab('subs','integrations');
 }
 
 // ── MY INTEGRATIONS ───────────────────────────────────────────────────────────
@@ -2754,18 +2770,18 @@ function renderIntegrationCards(c) {
     + '</div>';
 }
 function connectQuickBooks() {
-  if (DEMO || !currentSession || !currentSession.access_token) { alert('Sign in to connect QuickBooks.'); return; }
+  if (DEMO || !currentSession || !currentSession.access_token) { portalToast('Sign in to connect QuickBooks.', 'err'); return; }
   fetch('/.netlify/functions/qbo-auth?return=portal', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
     .then(function(r){ return r.json(); })
-    .then(function(d){ if (d && d.url) window.location.href = d.url; else alert(d && d.error ? d.error : 'QuickBooks isn’t available yet.'); })
-    .catch(function(){ alert('Could not reach QuickBooks. Try again in a moment.'); });
+    .then(function(d){ if (d && d.url) window.location.href = d.url; else portalToast(d && d.error ? d.error : 'QuickBooks isn’t available yet.', 'err'); })
+    .catch(function(){ portalToast('Could not reach QuickBooks. Try again in a moment.', 'err'); });
 }
 function connectGoogle() {
-  if (DEMO || !currentSession || !currentSession.access_token) { alert('Sign in to connect Google.'); return; }
+  if (DEMO || !currentSession || !currentSession.access_token) { portalToast('Sign in to connect Google.', 'err'); return; }
   fetch('/.netlify/functions/google-oauth-auth', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
     .then(function(r){ return r.json(); })
-    .then(function(d){ if (d && d.url) window.location.href = d.url; else alert(d && d.error ? d.error : 'Google isn’t available yet.'); })
-    .catch(function(){ alert('Could not reach Google. Try again in a moment.'); });
+    .then(function(d){ if (d && d.url) window.location.href = d.url; else portalToast(d && d.error ? d.error : 'Google isn’t available yet.', 'err'); })
+    .catch(function(){ portalToast('Could not reach Google. Try again in a moment.', 'err'); });
 }
 
 // ── DASHBOARD: YOUR GOOGLE PRESENCE CARD ─────────────────────────────────────
@@ -2814,9 +2830,9 @@ function handleConnectRedirect() {
   if (q === 'connected' || g === 'connected') {
     goTab('subs','integrations');
     loadGooglePresence();
-    setTimeout(function(){ alert((q === 'connected' ? 'QuickBooks' : 'Google') + ' connected. Your Bedrock tools can now use it.'); }, 400);
+    setTimeout(function(){ portalToast((q === 'connected' ? 'QuickBooks' : 'Google') + ' connected. Your Bedrock tools can now use it.', 'ok'); }, 400);
   } else if (q === 'error' || q === 'declined' || g === 'error' || g === 'declined') {
-    setTimeout(function(){ alert('That connection didn’t finish. You can try again from My Account → My Integrations.'); }, 400);
+    setTimeout(function(){ portalToast('That connection didn’t finish. Try again from My Account → My Integrations.', 'err'); }, 400);
   }
 }
 function onboardGo(step) {

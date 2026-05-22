@@ -8,3 +8,9 @@
 # 08:00 UTC ≈ 2:00 AM US Central (Netlify cron runs in UTC).
 [functions."finance-sync-nightly"]
   schedule = "0 8 * * *"
+
+# Daily onboarding email scheduler — sends day-2 and day-7 emails to
+# contractors hitting those signup-anniversaries. 14:00 UTC ≈ 8 AM US Central
+# so they land first thing in the morning their time.
+[functions."onboarding-email-scheduler"]
+  schedule = "0 14 * * *"

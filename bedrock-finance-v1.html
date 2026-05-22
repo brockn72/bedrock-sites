@@ -15,6 +15,8 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Bedrock Finance · Analytics">
 <meta name="twitter:description" content="Plain-language dashboards from your QuickBooks + Donna data.">
+<meta property="og:image" content="https://bedrock-sites.com/og-image.svg">
+<meta name="twitter:image" content="https://bedrock-sites.com/og-image.svg">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 68 68'%3E%3Crect width='68' height='68' rx='14' fill='%230D1B2E'/%3E%3Crect x='17' y='8' width='35' height='10' fill='%23F0C46A'/%3E%3Crect x='17' y='29' width='27' height='10' fill='%232E5A8E'/%3E%3Crect x='7' y='8' width='10' height='52' fill='%23C9922A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,6 +64,8 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .fin-mobile-tabs::-webkit-scrollbar{display:none}
 .fin-mobile-tabs button{flex-shrink:0;background:transparent;border:1px solid var(--border-light);color:var(--slate);font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;padding:0.42rem 0.95rem;cursor:pointer;border-radius:999px;white-space:nowrap}
 .fin-mobile-tabs button.active{background:var(--navy-deep);color:#fff;border-color:var(--navy-deep)}
+/* Estimated-statements 3-column grid stacks on tablet/mobile so the cards aren't squished */
+@media(max-width:760px){.an-grid[style*="1fr 1fr 1fr"]{grid-template-columns:1fr}}
 /* KPI skeleton — shimmering placeholder while data loads */
 .kpi-card.skel .kpi-value{color:transparent;background:linear-gradient(90deg,var(--off-white),#eee,var(--off-white));background-size:200% 100%;border-radius:4px;animation:kpiShim 1.4s infinite linear;display:inline-block;min-width:100px;height:1.7rem}
 .kpi-card.skel .kpi-sub{color:transparent;background:var(--off-white);border-radius:3px;animation:kpiShim 1.4s infinite linear;display:inline-block;min-width:120px;height:0.7rem}

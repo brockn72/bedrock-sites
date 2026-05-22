@@ -8,5 +8,7 @@ Disallow: /bedrock-donna-v1.html
 Disallow: /bedrock-finance-v1.html
 Disallow: /bedrock-marketing-v1.html
 Disallow: /bedrock-website-v1.html
+Disallow: /admin.html
+Disallow: /admin
 
 Sitemap: https://bedrock-sites.com/sitemap.xml
