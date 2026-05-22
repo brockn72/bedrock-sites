@@ -1725,6 +1725,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-btn-gold">Test My Site for SEO</a>
       <a href="/sites.html?embed=builder" class="bd-btn-gold">Build My Website Free</a>
       <a href="/bedrock-marketing-v1.html" class="bd-btn-gold">Create My Marketing Brand</a>
+      <a href="/bedrock-donna-v1.html" class="bd-btn-outline">Meet Your Assistant</a>
+      <a href="/bedrock-finance-v1.html" class="bd-btn-outline">Get Business Insights</a>
       <!-- hidden May 2026 — "See Our Work" removed from hero; it has its own nav tab -->
       <a href="#ourwork" onclick="showPage('ourwork',event)" class="bd-btn-outline" style="display:none">See Our Work</a>
     </div>
@@ -1821,6 +1823,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     #bd-whatwedo .wwd-pv-donna .pd-msg{font-family:'DM Sans',sans-serif;font-size:0.62rem;line-height:1.4;padding:0.45rem 0.6rem;border-radius:8px;max-width:85%}
     #bd-whatwedo .wwd-pv-donna .pd-donna{background:#fff;color:#0D1B2E;border-top-left-radius:2px;align-self:flex-start}
     #bd-whatwedo .wwd-pv-donna .pd-user{background:#C9922A;color:#0D1B2E;border-top-right-radius:2px;align-self:flex-end;font-weight:600}
+    /* product card — headline, lead sentence, sub-feature chips */
+    #bd-whatwedo .wwd-headline{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:#0D1B2E;margin-bottom:0.5rem}
+    #bd-whatwedo .wwd-lead{font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;color:#0D1B2E;line-height:1.55;margin-bottom:1rem;padding-left:0.85rem;border-left:2px solid #C9922A}
+    #bd-whatwedo .wwd-feats{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1.1rem}
+    #bd-whatwedo .wwd-feat{font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:600;color:#0D1B2E;background:#FAF7F2;border:1px solid rgba(13,27,46,0.1);border-radius:999px;padding:0.32rem 0.72rem}
   </style>
   <div class="wwd-inner">
     <!-- hidden May 2026 — gold "What We Do" label removed (redundant with the heading) -->
@@ -1852,13 +1859,50 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
     <div class="wwd-acc" id="wwdAcc1">
       <button type="button" class="wwd-acc-head" onclick="wwdToggle(1)">
-        <span class="wwd-thumb mkt" aria-hidden="true"><b style="background:#1F4E79">Aa</b><b style="background:#C9922A"></b><b style="background:#0D1B2E"></b><b style="background:#6B7280"></b></span>
-        <span class="wwd-acc-label">Marketing</span>
+        <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-d"/></svg></span>
+        <span class="wwd-acc-label">Operations<span class="wwd-soon">Soon</span></span>
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
         <div class="wwd-acc-text">
-          <p class="wwd-acc-desc">Marketing material that looks like you hired an agency &mdash; without the agency price or the back-and-forth. You set up your Brand Kit one time (colors, fonts, logo, and the voice your business speaks in), and after that everything you make is automatically on-brand. That matters because consistent, professional-looking marketing is what makes a small business look established and trustworthy enough to call. Build a flyer, social post, door hanger, yard sign, or business card in minutes and download it as a PDF, PNG, or JPG. It pulls from the same business profile as the rest of Bedrock, so you never enter your info twice.</p>
+          <div class="wwd-headline">Admin Assistant &amp; Customer Database</div>
+          <p class="wwd-lead">Donna is your operational admin secretary &mdash; sassy, smart, and always ready to handle the paperwork.</p>
+          <div class="wwd-feats">
+            <span class="wwd-feat">Donna &mdash; personal admin assistant</span>
+            <span class="wwd-feat">Customer Database</span>
+            <span class="wwd-feat">Project Tracking</span>
+            <span class="wwd-feat">Estimates &amp; Invoices</span>
+          </div>
+          <p class="wwd-acc-desc">Tell Donna what you need in plain words &mdash; or talk it out on the drive home &mdash; and she drafts the estimate, invoice, receipt, or schedule. You review, tweak, and approve; nothing goes to a customer without your say-so. Every customer, project, and job stays organized in one place, and she learns your rates and fees as you go.</p>
+          <div class="wwd-acc-links">
+            <a href="/bedrock-donna-v1.html">&rarr; Meet Donna</a>
+          </div>
+        </div>
+        <div class="wwd-preview">
+          <div class="wwd-pv-cap">Preview &middot; Bedrock Operations</div>
+          <div class="wwd-pv-donna">
+            <div class="pd-msg pd-user">New estimate &mdash; Joe Smith, paver patio</div>
+            <div class="pd-msg pd-donna">Roughed it out with your usual rates. Estimate's ready &mdash; take a look. 😉</div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="wwd-acc" id="wwdAcc2">
+      <button type="button" class="wwd-acc-head" onclick="wwdToggle(2)">
+        <span class="wwd-thumb mkt" aria-hidden="true"><b style="background:#1F4E79">Aa</b><b style="background:#C9922A"></b><b style="background:#0D1B2E"></b><b style="background:#6B7280"></b></span>
+        <span class="wwd-acc-label">Creative</span>
+        <span class="wwd-plus">+</span>
+      </button>
+      <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
+        <div class="wwd-acc-text">
+          <div class="wwd-headline">Marketing That Looks Hired-Out</div>
+          <p class="wwd-lead">Set up your Brand Kit once &mdash; then every flyer, post, and sign you make is automatically on-brand.</p>
+          <div class="wwd-feats">
+            <span class="wwd-feat">Brand Kit</span>
+            <span class="wwd-feat">Advertising Materials</span>
+          </div>
+          <p class="wwd-acc-desc">Consistent, professional-looking marketing is what makes a small business look established enough to call. Build a flyer, social post, door hanger, yard sign, or business card in minutes and download it as a PDF, PNG, or JPG. It pulls from the same business profile as the rest of Bedrock, so you never enter your info twice.</p>
           <div class="wwd-acc-links">
             <a href="/bedrock-marketing-v1.html">&rarr; Go to Marketing Hub</a>
             <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
@@ -1875,38 +1919,22 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div></div>
     </div>
 
-    <div class="wwd-acc" id="wwdAcc2">
-      <button type="button" class="wwd-acc-head" onclick="wwdToggle(2)">
-        <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-d"/></svg></span>
-        <span class="wwd-acc-label">Bedrock Donna<span class="wwd-soon">Soon</span></span>
-        <span class="wwd-plus">+</span>
-      </button>
-      <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
-        <div class="wwd-acc-text">
-          <p class="wwd-acc-desc">Donna handles the paperwork &mdash; estimates, invoices, receipts, and scheduling. Most contractors are great at the work and lose evenings to the office side of it. Donna is a conversational assistant that lives in your portal: tell her what you need in plain words, or even just talk it out on the drive home, and she drafts it. You review, tweak, and approve &mdash; nothing goes out to a customer without your say-so. She connects to QuickBooks so estimates, invoices, and expenses land in your books automatically, and she learns your rates and fees as you go.</p>
-          <div class="wwd-acc-links">
-            <a href="/bedrock-donna-v1.html">&rarr; Meet Donna</a>
-          </div>
-        </div>
-        <div class="wwd-preview">
-          <div class="wwd-pv-cap">Preview &middot; Bedrock Donna</div>
-          <div class="wwd-pv-donna">
-            <div class="pd-msg pd-user">New estimate &mdash; Joe Smith, paver patio</div>
-            <div class="pd-msg pd-donna">Roughed it out with your usual rates. Estimate's ready &mdash; take a look. 😉</div>
-          </div>
-        </div>
-      </div></div>
-    </div>
-
     <div class="wwd-acc" id="wwdAcc3">
       <button type="button" class="wwd-acc-head" onclick="wwdToggle(3)">
         <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-f"/></svg></span>
-        <span class="wwd-acc-label">Bedrock Finance<span class="wwd-soon">Soon</span></span>
+        <span class="wwd-acc-label">Analytics &amp; Insights<span class="wwd-soon">Soon</span></span>
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
         <div class="wwd-acc-text">
-          <p class="wwd-acc-desc">Understand your margins, track job profitability, and see where your money is going. Finance is a plain-English dashboard &mdash; no accounting degree required. It pulls from QuickBooks and shows you revenue trends, your gross margin, what's still owed to you, and which jobs actually made money versus which ones quietly lost it. It's read-only and visual: charts, tables, and filters, not a chatbot. The more you use Donna, the sharper Finance gets, because her structured job data makes the margin numbers far more precise than QuickBooks alone.</p>
+          <div class="wwd-headline">Know Where Your Money Goes</div>
+          <p class="wwd-lead">Understand your margins, track job profitability, and see exactly where your money is going.</p>
+          <div class="wwd-feats">
+            <span class="wwd-feat">Revenue Trends</span>
+            <span class="wwd-feat">Job Profitability</span>
+            <span class="wwd-feat">Business Dashboard</span>
+          </div>
+          <p class="wwd-acc-desc">Bedrock Finance is a plain-English dashboard &mdash; no accounting degree required. It shows revenue trends, your gross margin, what's still owed to you, and which jobs actually made money versus which ones quietly lost it. Read-only and visual: charts, tables, and filters, not a chatbot. The more you use Operations, the sharper Finance gets.</p>
           <div class="wwd-acc-links">
             <a href="/bedrock-finance-v1.html">&rarr; Open Bedrock Finance</a>
           </div>
@@ -3924,6 +3952,79 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
     </div>
   </div>
+
+  <!-- ════════ DECISION TREE — visual path map ════════ -->
+  <section id="hiw-tree">
+    <style>
+      #hiw-tree{padding:1rem 5% 3.5rem;max-width:1080px;margin:0 auto}
+      #hiw-tree .ht-eyebrow{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;text-align:center;margin-bottom:0.5rem}
+      #hiw-tree h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3vw,2.3rem);font-weight:700;color:#fff;text-align:center;margin-bottom:0.5rem}
+      #hiw-tree .ht-sub{font-family:'DM Sans',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.65);text-align:center;max-width:520px;margin:0 auto 2.25rem;line-height:1.65}
+      #hiw-tree .ht-node{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:1.15rem 1.5rem;max-width:420px;margin:0 auto;text-align:center}
+      #hiw-tree .ht-node .htn-step{font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#C9922A;margin-bottom:0.25rem}
+      #hiw-tree .ht-node .htn-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:#fff;line-height:1.2}
+      #hiw-tree .ht-node .htn-sub{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.6);margin-top:0.3rem;line-height:1.5}
+      #hiw-tree .ht-arrow{display:flex;justify-content:center;color:#C9922A;padding:0.5rem 0}
+      #hiw-tree .ht-fork{display:flex;justify-content:center;gap:0;color:rgba(255,255,255,0.25);margin:0.25rem 0}
+      #hiw-tree .ht-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:0.5rem}
+      @media(max-width:760px){#hiw-tree .ht-branches{grid-template-columns:1fr;gap:1.5rem}}
+      #hiw-tree .ht-branch{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-top:3px solid var(--bc);border-radius:12px;padding:1.35rem 1.3rem;display:flex;flex-direction:column}
+      #hiw-tree .htb-head{display:flex;align-items:center;gap:0.55rem;margin-bottom:0.9rem}
+      #hiw-tree .htb-dot{width:11px;height:11px;border-radius:50%;background:var(--bc);flex-shrink:0}
+      #hiw-tree .htb-name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700;color:#fff}
+      #hiw-tree .htb-step{font-family:'DM Sans',sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.78);line-height:1.5;padding:0.4rem 0;padding-left:1.2rem;position:relative}
+      #hiw-tree .htb-step::before{content:'→';position:absolute;left:0;color:var(--bc);font-weight:700}
+      #hiw-tree .htb-card{margin-top:auto;padding-top:0.9rem}
+      #hiw-tree .htb-card-inner{background:rgba(255,255,255,0.04);border-left:3px solid var(--bc);border-radius:0 6px 6px 0;padding:0.7rem 0.85rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.92rem;color:#F5E6C8;line-height:1.55}
+    </style>
+    <div class="ht-eyebrow">Your Path Through Bedrock</div>
+    <h2>One profile. Then pick your path.</h2>
+    <p class="ht-sub">Every contractor starts the same way &mdash; then branches off to whatever they need next. Nothing is locked in; add a path whenever it makes sense.</p>
+
+    <div class="ht-node">
+      <div class="htn-step">Step 1</div>
+      <div class="htn-title">Build Your Profile</div>
+      <div class="htn-sub">Trade, service area, contact info &mdash; entered once, used by every tool.</div>
+    </div>
+    <div class="ht-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></svg></div>
+    <div class="ht-node">
+      <div class="htn-step">Step 2</div>
+      <div class="htn-title">Analyze or Build Your Website</div>
+      <div class="htn-sub">Run the free Optimizer on the site you have &mdash; or build a new one in minutes.</div>
+    </div>
+    <div class="ht-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></svg></div>
+    <div class="ht-node">
+      <div class="htn-step">Step 3</div>
+      <div class="htn-title">Choose Your Path</div>
+      <div class="htn-sub">Three directions from here. Take one, take all three &mdash; your call.</div>
+    </div>
+    <div class="ht-fork"><svg width="60%" height="34" viewBox="0 0 600 34" preserveAspectRatio="none" fill="none" stroke="#C9922A" stroke-width="2"><path d="M300 0 V12 M300 12 H100 V34 M300 12 H300 V34 M300 12 H500 V34"/></svg></div>
+
+    <div class="ht-branches">
+      <div class="ht-branch" style="--bc:#4A7DB5">
+        <div class="htb-head"><span class="htb-dot"></span><span class="htb-name">Marketing</span></div>
+        <div class="htb-step">Create your Brand Kit</div>
+        <div class="htb-step">Generate social posts, flyers, door hangers</div>
+        <div class="htb-step">Download and use anywhere</div>
+        <div class="htb-card"><div class="htb-card-inner">Everything uses your brand colors and voice automatically &mdash; no design skills needed.</div></div>
+      </div>
+      <div class="ht-branch" style="--bc:#C9922A">
+        <div class="htb-head"><span class="htb-dot"></span><span class="htb-name">Operations</span></div>
+        <div class="htb-step">Connect QuickBooks or upload your spreadsheet</div>
+        <div class="htb-step">Tell Donna what you need &mdash; estimate, invoice, receipt, schedule</div>
+        <div class="htb-step">Review the draft, approve it &mdash; nothing sends until you do</div>
+        <div class="htb-card"><div class="htb-card-inner">Donna remembers your rates, your markups, your preferences. The more you use her, the faster she gets.</div></div>
+      </div>
+      <div class="ht-branch" style="--bc:#2E5A8E">
+        <div class="htb-head"><span class="htb-dot"></span><span class="htb-name">Finance</span></div>
+        <div class="htb-step">Data flows in automatically once Operations is set up</div>
+        <div class="htb-step">See profitability by job, by service type, by month</div>
+        <div class="htb-step">Know exactly where you make money and where you don't</div>
+        <div class="htb-card"><div class="htb-card-inner">No accounting degree required. Plain numbers, plain language.</div></div>
+      </div>
+    </div>
+  </section>
+
   <!-- PRICING -->
   <section id="hiw-pricing" style="background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.08);padding:4rem 5%">
     <style>
@@ -3959,7 +4060,21 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <div class="hp-card">
           <div class="hp-name">Finance &amp; Operations</div>
           <div class="hp-price">$70<span>/mo</span></div>
-          <div class="hp-note">Donna drafts estimates and invoices; Finance shows job profitability. In development now.</div>
+          <ul style="list-style:none;margin:0.7rem 0 0.2rem;padding:0;text-align:left">
+            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Optimizer Free Scan</li>
+            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Finance Dashboard</li>
+            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Donna Operations Assistant</li>
+            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Customer Database</li>
+            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Project Tracking</li>
+          </ul>
+          <details style="margin-top:0.6rem;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.5rem">
+            <summary style="font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;color:#C9922A;cursor:pointer;list-style:none">What's inside Bedrock Donna?</summary>
+            <p style="font-family:'DM Sans',sans-serif;font-size:0.76rem;color:rgba(255,255,255,0.62);line-height:1.6;margin-top:0.5rem">Your conversational admin assistant: drafts estimates and invoices, files receipts, schedules jobs, and keeps a customer database &mdash; all approval-gated. <a href="/bedrock-donna-v1.html" style="color:#C9922A">Open Operations &rarr;</a></p>
+          </details>
+          <details style="margin-top:0.35rem">
+            <summary style="font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;color:#C9922A;cursor:pointer;list-style:none">What's inside Bedrock Finance?</summary>
+            <p style="font-family:'DM Sans',sans-serif;font-size:0.76rem;color:rgba(255,255,255,0.62);line-height:1.6;margin-top:0.5rem">A read-only dashboard: revenue trends, gross margin, outstanding invoices, and job-by-job profitability &mdash; in plain language. <a href="/bedrock-finance-v1.html" style="color:#C9922A">Open Finance &rarr;</a></p>
+          </details>
         </div>
       </div>
       <div class="hp-grid" style="grid-template-columns:1fr 1fr">
@@ -4042,6 +4157,34 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
           <details class="bd-faq-item"><summary class="bd-faq-q">Can I run the Optimizer on a site I didn't build with Bedrock?</summary><div class="bd-faq-a"><p>Yes &mdash; that's the whole point. Paste in any contractor website URL and we audit it. If you build with Bedrock later, your portal version of the Optimizer also tracks improvements over time.</p></div></details>
           <details class="bd-faq-item"><summary class="bd-faq-q">Will Bedrock also do the SEO fixes for me?</summary><div class="bd-faq-a"><p>That's Bedrock SEO &mdash; the full optimization service. It's the paid version: we implement the schema, page structure, meta tags, and Google Business Profile work the audit flagged. Coming next.</p></div></details>
           <details class="bd-faq-item"><summary class="bd-faq-q">What's "GEO" mean?</summary><div class="bd-faq-a"><p>Generative Engine Optimization &mdash; whether AI assistants (ChatGPT, Gemini, Siri) describe your business correctly when someone asks "who's a good plumber in Milwaukee?". It uses FAQ schema, About content, and structured data signals. Bedrock includes GEO setup in every site.</p></div></details>
+        </div>
+      </div>
+
+      <div class="bd-faq-group">
+        <div class="bd-faq-group-head">
+          <span class="bd-faq-group-mark">05</span>
+          <span class="bd-faq-group-title">Bedrock Operations &amp; Donna</span>
+          <span class="bd-faq-group-sub">Your admin assistant</span>
+        </div>
+        <div class="bd-faq-list">
+          <details class="bd-faq-item"><summary class="bd-faq-q">What is Donna?</summary><div class="bd-faq-a"><p>She's your operational admin assistant. She handles estimates, invoices, receipts, and scheduling so you can stay on the job.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Does Donna share my pricing information?</summary><div class="bd-faq-a"><p>No. Your rates and preferences are completely private and used only to build your estimates.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Does Donna send things automatically?</summary><div class="bd-faq-a"><p>Never. Nothing sends until you review and approve it.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">What does Donna connect to?</summary><div class="bd-faq-a"><p>QuickBooks, Gmail, and Google Calendar. Setup is required &mdash; each connection shows its status right in the Operations tab.</p></div></details>
+        </div>
+      </div>
+
+      <div class="bd-faq-group">
+        <div class="bd-faq-group-head">
+          <span class="bd-faq-group-mark">06</span>
+          <span class="bd-faq-group-title">Bedrock Finance</span>
+          <span class="bd-faq-group-sub">Business visibility</span>
+        </div>
+        <div class="bd-faq-list">
+          <details class="bd-faq-item"><summary class="bd-faq-q">What is Bedrock Finance?</summary><div class="bd-faq-a"><p>A business visibility dashboard. It shows your revenue, margins, and job profitability in plain language.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Does it replace my accountant or QuickBooks?</summary><div class="bd-faq-a"><p>No. It reads from QuickBooks (or your uploaded spreadsheet) and displays the data in a way that's easy to understand.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">What if I don't use QuickBooks?</summary><div class="bd-faq-a"><p>Upload an Excel or CSV file. Finance reads it and builds your dashboard from that.</p></div></details>
+          <details class="bd-faq-item"><summary class="bd-faq-q">Are the margin numbers accurate?</summary><div class="bd-faq-a"><p>They're estimates based on available data &mdash; not official financial reporting. For taxes and statements, that's still your accountant.</p></div></details>
         </div>
       </div>
 
@@ -4140,7 +4283,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       #tools .tir-caption{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;color:#0D1B2E;margin-bottom:1.75rem}
       #tools .tir-grid{display:flex;justify-content:center;gap:0;max-width:680px;margin:0 auto;position:relative}
       #tools .tir-grid::before{content:'';position:absolute;top:34px;left:14%;right:14%;height:2px;background:repeating-linear-gradient(90deg,#C9922A 0 6px,transparent 6px 12px);z-index:0}
-      #tools .tir-item{flex:1;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0.6rem}
+      #tools .tir-item{flex:1;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0.6rem;cursor:pointer;text-decoration:none;transition:transform .15s}
+      #tools a.tir-item:hover{transform:translateY(-4px)}
+      #tools a.tir-item:hover .tir-ico{border-color:#F0C46A;background:#1B3557}
       #tools .tir-ico{width:68px;height:68px;border-radius:50%;background:#0D1B2E;border:2px solid #C9922A;display:flex;align-items:center;justify-content:center}
       #tools .tir-ico svg{width:30px;height:30px;stroke:#C9922A;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
       #tools .tir-label{font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#0D1B2E}
@@ -4149,26 +4294,26 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     </style>
     <div class="tir-caption">5 tools. 1 connected system.</div>
     <div class="tir-grid">
-      <div class="tir-item">
+      <a class="tir-item" href="/sites.html">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
         <div class="tir-label">Website</div>
-      </div>
-      <div class="tir-item">
+      </a>
+      <a class="tir-item" href="/bedrock-marketing-v1.html">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><path d="M3 11l18-8v18l-7-3"/><path d="M3 11v6h4l3 4V8z"/></svg></div>
         <div class="tir-label">Marketing</div>
-      </div>
-      <div class="tir-item">
+      </a>
+      <a class="tir-item" href="#optimizer" onclick="showPage('optimizer',event)">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
         <div class="tir-label">Optimizer</div>
-      </div>
-      <div class="tir-item">
+      </a>
+      <a class="tir-item" href="/bedrock-donna-v1.html">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
         <div class="tir-label">Donna<span class="tir-soon">Soon</span></div>
-      </div>
-      <div class="tir-item">
+      </a>
+      <a class="tir-item" href="/bedrock-finance-v1.html">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
         <div class="tir-label">Finance<span class="tir-soon">Soon</span></div>
-      </div>
+      </a>
     </div>
   </div>
 
