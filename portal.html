@@ -324,12 +324,12 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 /* Tool tabs (My Website / Marketing / Donna / Finance) open a separate tool — gold-outlined box to distinguish them from in-portal tabs */
 .nav-tab-group[data-top="website"]>.nav-tab-btn,
 .nav-tab-group[data-top="marketing"]>.nav-tab-btn,
-.nav-tab-group[data-top="donna"]>.nav-tab-btn,
+.nav-tab-group[data-top="operations"]>.nav-tab-btn,
 .nav-tab-group[data-top="finance"]>.nav-tab-btn,
 .nav-tab-group[data-top="cfo"]>.nav-tab-btn{border:1px solid rgba(201,146,42,0.55);border-radius:6px;margin:0 3px}
 .nav-tab-group[data-top="website"]>.nav-tab-btn:hover,
 .nav-tab-group[data-top="marketing"]>.nav-tab-btn:hover,
-.nav-tab-group[data-top="donna"]>.nav-tab-btn:hover,
+.nav-tab-group[data-top="operations"]>.nav-tab-btn:hover,
 .nav-tab-group[data-top="finance"]>.nav-tab-btn:hover,
 .nav-tab-group[data-top="cfo"]>.nav-tab-btn:hover{background:rgba(201,146,42,0.14);color:#fff}
 .nav-tab-group:hover .nav-tab-caret{opacity:1}
@@ -502,6 +502,14 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     <div class="nav-tab-group" data-top="dashboard">
       <button class="nav-tab-btn" onclick="goTab('dashboard','default')">Dashboard</button>
     </div>
+    <!-- Operations (Donna) — May 2026: the old CFO tab, now its own product, moved up next to Dashboard. -->
+    <div class="nav-tab-group locked" data-top="operations">
+      <button class="nav-tab-btn" onclick="launchDonna()" title="Bedrock Operations · Donna">
+        <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg>
+        Operations
+        <svg class="nav-tab-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </button>
+    </div>
     <!-- My Profile — May 2026: folded into the My Account dropdown. Standalone tab hidden, not deleted. -->
     <div class="nav-tab-group" data-top="profile" style="display:none">
       <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
@@ -523,14 +531,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('wizard')"><span class="tsl-eyebrow">Soon</span>Integrations</button>
       </div>
     </div>
-    <!-- Donna + Finance — May 2026: the old single CFO tab split into two products. -->
-    <div class="nav-tab-group locked" data-top="donna">
-      <button class="nav-tab-btn" onclick="launchDonna()" title="Bedrock Operations · Donna">
-        <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg>
-        Donna
-        <svg class="nav-tab-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      </button>
-    </div>
+    <!-- Finance — May 2026: its own product tab. Operations (Donna) tab now lives next to Dashboard. -->
     <div class="nav-tab-group locked" data-top="finance">
       <button class="nav-tab-btn" onclick="launchFinance()" title="Bedrock Finance · Analytics">
         <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg>
@@ -540,7 +541,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     </div>
     <!-- CFO — May 2026: replaced by Donna + Finance above. Old tab hidden, not deleted. -->
     <div class="nav-tab-group" data-top="cfo" style="display:none">
-      <button class="nav-tab-btn" onclick="goTab('cfo','default')">CFO</button>
+      <button class="nav-tab-btn" onclick="goTab('cfo','default')">Operations</button>
     </div>
     <div class="nav-tab-group" data-top="subs">
       <button class="nav-tab-btn" onclick="goTab('subs','cart')">My Account <span class="nav-tab-caret">▾</span></button>
@@ -1127,8 +1128,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <div class="portal-pane" id="pane-cfo-default">
         <div class="coming-soon-pane">
           <div class="cs-badge"><span>Coming Soon</span></div>
-          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Bedrock CFO</div>
-          <div class="dc-sub" style="max-width:440px;margin:0 auto 1.5rem">The money side, without the headache. Bedrock CFO will connect to your books, auto-categorize expenses, help you bid jobs with the right margin, and answer plain-English questions about your business.</div>
+          <div class="dc-title" style="font-size:1.6rem;margin-bottom:0.5rem">Bedrock Operations</div>
+          <div class="dc-sub" style="max-width:440px;margin:0 auto 1.5rem">The money and admin side, without the headache. Bedrock Operations and Finance connect to your books, draft your estimates and invoices, and show you which jobs actually make money.</div>
           <div style="display:flex;flex-direction:column;gap:0.6rem;max-width:340px;margin:0 auto 1.5rem;text-align:left">
             <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">QuickBooks &amp; Jobber connection — auto-categorize expenses</div>
             <div style="font-size:0.72rem;color:var(--text-muted);padding:0.5rem 0.75rem;background:var(--offwhite);border-left:3px solid var(--accent)">Bid intelligence — what to charge to hit your margin</div>
@@ -1349,10 +1350,10 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
                 <div class="stage-num">5</div>
                 <div>
                   <div class="stage-title">Operations</div>
-                  <div class="stage-sub">For Bedrock CFO — bid sizing, payroll, cash flow</div>
+                  <div class="stage-sub">For Bedrock Operations &amp; Finance — bid sizing, payroll, cash flow</div>
                 </div>
               </div>
-              <div style="display:flex;align-items:center"><span class="stage-pill" id="stage-5-pill">CFO</span><span class="stage-chev">▾</span></div>
+              <div style="display:flex;align-items:center"><span class="stage-pill" id="stage-5-pill">Operations</span><span class="stage-chev">▾</span></div>
             </button>
             <div class="stage-body">
               <div class="profile-grid">
@@ -1393,7 +1394,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
                     <option value="no">No — all in-house</option>
                   </select>
                 </div>
-                <div class="field full"><label>Operations notes</label><textarea id="pf_ops_notes" placeholder="Anything else Bedrock CFO should know about how you run the business?"></textarea></div>
+                <div class="field full"><label>Operations notes</label><textarea id="pf_ops_notes" placeholder="Anything else Bedrock Operations should know about how you run the business?"></textarea></div>
               </div>
               <div class="stage-save-row">
                 <span class="stage-save-msg" id="msg-5"></span>
@@ -1423,7 +1424,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         <div class="subs-faq">
           <div class="subs-faq-title">Before you pick</div>
           <div class="subs-faq-q">Heads-up: Each tool is sold separately.</div>
-          <div class="subs-faq-a">Buying Bedrock Marketing does <strong>not</strong> include Sites or CFO &mdash; and vice versa. Each one solves a different problem and is priced independently. Want everything? Pick the <strong>Full Ecosystem bundle</strong> below for the biggest savings.</div>
+          <div class="subs-faq-a">Buying Bedrock Marketing does <strong>not</strong> include Sites or Finance &amp; Operations &mdash; and vice versa. Each one solves a different problem and is priced independently. Want everything? Pick the <strong>Full Ecosystem bundle</strong> below for the biggest savings.</div>
         </div>
 
         <div class="subs-grid" id="subsGrid">
@@ -1449,14 +1450,18 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <div class="sub-toggle">+ Add to Plan</div>
           </button>
 
-          <!-- CFO -->
+          <!-- FINANCE & OPERATIONS -->
           <button type="button" class="sub-card" data-prod="cfo" onclick="toggleProduct('cfo')">
             <span class="sc-status">Soon</span>
-            <div class="sc-tag">Operations</div>
-            <div class="sc-name">Bedrock CFO</div>
-            <div class="sc-desc">Conversational AI that connects to QuickBooks. Auto-categorizes expenses, helps you bid jobs, watches cash flow.</div>
+            <div class="sc-tag">Finance &amp; Operations</div>
+            <div class="sc-name">Finance &amp; Operations</div>
+            <div class="sc-desc">Donna drafts your estimates, invoices, and receipts. Finance shows revenue, margins, and which jobs made money.</div>
+            <div style="display:flex;flex-direction:column;gap:5px;margin:0.55rem 0 0.7rem">
+              <div style="display:flex;align-items:center;gap:6px;font-size:0.72rem;color:var(--text-muted)"><span style="width:7px;height:7px;border-radius:50%;background:rgba(13,27,46,0.22);flex-shrink:0"></span>Bedrock Donna &mdash; <span style="color:var(--text-muted)">inactive</span></div>
+              <div style="display:flex;align-items:center;gap:6px;font-size:0.72rem;color:var(--text-muted)"><span style="width:7px;height:7px;border-radius:50%;background:rgba(13,27,46,0.22);flex-shrink:0"></span>Bedrock Finance &mdash; <span style="color:var(--text-muted)">inactive</span></div>
+            </div>
             <div class="sc-price">$70<span class="sc-price-unit">/mo</span></div>
-            <div class="sc-extra">Replaces a part-time bookkeeper</div>
+            <div class="sc-extra">Donna + Finance, one subscription</div>
             <div class="sub-toggle">+ Add to Plan</div>
           </button>
         </div>
@@ -1466,11 +1471,11 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           <div class="bundle-l">
             <div class="bundle-tag">★ Best Value</div>
             <div class="bundle-name">Bedrock Digital &mdash; Full Ecosystem</div>
-            <div class="bundle-desc">Everything Bedrock makes, in one bundle. Website build + monthly hosting, Marketing builder, and the CFO operations agent. One profile, one bill, every tool ready when you are.</div>
+            <div class="bundle-desc">Everything Bedrock makes, in one bundle. Website build + monthly hosting, Marketing builder, and the Finance &amp; Operations tools. One profile, one bill, every tool ready when you are.</div>
             <div class="bundle-incl">
               <span>Bedrock Sites</span>
               <span>Bedrock Marketing</span>
-              <span>Bedrock CFO</span>
+              <span>Finance &amp; Operations</span>
               <span>Shared Profile</span>
               <span>Priority support</span>
             </div>
@@ -1663,6 +1668,27 @@ function showNavTabs(yes) {
   el.style.display = yes ? 'flex' : 'none';
 }
 
+// ── ADMIN MASTER ACCOUNT ──────────────────────────────────────────────────────
+// profiles.is_admin = true  →  bypass every subscription gate; all tools unlocked.
+window.IS_ADMIN = false;
+function applyAdminUnlock() {
+  if (window.IS_ADMIN) return;
+  window.IS_ADMIN = true;
+  try { TOOL_SUBSCRIBED.donna = true; TOOL_SUBSCRIBED.finance = true; } catch(e){}
+  document.querySelectorAll('.nav-tab-group.locked').forEach(function(g){ g.classList.remove('locked'); });
+  document.querySelectorAll('.nav-tab-lock').forEach(function(l){ l.style.display = 'none'; });
+}
+function isAdminProfile(p) {
+  return !!(p && (p.is_admin === true || (p.extra && p.extra.is_admin === true)));
+}
+function checkAdmin() {
+  if (DEMO || !currentSession || !currentSession.access_token) return;
+  fetch('/.netlify/functions/get-profile', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){ if (d && isAdminProfile(d.profile)) applyAdminUnlock(); })
+    .catch(function(){});
+}
+
 (function init() {
   if (isDemoRequested()) { startDemo(); return; }
   try { var em = sessionStorage.getItem('bedrock_prefill_email'); if (em) { var f = document.getElementById('loginEmail'); if (f && !f.value) f.value = em; } } catch(e) {}
@@ -1673,6 +1699,7 @@ function showNavTabs(yes) {
     showPage('pageDash');
     showNavTabs(true);
     loadDashboard(raw);
+    checkAdmin();
   } else if (raw && raw.refresh_token && raw.remember) {
     // Expired but "Keep me signed in" — refresh the token instead of logging out.
     showPage('pageBoot');
@@ -1719,7 +1746,7 @@ function handleLogin() {
   var btn = document.getElementById('btnLogin'); btn.disabled = true; btn.textContent = 'Signing in…';
   fetch('/.netlify/functions/portal-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action: 'signin', email: email, password: password }) })
     .then(function(r) { return r.json(); }).then(function(d) {
-      if (d.success) { saveSession(d); currentSession = loadStoredSession(); loadDashboard(currentSession); }
+      if (d.success) { saveSession(d); currentSession = loadStoredSession(); loadDashboard(currentSession); checkAdmin(); }
       else { btn.disabled = false; btn.textContent = 'Sign In'; showError('loginError', d.error || 'Incorrect email or password. Please try again.'); }
     }).catch(function() { btn.disabled = false; btn.textContent = 'Sign In'; showError('loginError', 'Connection error — please try again.'); });
 }
@@ -1741,7 +1768,7 @@ function handleCreate() {
         document.getElementById('createSuccess').style.display = 'block';
         return fetch('/.netlify/functions/portal-auth', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action:'signin', email:email, password:pass }) })
           .then(function(r2) { return r2.json(); }).then(function(d2) {
-            if (d2.success) { saveSession(d2); currentSession = loadStoredSession(); setTimeout(function() { loadDashboard(currentSession); }, 900); }
+            if (d2.success) { saveSession(d2); currentSession = loadStoredSession(); setTimeout(function() { loadDashboard(currentSession); checkAdmin(); }, 900); }
             else { setTimeout(function() { switchAuthTab('login'); }, 900); }
           });
       } else { showError('createError', d.error || 'Could not create account — that email may already be registered. Try signing in.'); btn.disabled = false; btn.textContent = 'Create My Account'; }
@@ -1902,7 +1929,7 @@ var TAB_DEFS = {
   dashboard: { label:'Dashboard',       subs:{ default:'Dashboard' } },
   website:   { label:'My Website',      subs:{ hub:'Website Hub', editor:'My Site', optimizer:'Site Optimizer', analytics:'Site Analytics', builder:'Site Builder', status:'Site Info' } },
   marketing: { label:'Marketing',       subs:{ hub:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', library:'Asset Library', integrations:'Integrations' } },
-  cfo:       { label:'CFO',             subs:{ default:'CFO' } },
+  cfo:       { label:'Operations',      subs:{ default:'Operations' } },
   profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
   subs:      { label:'My Account',      subs:{ hub:'Billing Hub', cart:'Subscriptions', active:'Billing History' } },
 };
@@ -2032,6 +2059,7 @@ function loadProfile() {
     .then(function(r){ return r.ok ? r.json() : null; }).then(function(data){
       if (!data) return;
       PROFILE = data.profile || null; PROFILE_DRAFT = data.draft || null;
+      if (isAdminProfile(PROFILE)) applyAdminUnlock();
       var source = PROFILE || PROFILE_DRAFT || {};
       Object.keys(STAGE_TOP_FIELDS).forEach(function(stage){ STAGE_TOP_FIELDS[stage].forEach(function(f){ setTopField(f, source[f]); }); });
       var extra = (source.extra || {}) || {};
@@ -2077,7 +2105,7 @@ function updateProfileMeter() {
     if (stageFilled === allFields.length) { card.classList.add('done'); if (pill) pill.textContent = '✓ Complete'; }
     else if (stageFilled > 0) { card.classList.add('in-progress'); if (pill) pill.textContent = stageFilled + '/' + allFields.length; }
     else if (pill) {
-      var defaults = { 1:'Required', 2:'Sites', 3:'Marketing', 4:'SEO', 5:'CFO' };
+      var defaults = { 1:'Required', 2:'Sites', 3:'Marketing', 4:'SEO', 5:'Operations' };
       pill.textContent = defaults[stage] || '';
     }
   });
@@ -2238,7 +2266,7 @@ function renderCart() {
   var isFullEco  = selected.length === 3;
   var setupTotal = isFullEco ? 0 : rawSetup;   // Full Ecosystem waives the $200 site setup fee
 
-  var names = { website:'Bedrock Sites (Website Builder)', marketing:'Bedrock Marketing', cfo:'Bedrock CFO' };
+  var names = { website:'Bedrock Sites (Website Builder)', marketing:'Bedrock Marketing', cfo:'Finance &amp; Operations' };
   var lines = selected.map(function(p){
     return '<div class="cart-line"><span class="cl-name">' + names[p] + '</span><span class="cl-price">$' + PRICES[p] + '<span style="font-size:0.65rem;color:var(--text-muted);font-weight:400;margin-left:3px">/mo</span></span></div>';
   });
@@ -2283,11 +2311,11 @@ function clearCart() { CART = { website:false, marketing:false, cfo:false }; ACT
 function renderManageSubs() {
   var body = document.getElementById('manageSubsBody'); if (!body) return;
   var selected = ['website','marketing','cfo'].filter(function(p){ return CART[p]; });
-  var names = { website:'Bedrock Sites', marketing:'Bedrock Marketing', cfo:'Bedrock CFO' };
+  var names = { website:'Bedrock Sites', marketing:'Bedrock Marketing', cfo:'Finance &amp; Operations' };
   var descs = {
     website:'Your contractor website — hosted, mobile-ready, SEO-ready.',
     marketing:'Brand Kit plus flyers, social posts, signs, and more.',
-    cfo:'Conversational finance &amp; operations agent. In development.'
+    cfo:'Finance dashboard + Donna, your operations assistant. In development.'
   };
   if (!selected.length) {
     body.innerHTML = '<div class="ms-empty">You don\'t have an active plan yet.<br><button class="ms-addbtn" style="margin-top:0.85rem;padding:0.7rem 1.4rem" onclick="goTab(\'subs\',\'cart\')">Choose your tools &rarr;</button></div>';
