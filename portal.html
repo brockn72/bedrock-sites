@@ -434,6 +434,11 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .onboard-getstarted:hover{background:var(--accent-light)}
 .onboard-arrow{color:var(--accent);font-size:0.9rem}
 .onboard-done-msg{background:var(--green-bg);border-left:3px solid var(--green);padding:0.85rem 1rem;font-size:0.8rem;color:var(--green);font-weight:500;border-radius:4px}
+.conn-line{display:flex;align-items:center;gap:0.8rem;padding:0.8rem 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.conn-line:last-child{border-bottom:none}
+.cl-name{font-size:0.86rem;font-weight:600;color:var(--dark)}
+.cl-sub{font-size:0.72rem;color:var(--text-muted)}
+.cl-status{font-size:0.6rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted)}
 
 /* ── HELP TOOLTIPS ── */
 .help-tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:var(--offwhite);border:1px solid var(--border);color:var(--text-muted);font-size:0.6rem;font-weight:700;cursor:help;margin-left:0.5rem;position:relative;vertical-align:middle}
@@ -1398,6 +1403,19 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
                 <span class="stage-save-msg" id="msg-5"></span>
                 <button class="btn-dark" onclick="saveStage(5)">Save Operations</button>
               </div>
+            </div>
+          </div>
+
+          <!-- MY CONNECTIONS — shared by Operations + Finance -->
+          <div style="background:#fff;border-top:3px solid var(--accent);margin-top:1rem">
+            <div style="padding:1.15rem 1.5rem 0.4rem">
+              <div style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--dark)">My Connections</div>
+              <div style="font-size:0.76rem;color:var(--text-muted);margin-top:3px">Connect the tools your Bedrock products use. One connection works for Operations and Finance both &mdash; Bedrock never shows a connection as live until it's actually verified.</div>
+            </div>
+            <div style="padding:0.6rem 1.5rem 1.4rem">
+              <div class="conn-line"><span style="font-size:1.15rem">📊</span><div style="flex:1;min-width:160px"><div class="cl-name">QuickBooks Online</div><div class="cl-sub">Invoices, estimates &amp; expenses</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('QuickBooks')">Connect</button></div>
+              <div class="conn-line"><span style="font-size:1.15rem">✉️</span><div style="flex:1;min-width:160px"><div class="cl-name">Gmail</div><div class="cl-sub">Send estimates &amp; invoices from your address</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('Gmail')">Connect</button></div>
+              <div class="conn-line"><span style="font-size:1.15rem">📅</span><div style="flex:1;min-width:160px"><div class="cl-name">Google Calendar</div><div class="cl-sub">Scheduled jobs &amp; customer reminders</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('Calendar')">Connect</button></div>
             </div>
           </div>
 
@@ -2432,19 +2450,24 @@ var ONBOARD_KEY = 'bedrock_onboard_v1';
 var ONBOARD_STEPS = ['profile','website','marketing','subscription'];
 // Each step is 'todo' | 'progress' | 'done'. A green check requires real
 // completion; opening a section without finishing shows a yellow dash.
+// Per-account key — onboarding progress belongs to the signed-in account, not
+// the browser. A brand-new account never inherits a previous one's checkmarks.
+function onboardKey() {
+  var uid = (currentSession && currentSession.user && currentSession.user.id) ? currentSession.user.id : 'anon';
+  return ONBOARD_KEY + '_' + uid;
+}
 function loadOnboard() {
   try {
-    var raw = localStorage.getItem(ONBOARD_KEY);
+    var raw = localStorage.getItem(onboardKey());
     if (raw) {
       var o = JSON.parse(raw);
-      // migrate old boolean format → tri-state
       ONBOARD_STEPS.forEach(function(s){ if (o[s] === true) o[s] = 'done'; else if (o[s] === false || o[s] == null) o[s] = 'todo'; });
       return o;
     }
   } catch(_){}
   return { profile:'todo', website:'todo', marketing:'todo', subscription:'todo' };
 }
-function saveOnboard(o) { try { localStorage.setItem(ONBOARD_KEY, JSON.stringify(o)); } catch(_){} }
+function saveOnboard(o) { try { localStorage.setItem(onboardKey(), JSON.stringify(o)); } catch(_){} }
 function updateOnboardBell(incomplete) {
   var badge = document.getElementById('bellBadge');
   if (!badge) return;
@@ -2457,7 +2480,9 @@ function renderOnboard() {
   if (currentLead && currentLead.site_url) o.website = 'done';
   try {
     var cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}');
-    if (cart.website || cart.marketing || cart.cfo) o.subscription = 'done';
+    // Items in the cart mean "in progress" — not subscribed. A real
+    // subscription signal will mark this done once billing is wired.
+    if (cart.website || cart.marketing || cart.cfo) { if (o.subscription !== 'done') o.subscription = 'progress'; }
   } catch(_){}
   // Profile: green check ONLY at 100% completeness; partial = in-progress.
   var ppct = (typeof window.PROFILE_PCT === 'number') ? window.PROFILE_PCT : 0;
@@ -2493,6 +2518,9 @@ function renderOnboard() {
     if (gs) gs.style.display = '';
   }
   saveOnboard(o);
+}
+function connectTool(name) {
+  alert(name + ' setup isn\'t available yet. Bedrock never shows a connection as live until it\'s actually verified — and one connection works for both Operations and Finance.');
 }
 function onboardGo(step) {
   var o = loadOnboard();
