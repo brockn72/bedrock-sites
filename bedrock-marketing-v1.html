@@ -35,6 +35,14 @@
 }
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy-deep);min-height:100vh;display:flex;flex-direction:column;line-height:1.5}
+/* Preview-Mode banner — sits above the nav for non-subscribers */
+.preview-banner{background:var(--gold);color:var(--navy-deep);font-size:0.84rem;font-weight:600;padding:0.6rem 1.4rem;display:none;align-items:center;gap:0.85rem;justify-content:center;flex-wrap:wrap;border-bottom:2px solid var(--navy-deep);line-height:1.4}
+.preview-banner.show{display:flex}
+.preview-banner .preview-cta{display:inline-flex;align-items:center;border:1.5px solid var(--navy-deep);color:var(--navy-deep);text-decoration:none;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.4rem 0.9rem;border-radius:5px;transition:all .15s;background:transparent;cursor:pointer;font-family:inherit}
+.preview-banner .preview-cta:hover{background:var(--navy-deep);color:var(--gold)}
+.preview-banner .preview-x{background:none;border:none;color:var(--navy-deep);font-size:1.3rem;cursor:pointer;line-height:1;padding:0 0.3rem;opacity:0.6;font-family:inherit}
+.preview-banner .preview-x:hover{opacity:1}
+@media(max-width:760px){.preview-banner{font-size:0.74rem;padding:0.5rem 0.75rem;gap:0.45rem}.preview-banner .preview-cta{font-size:0.58rem;padding:0.34rem 0.6rem}}
 
 /* ── NAV ── */
 nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;align-items:center;padding:0.85rem 2rem;border-bottom:3px solid var(--gold);flex-shrink:0;position:sticky;top:0;z-index:50;gap:1rem;flex-wrap:wrap}
@@ -352,6 +360,13 @@ footer a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
+
+<!-- Preview-Mode banner (hidden by default; shown via JS for non-subscribers) -->
+<div id="previewBanner" class="preview-banner" role="banner">
+  <span>You're in Preview Mode — exploring <strong>Bedrock Marketing</strong>. To use this tool with your real data, add it to your plan.</span>
+  <a class="preview-cta" href="/portal.html#subs">Add to My Plan →</a>
+  <button class="preview-x" type="button" onclick="dismissPreviewBanner()" aria-label="Dismiss">×</button>
+</div>
 
 <nav class="top">
   <a href="/portal.html" class="nav-logo">
@@ -1584,10 +1599,46 @@ function filenameFor(ext) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PREVIEW MODE BANNER — shown above the nav when no Marketing subscription.
+// Marketing-specific because it doesn't load BedrockProfile like Donna/Finance.
+// ─────────────────────────────────────────────────────────────────────────────
+function dismissPreviewBanner(){
+  try { sessionStorage.setItem('bedrock_preview_dismissed_marketing','1'); } catch(e){}
+  var b=document.getElementById('previewBanner'); if(b) b.classList.remove('show');
+}
+function checkPreviewBanner(){
+  try { if(sessionStorage.getItem('bedrock_preview_dismissed_marketing') === '1') return; } catch(e){}
+  if(!STATE.authToken){
+    // Not signed in via portal — definitely in preview mode.
+    var b1=document.getElementById('previewBanner'); if(b1) b1.classList.add('show');
+    return;
+  }
+  // Signed in — quick subscription check.
+  fetch('/.netlify/functions/get-profile',{headers:{Authorization:'Bearer '+STATE.authToken}})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){
+      var subbed = false;
+      if(d){
+        if(d.profile && d.profile.is_admin) subbed = true;
+        var subs = (d.subscriptions||[]);
+        if(subs.some(function(s){ return (s.status==='active'||s.status==='past_due') && s.tool==='marketing'; })) subbed = true;
+      }
+      if(!subbed){
+        var b=document.getElementById('previewBanner'); if(b) b.classList.add('show');
+      }
+    })
+    .catch(function(){
+      var b=document.getElementById('previewBanner'); if(b) b.classList.add('show');
+    });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────────────────────────────────────
 (function init() {
   paintPalettes();
+  // Defer until STATE.authToken has had a chance to populate from URL/session.
+  setTimeout(checkPreviewBanner, 80);
 
   // Pull session token from query (if portal handed us one)
   try {

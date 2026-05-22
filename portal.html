@@ -421,7 +421,11 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 @media(max-width:480px){.portal-pane.subs-pane-bg.active{padding:1rem}}
 
 /* ── ONBOARDING CHECKLIST ── */
-.onboard{background:#fff;border-top:3px solid var(--accent);padding:1.5rem 1.75rem;margin-bottom:1.25rem}
+.onboard{background:#fff;border-top:3px solid var(--accent);padding:1.25rem 1.5rem;margin-bottom:1rem;border-radius:8px}
+/* Dashboard pane — unify every card under one visual style (white bg, top accent, 8px radius) */
+#pane-dashboard-default .banner-card{background:#fff;border-left:none;border-top:3px solid var(--accent);border-radius:8px;padding:1.25rem 1.5rem}
+#pane-dashboard-default .banner-card.support-card{border-top-color:var(--accent)}
+#pane-dashboard-default .banner-grid{margin-bottom:1rem !important}
 .onboard-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
 .onboard-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:600;color:var(--dark)}
 .onboard-prog{font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent)}

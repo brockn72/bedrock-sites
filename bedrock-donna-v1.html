@@ -238,6 +238,17 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .bld-set input[type=checkbox]{width:auto;accent-color:var(--gold);margin:0;flex-shrink:0}
 .bld-mini{font-family:inherit;font-size:0.62rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;background:var(--navy-deep);color:#fff;border:none;padding:0.42rem 0.6rem;border-radius:5px;cursor:pointer;white-space:nowrap}
 .bld-mini:hover{background:var(--navy)}
+/* Preview-Mode banner — sits above the nav for non-subscribers */
+.preview-banner{background:var(--gold);color:var(--navy-deep);font-size:0.84rem;font-weight:600;padding:0.6rem 1.4rem;display:none;align-items:center;gap:0.85rem;justify-content:center;flex-wrap:wrap;border-bottom:2px solid var(--navy-deep);line-height:1.4}
+.preview-banner.show{display:flex}
+.preview-banner .preview-cta{display:inline-flex;align-items:center;border:1.5px solid var(--navy-deep);color:var(--navy-deep);text-decoration:none;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.4rem 0.9rem;border-radius:5px;transition:all .15s;background:transparent;cursor:pointer;font-family:inherit}
+.preview-banner .preview-cta:hover{background:var(--navy-deep);color:var(--gold)}
+.preview-banner .preview-x{background:none;border:none;color:var(--navy-deep);font-size:1.3rem;cursor:pointer;line-height:1;padding:0 0.3rem;opacity:0.6;font-family:inherit}
+.preview-banner .preview-x:hover{opacity:1}
+@media(max-width:720px){.preview-banner{font-size:0.74rem;padding:0.5rem 0.75rem;gap:0.45rem}.preview-banner .preview-cta{font-size:0.58rem;padding:0.34rem 0.6rem}}
+/* PREVIEW watermark on draft documents in preview mode */
+body.preview-mode .draft{position:relative}
+body.preview-mode .draft::before{content:'PREVIEW';position:absolute;top:10px;right:10px;background:rgba(201,146,42,0.18);color:var(--gold);font-size:0.55rem;font-weight:700;letter-spacing:0.2em;padding:0.22rem 0.6rem;border-radius:99px;z-index:5;pointer-events:none}
 /* Modals go full-screen on mobile so forms aren't cramped */
 @media(max-width:720px){.modal{max-height:100vh;border-radius:0;max-width:100%}.modal-overlay{padding:0}}
 /* Toast — short floating confirmation/error message */
@@ -340,6 +351,13 @@ footer a{color:var(--gold);text-decoration:none}
 </style>
 </head>
 <body>
+
+<!-- Preview-Mode banner (hidden by default; shown via JS for non-subscribers) -->
+<div id="previewBanner" class="preview-banner" role="banner">
+  <span>You're in Preview Mode — exploring <strong>Operations · Donna</strong>. To use this tool with your real data, add it to your plan.</span>
+  <a class="preview-cta" href="/portal.html#subs">Add to My Plan →</a>
+  <button class="preview-x" type="button" onclick="dismissPreviewBanner()" aria-label="Dismiss">×</button>
+</div>
 
 <svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <clipPath id="rightOfStem"><rect x="17" y="0" width="51" height="68"/></clipPath>
@@ -736,10 +754,13 @@ var FIELDS = {
     {k:'name',label:'Name',type:'text',req:true},
     {k:'phone',label:'Phone',type:'tel'},
     {k:'email',label:'Email',type:'email'},
-    {k:'address',label:'Address',type:'text'} ]},
+    {k:'address',label:'Address',type:'text'},
+    {k:'spouse',label:'Spouse / partner (optional)',type:'text'},
+    {k:'source',label:'How did they find you? (optional)',type:'select',opts:['','Referral','Google','Door knock','Repeat customer','Other']} ]},
   project:{ title:'Project', fields:[
     {k:'name',label:'Project name',type:'text',req:true},
     {k:'customerId',label:'Customer',type:'customer'},
+    {k:'trade',label:'Job type',type:'select',opts:['','Patio','Roofing','Plumbing','HVAC','Landscaping','Electrical','Concrete','General','Other']},
     {k:'status',label:'Status',type:'select',opts:['active','completed','closed']} ]},
   job:{ title:'Job', fields:[
     {k:'name',label:'Job',type:'text',req:true},
@@ -764,21 +785,43 @@ function openModalRaw(eyebrow, title, bodyHtml, wide){
 function closeModal(){ document.getElementById('appModal').classList.remove('show'); }
 document.getElementById('appModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
 
-// generic add/edit form
-function openForm(type, id){
+// Build a datalist of project name options, optionally filtered to one customer.
+function buildProjectOptions(customerId){
+  var projects = STORE.projects;
+  if(customerId) projects = projects.filter(function(p){return p.customerId===customerId;});
+  return projects.map(function(p){return '<option value="'+esc(p.name)+'">';}).join('');
+}
+// When a Job's customer changes, narrow the project datalist to that customer.
+function rebuildProjectDL(){
+  var custInput = document.querySelector('#modalBody input[data-resolve="customer"]');
+  var dl = document.getElementById('dl-projects');
+  if(!custInput || !dl) return;
+  var name = (custInput.value||'').trim().toLowerCase();
+  var match = STORE.customers.filter(function(c){return (c.name||'').toLowerCase()===name;})[0];
+  dl.innerHTML = buildProjectOptions(match?match.id:null);
+}
+
+// Generic add/edit form. `preset` lets callers pre-populate fields when chaining
+// from another modal (e.g. "Add a job for this customer" after saving them).
+function openForm(type, id, preset){
   if(!requireSub()) return;
   var schema = FIELDS[type];
   var rec = id ? STORE[STORE_KEY[type]].filter(function(x){return x.id===id;})[0] : {};
+  if(!id && preset && typeof preset==='object'){ Object.keys(preset).forEach(function(k){ rec[k]=preset[k]; }); }
   var html = '<form onsubmit="saveForm(event,\''+type+'\',\''+(id||'')+'\')">';
   schema.fields.forEach(function(f){
     var val = rec[f.k]!=null ? String(rec[f.k]) : '';
     html += '<div class="fld"><label>'+f.label+(f.req?' *':'')+'</label>';
     if(f.type==='select'){
-      html += '<select data-k="'+f.k+'">'+f.opts.map(function(o){return '<option'+(val===o?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';
+      html += '<select data-k="'+f.k+'">'+f.opts.map(function(o){return '<option'+(val===o?' selected':'')+'>'+esc(o)+'</option>';}).join('')+'</select>';
     } else if(f.type==='customer'){
-      html += '<select data-k="'+f.k+'">'+STORE.customers.map(function(c){return '<option value="'+c.id+'"'+(val===c.id?' selected':'')+'>'+esc(c.name)+'</option>';}).join('')+'</select>';
+      // Searchable typeahead via HTML datalist. value displays the name; saveForm
+      // resolves it back to the customer's UUID via STORE.customers.
+      var custName=''; if(val){ var c=STORE.customers.filter(function(x){return x.id===val;})[0]; if(c) custName=c.name; }
+      html += '<input type="text" data-k="'+f.k+'" data-resolve="customer" list="dl-customers" value="'+esc(custName)+'" placeholder="Type a customer name…" autocomplete="off"'+(type==='job'?' oninput="rebuildProjectDL()"':'')+'>';
     } else if(f.type==='project'){
-      html += '<select data-k="'+f.k+'"><option value="">&mdash; none &mdash;</option>'+STORE.projects.map(function(p){return '<option value="'+p.id+'"'+(val===p.id?' selected':'')+'>'+esc(p.name)+'</option>';}).join('')+'</select>';
+      var projName=''; if(val){ var pr=STORE.projects.filter(function(x){return x.id===val;})[0]; if(pr) projName=pr.name; }
+      html += '<input type="text" data-k="'+f.k+'" data-resolve="project" list="dl-projects" value="'+esc(projName)+'" placeholder="Type a project name (optional)" autocomplete="off">';
     } else if(f.type==='textarea'){
       html += '<textarea data-k="'+f.k+'">'+esc(val)+'</textarea>';
     } else {
@@ -786,6 +829,14 @@ function openForm(type, id){
     }
     html += '</div>';
   });
+  // Single shared datalist per modal — only one form is open at a time.
+  if(schema.fields.some(function(f){return f.type==='customer';})){
+    html += '<datalist id="dl-customers">'+STORE.customers.map(function(c){return '<option value="'+esc(c.name)+'">';}).join('')+'</datalist>';
+  }
+  if(schema.fields.some(function(f){return f.type==='project';})){
+    var presetCust = (rec.customerId) || null;
+    html += '<datalist id="dl-projects">'+buildProjectOptions(presetCust)+'</datalist>';
+  }
   html += '<div class="modal-actions">'
     + (id ? '<button type="button" class="btn-outline" style="color:var(--red);border-color:rgba(185,28,28,0.4)" onclick="deleteRecord(\''+type+'\',\''+id+'\')">Delete</button>' : '')
     + '<button type="button" class="btn-outline" onclick="closeModal()">Cancel</button>'
@@ -806,19 +857,43 @@ function saveForm(e, type, id){
   e.preventDefault();
   var schema = FIELDS[type], rec = {};
   var inputs = document.querySelectorAll('#modalBody [data-k]');
-  for(var i=0;i<inputs.length;i++){ rec[inputs[i].getAttribute('data-k')] = inputs[i].value.trim(); }
+  for(var i=0;i<inputs.length;i++){
+    var el=inputs[i], k=el.getAttribute('data-k'), val=(el.value||'').trim(), resolve=el.getAttribute('data-resolve');
+    if(resolve==='customer'){
+      var c=STORE.customers.filter(function(x){return (x.name||'').toLowerCase()===val.toLowerCase();})[0];
+      rec[k] = c ? c.id : '';
+    } else if(resolve==='project'){
+      var p=STORE.projects.filter(function(x){return (x.name||'').toLowerCase()===val.toLowerCase();})[0];
+      rec[k] = p ? p.id : '';
+    } else {
+      rec[k] = val;
+    }
+  }
   var nameField = schema.fields[0];
-  if(nameField.req && !rec[nameField.k]){ alert('Please fill in '+nameField.label+'.'); return; }
+  if(nameField.req && !rec[nameField.k]){ donnaToast('Please fill in '+nameField.label+'.', 'err'); return; }
   var btn = document.querySelector('#modalBody button[type="submit"]'); if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
   DonnaData.save(type, id, rec).then(function(saved){
     if(type==='customer' && saved) qboSyncCustomer(saved);
-    closeModal();
     refreshView();
     donnaToast((id?'Updated':'Saved')+' '+schema.title.toLowerCase()+'.', 'ok');
+    // Chained-flow: after creating a NEW customer, offer to add a job/project for them.
+    if(!id && type==='customer' && saved){ showCustomerChainPanel(saved); return; }
+    closeModal();
   }).catch(function(){
     if(btn){ btn.disabled=false; btn.textContent='Save '+schema.title; }
     donnaToast('Could not save — check your connection and try again.', 'err');
   });
+}
+// "What's next?" panel after creating a new customer.
+function showCustomerChainPanel(customer){
+  var name = esc(customer.name||'them');
+  openModalRaw('Saved', 'Saved '+name+'.',
+    '<p style="font-size:0.86rem;color:var(--slate);line-height:1.55;margin-bottom:1rem">Want to keep going?</p>'
+    +'<div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:0.4rem">'
+    +'<button class="btn-gold" onclick="openForm(\'job\',null,{customerId:\''+esc(customer.id)+'\'})" style="flex:1;min-width:140px">+ Add a Job</button>'
+    +'<button class="btn-outline" onclick="openForm(\'project\',null,{customerId:\''+esc(customer.id)+'\'})" style="flex:1;min-width:140px">+ Add a Project</button>'
+    +'</div>'
+    +'<div class="modal-actions"><button type="button" class="btn-outline" onclick="closeModal()">Done</button></div>');
 }
 function deleteRecord(type, id){
   if(!confirm('Delete this '+FIELDS[type].title.toLowerCase()+'? This cannot be undone.')) return;
@@ -1680,21 +1755,45 @@ function applyConnDots(){
   var on={ qbo:!!c.qbo,
            gmail:!!c.google && scopes.indexOf('gmail.send')!==-1,
            calendar:!!c.google && scopes.indexOf('calendar')!==-1 };
-  // sidebar dots
+  // Sidebar dots — explicitly add/remove .on (never flashes green->grey because
+  // dots start without .on in the HTML).
   [['dotQbo','qbo'],['dotGmail','gmail'],['dotCalendar','calendar']].forEach(function(p){
     var el=document.getElementById(p[0]); if(el) el.classList.toggle('on',on[p[1]]);
   });
-  // connections-view status rows
+  // Setup button → "Manage Connections" with a green dot when any connection is live.
+  var setupBtn=document.querySelector('.d-conn-setup');
+  if(setupBtn){
+    var any = on.qbo || on.gmail || on.calendar;
+    setupBtn.innerHTML = any
+      ? '<span class="d-conn-dot on" style="margin-right:5px;display:inline-block;width:8px;height:8px;border-radius:50%"></span>Manage Connections'
+      : 'Setup Connections';
+  }
+  // Connections-view status rows
   [['connStatusQbo','qbo'],['connStatusGmail','gmail'],['connStatusCalendar','calendar']].forEach(function(p){
     var el=document.getElementById(p[0]); if(!el) return;
     el.innerHTML='<span class="d-conn-dot'+(on[p[1]]?' on':'')+'"></span> '+(on[p[1]]?'Connected':'Not connected');
   });
 }
 
+// ═══════════════ PREVIEW MODE BANNER ═══════════════
+// Persistent gold banner above the nav when the viewer doesn't have an
+// Operations subscription. Dismissed for the session; reappears next visit.
+function showPreviewBanner(){
+  if(IS_SUBSCRIBED) return;
+  try { if(sessionStorage.getItem('bedrock_preview_dismissed_donna') === '1') return; } catch(e){}
+  document.body.classList.add('preview-mode');
+  var b = document.getElementById('previewBanner'); if(b) b.classList.add('show');
+}
+function dismissPreviewBanner(){
+  try { sessionStorage.setItem('bedrock_preview_dismissed_donna','1'); } catch(e){}
+  var b = document.getElementById('previewBanner'); if(b) b.classList.remove('show');
+}
+
 // ═══════════════ INIT ═══════════════
 renderPanelDefault();
 BedrockProfile.load().then(function(){
   IS_SUBSCRIBED = !!BedrockProfile.get('is_admin') || BedrockProfile.subscribedTo(['finance_operations','operations']);
+  showPreviewBanner();
   applyConnDots();
   var _qbo = new URLSearchParams(location.search).get('qbo');
   if (_qbo === 'connected') setTimeout(function(){ alert('QuickBooks connected. Donna can now sync your customers, estimates, and invoices.'); }, 500);
