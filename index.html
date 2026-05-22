@@ -1673,9 +1673,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <li class="nav-home-wrap">
       <a id="nl-tools" href="#tools" onclick="showPage('tools',event)">Tools</a>
       <ul class="nav-jumps">
-        <li><a href="/sites.html">Bedrock Sites</a></li>
-        <li><a href="/bedrock-marketing-v1.html">Bedrock Marketing</a></li>
-        <li><a href="#optimizer" onclick="showPage('optimizer',event)">Optimizer &mdash; Free Scan</a></li>
+        <li><a href="/bedrock-donna-v1.html">Operations</a></li>
+        <li><a href="/bedrock-finance-v1.html">Finance</a></li>
+        <li><a href="/bedrock-marketing-v1.html">Marketing</a></li>
+        <li><a href="/sites.html">Website</a></li>
+        <li><a href="#optimizer" onclick="showPage('optimizer',event)">SEO/Geo Optimizer</a></li>
       </ul>
     </li>
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
@@ -1725,8 +1727,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-btn-gold">Test My Site for SEO</a>
       <a href="/sites.html?embed=builder" class="bd-btn-gold">Build My Website Free</a>
       <a href="/bedrock-marketing-v1.html" class="bd-btn-gold">Create My Marketing Brand</a>
-      <a href="/bedrock-donna-v1.html" class="bd-btn-outline">Meet Your Assistant</a>
-      <a href="/bedrock-finance-v1.html" class="bd-btn-outline">Get Business Insights</a>
+      <a href="/bedrock-donna-v1.html" class="bd-btn-gold">Meet Your Assistant</a>
+      <a href="/bedrock-finance-v1.html" class="bd-btn-gold">Get Business Insights</a>
       <!-- hidden May 2026 — "See Our Work" removed from hero; it has its own nav tab -->
       <a href="#ourwork" onclick="showPage('ourwork',event)" class="bd-btn-outline" style="display:none">See Our Work</a>
     </div>
@@ -1823,7 +1825,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     #bd-whatwedo .wwd-pv-donna .pd-msg{font-family:'DM Sans',sans-serif;font-size:0.62rem;line-height:1.4;padding:0.45rem 0.6rem;border-radius:8px;max-width:85%}
     #bd-whatwedo .wwd-pv-donna .pd-donna{background:#fff;color:#0D1B2E;border-top-left-radius:2px;align-self:flex-start}
     #bd-whatwedo .wwd-pv-donna .pd-user{background:#C9922A;color:#0D1B2E;border-top-right-radius:2px;align-self:flex-end;font-weight:600}
-    /* product card — headline, lead sentence, sub-feature chips */
+    /* product card — descriptor in the title, lead sentence, sub-feature chips */
+    #bd-whatwedo .wwd-acc-label .wld{font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;color:#4A5568}
     #bd-whatwedo .wwd-headline{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:#0D1B2E;margin-bottom:0.5rem}
     #bd-whatwedo .wwd-lead{font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:600;color:#0D1B2E;line-height:1.55;margin-bottom:1rem;padding-left:0.85rem;border-left:2px solid #C9922A}
     #bd-whatwedo .wwd-feats{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1.1rem}
@@ -1860,12 +1863,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="wwd-acc" id="wwdAcc1">
       <button type="button" class="wwd-acc-head" onclick="wwdToggle(1)">
         <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-d"/></svg></span>
-        <span class="wwd-acc-label">Operations<span class="wwd-soon">Soon</span></span>
+        <span class="wwd-acc-label">Operations<span class="wld"> &mdash; Admin Assistant &amp; Customer Database</span><span class="wwd-soon">Soon</span></span>
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
         <div class="wwd-acc-text">
-          <div class="wwd-headline">Admin Assistant &amp; Customer Database</div>
           <p class="wwd-lead">Donna is your operational admin secretary &mdash; sassy, smart, and always ready to handle the paperwork.</p>
           <div class="wwd-feats">
             <span class="wwd-feat">Donna &mdash; personal admin assistant</span>
@@ -1891,12 +1893,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="wwd-acc" id="wwdAcc2">
       <button type="button" class="wwd-acc-head" onclick="wwdToggle(2)">
         <span class="wwd-thumb mkt" aria-hidden="true"><b style="background:#1F4E79">Aa</b><b style="background:#C9922A"></b><b style="background:#0D1B2E"></b><b style="background:#6B7280"></b></span>
-        <span class="wwd-acc-label">Creative</span>
+        <span class="wwd-acc-label">Marketing<span class="wld"> &mdash; Brand Kit &amp; Advertising Materials</span></span>
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
         <div class="wwd-acc-text">
-          <div class="wwd-headline">Marketing That Looks Hired-Out</div>
           <p class="wwd-lead">Set up your Brand Kit once &mdash; then every flyer, post, and sign you make is automatically on-brand.</p>
           <div class="wwd-feats">
             <span class="wwd-feat">Brand Kit</span>
@@ -1922,12 +1923,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="wwd-acc" id="wwdAcc3">
       <button type="button" class="wwd-acc-head" onclick="wwdToggle(3)">
         <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-f"/></svg></span>
-        <span class="wwd-acc-label">Analytics &amp; Insights<span class="wwd-soon">Soon</span></span>
+        <span class="wwd-acc-label">Finance &amp; Analytics<span class="wld"> &mdash; Revenue Trends, Job Profitability, Business Dashboard</span><span class="wwd-soon">Soon</span></span>
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
         <div class="wwd-acc-text">
-          <div class="wwd-headline">Know Where Your Money Goes</div>
           <p class="wwd-lead">Understand your margins, track job profitability, and see exactly where your money is going.</p>
           <div class="wwd-feats">
             <span class="wwd-feat">Revenue Trends</span>
@@ -3914,8 +3914,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 <div id="howitworks" class="page">
   <div class="hiw-hero">
     <div class="hiw-eyebrow">How It Works</div>
-    <h1>Four steps from <em>here to running.</em></h1>
-    <p class="hiw-sub">Bedrock Digital is one connected system. Here's exactly how you go from signing up to running your whole business presence in one place.</p>
+    <h1>From signup to <em>up and running.</em></h1>
+    <p class="hiw-sub">Bedrock Digital is one connected system. Set up your profile, get your website sorted, then pick the path that matters most to your business.</p>
   </div>
   <div class="hiw-steps">
     <div class="hiw-step">
@@ -3935,7 +3935,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <a class="hiw-link" href="/sites.html?embed=builder" style="margin-left:1.25rem">Build a new one &rarr;</a>
       </div>
     </div>
-    <div class="hiw-step">
+    <!-- hidden May 2026 — steps 3 & 4 replaced by the decision-tree path map below -->
+    <div class="hiw-step" style="display:none">
       <div class="hiw-num">3</div>
       <div class="hiw-body">
         <h3>Set up your marketing</h3>
@@ -3943,7 +3944,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <a class="hiw-link" href="/bedrock-marketing-v1.html">Open Marketing &rarr;</a>
       </div>
     </div>
-    <div class="hiw-step">
+    <div class="hiw-step" style="display:none">
       <div class="hiw-num">4</div>
       <div class="hiw-body">
         <h3>Streamline your operations</h3>
@@ -3964,41 +3965,29 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       #hiw-tree .ht-node .htn-step{font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#C9922A;margin-bottom:0.25rem}
       #hiw-tree .ht-node .htn-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:#fff;line-height:1.2}
       #hiw-tree .ht-node .htn-sub{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.6);margin-top:0.3rem;line-height:1.5}
-      #hiw-tree .ht-arrow{display:flex;justify-content:center;color:#C9922A;padding:0.5rem 0}
+      #hiw-tree .ht-node.ht-choose{border-color:rgba(201,146,42,0.5);background:linear-gradient(180deg,rgba(201,146,42,.12),rgba(255,255,255,.02))}
+      #hiw-tree .ht-continue{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;text-align:center;margin-bottom:0.6rem}
+      #hiw-tree .ht-arrow{display:flex;justify-content:center;color:#C9922A;padding:0.4rem 0}
       #hiw-tree .ht-fork{display:flex;justify-content:center;gap:0;color:rgba(255,255,255,0.25);margin:0.25rem 0}
       #hiw-tree .ht-branches{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:0.5rem}
       @media(max-width:760px){#hiw-tree .ht-branches{grid-template-columns:1fr;gap:1.5rem}}
-      #hiw-tree .ht-branch{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-top:3px solid var(--bc);border-radius:12px;padding:1.35rem 1.3rem;display:flex;flex-direction:column}
-      #hiw-tree .htb-head{display:flex;align-items:center;gap:0.55rem;margin-bottom:0.9rem}
-      #hiw-tree .htb-dot{width:11px;height:11px;border-radius:50%;background:var(--bc);flex-shrink:0}
-      #hiw-tree .htb-name{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700;color:#fff}
-      #hiw-tree .htb-step{font-family:'DM Sans',sans-serif;font-size:0.82rem;color:rgba(255,255,255,0.78);line-height:1.5;padding:0.4rem 0;padding-left:1.2rem;position:relative}
+      #hiw-tree .ht-branch{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-top:3px solid var(--bc);border-radius:14px;padding:1.9rem 1.75rem;display:flex;flex-direction:column}
+      #hiw-tree .htb-head{display:flex;align-items:center;gap:0.6rem;margin-bottom:1.15rem}
+      #hiw-tree .htb-dot{width:13px;height:13px;border-radius:50%;background:var(--bc);flex-shrink:0}
+      #hiw-tree .htb-name{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#fff}
+      #hiw-tree .htb-step{font-family:'DM Sans',sans-serif;font-size:0.92rem;color:rgba(255,255,255,0.82);line-height:1.55;padding:0.5rem 0;padding-left:1.4rem;position:relative}
       #hiw-tree .htb-step::before{content:'→';position:absolute;left:0;color:var(--bc);font-weight:700}
-      #hiw-tree .htb-card{margin-top:auto;padding-top:0.9rem}
-      #hiw-tree .htb-card-inner{background:rgba(255,255,255,0.04);border-left:3px solid var(--bc);border-radius:0 6px 6px 0;padding:0.7rem 0.85rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:0.92rem;color:#F5E6C8;line-height:1.55}
+      #hiw-tree .htb-card{margin-top:auto;padding-top:1.1rem}
+      #hiw-tree .htb-card-inner{background:rgba(255,255,255,0.04);border-left:3px solid var(--bc);border-radius:0 6px 6px 0;padding:0.85rem 1rem;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.02rem;color:#F5E6C8;line-height:1.6}
     </style>
-    <div class="ht-eyebrow">Your Path Through Bedrock</div>
-    <h2>One profile. Then pick your path.</h2>
-    <p class="ht-sub">Every contractor starts the same way &mdash; then branches off to whatever they need next. Nothing is locked in; add a path whenever it makes sense.</p>
-
-    <div class="ht-node">
-      <div class="htn-step">Step 1</div>
-      <div class="htn-title">Build Your Profile</div>
-      <div class="htn-sub">Trade, service area, contact info &mdash; entered once, used by every tool.</div>
-    </div>
-    <div class="ht-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></svg></div>
-    <div class="ht-node">
-      <div class="htn-step">Step 2</div>
-      <div class="htn-title">Analyze or Build Your Website</div>
-      <div class="htn-sub">Run the free Optimizer on the site you have &mdash; or build a new one in minutes.</div>
-    </div>
-    <div class="ht-arrow"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></svg></div>
-    <div class="ht-node">
+    <div class="ht-arrow"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="6 13 12 19 18 13"/></svg></div>
+    <div class="ht-continue">Continue</div>
+    <div class="ht-node ht-choose">
       <div class="htn-step">Step 3</div>
-      <div class="htn-title">Choose Your Path</div>
-      <div class="htn-sub">Three directions from here. Take one, take all three &mdash; your call.</div>
+      <div class="htn-title">Choose Where to Start</div>
+      <div class="htn-sub">Pick what matters most to your business right now &mdash; Marketing, Operations, or Finance. You can add the others whenever it makes sense.</div>
     </div>
-    <div class="ht-fork"><svg width="60%" height="34" viewBox="0 0 600 34" preserveAspectRatio="none" fill="none" stroke="#C9922A" stroke-width="2"><path d="M300 0 V12 M300 12 H100 V34 M300 12 H300 V34 M300 12 H500 V34"/></svg></div>
+    <div class="ht-fork"><svg width="68%" height="36" viewBox="0 0 600 36" preserveAspectRatio="none" fill="none" stroke="#C9922A" stroke-width="2"><path d="M300 0 V13 M300 13 H100 V36 M300 13 H300 V36 M300 13 H500 V36"/></svg></div>
 
     <div class="ht-branches">
       <div class="ht-branch" style="--bc:#4A7DB5">
