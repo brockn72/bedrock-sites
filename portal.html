@@ -2380,7 +2380,35 @@ function addToolFromManage(p) {
 }
 function pickFullBundle() { CART = { website:true, marketing:true, cfo:true }; paintCart(); persistCart(); document.getElementById('cartSummary').scrollIntoView({behavior:'smooth',block:'center'}); }
 function checkout() {
-  alert('Checkout flow coming soon. Once Stripe products are configured, this button will redirect to Stripe Checkout with the right bundle priced in.');
+  if (DEMO) { alert('Demo mode — checkout is disabled.'); return; }
+  var selected = ['website','marketing','cfo'].filter(function(p){ return CART[p]; });
+  if (!selected.length) { alert('Pick at least one tool to add to your plan.'); return; }
+  // Website carries a one-time $200 build fee and is purchased through the site
+  // builder — it can't be bought as a pure subscription from this cart.
+  if (selected.indexOf('website') !== -1) {
+    alert('Bedrock Website is purchased through the site builder (it includes a one-time $200 build). Start it from the "My Website" tab. Marketing and Finance & Operations check out below.');
+  }
+  var recurring = selected.filter(function(p){ return p === 'marketing' || p === 'cfo'; });
+  if (!recurring.length) return;
+  var email  = (currentSession && currentSession.user && currentSession.user.email) ||
+               (currentLead && currentLead.email) || '';
+  var userId = (currentSession && currentSession.user && currentSession.user.id) || '';
+  var btn = document.querySelector('button.btn-gold[onclick="checkout()"]');
+  if (btn) { btn.disabled = true; btn.textContent = 'Starting checkout…'; }
+  fetch('/.netlify/functions/create-subscription-checkout', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tools: recurring, email: email, userId: userId }),
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.url) { window.location.href = d.url; return; }
+      alert(d && d.error ? d.error : 'Could not start checkout. Please try again in a moment.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Update My Subscription →'; }
+    })
+    .catch(function(){
+      alert('Could not reach checkout. Check your connection and try again.');
+      if (btn) { btn.disabled = false; btn.textContent = 'Update My Subscription →'; }
+    });
 }
 
 // ── DASHBOARD: REVIEW + FEEDBACK FORMS ───────────────────────────────────────
