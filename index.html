@@ -1621,6 +1621,28 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
 </head>
 <body>
+
+<!-- ── SUB-BRAND MARK SYMBOLS (from bedrock-subbrands-v9.html) — Finance (F) + Donna (D) marks ── -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <clipPath id="rightOfStem"><rect x="17" y="0" width="51" height="68"/></clipPath>
+  <symbol id="mark-f" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g clip-path="url(#rightOfStem)">
+      <rect x="7" y="8"  width="45" height="10" fill="#F0C46A"/>
+      <rect x="7" y="29" width="37" height="10" fill="#2E5A8E"/>
+    </g>
+    <rect x="7" y="8" width="10" height="52" fill="#C9922A"/>
+  </symbol>
+  <symbol id="mark-d" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g clip-path="url(#rightOfStem)" fill="none" stroke-width="10" stroke-linecap="butt">
+      <path d="M12,9 A32,25.5 0 0 1 44,34.5" stroke="#F0C46A"/>
+      <path d="M44,34.5 A32,25.5 0 0 1 12,60" stroke="#2E5A8E"/>
+    </g>
+    <rect x="7" y="4.25" width="10" height="60.35" fill="#C9922A"/>
+  </symbol>
+</svg>
+
 <!-- Embed mode: strip all chrome when loaded as ?embed=optimizer (used by the My Website hub) -->
 <script>if(/[?&]embed=optimizer/.test(location.search)){document.body.className+=' bd-embed bd-embed-optimizer';}</script>
 <style>
@@ -1784,6 +1806,21 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     #bd-whatwedo .wwd-thumb.mkt b{display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;font-size:0.78rem;color:#fff}
     #bd-whatwedo .wwd-thumb.fin{background:#0D1B2E;display:flex;align-items:center;justify-content:center}
     #bd-whatwedo .wwd-thumb.fin svg{width:26px;height:26px;stroke:#C9922A;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    /* sub-product mark thumbs (Finance F / Donna D) */
+    #bd-whatwedo .wwd-thumb.brandmark{border:none}
+    #bd-whatwedo .wwd-thumb.brandmark svg{width:100%;height:100%;display:block}
+    /* mini preview tiles for the Finance + Donna accordions */
+    #bd-whatwedo .wwd-pv-fin{aspect-ratio:4/3;background:#0D1B2E;padding:0.85rem;display:flex;flex-direction:column;gap:0.5rem}
+    #bd-whatwedo .wwd-pv-fin .pf-kpis{display:flex;gap:0.4rem}
+    #bd-whatwedo .wwd-pv-fin .pf-kpi{flex:1;background:rgba(255,255,255,0.05);border-radius:4px;padding:0.4rem 0.5rem}
+    #bd-whatwedo .wwd-pv-fin .pf-kpi small{display:block;font-family:'DM Sans',sans-serif;font-size:0.42rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.5)}
+    #bd-whatwedo .wwd-pv-fin .pf-kpi b{font-family:'Cormorant Garamond',serif;font-size:1rem;color:#fff}
+    #bd-whatwedo .wwd-pv-fin .pf-bars{flex:1;display:flex;align-items:flex-end;gap:5px;padding-top:0.3rem}
+    #bd-whatwedo .wwd-pv-fin .pf-bars i{flex:1;background:#C9922A;border-radius:2px 2px 0 0;opacity:0.85}
+    #bd-whatwedo .wwd-pv-donna{aspect-ratio:4/3;background:#0D1B2E;padding:0.9rem;display:flex;flex-direction:column;justify-content:center;gap:0.5rem}
+    #bd-whatwedo .wwd-pv-donna .pd-msg{font-family:'DM Sans',sans-serif;font-size:0.62rem;line-height:1.4;padding:0.45rem 0.6rem;border-radius:8px;max-width:85%}
+    #bd-whatwedo .wwd-pv-donna .pd-donna{background:#fff;color:#0D1B2E;border-top-left-radius:2px;align-self:flex-start}
+    #bd-whatwedo .wwd-pv-donna .pd-user{background:#C9922A;color:#0D1B2E;border-top-right-radius:2px;align-self:flex-end;font-weight:600}
   </style>
   <div class="wwd-inner">
     <!-- hidden May 2026 — gold "What We Do" label removed (redundant with the heading) -->
@@ -1840,19 +1877,48 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
     <div class="wwd-acc" id="wwdAcc2">
       <button type="button" class="wwd-acc-head" onclick="wwdToggle(2)">
-        <span class="wwd-thumb fin" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
-        <span class="wwd-acc-label">Finance &amp; Operations<span class="wwd-soon">Soon</span></span>
+        <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-d"/></svg></span>
+        <span class="wwd-acc-label">Bedrock Donna<span class="wwd-soon">Soon</span></span>
         <span class="wwd-plus">+</span>
       </button>
       <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
         <div class="wwd-acc-text">
-          <p class="wwd-acc-desc">The money and operations side of your business, simplified &mdash; this one is in development now. Bedrock CFO will connect to your accounting, billing, bidding, invoicing, and purchasing so it all lives in one place instead of scattered across apps and spreadsheets. It matters because most contractors are great at the work but quietly lose money to messy books, underpriced bids, and cash-flow surprises. It's being built to work with tools you already use, like Jobber and QuickBooks, and to answer plain-English questions about your business &mdash; "can I make payroll this month?" or "what should I charge to hit my margin?" When it's ready, it'll plug straight into the profile you've already built.</p>
+          <p class="wwd-acc-desc">Donna handles the paperwork &mdash; estimates, invoices, receipts, and scheduling. Most contractors are great at the work and lose evenings to the office side of it. Donna is a conversational assistant that lives in your portal: tell her what you need in plain words, or even just talk it out on the drive home, and she drafts it. You review, tweak, and approve &mdash; nothing goes out to a customer without your say-so. She connects to QuickBooks so estimates, invoices, and expenses land in your books automatically, and she learns your rates and fees as you go.</p>
+          <div class="wwd-acc-links">
+            <a href="/bedrock-donna-v1.html">&rarr; Meet Donna</a>
+          </div>
         </div>
         <div class="wwd-preview">
-          <div class="wwd-pv-cap">In Development &middot; Bedrock CFO</div>
-          <div class="wwd-pv-soon">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            <span>Coming Soon</span>
+          <div class="wwd-pv-cap">Preview &middot; Bedrock Donna</div>
+          <div class="wwd-pv-donna">
+            <div class="pd-msg pd-user">New estimate &mdash; Joe Smith, paver patio</div>
+            <div class="pd-msg pd-donna">Roughed it out with your usual rates. Estimate's ready &mdash; take a look. 😉</div>
+          </div>
+        </div>
+      </div></div>
+    </div>
+
+    <div class="wwd-acc" id="wwdAcc3">
+      <button type="button" class="wwd-acc-head" onclick="wwdToggle(3)">
+        <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-f"/></svg></span>
+        <span class="wwd-acc-label">Bedrock Finance<span class="wwd-soon">Soon</span></span>
+        <span class="wwd-plus">+</span>
+      </button>
+      <div class="wwd-acc-body"><div class="wwd-acc-body-inner">
+        <div class="wwd-acc-text">
+          <p class="wwd-acc-desc">Understand your margins, track job profitability, and see where your money is going. Finance is a plain-English dashboard &mdash; no accounting degree required. It pulls from QuickBooks and shows you revenue trends, your gross margin, what's still owed to you, and which jobs actually made money versus which ones quietly lost it. It's read-only and visual: charts, tables, and filters, not a chatbot. The more you use Donna, the sharper Finance gets, because her structured job data makes the margin numbers far more precise than QuickBooks alone.</p>
+          <div class="wwd-acc-links">
+            <a href="/bedrock-finance-v1.html">&rarr; Open Bedrock Finance</a>
+          </div>
+        </div>
+        <div class="wwd-preview">
+          <div class="wwd-pv-cap">Preview &middot; Bedrock Finance</div>
+          <div class="wwd-pv-fin">
+            <div class="pf-kpis">
+              <div class="pf-kpi"><small>Revenue</small><b>$50,850</b></div>
+              <div class="pf-kpi"><small>Margin</small><b>47%</b></div>
+            </div>
+            <div class="pf-bars"><i style="height:38%"></i><i style="height:56%"></i><i style="height:80%"></i><i style="height:100%"></i><i style="height:62%"></i></div>
           </div>
         </div>
       </div></div>
@@ -2903,18 +2969,21 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         </div>
       </div>
 
-      <!-- FINANCE & OPERATIONS -->
+      <!-- FINANCE & DONNA -->
       <div class="sc2-panel">
-        <div class="sc2-label">Finance &amp; Operations</div>
+        <div class="sc2-label">Finance &amp; Donna</div>
         <div class="sc2-vis">
           <div class="sc2-soon">
-            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <div style="display:flex;gap:0.85rem">
+              <svg viewBox="0 0 68 68" width="46" height="46" aria-label="Bedrock Donna mark"><use href="#mark-d"/></svg>
+              <svg viewBox="0 0 68 68" width="46" height="46" aria-label="Bedrock Finance mark"><use href="#mark-f"/></svg>
+            </div>
             <div class="ss-badge">Coming Soon</div>
           </div>
         </div>
         <div class="sc2-cap">
-          <strong>Bedrock CFO</strong>
-          <p>Connect your books, bid jobs with the right margin, and watch cash flow. In development now.</p>
+          <strong>Donna &amp; Finance</strong>
+          <p>Donna drafts your estimates, invoices, and receipts. Finance shows which jobs made money. Both on the way.</p>
         </div>
       </div>
 
@@ -4009,6 +4078,53 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   #tools .tool-points li{font-family:'DM Sans',sans-serif;font-size:0.85rem;color:#0D1B2E;padding:0.4rem 0;display:flex;gap:0.6rem;align-items:flex-start}
   #tools .tool-points li::before{content:'';width:6px;height:6px;background:#C9922A;border-radius:50%;flex-shrink:0;margin-top:0.5rem}
   #tools .tool-card.optimizer .tool-points li{color:#fff}
+  /* ── Rich tool card (Donna + Finance): mark header, does/doesn't split, workflow, preview, integrations ── */
+  #tools .tool-head{display:flex;align-items:center;gap:0.9rem;margin-bottom:0.65rem}
+  #tools .tool-mark{width:46px;height:46px;flex-shrink:0;display:block}
+  #tools .tool-head .th-text{flex:1}
+  #tools .tool-head h2{margin-bottom:0}
+  #tools .tool-soon-tag{display:inline-block;font-family:'DM Sans',sans-serif;font-size:0.54rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#C9922A;background:rgba(201,146,42,0.12);padding:0.18rem 0.5rem;border-radius:3px;margin-left:0.5rem;vertical-align:middle}
+  #tools .tool-split{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin:1.35rem 0}
+  @media(max-width:620px){#tools .tool-split{grid-template-columns:1fr;gap:1rem}}
+  #tools .tool-col-title{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#0D1B2E;margin-bottom:0.5rem}
+  #tools .tool-list{list-style:none;padding:0;margin:0}
+  #tools .tool-list li{font-family:'DM Sans',sans-serif;font-size:0.82rem;color:#4A5568;line-height:1.5;padding:0.3rem 0;display:flex;gap:0.55rem;align-items:flex-start}
+  #tools .tool-list.pos li::before{content:'✓';color:#3b6d11;font-weight:700;flex-shrink:0}
+  #tools .tool-list.neg li::before{content:'✕';color:#b91c1c;font-weight:700;flex-shrink:0}
+  #tools .tool-workflow{background:#FAF7F2;border-left:3px solid #C9922A;padding:1.1rem 1.25rem;margin:1.35rem 0}
+  #tools .tool-workflow .tw-label{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#C9922A;margin-bottom:0.55rem}
+  #tools .tool-workflow ol{margin:0;padding-left:1.15rem}
+  #tools .tool-workflow li{font-family:'DM Sans',sans-serif;font-size:0.84rem;color:#0D1B2E;line-height:1.55;padding:0.2rem 0}
+  #tools .tool-review{display:flex;gap:0.6rem;align-items:flex-start;background:#0D1B2E;border-radius:6px;padding:0.85rem 1rem;margin:1.35rem 0;font-family:'DM Sans',sans-serif;font-size:0.78rem;line-height:1.55;color:rgba(255,255,255,0.8)}
+  #tools .tool-review strong{color:#C9922A}
+  #tools .tool-integrations{display:flex;align-items:center;gap:0.55rem;flex-wrap:wrap;margin-top:1.2rem;padding-top:1rem;border-top:1px solid rgba(13,27,46,0.08)}
+  #tools .tool-int-label{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(13,27,46,0.4)}
+  #tools .tool-int-chip{font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;color:#0D1B2E;background:#FAF7F2;border:1px solid rgba(13,27,46,0.1);border-radius:999px;padding:0.35rem 0.8rem;display:inline-flex;align-items:center;gap:0.4rem}
+  /* tool preview mocks */
+  #tools .tool-preview{margin:1.35rem 0;border:1px solid rgba(13,27,46,0.1);border-radius:8px;overflow:hidden}
+  #tools .tool-pv-cap{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#C9922A;background:#FAF7F2;padding:0.55rem 0.85rem;border-bottom:1px solid rgba(13,27,46,0.08)}
+  #tools .tool-pv-body{background:#0D1B2E;padding:1.1rem}
+  /* donna chat mock */
+  #tools .pv-chat{display:flex;flex-direction:column;gap:0.5rem}
+  #tools .pv-bubble{font-family:'DM Sans',sans-serif;font-size:0.78rem;line-height:1.45;padding:0.55rem 0.8rem;border-radius:10px;max-width:78%}
+  #tools .pv-bubble.user{background:#C9922A;color:#0D1B2E;font-weight:600;align-self:flex-end;border-top-right-radius:3px}
+  #tools .pv-bubble.donna{background:#fff;color:#0D1B2E;align-self:flex-start;border-top-left-radius:3px}
+  #tools .pv-approve{align-self:flex-start;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.14);border-radius:8px;padding:0.65rem 0.8rem;width:100%;margin-top:0.2rem}
+  #tools .pv-approve .pa-row{display:flex;justify-content:space-between;font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.15rem 0}
+  #tools .pv-approve .pa-row.total{color:#fff;font-weight:700;border-top:1px solid rgba(255,255,255,0.12);margin-top:0.25rem;padding-top:0.35rem}
+  #tools .pv-approve .pa-btns{display:flex;gap:0.4rem;margin-top:0.55rem}
+  #tools .pv-approve .pa-btns span{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:0.35rem 0.65rem;border-radius:4px}
+  #tools .pa-approve{background:#3b6d11;color:#fff}
+  #tools .pa-edit{background:rgba(255,255,255,0.1);color:#fff}
+  #tools .pa-reject{background:rgba(255,255,255,0.1);color:#E8B4B4}
+  /* finance dashboard mock */
+  #tools .pv-fin-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:0.7rem}
+  #tools .pv-fin-kpi{background:rgba(255,255,255,0.05);border-radius:5px;padding:0.55rem 0.6rem}
+  #tools .pv-fin-kpi small{display:block;font-family:'DM Sans',sans-serif;font-size:0.46rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:2px}
+  #tools .pv-fin-kpi b{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:#fff}
+  #tools .pv-fin-chart{display:flex;align-items:flex-end;gap:6px;height:74px;background:rgba(255,255,255,0.04);border-radius:5px;padding:0.6rem}
+  #tools .pv-fin-chart i{flex:1;background:#C9922A;border-radius:2px 2px 0 0;opacity:0.9}
+  @media(max-width:620px){#tools .pv-fin-kpis{grid-template-columns:1fr 1fr}}
 </style>
 <div id="tools" class="page">
   <div class="tools-hero">
@@ -4044,6 +4160,10 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <div class="tir-item">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
         <div class="tir-label">Optimizer</div>
+      </div>
+      <div class="tir-item">
+        <div class="tir-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="tir-label">Donna<span class="tir-soon">Soon</span></div>
       </div>
       <div class="tir-item">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
@@ -4094,6 +4214,158 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <li>Download as PNG, JPG, or PDF &mdash; print or post anywhere</li>
       </ul>
       <a href="/bedrock-marketing-v1.html" class="bd-btn-gold" style="font-size:0.7rem">Open Bedrock Marketing &rarr;</a>
+    </div>
+
+    <!-- BEDROCK DONNA -->
+    <div class="tool-card">
+      <div class="tool-head">
+        <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg>
+        <div class="th-text">
+          <div class="tool-eyebrow">Operations Assistant<span class="tool-soon-tag">Coming Soon</span></div>
+          <h2>Bedrock Donna</h2>
+        </div>
+      </div>
+      <p>Donna handles the paperwork &mdash; estimates, invoices, receipts, and scheduling. Tell her what you need in plain words, she drafts it, and you approve it. She's an office manager that fits in your truck, not another app to learn.</p>
+
+      <div class="tool-split">
+        <div>
+          <div class="tool-col-title">What it does</div>
+          <ul class="tool-list pos">
+            <li>Drafts priced estimates from a plain job description</li>
+            <li>Turns an approved estimate into an invoice</li>
+            <li>Reads receipts from a photo and files them</li>
+            <li>Saves customers and starts a project folder for each</li>
+            <li>Schedules jobs and drafts customer reminders</li>
+            <li>Syncs estimates, invoices, and expenses to QuickBooks</li>
+            <li>Learns your labor rate, markup, and standard fees</li>
+          </ul>
+        </div>
+        <div>
+          <div class="tool-col-title">What it does not do</div>
+          <ul class="tool-list neg">
+            <li>Send anything to a customer without your approval</li>
+            <li>File taxes or replace your accountant</li>
+            <li>Give legal, tax, or financial advice</li>
+            <li>Move money or touch your bank account</li>
+            <li>Run payroll</li>
+            <li>Make the final call on your pricing</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tool-preview">
+        <div class="tool-pv-cap">What Donna looks like</div>
+        <div class="tool-pv-body">
+          <div class="pv-chat">
+            <div class="pv-bubble user">Invoice Joe Smith for the patio job</div>
+            <div class="pv-bubble donna">Built it off the approved estimate so the numbers match. Net 30. Take a look &mdash; nothing sends till you say so.</div>
+            <div class="pv-approve">
+              <div class="pa-row"><span>Invoice INV-2087 &middot; 600 sq ft Paver Patio</span></div>
+              <div class="pa-row total"><span>Amount due</span><span>$5,786</span></div>
+              <div class="pa-btns"><span class="pa-approve">Approve &amp; Send</span><span class="pa-edit">Edit</span><span class="pa-reject">Reject</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-workflow">
+        <div class="tw-label">Example workflow</div>
+        <ol>
+          <li>Mike finishes a paver patio and tells Donna: "Invoice Joe Smith for the patio job."</li>
+          <li>Donna pulls the approved estimate and drafts the invoice &mdash; Net 30, line items already filled in.</li>
+          <li>Mike reads it over and taps <strong>Approve</strong>.</li>
+          <li>Donna emails it to Joe from Mike's address and logs it in QuickBooks. Start to finish: about 30 seconds.</li>
+        </ol>
+      </div>
+
+      <div class="tool-review">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#C9922A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <div><strong>You approve everything.</strong> Donna drafts &mdash; she never sends an estimate, invoice, email, or calendar invite on her own. Every action waits for your review. Donna can make mistakes, so the final check is always yours.</div>
+      </div>
+
+      <div class="tool-integrations">
+        <span class="tool-int-label">Works with</span>
+        <span class="tool-int-chip">QuickBooks Online</span>
+        <span class="tool-int-chip">Gmail</span>
+        <span class="tool-int-chip">Google Calendar</span>
+      </div>
+
+      <a href="/bedrock-donna-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Preview Bedrock Donna &rarr;</a>
+    </div>
+
+    <!-- BEDROCK FINANCE -->
+    <div class="tool-card">
+      <div class="tool-head">
+        <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg>
+        <div class="th-text">
+          <div class="tool-eyebrow">Business Dashboard<span class="tool-soon-tag">Coming Soon</span></div>
+          <h2>Bedrock Finance</h2>
+        </div>
+      </div>
+      <p>Understand your margins, track job profitability, and see where your money is going. Finance is a plain-English dashboard &mdash; charts and tables, no accounting degree required. It shows you which jobs made money and which ones quietly didn't.</p>
+
+      <div class="tool-split">
+        <div>
+          <div class="tool-col-title">What it does</div>
+          <ul class="tool-list pos">
+            <li>Shows revenue, margin, and expense trends in clear charts</li>
+            <li>Tracks every invoice &mdash; paid, outstanding, and overdue</li>
+            <li>Lists the estimates you've sent and where each stands</li>
+            <li>Ranks jobs by profitability so you see what actually paid</li>
+            <li>Filters by time period, service type, and margin</li>
+            <li>Pulls straight from QuickBooks &mdash; no manual entry</li>
+          </ul>
+        </div>
+        <div>
+          <div class="tool-col-title">What it does not do</div>
+          <ul class="tool-list neg">
+            <li>Replace QuickBooks or your accountant</li>
+            <li>Do bookkeeping, reconciliation, or tax filing</li>
+            <li>Send invoices or estimates &mdash; that's Donna's job</li>
+            <li>Give financial or tax advice</li>
+            <li>Handle payroll or connect to your bank</li>
+            <li>Let you edit numbers &mdash; it's read-only by design</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tool-preview">
+        <div class="tool-pv-cap">What Finance looks like</div>
+        <div class="tool-pv-body">
+          <div class="pv-fin-kpis">
+            <div class="pv-fin-kpi"><small>Revenue</small><b>$50,850</b></div>
+            <div class="pv-fin-kpi"><small>Margin</small><b>47%</b></div>
+            <div class="pv-fin-kpi"><small>Expenses</small><b>$26,500</b></div>
+            <div class="pv-fin-kpi"><small>Owed</small><b>$29,200</b></div>
+          </div>
+          <div class="pv-fin-chart">
+            <i style="height:34%"></i><i style="height:52%"></i><i style="height:71%"></i><i style="height:100%"></i><i style="height:60%"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-workflow">
+        <div class="tw-label">Example workflow</div>
+        <ol>
+          <li>End of the month, Sarah opens Finance. Graphs page: revenue's up, margin holding at 47%.</li>
+          <li>Statements page: two invoices are overdue &mdash; she sees exactly who owes her and how much.</li>
+          <li>Projects page: the retaining-wall job ran a thin 26% margin while patios cleared 54%.</li>
+          <li>Next time she bids a wall, she prices it right. No spreadsheets, no guessing.</li>
+        </ol>
+      </div>
+
+      <div class="tool-review">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#C9922A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <div><strong>Estimates, not official books.</strong> Finance is read-only and built for a quick gut check. Margins are estimates based on available data &mdash; this is not official financial reporting. For taxes and statements, that's still your accountant.</div>
+      </div>
+
+      <div class="tool-integrations">
+        <span class="tool-int-label">Works with</span>
+        <span class="tool-int-chip">QuickBooks Online</span>
+        <span class="tool-int-chip">Shares Donna's connection</span>
+      </div>
+
+      <a href="/bedrock-finance-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Open Bedrock Finance &rarr;</a>
     </div>
 
   </div>

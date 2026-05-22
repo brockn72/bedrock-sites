@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bedrock Finance — Understand your business at a glance</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 68 68'%3E%3Crect width='68' height='68' rx='14' fill='%230D1B2E'/%3E%3Crect x='17' y='8' width='35' height='10' fill='%23F0C46A'/%3E%3Crect x='17' y='29' width='27' height='10' fill='%232E5A8E'/%3E%3Crect x='7' y='8' width='10' height='52' fill='%23C9922A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy-deep:#0D1B2E;--navy:#1B3557;--navy-mid:#2E5A8E;
+  --gold:#C9922A;--gold-light:#D4A843;
+  --off-white:#FAF7F2;--white:#FFFFFF;--slate:#4A5568;--cream:#F5E6C8;
+  --border-light:rgba(13,27,46,0.1);--border-dark:rgba(255,255,255,0.12);
+  --muted-light:rgba(255,255,255,0.45);--muted-dark:rgba(13,27,46,0.35);
+  --red:#b91c1c;--red-bg:#fef2f2;--green:#3b6d11;--green-bg:#f0f5ea;
+  --amber:#92660e;--amber-bg:#fdf6e3;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy-deep);min-height:100vh;display:flex;flex-direction:column;line-height:1.5}
+
+/* ── NAV ── */
+nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;align-items:center;padding:0.85rem 2rem;border-bottom:3px solid var(--gold);flex-shrink:0;position:sticky;top:0;z-index:50;gap:1rem;flex-wrap:wrap}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-strata{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
+.nav-strata span{height:5px;border-radius:1px}
+.nav-strata span:nth-child(1){width:26px;background:var(--gold)}
+.nav-strata span:nth-child(2){width:20px;background:#A8711A}
+.nav-strata span:nth-child(3){width:30px;background:#2E5A8E}
+.nav-strata span:nth-child(4){width:22px;background:#4A7DB5}
+.nav-wm{display:flex;flex-direction:column;line-height:1}
+.nav-wm .wordmark{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;letter-spacing:-0.02em;color:var(--cream)}
+.nav-wm .sub{font-size:0.52rem;font-weight:500;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin-top:3px}
+.nav-product{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.55);border-left:1px solid rgba(255,255,255,0.15);padding-left:0.85rem;margin-left:0.85rem}
+.nav-right{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+.tnav-link{font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;padding:0.5rem 0.75rem;border-radius:6px;display:inline-flex;align-items:center;gap:0.4rem;transition:color .15s,background .15s;cursor:pointer}
+.tnav-link:hover{color:#fff;background:rgba(255,255,255,0.07)}
+.tnav-link.tnav-active{color:var(--gold)}
+.tnav-link.tnav-home{color:var(--gold);border:1px solid rgba(201,146,42,0.55)}
+.tnav-link.tnav-home:hover{background:rgba(201,146,42,0.12);color:var(--gold)}
+
+/* ── PAGE HEAD + PAGE NAV ── */
+.fin-head{background:#fff;border-bottom:1px solid var(--border-light);padding:1.5rem 2rem 0}
+.fin-head-top{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;flex-wrap:wrap}
+.eyebrow{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted-dark);margin-bottom:0.3rem}
+.fin-head h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,2.6vw,2rem);font-weight:700;color:var(--navy-deep);line-height:1.15}
+.fin-head h1 em{font-style:italic;color:var(--gold)}
+.refresh-row{display:flex;align-items:center;gap:0.6rem;font-size:0.7rem;color:var(--slate)}
+.btn-refresh{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:#fff;color:var(--navy);border:1px solid var(--border-light);padding:0.5rem 0.85rem;border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.btn-refresh:hover{border-color:var(--gold);color:var(--gold)}
+.page-nav{max-width:1180px;margin:1.25rem auto 0;display:flex;gap:0.25rem}
+.page-nav button{font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:600;letter-spacing:0.06em;background:transparent;border:none;border-bottom:2px solid transparent;padding:0.7rem 1.1rem;cursor:pointer;color:var(--slate);transition:color .15s}
+.page-nav button:hover{color:var(--navy-deep)}
+.page-nav button.active{color:var(--gold);border-bottom-color:var(--gold)}
+
+/* ── QBO BANNER ── */
+.qbo-banner{max-width:1180px;margin:1.25rem auto 0;background:linear-gradient(135deg,rgba(201,146,42,0.09),rgba(13,27,46,0.04));border:1px solid var(--gold);border-radius:8px;padding:0.9rem 1.15rem;display:flex;gap:0.85rem;align-items:center;flex-wrap:wrap}
+.qbo-banner .qb-txt{flex:1;min-width:240px;font-size:0.8rem;color:var(--navy-deep);line-height:1.55}
+.qbo-banner .qb-txt strong{color:var(--gold)}
+.btn-gold{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:0.65rem 1.15rem;cursor:pointer;border-radius:4px;transition:background .2s;text-decoration:none;display:inline-block;text-align:center;line-height:1}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-outline{font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:var(--navy);border:1px solid rgba(27,53,87,0.3);padding:0.6rem 1rem;cursor:pointer;border-radius:4px;transition:all .2s}
+.btn-outline:hover{border-color:var(--navy-deep);background:rgba(13,27,46,0.04)}
+.qb-dismiss{background:none;border:none;color:var(--slate);cursor:pointer;font-size:1rem;line-height:1;padding:0.25rem}
+
+/* ── LAYOUT ── */
+.fin-wrap{max-width:1180px;margin:0 auto;padding:1.75rem 2rem 3rem;width:100%}
+.page{display:none}
+.page.active{display:block}
+
+/* ── FILTERS ── */
+.filter-bar{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+.filter-label{font-size:0.58rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--slate);margin-right:0.4rem}
+.filter-btn{font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:500;background:#fff;border:1px solid var(--border-light);color:var(--slate);padding:0.45rem 0.85rem;border-radius:999px;cursor:pointer;transition:all .14s}
+.filter-btn:hover{border-color:var(--navy)}
+.filter-btn.active{background:var(--navy-deep);color:#fff;border-color:var(--navy-deep)}
+.select-mini{font-family:'DM Sans',sans-serif;font-size:0.72rem;padding:0.45rem 0.7rem;border:1px solid var(--border-light);border-radius:6px;background:#fff;color:var(--navy-deep);cursor:pointer;outline:none}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
+@media(max-width:880px){.kpi-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:460px){.kpi-grid{grid-template-columns:1fr}}
+.kpi-card{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--navy-deep);border-radius:6px;padding:1.1rem 1.2rem}
+.kpi-card.accent{border-top-color:var(--gold)}
+.kpi-label{font-size:0.58rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--slate);margin-bottom:0.5rem}
+.kpi-value{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--navy-deep);line-height:1}
+.kpi-sub{font-size:0.68rem;color:var(--slate);margin-top:0.4rem}
+.kpi-sub .up{color:var(--green);font-weight:600}
+.kpi-sub .down{color:var(--red);font-weight:600}
+
+/* ── CHARTS ── */
+.chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:880px){.chart-grid{grid-template-columns:1fr}}
+.chart-card{background:#fff;border:1px solid var(--border-light);border-radius:6px;padding:1.15rem 1.2rem}
+.chart-card.wide{grid-column:1 / -1}
+.chart-card h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--navy-deep);margin-bottom:0.15rem}
+.chart-card .ch-sub{font-size:0.7rem;color:var(--slate);margin-bottom:0.85rem}
+.chart-box{position:relative;height:230px}
+.chart-box.tall{height:260px}
+
+/* ── TABLES ── */
+.table-block{background:#fff;border:1px solid var(--border-light);border-radius:6px;overflow:hidden;margin-bottom:1.75rem}
+.table-block-head{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border-light)}
+.table-block-head .tb-eyebrow{font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:0.2rem}
+.table-block-head h3{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;color:var(--navy-deep);line-height:1.15}
+.table-block-head .tb-sub{font-size:0.74rem;color:var(--slate);margin-top:0.15rem}
+.table-scroll{overflow-x:auto}
+table.fin-table{width:100%;border-collapse:collapse;font-size:0.8rem;min-width:540px}
+table.fin-table th{text-align:left;font-size:0.56rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--slate);padding:0.7rem 1.25rem;border-bottom:1px solid var(--border-light);background:var(--off-white);white-space:nowrap}
+table.fin-table th.num,table.fin-table td.num{text-align:right}
+table.fin-table td{padding:0.78rem 1.25rem;border-bottom:1px solid var(--border-light);color:var(--navy-deep)}
+table.fin-table tr:last-child td{border-bottom:none}
+table.fin-table tbody tr:hover{background:var(--off-white)}
+.cust{font-weight:600}
+.job-sub{color:var(--slate);font-size:0.72rem}
+.amt{font-weight:600;white-space:nowrap}
+.status-pill{display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:0.25rem 0.6rem;border-radius:999px;white-space:nowrap}
+.st-paid{background:var(--green-bg);color:var(--green)}
+.st-outstanding{background:var(--amber-bg);color:var(--amber)}
+.st-overdue{background:var(--red-bg);color:var(--red)}
+.st-draft{background:rgba(13,27,46,0.06);color:var(--slate)}
+.st-sent{background:rgba(46,90,142,0.12);color:#23496f}
+.st-approved{background:var(--green-bg);color:var(--green)}
+.st-declined{background:var(--red-bg);color:var(--red)}
+.margin-bar{display:flex;align-items:center;gap:0.5rem;justify-content:flex-end}
+.margin-track{width:54px;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
+.margin-fill{height:100%;border-radius:3px}
+.margin-pct{font-weight:700;min-width:34px;text-align:right}
+
+/* ── DISCLAIMER ── */
+.disclaimer{background:var(--amber-bg);border-left:3px solid var(--amber);padding:0.8rem 1rem;border-radius:4px;font-size:0.74rem;color:#6e5212;line-height:1.55;margin-bottom:1.25rem}
+
+/* ── EMPTY / CONNECT STATE ── */
+.connect-state{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);border-radius:6px;padding:2.75rem 2rem;text-align:center;max-width:520px;margin:1rem auto}
+.connect-state .cs-ic{width:56px;height:56px;border-radius:12px;background:var(--off-white);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.connect-state h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--navy-deep);margin-bottom:0.4rem}
+.connect-state p{font-size:0.82rem;color:var(--slate);line-height:1.6;margin-bottom:1.25rem}
+
+.section-label{font-size:0.58rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--slate);margin:0 0 0.85rem}
+
+footer{background:var(--navy-deep);color:rgba(255,255,255,0.55);padding:1.25rem 0;text-align:center;font-size:0.72rem;flex-shrink:0;margin-top:auto}
+footer a{color:var(--gold);text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- ── SUB-BRAND MARK SYMBOLS (from bedrock-subbrands-v9.html) ── -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <clipPath id="rightOfStem"><rect x="17" y="0" width="51" height="68"/></clipPath>
+  <symbol id="mark-f" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g clip-path="url(#rightOfStem)">
+      <rect x="7" y="8"  width="45" height="10" fill="#F0C46A"/>
+      <rect x="7" y="29" width="37" height="10" fill="#2E5A8E"/>
+    </g>
+    <rect x="7" y="8" width="10" height="52" fill="#C9922A"/>
+  </symbol>
+</svg>
+
+<nav class="top">
+  <a href="/portal.html" class="nav-logo">
+    <div class="nav-strata"><span></span><span></span><span></span><span></span></div>
+    <div class="nav-wm">
+      <span class="wordmark">Bedrock</span>
+      <span class="sub">Digital</span>
+    </div>
+    <span class="nav-product">Finance · Analytics</span>
+  </a>
+  <div class="nav-right">
+    <a href="/portal.html" class="tnav-link tnav-home" title="My Portal">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      My Portal
+    </a>
+    <a href="/bedrock-website-v1.html" class="tnav-link">My Website</a>
+    <a href="/bedrock-marketing-v1.html" class="tnav-link">Marketing</a>
+    <a href="/bedrock-donna-v1.html" class="tnav-link">Donna</a>
+    <a href="/bedrock-finance-v1.html" class="tnav-link tnav-active">Finance</a>
+  </div>
+</nav>
+
+<div class="fin-head">
+  <div class="fin-head-top">
+    <div>
+      <div class="eyebrow">Bedrock Finance · Analytics</div>
+      <h1>Understand your business <em>at a glance.</em></h1>
+    </div>
+    <div class="refresh-row">
+      <span id="lastUpdated">Sample data</span>
+      <button class="btn-refresh" onclick="refreshData()">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <div class="qbo-banner" id="qboBanner">
+    <span style="font-size:1.1rem">📊</span>
+    <div class="qb-txt"><strong>You're viewing sample data.</strong> Connect QuickBooks to see your real revenue, invoices, and job margins. One connection works for Finance and Donna both.</div>
+    <button class="btn-gold" onclick="connectQBO()">Connect QuickBooks</button>
+    <button class="qb-dismiss" onclick="document.getElementById('qboBanner').style.display='none'" title="Dismiss">&times;</button>
+  </div>
+
+  <div class="page-nav">
+    <button id="nav-graphs" class="active" onclick="goPage('graphs')">Graphs</button>
+    <button id="nav-statements" onclick="goPage('statements')">Statements</button>
+    <button id="nav-projects" onclick="goPage('projects')">Projects</button>
+  </div>
+</div>
+
+<div class="fin-wrap">
+
+  <!-- ╭───────────────────────────────────────────╮ -->
+  <!-- │ PAGE 1 — GRAPHS                            │ -->
+  <!-- ╰───────────────────────────────────────────╯ -->
+  <div id="page-graphs" class="page active">
+    <div class="filter-bar">
+      <span class="filter-label">Time period</span>
+      <button class="filter-btn" data-period="7d"      onclick="setPeriod('7d',this)">7 days</button>
+      <button class="filter-btn active" data-period="30d" onclick="setPeriod('30d',this)">30 days</button>
+      <button class="filter-btn" data-period="90d"     onclick="setPeriod('90d',this)">90 days</button>
+      <button class="filter-btn" data-period="month"   onclick="setPeriod('month',this)">This month</button>
+      <button class="filter-btn" data-period="quarter" onclick="setPeriod('quarter',this)">This quarter</button>
+      <button class="filter-btn" data-period="year"    onclick="setPeriod('year',this)">This year</button>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-value" id="kpiRevenue">$0</div>
+        <div class="kpi-sub" id="kpiRevenueSub"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Gross Margin %</div>
+        <div class="kpi-value" id="kpiMargin">0%</div>
+        <div class="kpi-sub">Estimated, across all jobs</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Expenses</div>
+        <div class="kpi-value" id="kpiExpenses">$0</div>
+        <div class="kpi-sub" id="kpiExpensesSub"></div>
+      </div>
+      <div class="kpi-card accent">
+        <div class="kpi-label">Outstanding Invoices</div>
+        <div class="kpi-value" id="kpiOutstanding">$0</div>
+        <div class="kpi-sub">Money you're owed — always current</div>
+      </div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="chart-card wide">
+        <h3>Revenue over time</h3>
+        <div class="ch-sub">What you've billed and collected across the period.</div>
+        <div class="chart-box tall"><canvas id="chartRevenue"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Estimated margin over time</h3>
+        <div class="ch-sub">Revenue minus estimated job cost, as a percent.</div>
+        <div class="chart-box"><canvas id="chartMargin"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Expense trends</h3>
+        <div class="ch-sub">Materials, equipment, and other job costs.</div>
+        <div class="chart-box"><canvas id="chartExpense"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╭───────────────────────────────────────────╮ -->
+  <!-- │ PAGE 2 — STATEMENTS                        │ -->
+  <!-- ╰───────────────────────────────────────────╯ -->
+  <div id="page-statements" class="page">
+    <div class="filter-bar">
+      <span class="filter-label">Status</span>
+      <select class="select-mini" id="invStatusFilter" onchange="renderInvoices()">
+        <option value="all">All invoices</option>
+        <option value="Paid">Paid</option>
+        <option value="Outstanding">Outstanding</option>
+        <option value="Overdue">Overdue</option>
+      </select>
+      <select class="select-mini" id="invDateFilter" onchange="renderInvoices()">
+        <option value="all">All dates</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+    </div>
+
+    <div class="table-block">
+      <div class="table-block-head">
+        <div class="tb-eyebrow">Invoices</div>
+        <h3>Money You're Owed</h3>
+        <div class="tb-sub">Jobs you've billed for. Outstanding and overdue rows are money still coming to you.</div>
+      </div>
+      <div class="table-scroll">
+        <table class="fin-table">
+          <thead><tr><th>Customer</th><th>Job</th><th class="num">Amount</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="invoiceRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="filter-bar">
+      <span class="filter-label">Estimate status</span>
+      <select class="select-mini" id="estStatusFilter" onchange="renderEstimates()">
+        <option value="all">All estimates</option>
+        <option value="Draft">Draft</option>
+        <option value="Sent">Sent</option>
+        <option value="Approved">Approved</option>
+        <option value="Declined">Declined</option>
+      </select>
+    </div>
+
+    <div class="table-block">
+      <div class="table-block-head">
+        <div class="tb-eyebrow">Estimates</div>
+        <h3>Jobs You've Quoted</h3>
+        <div class="tb-sub">Bids you've sent out. Approved estimates usually become invoices once the work is done.</div>
+      </div>
+      <div class="table-scroll">
+        <table class="fin-table">
+          <thead><tr><th>Customer</th><th>Job</th><th class="num">Amount</th><th>Date</th><th>Status</th></tr></thead>
+          <tbody id="estimateRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╭───────────────────────────────────────────╮ -->
+  <!-- │ PAGE 3 — PROJECTS                          │ -->
+  <!-- ╰───────────────────────────────────────────╯ -->
+  <div id="page-projects" class="page">
+    <div class="disclaimer">
+      <strong>Heads up:</strong> Margins are estimates based on available data. Actual profitability may vary. This is not official financial reporting.
+    </div>
+    <div class="filter-bar">
+      <span class="filter-label">Service type</span>
+      <select class="select-mini" id="projServiceFilter" onchange="renderProjects()">
+        <option value="all">All services</option>
+        <option value="Hardscape">Hardscape</option>
+        <option value="Lawn">Lawn &amp; Maintenance</option>
+        <option value="Planting">Planting</option>
+        <option value="Drainage">Drainage</option>
+        <option value="Irrigation">Irrigation</option>
+      </select>
+      <select class="select-mini" id="projDateFilter" onchange="renderProjects()">
+        <option value="all">All dates</option>
+        <option value="30">Last 30 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+      <select class="select-mini" id="projMarginFilter" onchange="renderProjects()">
+        <option value="all">Any margin</option>
+        <option value="high">Above 45%</option>
+        <option value="low">Below 45%</option>
+      </select>
+    </div>
+
+    <div class="table-block">
+      <div class="table-block-head">
+        <div class="tb-eyebrow">Projects</div>
+        <h3>Which Jobs Made Money</h3>
+        <div class="tb-sub">Revenue versus estimated cost, job by job. Your best and worst jobs, in plain numbers.</div>
+      </div>
+      <div class="table-scroll">
+        <table class="fin-table">
+          <thead><tr><th>Job</th><th>Customer</th><th class="num">Revenue</th><th class="num">Est. Cost</th><th class="num">Est. Margin</th></tr></thead>
+          <tbody id="projectRows"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Bedrock Finance · Analytics &mdash; rough draft preview, sample data shown. <a href="/portal.html">Back to Portal</a>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// MOCK DATA — Summit Landscaping, a 1-crew landscaper
+// ─────────────────────────────────────────────────────────────
+var OUTSTANDING_TOTAL = 29200; // always-current — not period-filtered
+
+var PERIODS = {
+  '7d': {
+    revLabels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    revenue:[0,3800,0,4200,0,1350,0],
+    margin:[0,44,0,50,0,54,0],
+    expense:[0,2100,640,1900,0,610,0],
+    kpi:{ revenue:9350, margin:48, expenses:5250 }
+  },
+  '30d': {
+    revLabels:['Apr 22','Apr 29','May 6','May 13','May 20'],
+    revenue:[5150,7600,11800,18400,7900],
+    margin:[42,46,49,52,47],
+    expense:[3100,4200,6400,9100,3700],
+    kpi:{ revenue:50850, margin:47, expenses:26500 }
+  },
+  '90d': {
+    revLabels:['Mar','Apr','May'],
+    revenue:[28400,41200,50850],
+    margin:[39,44,47],
+    expense:[18900,24600,26500],
+    kpi:{ revenue:120450, margin:44, expenses:70000 }
+  },
+  'month': {
+    revLabels:['Wk 1','Wk 2','Wk 3','Wk 4'],
+    revenue:[8200,11800,18400,12450],
+    margin:[43,48,52,46],
+    expense:[4600,6400,9100,6400],
+    kpi:{ revenue:50850, margin:47, expenses:26500 }
+  },
+  'quarter': {
+    revLabels:['Mar','Apr','May'],
+    revenue:[28400,41200,50850],
+    margin:[39,44,47],
+    expense:[18900,24600,26500],
+    kpi:{ revenue:120450, margin:44, expenses:70000 }
+  },
+  'year': {
+    revLabels:['Jan','Feb','Mar','Apr','May'],
+    revenue:[9800,12400,28400,41200,50850],
+    margin:[31,34,39,44,47],
+    expense:[7100,8600,18900,24600,26500],
+    kpi:{ revenue:142650, margin:42, expenses:85700 }
+  }
+};
+
+var INVOICES = [
+  { customer:'Joe Smith',        job:'600 sq ft paver patio',   amount:18000, date:'May 14', daysAgo:7,  status:'Paid' },
+  { customer:'Anderson Property',job:'Retaining wall',          amount:11000, date:'May 18', daysAgo:3,  status:'Outstanding' },
+  { customer:'Carlson Home',     job:'Fire pit & seating wall', amount:7900,  date:'May 20', daysAgo:1,  status:'Outstanding' },
+  { customer:'Becker Home',      job:'Sod replacement',         amount:3800,  date:'May 19', daysAgo:2,  status:'Outstanding' },
+  { customer:'Flores Residence', job:'Irrigation install',      amount:4200,  date:'May 6',  daysAgo:15, status:'Paid' },
+  { customer:'Maple Grove HOA',  job:'Lawn maintenance — May',  amount:1600,  date:'May 1',  daysAgo:20, status:'Paid' },
+  { customer:'Rivera Household', job:'Spring cleanup package',  amount:1350,  date:'Apr 28', daysAgo:23, status:'Paid' },
+  { customer:'Whitfield Property',job:'Drainage correction',    amount:6500,  date:'Apr 2',  daysAgo:49, status:'Overdue' }
+];
+
+var ESTIMATES = [
+  { customer:'Patterson Residence',job:'Backyard redesign',      amount:24500, date:'May 20', daysAgo:1,  status:'Sent' },
+  { customer:'Brooks Residence',   job:'Drainage + regrade',     amount:9100,  date:'May 21', daysAgo:0,  status:'Draft' },
+  { customer:'Greenfield HOA',     job:'Seasonal maintenance contract', amount:14400, date:'May 19', daysAgo:2, status:'Sent' },
+  { customer:'Delgado Home',       job:'Paver walkway',          amount:3900,  date:'May 17', daysAgo:4,  status:'Approved' },
+  { customer:'Hammond Home',       job:'Patio extension',        amount:6800,  date:'May 8',  daysAgo:13, status:'Draft' },
+  { customer:'Kowalski Property',  job:'Retaining wall repair',  amount:5200,  date:'May 12', daysAgo:9,  status:'Declined' }
+];
+
+var PROJECTS = [
+  { job:'600 sq ft paver patio',  customer:'Joe Smith',        service:'Hardscape', revenue:18000, cost:8200,  daysAgo:7 },
+  { job:'Fire pit & seating wall',customer:'Carlson Home',     service:'Hardscape', revenue:7900,  cost:3600,  daysAgo:1 },
+  { job:'Retaining wall',         customer:'Anderson Property',service:'Hardscape', revenue:11000, cost:7400,  daysAgo:3 },
+  { job:'Irrigation install',     customer:'Flores Residence', service:'Irrigation',revenue:4200,  cost:2100,  daysAgo:15 },
+  { job:'Spring cleanup package', customer:'Rivera Household', service:'Lawn',      revenue:1350,  cost:620,   daysAgo:23 },
+  { job:'Sod replacement',        customer:'Becker Home',      service:'Lawn',      revenue:3800,  cost:2500,  daysAgo:2 },
+  { job:'Tree & shrub planting',  customer:'Nguyen Residence', service:'Planting',  revenue:2650,  cost:1400,  daysAgo:11 },
+  { job:'Drainage correction',    customer:'Whitfield Property',service:'Drainage', revenue:6500,  cost:4800,  daysAgo:49 },
+  { job:'Lawn maintenance — May', customer:'Maple Grove HOA',  service:'Lawn',      revenue:9600,  cost:5200,  daysAgo:20 }
+];
+
+// ─────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────
+function money(n){ return '$' + Number(Math.round(n)).toLocaleString('en-US'); }
+function statusClass(s){ return 'st-' + s.toLowerCase(); }
+
+// ─────────────────────────────────────────────────────────────
+// PAGE NAV
+// ─────────────────────────────────────────────────────────────
+function goPage(id){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.page-nav button').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('nav-'+id).classList.add('active');
+  if(id==='graphs'){ setTimeout(resizeCharts, 30); }
+}
+
+// ─────────────────────────────────────────────────────────────
+// CHARTS
+// ─────────────────────────────────────────────────────────────
+var charts = { revenue:null, margin:null, expense:null };
+var currentPeriod = '30d';
+
+var GRID = 'rgba(13,27,46,0.06)';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#4A5568';
+
+function buildCharts(){
+  var d = PERIODS[currentPeriod];
+  charts.revenue = new Chart(document.getElementById('chartRevenue'), {
+    type:'bar',
+    data:{ labels:d.revLabels, datasets:[{ label:'Revenue', data:d.revenue, backgroundColor:'#1B3557', borderRadius:4, maxBarThickness:54 }] },
+    options:chartOpts('$')
+  });
+  charts.margin = new Chart(document.getElementById('chartMargin'), {
+    type:'line',
+    data:{ labels:d.revLabels, datasets:[{ label:'Margin %', data:d.margin, borderColor:'#C9922A', backgroundColor:'rgba(201,146,42,0.12)', fill:true, tension:0.35, pointBackgroundColor:'#C9922A', pointRadius:3, borderWidth:2 }] },
+    options:chartOpts('%')
+  });
+  charts.expense = new Chart(document.getElementById('chartExpense'), {
+    type:'bar',
+    data:{ labels:d.revLabels, datasets:[{ label:'Expenses', data:d.expense, backgroundColor:'#8696AA', borderRadius:4, maxBarThickness:54 }] },
+    options:chartOpts('$')
+  });
+}
+function chartOpts(unit){
+  return {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{ display:false },
+      tooltip:{ callbacks:{ label:function(c){
+        return unit==='%' ? c.parsed.y + '%' : '$' + c.parsed.y.toLocaleString('en-US');
+      }}}
+    },
+    scales:{
+      x:{ grid:{ display:false }, ticks:{ font:{ size:11 } } },
+      y:{ grid:{ color:GRID }, ticks:{ font:{ size:11 }, callback:function(v){
+        return unit==='%' ? v + '%' : '$' + (v>=1000 ? (v/1000)+'k' : v);
+      }}, beginAtZero:true }
+    }
+  };
+}
+function updateCharts(){
+  var d = PERIODS[currentPeriod];
+  ['revenue','margin','expense'].forEach(function(k){
+    charts[k].data.labels = d.revLabels;
+  });
+  charts.revenue.data.datasets[0].data = d.revenue;
+  charts.margin.data.datasets[0].data  = d.margin;
+  charts.expense.data.datasets[0].data = d.expense;
+  charts.revenue.update(); charts.margin.update(); charts.expense.update();
+}
+function resizeCharts(){
+  ['revenue','margin','expense'].forEach(function(k){ if(charts[k]) charts[k].resize(); });
+}
+
+// ─────────────────────────────────────────────────────────────
+// KPIs + PERIOD FILTER
+// ─────────────────────────────────────────────────────────────
+function setPeriod(p, btn){
+  currentPeriod = p;
+  document.querySelectorAll('.filter-btn[data-period]').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  updateCharts();
+  updateKPIs();
+}
+function updateKPIs(){
+  var k = PERIODS[currentPeriod].kpi;
+  document.getElementById('kpiRevenue').textContent    = money(k.revenue);
+  document.getElementById('kpiRevenueSub').innerHTML   = 'Billed in the selected period';
+  document.getElementById('kpiMargin').textContent     = k.margin + '%';
+  document.getElementById('kpiExpenses').textContent   = money(k.expenses);
+  document.getElementById('kpiExpensesSub').innerHTML  = 'Materials, equipment &amp; job costs';
+  document.getElementById('kpiOutstanding').textContent= money(OUTSTANDING_TOTAL);
+}
+
+// ─────────────────────────────────────────────────────────────
+// STATEMENTS — INVOICES + ESTIMATES
+// ─────────────────────────────────────────────────────────────
+function renderInvoices(){
+  var sf = document.getElementById('invStatusFilter').value;
+  var df = document.getElementById('invDateFilter').value;
+  var rows = INVOICES.filter(function(i){
+    if(sf!=='all' && i.status!==sf) return false;
+    if(df!=='all' && i.daysAgo > parseInt(df,10)) return false;
+    return true;
+  });
+  var tb = document.getElementById('invoiceRows');
+  if(!rows.length){ tb.innerHTML = emptyRow(5,'No invoices match those filters.'); return; }
+  tb.innerHTML = rows.map(function(i){
+    return '<tr>'
+      + '<td class="cust">'+i.customer+'</td>'
+      + '<td class="job-sub">'+i.job+'</td>'
+      + '<td class="num amt">'+money(i.amount)+'</td>'
+      + '<td>'+i.date+'</td>'
+      + '<td><span class="status-pill '+statusClass(i.status)+'">'+i.status+'</span></td>'
+      + '</tr>';
+  }).join('');
+}
+function renderEstimates(){
+  var sf = document.getElementById('estStatusFilter').value;
+  var rows = ESTIMATES.filter(function(e){ return sf==='all' || e.status===sf; });
+  var tb = document.getElementById('estimateRows');
+  if(!rows.length){ tb.innerHTML = emptyRow(5,'No estimates match that status.'); return; }
+  tb.innerHTML = rows.map(function(e){
+    return '<tr>'
+      + '<td class="cust">'+e.customer+'</td>'
+      + '<td class="job-sub">'+e.job+'</td>'
+      + '<td class="num amt">'+money(e.amount)+'</td>'
+      + '<td>'+e.date+'</td>'
+      + '<td><span class="status-pill '+statusClass(e.status)+'">'+e.status+'</span></td>'
+      + '</tr>';
+  }).join('');
+}
+
+// ─────────────────────────────────────────────────────────────
+// PROJECTS
+// ─────────────────────────────────────────────────────────────
+function renderProjects(){
+  var svc = document.getElementById('projServiceFilter').value;
+  var df  = document.getElementById('projDateFilter').value;
+  var mf  = document.getElementById('projMarginFilter').value;
+  var rows = PROJECTS.filter(function(p){
+    var margin = (p.revenue - p.cost) / p.revenue * 100;
+    if(svc!=='all' && p.service!==svc) return false;
+    if(df!=='all' && p.daysAgo > parseInt(df,10)) return false;
+    if(mf==='high' && margin < 45) return false;
+    if(mf==='low'  && margin >= 45) return false;
+    return true;
+  });
+  var tb = document.getElementById('projectRows');
+  if(!rows.length){ tb.innerHTML = emptyRow(5,'No jobs match those filters.'); return; }
+  tb.innerHTML = rows.map(function(p){
+    var margin = Math.round((p.revenue - p.cost) / p.revenue * 100);
+    var color = margin >= 50 ? '#3b6d11' : (margin >= 35 ? '#C9922A' : '#b91c1c');
+    return '<tr>'
+      + '<td class="cust">'+p.job+'</td>'
+      + '<td class="job-sub">'+p.customer+'</td>'
+      + '<td class="num amt">'+money(p.revenue)+'</td>'
+      + '<td class="num">'+money(p.cost)+'</td>'
+      + '<td class="num"><div class="margin-bar">'
+      + '<div class="margin-track"><div class="margin-fill" style="width:'+Math.max(margin,4)+'%;background:'+color+'"></div></div>'
+      + '<span class="margin-pct" style="color:'+color+'">'+margin+'%</span></div></td>'
+      + '</tr>';
+  }).join('');
+}
+function emptyRow(cols,msg){
+  return '<tr><td colspan="'+cols+'" style="text-align:center;color:var(--slate);padding:1.75rem">'+msg+'</td></tr>';
+}
+
+// ─────────────────────────────────────────────────────────────
+// QBO + REFRESH (placeholders)
+// ─────────────────────────────────────────────────────────────
+function connectQBO(){
+  // Placeholder — real flow shares Donna's QBO OAuth (donna_qbo_tokens)
+  var b = document.getElementById('qboBanner');
+  b.innerHTML = '<span style="font-size:1.1rem">✓</span><div class="qb-txt">'
+    + '<strong style="color:var(--green)">QuickBooks connected.</strong> '
+    + 'In the live version, your real numbers would load here. This preview keeps showing sample data.</div>';
+}
+function refreshData(){
+  var el = document.getElementById('lastUpdated');
+  el.textContent = 'Refreshing…';
+  setTimeout(function(){ el.textContent = 'Updated just now'; }, 700);
+}
+
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
+buildCharts();
+updateKPIs();
+renderInvoices();
+renderEstimates();
+renderProjects();
+window.addEventListener('resize', resizeCharts);
+</script>
+</body>
+</html>

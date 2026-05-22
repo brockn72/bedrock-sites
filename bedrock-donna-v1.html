@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bedrock Donna — Donna handles the paperwork</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 68 68'%3E%3Crect width='68' height='68' rx='14' fill='%230D1B2E'/%3E%3Cpath d='M12,9 A32,25.5 0 0 1 44,34.5' fill='none' stroke='%23F0C46A' stroke-width='10'/%3E%3Cpath d='M44,34.5 A32,25.5 0 0 1 12,60' fill='none' stroke='%232E5A8E' stroke-width='10'/%3E%3Crect x='7' y='4.25' width='10' height='60.35' fill='%23C9922A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy-deep:#0D1B2E;--navy:#1B3557;--navy-mid:#2E5A8E;
+  --gold:#C9922A;--gold-light:#D4A843;
+  --off-white:#FAF7F2;--white:#FFFFFF;--slate:#4A5568;--cream:#F5E6C8;
+  --border-light:rgba(13,27,46,0.1);--border-dark:rgba(255,255,255,0.12);
+  --muted-light:rgba(255,255,255,0.45);--muted-dark:rgba(13,27,46,0.35);
+  --red:#b91c1c;--red-bg:#fef2f2;--green:#3b6d11;--green-bg:#f0f5ea;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy-deep);min-height:100vh;display:flex;flex-direction:column;line-height:1.5}
+
+/* ── NAV ── */
+nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;align-items:center;padding:0.85rem 2rem;border-bottom:3px solid var(--gold);flex-shrink:0;position:sticky;top:0;z-index:50;gap:1rem;flex-wrap:wrap}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-strata{display:flex;flex-direction:column;gap:3px;flex-shrink:0}
+.nav-strata span{height:5px;border-radius:1px}
+.nav-strata span:nth-child(1){width:26px;background:var(--gold)}
+.nav-strata span:nth-child(2){width:20px;background:#A8711A}
+.nav-strata span:nth-child(3){width:30px;background:#2E5A8E}
+.nav-strata span:nth-child(4){width:22px;background:#4A7DB5}
+.nav-wm{display:flex;flex-direction:column;line-height:1}
+.nav-wm .wordmark{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;letter-spacing:-0.02em;color:var(--cream)}
+.nav-wm .sub{font-size:0.52rem;font-weight:500;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin-top:3px}
+.nav-product{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.55);border-left:1px solid rgba(255,255,255,0.15);padding-left:0.85rem;margin-left:0.85rem}
+.nav-right{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+.tnav-link{font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;padding:0.5rem 0.75rem;border-radius:6px;display:inline-flex;align-items:center;gap:0.4rem;transition:color .15s,background .15s;cursor:pointer}
+.tnav-link:hover{color:#fff;background:rgba(255,255,255,0.07)}
+.tnav-link.tnav-active{color:var(--gold)}
+.tnav-link.tnav-home{color:var(--gold);border:1px solid rgba(201,146,42,0.55)}
+.tnav-link.tnav-home:hover{background:rgba(201,146,42,0.12);color:var(--gold)}
+
+/* ── PAGES ── */
+.page{display:none}
+.page.active{display:block}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+
+/* ── HERO / CONNECT ── */
+section.hero{background:var(--navy-deep);color:#fff;padding:3.5rem 0 4rem;position:relative;overflow:hidden}
+section.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 25%,rgba(27,53,87,0.5) 0%,transparent 55%),radial-gradient(ellipse at 85% 85%,rgba(201,146,42,0.07) 0%,transparent 42%);pointer-events:none}
+.hero-inner{position:relative;z-index:1;text-align:center;max-width:720px;margin:0 auto}
+.eyebrow{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;letter-spacing:0.28em;text-transform:uppercase;color:var(--muted-light);margin-bottom:1.1rem}
+.eyebrow.light{color:var(--muted-dark)}
+h1.hero-h{font-family:'Cormorant Garamond',serif;font-size:clamp(2.1rem,4.4vw,3.3rem);font-weight:700;line-height:1.12;color:var(--cream);margin-bottom:1.1rem}
+h1.hero-h em{font-style:italic;color:var(--gold)}
+p.hero-sub{font-family:'DM Sans',sans-serif;font-size:clamp(0.95rem,1.4vw,1.05rem);line-height:1.75;color:rgba(255,255,255,0.78);margin-bottom:2rem}
+
+/* connect cards */
+.connect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;max-width:760px;margin:0 auto;text-align:left}
+@media(max-width:720px){.connect-grid{grid-template-columns:1fr}}
+.connect-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:1.4rem 1.35rem;display:flex;flex-direction:column;gap:0.65rem}
+.connect-card .cc-icon{width:42px;height:42px;border-radius:8px;background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.connect-card h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:#fff}
+.connect-card p{font-size:0.76rem;color:rgba(255,255,255,0.6);line-height:1.6;flex:1}
+.cc-status{font-size:0.55rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+.cc-status.connected{color:#7bbf4a}
+
+/* ── BUTTONS ── */
+.btn-gold{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:0.85rem 1.6rem;cursor:pointer;border-radius:4px;transition:background .2s;display:inline-block;text-decoration:none;text-align:center;line-height:1}
+.btn-gold:hover{background:var(--gold-light)}
+.btn-gold.full{width:100%}
+.btn-dark{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;background:var(--navy-deep);color:#fff;border:none;padding:0.72rem 1.3rem;cursor:pointer;border-radius:4px;transition:background .2s;text-decoration:none;display:inline-block;text-align:center;line-height:1}
+.btn-dark:hover{background:var(--navy)}
+.btn-outline{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:var(--navy);border:1px solid rgba(27,53,87,0.3);padding:0.72rem 1.3rem;cursor:pointer;border-radius:4px;transition:all .2s;text-decoration:none;display:inline-block;text-align:center;line-height:1}
+.btn-outline:hover{border-color:var(--navy-deep);background:rgba(13,27,46,0.04)}
+.btn-ghost-dark{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.25);padding:0.72rem 1.3rem;cursor:pointer;border-radius:4px;transition:all .2s;text-decoration:none;display:inline-block}
+.btn-ghost-dark:hover{border-color:var(--gold);color:var(--gold)}
+.btn-connect{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;background:#fff;color:var(--navy-deep);border:none;padding:0.7rem 1rem;cursor:pointer;border-radius:5px;transition:all .15s;width:100%}
+.btn-connect:hover{background:var(--gold);color:#fff}
+.btn-connect.done{background:rgba(123,191,74,0.15);color:#7bbf4a;cursor:default}
+
+/* ── ONBOARDING ── */
+.onboard-wrap{max-width:560px;margin:0 auto;padding:3.5rem 0 5rem}
+.onboard-card{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);padding:2.5rem 2.5rem 2.25rem;border-radius:0}
+.onboard-progress{display:flex;gap:6px;margin-bottom:1.75rem}
+.onboard-progress span{height:4px;flex:1;background:var(--border-light);border-radius:2px;transition:background .25s}
+.onboard-progress span.done{background:var(--gold)}
+.onboard-q-num{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--gold);margin-bottom:0.4rem}
+.onboard-card h2{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:var(--navy-deep);margin-bottom:0.4rem;line-height:1.2}
+.onboard-card .oq-sub{font-size:0.84rem;color:var(--slate);line-height:1.6;margin-bottom:1.5rem}
+.donna-aside{display:flex;gap:0.6rem;align-items:flex-start;background:var(--off-white);border-left:3px solid var(--gold);padding:0.75rem 0.9rem;border-radius:4px;margin-bottom:1.5rem}
+.donna-aside .da-av{flex-shrink:0}
+.donna-aside p{font-size:0.78rem;color:var(--slate);font-style:italic;line-height:1.55}
+.input-big{font-family:'DM Sans',sans-serif;font-size:1rem;width:100%;padding:0.85rem 1rem;border:1px solid var(--border-light);background:#fff;color:var(--navy-deep);outline:none;border-radius:8px;transition:border-color .2s}
+.input-big:focus{border-color:var(--navy-deep)}
+.input-prefix{display:flex;align-items:center;border:1px solid var(--border-light);border-radius:8px;overflow:hidden}
+.input-prefix span{padding:0 0.85rem;font-weight:600;color:var(--slate);background:var(--off-white);align-self:stretch;display:flex;align-items:center;font-size:0.95rem}
+.input-prefix input{border:none;flex:1;padding:0.85rem 1rem;font-size:1rem;font-family:inherit;outline:none}
+.onboard-actions{display:flex;justify-content:space-between;align-items:center;margin-top:1.75rem;gap:1rem}
+
+/* ── DONNA APP ── */
+.donna-app{display:grid;grid-template-columns:230px 1fr 360px;height:calc(100vh - 64px);min-height:520px}
+@media(max-width:1100px){.donna-app{grid-template-columns:200px 1fr}.d-panel{display:none}}
+@media(max-width:760px){.donna-app{grid-template-columns:1fr;height:auto}.d-sidebar{display:none}}
+
+/* sidebar */
+.d-sidebar{background:var(--navy-deep);color:#fff;padding:1.35rem 0;overflow-y:auto;border-right:1px solid rgba(255,255,255,0.05)}
+.d-side-label{font-size:0.55rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);padding:0 1.35rem;margin-bottom:0.65rem}
+.d-side-section{margin-bottom:1.4rem}
+.d-flow{display:flex;align-items:center;gap:0.7rem;width:100%;padding:0.62rem 1.35rem;background:transparent;border:none;color:rgba(255,255,255,0.72);font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;text-align:left;transition:all .14s;border-left:3px solid transparent}
+.d-flow:hover{background:rgba(255,255,255,0.04);color:#fff}
+.d-flow.active{background:rgba(201,146,42,0.13);color:var(--gold);border-left-color:var(--gold)}
+.d-flow .fic{width:18px;height:18px;flex-shrink:0;opacity:0.85}
+.d-side-card{margin:0 1rem;padding:0.9rem 1rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:8px}
+.d-side-card .dsc-row{display:flex;align-items:center;gap:0.55rem;font-size:0.72rem;color:rgba(255,255,255,0.7);margin-bottom:0.4rem}
+.d-side-card .dsc-row:last-child{margin-bottom:0}
+.d-side-card .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot.on{background:#7bbf4a}.dot.off{background:rgba(255,255,255,0.25)}
+
+/* chat */
+.d-chat{display:flex;flex-direction:column;background:var(--off-white);min-height:0}
+.d-chat-head{background:#fff;border-bottom:1px solid var(--border-light);padding:0.9rem 1.5rem;display:flex;align-items:center;gap:0.7rem;flex-shrink:0}
+.d-chat-head .dch-av{flex-shrink:0}
+.d-chat-head .dch-name{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--navy-deep);line-height:1.1}
+.d-chat-head .dch-status{font-size:0.66rem;color:var(--slate);display:flex;align-items:center;gap:5px}
+.d-chat-head .dch-status::before{content:'';width:7px;height:7px;border-radius:50%;background:#7bbf4a}
+.d-thread{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
+.msg{display:flex;gap:0.65rem;max-width:84%}
+.msg.user{align-self:flex-end;flex-direction:row-reverse}
+.msg-av{width:30px;height:30px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.msg-av.user{background:var(--navy);color:#fff;font-size:0.7rem;font-weight:700}
+.msg-bubble{padding:0.7rem 0.95rem;border-radius:12px;font-size:0.85rem;line-height:1.6}
+.msg.donna .msg-bubble{background:#fff;border:1px solid var(--border-light);border-top-left-radius:3px;color:var(--navy-deep)}
+.msg.user .msg-bubble{background:var(--navy-deep);color:#fff;border-top-right-radius:3px}
+.msg-bubble strong{font-weight:700}
+.msg-meta{font-size:0.6rem;color:var(--muted-dark);margin-top:3px}
+.msg-bubble .legal{font-size:0.72rem;color:var(--slate);font-style:italic;border-top:1px solid var(--border-light);margin-top:0.5rem;padding-top:0.5rem}
+.chip-row{display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.55rem}
+.chip{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:500;background:#fff;border:1px solid var(--border-light);color:var(--navy);padding:0.4rem 0.8rem;border-radius:999px;cursor:pointer;transition:all .14s}
+.chip:hover{border-color:var(--gold);color:var(--gold)}
+.typing{display:flex;gap:4px;padding:0.8rem 1rem}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--muted-dark);animation:tb 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.18s}.typing span:nth-child(3){animation-delay:.36s}
+@keyframes tb{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+
+/* composer */
+.d-composer{background:#fff;border-top:1px solid var(--border-light);padding:0.85rem 1.25rem;flex-shrink:0}
+.d-composer-row{display:flex;gap:0.55rem;align-items:flex-end}
+.d-composer textarea{flex:1;resize:none;font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:0.65rem 0.85rem;border:1px solid var(--border-light);border-radius:8px;outline:none;max-height:120px;line-height:1.5}
+.d-composer textarea:focus{border-color:var(--navy-deep)}
+.icon-btn{width:42px;height:42px;border-radius:8px;border:1px solid var(--border-light);background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;color:var(--slate)}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold)}
+.icon-btn.send{background:var(--gold);border-color:var(--gold);color:#fff}
+.icon-btn.send:hover{background:var(--gold-light)}
+.icon-btn.mic.recording{background:var(--red);border-color:var(--red);color:#fff;animation:pulseRec 1.2s infinite}
+@keyframes pulseRec{50%{opacity:.6}}
+.composer-hint{font-size:0.62rem;color:var(--muted-dark);margin-top:0.4rem;text-align:center}
+
+/* action panel */
+.d-panel{background:#fff;border-left:1px solid var(--border-light);overflow-y:auto;display:flex;flex-direction:column}
+.d-panel-head{padding:1rem 1.25rem;border-bottom:1px solid var(--border-light);flex-shrink:0}
+.d-panel-head .dph-eyebrow{font-size:0.55rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted-dark);margin-bottom:0.2rem}
+.d-panel-head .dph-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--navy-deep);line-height:1.15}
+.d-panel-body{padding:1.25rem;flex:1}
+
+/* panel: default helper */
+.flow-card{display:flex;gap:0.7rem;align-items:flex-start;padding:0.85rem;border:1px solid var(--border-light);border-radius:8px;margin-bottom:0.6rem;cursor:pointer;transition:all .15s;background:#fff;width:100%;text-align:left;font:inherit}
+.flow-card:hover{border-color:var(--gold);transform:translateY(-1px);box-shadow:0 4px 12px rgba(13,27,46,0.05)}
+.flow-card .fc-ic{width:34px;height:34px;border-radius:7px;background:var(--off-white);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--gold)}
+.flow-card .fc-t{font-size:0.84rem;font-weight:600;color:var(--navy-deep);margin-bottom:1px}
+.flow-card .fc-s{font-size:0.72rem;color:var(--slate);line-height:1.45}
+
+/* empty state */
+.empty-state{text-align:center;padding:1.5rem 0.5rem}
+.empty-state .es-ic{width:54px;height:54px;border-radius:12px;background:var(--off-white);display:flex;align-items:center;justify-content:center;margin:0 auto 0.85rem;color:var(--gold)}
+.empty-state h4{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--navy-deep);margin-bottom:0.3rem}
+.empty-state p{font-size:0.78rem;color:var(--slate);line-height:1.6;margin-bottom:1.1rem}
+
+/* draft / approval card */
+.draft{border:1px solid var(--border-light);border-radius:8px;overflow:hidden}
+.draft-head{background:var(--navy-deep);color:#fff;padding:0.9rem 1.1rem}
+.draft-head .dh-type{font-size:0.55rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:2px}
+.draft-head .dh-title{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600}
+.draft-head .dh-meta{font-size:0.68rem;color:rgba(255,255,255,0.6);margin-top:2px}
+.draft-body{padding:1rem 1.1rem;background:#fff}
+.li-row{display:flex;justify-content:space-between;gap:0.75rem;padding:0.5rem 0;border-bottom:1px dashed var(--border-light);font-size:0.78rem}
+.li-row:last-of-type{border-bottom:none}
+.li-desc{color:var(--navy-deep)}
+.li-desc small{display:block;color:var(--slate);font-size:0.68rem}
+.li-amt{font-weight:600;color:var(--navy-deep);white-space:nowrap}
+.draft-totals{margin-top:0.55rem;border-top:1px solid var(--border-light);padding-top:0.6rem}
+.tot-row{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--slate);padding:0.16rem 0}
+.tot-row.grand{font-size:0.95rem;font-weight:700;color:var(--navy-deep);border-top:1px solid var(--border-light);margin-top:0.3rem;padding-top:0.5rem}
+.draft-note{font-size:0.7rem;color:var(--slate);font-style:italic;background:var(--off-white);padding:0.55rem 0.7rem;border-radius:5px;margin-top:0.7rem;line-height:1.5}
+.approval-row{display:flex;gap:0.5rem;padding:0.9rem 1.1rem;background:var(--off-white);border-top:1px solid var(--border-light)}
+.btn-approve{flex:1;font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--green);color:#fff;border:none;padding:0.7rem;border-radius:5px;cursor:pointer;transition:opacity .15s}
+.btn-approve:hover{opacity:0.88}
+.btn-edit{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#fff;color:var(--navy);border:1px solid var(--border-light);padding:0.7rem 0.9rem;border-radius:5px;cursor:pointer}
+.btn-edit:hover{border-color:var(--navy)}
+.btn-reject{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;background:#fff;color:var(--red);border:1px solid var(--border-light);padding:0.7rem 0.9rem;border-radius:5px;cursor:pointer}
+.btn-reject:hover{border-color:var(--red);background:var(--red-bg)}
+.approval-banner{font-size:0.68rem;color:var(--slate);text-align:center;padding:0.5rem 1.1rem;background:#fff8e6;border-top:1px solid var(--border-light)}
+
+/* receipt drop */
+.receipt-drop{border:2px dashed var(--border-light);border-radius:10px;padding:1.5rem 1rem;text-align:center;cursor:pointer;transition:border-color .15s;background:var(--off-white)}
+.receipt-drop:hover{border-color:var(--gold)}
+
+/* mini form */
+.mini-field{margin-bottom:0.7rem}
+.mini-field label{display:block;font-size:0.58rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--slate);margin-bottom:4px}
+.mini-field input{width:100%;padding:0.6rem 0.75rem;border:1px solid var(--border-light);border-radius:6px;font-size:0.82rem;font-family:inherit;outline:none}
+.mini-field input:focus{border-color:var(--navy-deep)}
+
+/* mobile workflow strip */
+.m-flowstrip{display:none}
+@media(max-width:760px){
+  .m-flowstrip{display:flex;gap:0.4rem;overflow-x:auto;padding:0.7rem 1rem;background:var(--navy-deep);scrollbar-width:none}
+  .m-flowstrip::-webkit-scrollbar{display:none}
+  .m-flowstrip .chip{white-space:nowrap;background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.12);color:rgba(255,255,255,0.85)}
+  .d-thread{max-height:60vh}
+}
+
+/* notebox */
+.notebox{padding:0.8rem 1rem;background:#fff;border-left:3px solid var(--navy-deep);font-size:0.76rem;color:var(--slate);line-height:1.55;border-radius:4px}
+.notebox.warn{background:#fff8e6;border-left-color:#d49019}
+
+footer{background:var(--navy-deep);color:rgba(255,255,255,0.55);padding:1.25rem 0;text-align:center;font-size:0.72rem;flex-shrink:0}
+footer a{color:var(--gold);text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- ── SUB-BRAND MARK SYMBOLS (from bedrock-subbrands-v9.html) ── -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <clipPath id="rightOfStem"><rect x="17" y="0" width="51" height="68"/></clipPath>
+  <symbol id="mark-f" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g clip-path="url(#rightOfStem)">
+      <rect x="7" y="8"  width="45" height="10" fill="#F0C46A"/>
+      <rect x="7" y="29" width="37" height="10" fill="#2E5A8E"/>
+    </g>
+    <rect x="7" y="8" width="10" height="52" fill="#C9922A"/>
+  </symbol>
+  <symbol id="mark-d" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g clip-path="url(#rightOfStem)" fill="none" stroke-width="10" stroke-linecap="butt">
+      <path d="M12,9 A32,25.5 0 0 1 44,34.5" stroke="#F0C46A"/>
+      <path d="M44,34.5 A32,25.5 0 0 1 12,60" stroke="#2E5A8E"/>
+    </g>
+    <rect x="7" y="4.25" width="10" height="60.35" fill="#C9922A"/>
+  </symbol>
+</svg>
+
+<nav class="top">
+  <a href="/portal.html" class="nav-logo">
+    <div class="nav-strata"><span></span><span></span><span></span><span></span></div>
+    <div class="nav-wm">
+      <span class="wordmark">Bedrock</span>
+      <span class="sub">Digital</span>
+    </div>
+    <span class="nav-product">Operations · Donna</span>
+  </a>
+  <div class="nav-right">
+    <a href="/portal.html" class="tnav-link tnav-home" title="My Portal">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      My Portal
+    </a>
+    <a href="/bedrock-website-v1.html" class="tnav-link">My Website</a>
+    <a href="/bedrock-marketing-v1.html" class="tnav-link">Marketing</a>
+    <a href="/bedrock-donna-v1.html" class="tnav-link tnav-active">Donna</a>
+    <a href="/bedrock-finance-v1.html" class="tnav-link">Finance</a>
+  </div>
+</nav>
+
+<main style="flex:1;display:flex;flex-direction:column">
+
+<!-- ╭──────────────────────────────────────────────╮ -->
+<!-- │ PAGE 1 — CONNECT                             │ -->
+<!-- ╰──────────────────────────────────────────────╯ -->
+<div id="pageConnect" class="page active">
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="eyebrow">Bedrock Operations · Donna</div>
+        <h1 class="hero-h">Meet Donna.<br><em>She handles the paperwork.</em></h1>
+        <p class="hero-sub">Estimates, invoices, receipts, scheduling &mdash; the stuff that piles up on the dashboard of your truck. Tell Donna what you need, she drafts it, you approve it. Nothing goes out without your say-so.</p>
+        <div class="connect-grid">
+          <div class="connect-card">
+            <div class="cc-icon">📊</div>
+            <h3>QuickBooks</h3>
+            <p>So your estimates, invoices, and expenses land in your books automatically.</p>
+            <span class="cc-status" id="st-qbo">Not connected</span>
+            <button class="btn-connect" id="btn-qbo" onclick="connectService('qbo')">Connect QuickBooks</button>
+          </div>
+          <div class="connect-card">
+            <div class="cc-icon">✉️</div>
+            <h3>Gmail</h3>
+            <p>So Donna can send estimates and invoices from your own email address.</p>
+            <span class="cc-status" id="st-gmail">Not connected</span>
+            <button class="btn-connect" id="btn-gmail" onclick="connectService('gmail')">Connect Gmail</button>
+          </div>
+          <div class="connect-card">
+            <div class="cc-icon">📅</div>
+            <h3>Calendar</h3>
+            <p>So scheduled jobs show up on your calendar and customers get reminders.</p>
+            <span class="cc-status" id="st-cal">Not connected</span>
+            <button class="btn-connect" id="btn-cal" onclick="connectService('cal')">Connect Calendar</button>
+          </div>
+        </div>
+        <div style="margin-top:2rem;display:flex;gap:0.65rem;justify-content:center;flex-wrap:wrap">
+          <button class="btn-gold" onclick="showPage('pageOnboard')">Continue &rarr;</button>
+          <button class="btn-ghost-dark" onclick="showPage('pageOnboard')">Skip for now</button>
+        </div>
+        <p style="font-size:0.68rem;color:rgba(255,255,255,0.4);margin-top:1rem">You can connect these anytime from inside Donna. Connections are placeholders in this preview.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ╭──────────────────────────────────────────────╮ -->
+<!-- │ PAGE 2 — ONBOARDING Q&A                      │ -->
+<!-- ╰──────────────────────────────────────────────╯ -->
+<div id="pageOnboard" class="page">
+  <div class="container">
+    <div class="onboard-wrap">
+      <div class="onboard-card">
+        <div class="onboard-progress">
+          <span id="op-1" class="done"></span><span id="op-2"></span><span id="op-3"></span>
+        </div>
+
+        <div class="onboard-q" id="oq-1">
+          <div class="onboard-q-num">Question 1 of 3</div>
+          <h2>What's your standard labor rate?</h2>
+          <p class="oq-sub">Per hour. Donna uses this as the starting point on every estimate &mdash; you can always change it on a specific job.</p>
+          <div class="donna-aside">
+            <svg class="da-av" width="26" height="26" viewBox="0 0 68 68"><use href="#mark-d"/></svg>
+            <p>"Don't overthink it &mdash; give me your usual number and I'll work from there."</p>
+          </div>
+          <div class="input-prefix">
+            <span>$</span><input id="ob_labor" type="number" placeholder="65" inputmode="decimal">
+          </div>
+          <div class="onboard-actions">
+            <span></span>
+            <button class="btn-gold" onclick="onboardNext(1)">Next &rarr;</button>
+          </div>
+        </div>
+
+        <div class="onboard-q" id="oq-2" style="display:none">
+          <div class="onboard-q-num">Question 2 of 3</div>
+          <h2>Do you mark up materials?</h2>
+          <p class="oq-sub">If you add a percentage on top of what materials cost you, put it here. Leave it blank if you bill materials at cost.</p>
+          <div class="donna-aside">
+            <svg class="da-av" width="26" height="26" viewBox="0 0 68 68"><use href="#mark-d"/></svg>
+            <p>"Most contractors I work with run somewhere between 15% and 25%. Whatever's yours."</p>
+          </div>
+          <div class="input-prefix">
+            <input id="ob_markup" type="number" placeholder="18" inputmode="decimal" style="text-align:right"><span>%</span>
+          </div>
+          <div class="onboard-actions">
+            <button class="btn-outline" onclick="onboardBack(2)">&larr; Back</button>
+            <button class="btn-gold" onclick="onboardNext(2)">Next &rarr;</button>
+          </div>
+        </div>
+
+        <div class="onboard-q" id="oq-3" style="display:none">
+          <div class="onboard-q-num">Question 3 of 3</div>
+          <h2>Any standard fees you charge?</h2>
+          <p class="oq-sub">Travel, cleanup, dump runs, trip charges &mdash; whatever you tack on regularly. Donna will offer to add them when they fit.</p>
+          <div class="donna-aside">
+            <svg class="da-av" width="26" height="26" viewBox="0 0 68 68"><use href="#mark-d"/></svg>
+            <p>"Tell me once. After that I'll ask before adding them &mdash; never just slap them on."</p>
+          </div>
+          <div class="mini-field"><label>Travel fee</label><div class="input-prefix"><span>$</span><input id="ob_travel" type="number" placeholder="75" inputmode="decimal"></div></div>
+          <div class="mini-field" style="margin-top:0.7rem"><label>Cleanup fee</label><div class="input-prefix"><span>$</span><input id="ob_cleanup" type="number" placeholder="50" inputmode="decimal"></div></div>
+          <div class="onboard-actions">
+            <button class="btn-outline" onclick="onboardBack(3)">&larr; Back</button>
+            <button class="btn-gold" onclick="finishOnboard()">Start using Donna &rarr;</button>
+          </div>
+        </div>
+      </div>
+      <p style="text-align:center;font-size:0.72rem;color:var(--slate);margin-top:1rem">Donna learns the rest as you go. No giant setup form.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ╭──────────────────────────────────────────────╮ -->
+<!-- │ PAGE 3 — DONNA APP                           │ -->
+<!-- ╰──────────────────────────────────────────────╯ -->
+<div id="pageApp" class="page">
+  <div class="donna-app">
+
+    <!-- SIDEBAR -->
+    <aside class="d-sidebar">
+      <div class="d-side-section">
+        <div class="d-side-label">Start a job</div>
+        <button class="d-flow active" data-flow="chat" onclick="startWorkflow('chat')">
+          <svg class="fic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Chat with Donna</span>
+        </button>
+        <button class="d-flow" data-flow="customer" onclick="startWorkflow('customer')">
+          <svg class="fic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+          <span>New Customer</span>
+        </button>
+        <button class="d-flow" data-flow="estimate" onclick="startWorkflow('estimate')">
+          <svg class="fic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+          <span>New Estimate</span>
+        </button>
+        <button class="d-flow" data-flow="invoice" onclick="startWorkflow('invoice')">
+          <svg class="fic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          <span>New Invoice</span>
+        </button>
+        <button class="d-flow" data-flow="receipt" onclick="startWorkflow('receipt')">
+          <svg class="fic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 1 1V2l-1 1-3-2-3 2-3-2-3 2z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/></svg>
+          <span>Upload Receipt</span>
+        </button>
+        <button class="d-flow" data-flow="schedule" onclick="startWorkflow('schedule')">
+          <svg class="fic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Schedule Job</span>
+        </button>
+      </div>
+
+      <div class="d-side-section">
+        <div class="d-side-label">Connections</div>
+        <div class="d-side-card">
+          <div class="dsc-row"><span class="dot off" id="sd-qbo"></span> QuickBooks</div>
+          <div class="dsc-row"><span class="dot off" id="sd-gmail"></span> Gmail</div>
+          <div class="dsc-row"><span class="dot off" id="sd-cal"></span> Calendar</div>
+        </div>
+      </div>
+
+      <div class="d-side-section">
+        <div class="d-side-label">Account</div>
+        <a class="d-flow" href="/portal.html" style="text-decoration:none">
+          <svg class="fic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg>
+          <span>Back to Portal</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- CHAT -->
+    <section class="d-chat">
+      <div class="d-chat-head">
+        <svg class="dch-av" width="34" height="34" viewBox="0 0 68 68"><use href="#mark-d"/></svg>
+        <div>
+          <div class="dch-name">Donna</div>
+          <div class="dch-status">Ready when you are</div>
+        </div>
+      </div>
+
+      <div class="m-flowstrip">
+        <button class="chip" onclick="startWorkflow('customer')">+ Customer</button>
+        <button class="chip" onclick="startWorkflow('estimate')">+ Estimate</button>
+        <button class="chip" onclick="startWorkflow('invoice')">+ Invoice</button>
+        <button class="chip" onclick="startWorkflow('receipt')">Upload Receipt</button>
+        <button class="chip" onclick="startWorkflow('schedule')">Schedule Job</button>
+      </div>
+
+      <div class="d-thread" id="thread"></div>
+
+      <div class="d-composer">
+        <div class="d-composer-row">
+          <button class="icon-btn mic" id="micBtn" onclick="toggleMic()" title="Talk to Donna">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+          </button>
+          <textarea id="composer" rows="1" placeholder="Tell Donna what you need — &quot;New estimate for Joe Smith, 600 sq ft paver patio&quot;" onkeydown="composerKey(event)" oninput="autoGrow(this)"></textarea>
+          <button class="icon-btn send" onclick="sendDonna()" title="Send">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+        <div class="composer-hint">Donna drafts everything &mdash; nothing sends until you approve it.</div>
+      </div>
+    </section>
+
+    <!-- ACTION PANEL -->
+    <aside class="d-panel">
+      <div class="d-panel-head">
+        <div class="dph-eyebrow" id="panelEyebrow">Action panel</div>
+        <div class="dph-title" id="panelTitle">What can Donna do?</div>
+      </div>
+      <div class="d-panel-body" id="panelBody"></div>
+    </aside>
+
+  </div>
+</div>
+
+</main>
+
+<footer>
+  Bedrock Operations · Donna &mdash; rough draft preview. <a href="/portal.html">Back to Portal</a>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────
+var STATE = {
+  connections: { qbo:false, gmail:false, cal:false },
+  prefs: { labor:65, markup:18, travel:75, cleanup:50 },
+  workflow: 'chat',
+  greeted: false
+};
+
+// mock customer + job library so the UI feels lived-in
+var MOCK = {
+  customer: { name:'Joe Smith', phone:'(414) 555-0174', email:'joe.smith@email.com', address:'1820 Oak Ridge Dr, Menomonee Falls, WI' },
+  recentCustomers: ['Joe Smith', 'Anderson Property', 'Rivera Household', 'Flores Residence']
+};
+
+// ─────────────────────────────────────────────────────────────
+// PAGE NAV
+// ─────────────────────────────────────────────────────────────
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  var el = document.getElementById(id); if(el) el.classList.add('active');
+  try{ window.scrollTo({top:0,behavior:'instant'}); }catch(e){ window.scrollTo(0,0); }
+  if(id==='pageApp' && !STATE.greeted){ greet(); STATE.greeted = true; }
+}
+
+// ─────────────────────────────────────────────────────────────
+// CONNECT SCREEN
+// ─────────────────────────────────────────────────────────────
+function connectService(svc){
+  // Placeholder — real OAuth flow wired later (qbo-auth.js / Google OAuth)
+  STATE.connections[svc] = true;
+  var label = { qbo:'QuickBooks', gmail:'Gmail', cal:'Calendar' }[svc];
+  var stEl = { qbo:'st-qbo', gmail:'st-gmail', cal:'st-cal' }[svc];
+  var btnEl = { qbo:'btn-qbo', gmail:'btn-gmail', cal:'btn-cal' }[svc];
+  var s = document.getElementById(stEl); s.textContent = 'Connected'; s.classList.add('connected');
+  var b = document.getElementById(btnEl); b.textContent = '✓ ' + label + ' connected'; b.classList.add('done'); b.disabled = true;
+  syncConnectionDots();
+}
+function syncConnectionDots(){
+  ['qbo','gmail','cal'].forEach(function(k){
+    var d = document.getElementById('sd-'+k);
+    if(d){ d.className = 'dot ' + (STATE.connections[k] ? 'on' : 'off'); }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// ONBOARDING
+// ─────────────────────────────────────────────────────────────
+function onboardNext(step){
+  document.getElementById('oq-'+step).style.display = 'none';
+  document.getElementById('oq-'+(step+1)).style.display = 'block';
+  document.getElementById('op-'+(step+1)).classList.add('done');
+}
+function onboardBack(step){
+  document.getElementById('oq-'+step).style.display = 'none';
+  document.getElementById('oq-'+(step-1)).style.display = 'block';
+  document.getElementById('op-'+step).classList.remove('done');
+}
+function finishOnboard(){
+  STATE.prefs.labor   = parseFloat(document.getElementById('ob_labor').value)   || 65;
+  STATE.prefs.markup  = parseFloat(document.getElementById('ob_markup').value)  || 18;
+  STATE.prefs.travel  = parseFloat(document.getElementById('ob_travel').value)  || 75;
+  STATE.prefs.cleanup = parseFloat(document.getElementById('ob_cleanup').value) || 50;
+  showPage('pageApp');
+}
+
+// ─────────────────────────────────────────────────────────────
+// CHAT
+// ─────────────────────────────────────────────────────────────
+function nowTime(){
+  var d = new Date();
+  var h = d.getHours(), m = d.getMinutes();
+  var ap = h >= 12 ? 'PM' : 'AM'; h = h % 12 || 12;
+  return h + ':' + (m<10?'0':'') + m + ' ' + ap;
+}
+function addMsg(who, html, opts){
+  opts = opts || {};
+  var thread = document.getElementById('thread');
+  var wrap = document.createElement('div');
+  wrap.className = 'msg ' + who;
+  var av = who === 'donna'
+    ? '<svg class="msg-av" width="30" height="30" viewBox="0 0 68 68"><use href="#mark-d"/></svg>'
+    : '<div class="msg-av user">You</div>';
+  var chips = '';
+  if(opts.chips && opts.chips.length){
+    chips = '<div class="chip-row">' + opts.chips.map(function(c){
+      return '<button class="chip" onclick="chipClick(this,\''+ c.action +'\')">'+ c.label +'</button>';
+    }).join('') + '</div>';
+  }
+  wrap.innerHTML = av + '<div><div class="msg-bubble">'+ html + chips +'</div><div class="msg-meta">'+ (who==='donna'?'Donna':'You') +' · '+ nowTime() +'</div></div>';
+  thread.appendChild(wrap);
+  thread.scrollTop = thread.scrollHeight;
+}
+function showTyping(){
+  var thread = document.getElementById('thread');
+  var wrap = document.createElement('div');
+  wrap.className = 'msg donna'; wrap.id = 'typingMsg';
+  wrap.innerHTML = '<svg class="msg-av" width="30" height="30" viewBox="0 0 68 68"><use href="#mark-d"/></svg>'
+    + '<div class="msg-bubble" style="padding:0"><div class="typing"><span></span><span></span><span></span></div></div>';
+  thread.appendChild(wrap);
+  thread.scrollTop = thread.scrollHeight;
+}
+function clearTyping(){
+  var t = document.getElementById('typingMsg'); if(t) t.remove();
+}
+function donnaReply(html, opts){
+  showTyping();
+  setTimeout(function(){ clearTyping(); addMsg('donna', html, opts); }, 750);
+}
+
+function greet(){
+  addMsg('donna',
+    "Hey boss &mdash; I'm Donna. I handle the paperwork so you can stay on the job. "
+    + "Tell me what you need in plain words, or tap one of the buttons. I'll draft it, you approve it."
+    + '<div class="legal">Donna may make mistakes. You\'re responsible for reviewing and approving all estimates, '
+    + 'invoices, and communications before they\'re sent. Donna does not provide accounting, legal, or tax advice.</div>',
+    { chips:[
+      { label:'New estimate', action:'estimate' },
+      { label:'New invoice', action:'invoice' },
+      { label:'Add a customer', action:'customer' }
+    ]});
+}
+
+function composerKey(e){
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendDonna(); }
+}
+function autoGrow(el){ el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight,120) + 'px'; }
+
+function sendDonna(){
+  var box = document.getElementById('composer');
+  var text = (box.value || '').trim();
+  if(!text) return;
+  addMsg('user', escapeHtml(text));
+  box.value = ''; autoGrow(box);
+  routeIntent(text.toLowerCase());
+}
+
+function chipClick(btn, action){
+  addMsg('user', escapeHtml(btn.textContent));
+  if(['estimate','invoice','customer','receipt','schedule'].indexOf(action) !== -1){
+    startWorkflow(action, true);
+  } else if(action === 'send'){
+    donnaReply("Sent. The customer's got it now, and I logged it in QuickBooks. <strong>Already handled it, boss.</strong> 😉");
+  } else if(action === 'travel'){
+    donnaReply("Good call &mdash; added your $"+STATE.prefs.travel+" travel fee. Take a look at the updated estimate on the right.");
+  } else {
+    donnaReply("On it.");
+  }
+}
+
+// very simple keyword router for the rough draft
+function routeIntent(t){
+  if(/(estimate|bid|quote)/.test(t)){ startWorkflow('estimate', true); return; }
+  if(/invoice|bill/.test(t)){ startWorkflow('invoice', true); return; }
+  if(/(new customer|add (a )?customer|customer)/.test(t)){ startWorkflow('customer', true); return; }
+  if(/receipt|expense/.test(t)){ startWorkflow('receipt', true); return; }
+  if(/(schedule|book|appointment|calendar)/.test(t)){ startWorkflow('schedule', true); return; }
+  donnaReply(
+    "Got it. I can put together an <strong>estimate</strong>, draft an <strong>invoice</strong>, save a "
+    + "<strong>new customer</strong>, file a <strong>receipt</strong>, or get a job <strong>on the calendar</strong>. "
+    + "Which one are we doing?",
+    { chips:[
+      { label:'Estimate', action:'estimate' },
+      { label:'Invoice', action:'invoice' },
+      { label:'Customer', action:'customer' },
+      { label:'Receipt', action:'receipt' },
+      { label:'Schedule', action:'schedule' }
+    ]});
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"]/g, function(c){
+    return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c];
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// VOICE (placeholder — Web Speech API wired later)
+// ─────────────────────────────────────────────────────────────
+function toggleMic(){
+  var btn = document.getElementById('micBtn');
+  if(btn.classList.contains('recording')){
+    btn.classList.remove('recording');
+    return;
+  }
+  btn.classList.add('recording');
+  // Placeholder: simulate a voice transcript landing in the composer
+  setTimeout(function(){
+    btn.classList.remove('recording');
+    var box = document.getElementById('composer');
+    box.value = 'New estimate for Joe Smith — 600 square foot paver patio, charcoal border';
+    autoGrow(box);
+  }, 1400);
+}
+
+// ─────────────────────────────────────────────────────────────
+// WORKFLOWS
+// ─────────────────────────────────────────────────────────────
+function setActiveFlow(flow){
+  STATE.workflow = flow;
+  document.querySelectorAll('.d-flow[data-flow]').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-flow') === flow);
+  });
+}
+
+function startWorkflow(flow, fromChat){
+  setActiveFlow(flow === 'chat' ? 'chat' : flow);
+  if(flow === 'chat'){ renderPanelDefault(); return; }
+
+  if(flow === 'customer'){
+    if(!fromChat) addMsg('user', 'Add a new customer');
+    donnaReply("Sure thing. Fill in what you've got over on the right &mdash; name and phone are all I really need to start. "
+      + "I'll save them and set up a project folder so everything for this customer stays together.");
+    renderPanelCustomer();
+  }
+  else if(flow === 'estimate'){
+    if(!fromChat) addMsg('user', 'New estimate');
+    donnaReply("Alright &mdash; I pulled up <strong>Joe Smith</strong> and roughed out an estimate for the 600 sq ft paver patio "
+      + "based on your usual numbers: $"+STATE.prefs.labor+"/hr labor and a "+STATE.prefs.markup+"% material markup. "
+      + "It's on the right. This one's outside your normal service area &mdash; want me to add the travel fee?",
+      { chips:[
+        { label:'Add $'+STATE.prefs.travel+' travel fee', action:'travel' },
+        { label:'Leave it as is', action:'noop' }
+      ]});
+    renderPanelEstimate();
+  }
+  else if(flow === 'invoice'){
+    if(!fromChat) addMsg('user', 'New invoice');
+    donnaReply("Done &mdash; I built the invoice straight off the approved Smith patio estimate so the numbers match. "
+      + "Net 30, due "+datePlus(30)+". Give it a look and approve when you're ready.");
+    renderPanelInvoice();
+  }
+  else if(flow === 'receipt'){
+    if(!fromChat) addMsg('user', 'Upload a receipt');
+    donnaReply("Snap a photo of the receipt or drop the file on the right. I'll read it, pull out the vendor and "
+      + "amount, suggest a category, and ask which job it belongs to before anything's filed.");
+    renderPanelReceipt();
+  }
+  else if(flow === 'schedule'){
+    if(!fromChat) addMsg('user', 'Schedule a job');
+    donnaReply("Got it. I drafted a calendar block for the Smith patio install and a reminder text for Joe. "
+      + "Nothing goes on the calendar or out to the customer until you approve it &mdash; check the right panel.");
+    renderPanelSchedule();
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// ACTION PANEL RENDERERS
+// ─────────────────────────────────────────────────────────────
+function setPanel(eyebrow, title, bodyHtml){
+  document.getElementById('panelEyebrow').textContent = eyebrow;
+  document.getElementById('panelTitle').innerHTML = title;
+  document.getElementById('panelBody').innerHTML = bodyHtml;
+}
+
+function renderPanelDefault(){
+  setPanel('Action panel', 'What can Donna do?',
+    flowCard('customer','New Customer','Save a customer and start a project folder.')
+    + flowCard('estimate','New Estimate','Describe a job — Donna drafts a priced estimate.')
+    + flowCard('invoice','New Invoice','Turn an approved estimate into an invoice.')
+    + flowCard('receipt','Upload Receipt','Snap a receipt — Donna reads and files it.')
+    + flowCard('schedule','Schedule Job','Get a job on the calendar with a reminder.')
+    + '<div class="notebox" style="margin-top:0.9rem">Every draft Donna builds shows up here. You approve, edit, or reject it before anything happens.</div>'
+  );
+}
+function flowCard(flow,title,sub){
+  var icons = {
+    customer:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>',
+    estimate:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',
+    invoice:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/>',
+    receipt:'<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 1 1V2l-1 1-3-2-3 2-3-2-3 2z"/>',
+    schedule:'<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/>'
+  };
+  return '<button class="flow-card" onclick="startWorkflow(\''+flow+'\')">'
+    + '<span class="fc-ic"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+icons[flow]+'</svg></span>'
+    + '<span><span class="fc-t">'+title+'</span><br><span class="fc-s">'+sub+'</span></span></button>';
+}
+
+function renderPanelCustomer(){
+  setPanel('New customer', 'Add a customer',
+    '<div class="empty-state" style="padding-top:0.5rem">'
+    + '<div class="es-ic"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></div>'
+    + '<h4>No customer yet</h4><p>Fill this in and Donna saves the customer, syncs them to QuickBooks, and starts a project folder.</p></div>'
+    + '<div class="mini-field"><label>Name</label><input type="text" placeholder="Joe Smith"></div>'
+    + '<div class="mini-field"><label>Phone</label><input type="tel" placeholder="(414) 555-0174"></div>'
+    + '<div class="mini-field"><label>Email</label><input type="email" placeholder="joe.smith@email.com"></div>'
+    + '<div class="mini-field"><label>Address</label><input type="text" placeholder="1820 Oak Ridge Dr, Menomonee Falls"></div>'
+    + '<button class="btn-gold full" style="margin-top:0.5rem" onclick="approve(\'customer\')">Save customer</button>'
+    + '<div class="notebox" style="margin-top:0.8rem">Donna will ask you to confirm before this customer is created in QuickBooks.</div>'
+  );
+}
+
+function renderPanelEstimate(){
+  var p = STATE.prefs;
+  var labor = p.labor * 14;          // 14 hrs
+  var materials = 4200;
+  var markup = Math.round(materials * (p.markup/100));
+  var equip = 380;
+  var sub = labor + materials + markup + equip;
+  var total = sub;
+  setPanel('Pending approval', 'Estimate draft',
+    '<div class="draft">'
+    + '<div class="draft-head"><div class="dh-type">Estimate · EST-1042</div>'
+    + '<div class="dh-title">600 sq ft Paver Patio</div>'
+    + '<div class="dh-meta">Joe Smith · Menomonee Falls, WI</div></div>'
+    + '<div class="draft-body">'
+    + liRow('Labor', '14 hrs @ $'+p.labor+'/hr', labor)
+    + liRow('Belgard pavers + base', 'Charcoal border, materials', materials)
+    + liRow('Material markup', p.markup+'% (your standard)', markup)
+    + liRow('Skid steer rental', 'Site access — 1 day', equip)
+    + '<div class="draft-totals">'
+    + totRow('Subtotal', sub)
+    + totRow('Tax', 0)
+    + totRow('Total', total, true)
+    + '</div>'
+    + '<div class="draft-note">Donna: "I used your usual 18% markup and 14 hours of labor. This address is outside your normal area &mdash; ask me to add the travel fee if you want it."</div>'
+    + '</div>'
+    + '<div class="approval-row">'
+    + '<button class="btn-approve" onclick="approve(\'estimate\')">Approve &amp; Send</button>'
+    + '<button class="btn-edit" onclick="editDraft()">Edit</button>'
+    + '<button class="btn-reject" onclick="rejectDraft()">Reject</button>'
+    + '</div>'
+    + '<div class="approval-banner">Nothing is sent to the customer until you approve.</div>'
+    + '</div>'
+  );
+}
+
+function renderPanelInvoice(){
+  var p = STATE.prefs;
+  var labor = p.labor * 14, materials = 4200, markup = Math.round(materials*(p.markup/100)), equip = 380;
+  var total = labor + materials + markup + equip;
+  setPanel('Pending approval', 'Invoice draft',
+    '<div class="draft">'
+    + '<div class="draft-head"><div class="dh-type">Invoice · INV-2087</div>'
+    + '<div class="dh-title">600 sq ft Paver Patio</div>'
+    + '<div class="dh-meta">Joe Smith · Net 30 · Due '+datePlus(30)+'</div></div>'
+    + '<div class="draft-body">'
+    + liRow('Patio install — labor', '14 hrs completed', labor)
+    + liRow('Materials', 'Belgard pavers, base, border', materials)
+    + liRow('Material markup', p.markup+'%', markup)
+    + liRow('Equipment', 'Skid steer rental', equip)
+    + '<div class="draft-totals">'
+    + totRow('Subtotal', total)
+    + totRow('Paid to date', 0)
+    + totRow('Amount due', total, true)
+    + '</div>'
+    + '<div class="draft-note">Donna: "Built straight off the approved estimate so the numbers match. I\'ll send it from your email and log it in QuickBooks once you approve."</div>'
+    + '</div>'
+    + '<div class="approval-row">'
+    + '<button class="btn-approve" onclick="approve(\'invoice\')">Approve &amp; Send</button>'
+    + '<button class="btn-edit" onclick="editDraft()">Edit</button>'
+    + '<button class="btn-reject" onclick="rejectDraft()">Reject</button>'
+    + '</div>'
+    + '<div class="approval-banner">Donna never sends an invoice without your approval.</div>'
+    + '</div>'
+  );
+}
+
+function renderPanelReceipt(){
+  setPanel('Upload receipt', 'File a receipt',
+    '<div class="receipt-drop" onclick="mockReceiptScan()">'
+    + '<div class="es-ic" style="margin-bottom:0.6rem"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>'
+    + '<div style="font-size:0.84rem;font-weight:600;color:var(--navy-deep)">Snap or upload a receipt</div>'
+    + '<div style="font-size:0.72rem;color:var(--slate);margin-top:3px">Donna reads it and fills in the details</div>'
+    + '</div>'
+    + '<div id="receiptResult" style="margin-top:1rem"><div class="empty-state" style="padding-top:0.5rem">'
+    + '<h4>Nothing filed yet</h4><p>Once you add a receipt, Donna pulls out the vendor, amount, and date, then suggests a category and a job.</p></div></div>'
+  );
+}
+function mockReceiptScan(){
+  document.getElementById('receiptResult').innerHTML =
+    '<div class="draft">'
+    + '<div class="draft-head"><div class="dh-type">Receipt · scanned</div>'
+    + '<div class="dh-title">Menards</div>'
+    + '<div class="dh-meta">'+datePlus(0)+' · Donna read this automatically</div></div>'
+    + '<div class="draft-body">'
+    + '<div class="mini-field"><label>Vendor</label><input type="text" value="Menards"></div>'
+    + '<div class="mini-field"><label>Amount</label><input type="text" value="$248.17"></div>'
+    + '<div class="mini-field"><label>Category</label><input type="text" value="Materials — Hardscape"></div>'
+    + '<div class="mini-field"><label>Apply to job</label><input type="text" value="Smith — 600 sq ft Paver Patio"></div>'
+    + '<div class="draft-note">Donna: "Pretty sure this is materials for the Smith patio &mdash; that\'s where you\'ve been buying. Fix anything I got wrong."</div>'
+    + '</div>'
+    + '<div class="approval-row">'
+    + '<button class="btn-approve" onclick="approve(\'receipt\')">Confirm &amp; File</button>'
+    + '<button class="btn-edit" onclick="editDraft()">Edit</button>'
+    + '<button class="btn-reject" onclick="rejectDraft()">Discard</button>'
+    + '</div></div>';
+  donnaReply("Read it &mdash; <strong>Menards, $248.17</strong>. Looks like hardscape materials for the Smith patio. "
+    + "Confirm it on the right and I'll file it as an expense in QuickBooks.");
+}
+
+function renderPanelSchedule(){
+  setPanel('Pending approval', 'Schedule a job',
+    '<div class="draft">'
+    + '<div class="draft-head"><div class="dh-type">Calendar event · draft</div>'
+    + '<div class="dh-title">Patio Install — Smith</div>'
+    + '<div class="dh-meta">Proposed: '+datePlus(5)+' · 7:30 AM – 4:00 PM</div></div>'
+    + '<div class="draft-body">'
+    + '<div class="mini-field"><label>Job</label><input type="text" value="600 sq ft Paver Patio"></div>'
+    + '<div class="mini-field"><label>Customer</label><input type="text" value="Joe Smith — (414) 555-0174"></div>'
+    + '<div class="mini-field"><label>Date</label><input type="text" value="'+datePlus(5)+'"></div>'
+    + '<div class="mini-field"><label>Crew note</label><input type="text" value="Skid steer access — confirm gate width"></div>'
+    + '<div class="draft-note">Donna: "I also drafted a reminder text for Joe the day before. Want to see it before it sends? It won\'t go out until you say so."</div>'
+    + '</div>'
+    + '<div class="approval-row">'
+    + '<button class="btn-approve" onclick="approve(\'schedule\')">Approve &amp; Add</button>'
+    + '<button class="btn-edit" onclick="editDraft()">Edit</button>'
+    + '<button class="btn-reject" onclick="rejectDraft()">Reject</button>'
+    + '</div>'
+    + '<div class="approval-banner">Calendar event and customer reminder both wait for your approval.</div>'
+    + '</div>'
+  );
+}
+
+// draft helpers
+function liRow(desc, sub, amt){
+  return '<div class="li-row"><div class="li-desc">'+desc+'<small>'+sub+'</small></div>'
+    + '<div class="li-amt">'+money(amt)+'</div></div>';
+}
+function totRow(label, amt, grand){
+  return '<div class="tot-row'+(grand?' grand':'')+'"><span>'+label+'</span><span>'+money(amt)+'</span></div>';
+}
+function money(n){ return '$' + Number(n).toLocaleString('en-US'); }
+function datePlus(days){
+  var d = new Date(); d.setDate(d.getDate()+days);
+  return d.toLocaleDateString('en-US',{ month:'short', day:'numeric' });
+}
+
+// approval actions
+function approve(kind){
+  var msgs = {
+    customer:"Customer saved and synced to QuickBooks. Project folder's ready &mdash; <strong>already handled it, boss.</strong>",
+    estimate:"Approved. I sent the estimate to Joe and logged it in QuickBooks. I'll let you know the second he responds. 😉",
+    invoice:"Approved &mdash; invoice is on its way to Joe and recorded in QuickBooks. I'll watch for the payment.",
+    receipt:"Filed. Logged as a materials expense on the Smith patio job. One less thing on your dashboard.",
+    schedule:"Done &mdash; it's on your calendar, and Joe's reminder is queued for the day before. Nothing else for you to do."
+  };
+  donnaReply(msgs[kind] || "Approved &mdash; handled.");
+  setPanel('Done', 'All set',
+    '<div class="empty-state"><div class="es-ic" style="color:var(--green)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>'
+    + '<h4>Approved</h4><p>Donna handled it. Start the next thing whenever you\'re ready.</p>'
+    + '<button class="btn-outline" onclick="startWorkflow(\'chat\')">Back to start</button></div>');
+}
+function editDraft(){
+  donnaReply("Sure &mdash; tell me what to change. \"Bump labor to 16 hours\" or \"drop the skid steer\" &mdash; "
+    + "whatever it is, I'll redo the draft and show you again before anything moves.");
+}
+function rejectDraft(){
+  donnaReply("No problem &mdash; tossed it. Nothing was sent or saved. Want to start over, or move on to something else?",
+    { chips:[
+      { label:'Start over', action:'estimate' },
+      { label:'Something else', action:'noop' }
+    ]});
+  renderPanelDefault();
+}
+
+// ─────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────
+renderPanelDefault();
+syncConnectionDots();
+</script>
+</body>
+</html>

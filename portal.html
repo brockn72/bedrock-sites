@@ -321,14 +321,24 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .nav-tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
 .nav-tab-btn:hover:not(.active){color:rgba(255,255,255,0.85)}
 .nav-tab-caret{font-size:0.6rem;opacity:0.6}
-/* Tool tabs (My Website / Marketing / CFO) open a separate tool — gold-outlined box to distinguish them from in-portal tabs */
+/* Tool tabs (My Website / Marketing / Donna / Finance) open a separate tool — gold-outlined box to distinguish them from in-portal tabs */
 .nav-tab-group[data-top="website"]>.nav-tab-btn,
 .nav-tab-group[data-top="marketing"]>.nav-tab-btn,
+.nav-tab-group[data-top="donna"]>.nav-tab-btn,
+.nav-tab-group[data-top="finance"]>.nav-tab-btn,
 .nav-tab-group[data-top="cfo"]>.nav-tab-btn{border:1px solid rgba(201,146,42,0.55);border-radius:6px;margin:0 3px}
 .nav-tab-group[data-top="website"]>.nav-tab-btn:hover,
 .nav-tab-group[data-top="marketing"]>.nav-tab-btn:hover,
+.nav-tab-group[data-top="donna"]>.nav-tab-btn:hover,
+.nav-tab-group[data-top="finance"]>.nav-tab-btn:hover,
 .nav-tab-group[data-top="cfo"]>.nav-tab-btn:hover{background:rgba(201,146,42,0.14);color:#fff}
 .nav-tab-group:hover .nav-tab-caret{opacity:1}
+/* sub-product mark icon inside a tool tab */
+.nav-tab-mark{width:15px;height:15px;flex-shrink:0;border-radius:3px;vertical-align:middle}
+/* locked tool tab — contractor hasn't subscribed yet */
+.nav-tab-btn .nav-tab-lock{width:11px;height:11px;opacity:0.7;margin-left:2px;stroke-width:2.5}
+.nav-tab-group.locked>.nav-tab-btn{border-color:rgba(255,255,255,0.18);color:rgba(255,255,255,0.6)}
+.nav-tab-group.locked>.nav-tab-btn:hover{background:rgba(255,255,255,0.05)}
 .nav-tab-submenu{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--border);border-top:2px solid var(--accent);min-width:230px;box-shadow:0 10px 28px rgba(0,0,0,0.4);display:none;z-index:200;flex-direction:column;margin-top:0}
 /* transparent bridge so the cursor never crosses a dead zone between tab and menu */
 .nav-tab-submenu::before{content:'';position:absolute;top:-10px;left:0;right:0;height:10px}
@@ -450,6 +460,27 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 </head>
 <body>
 
+<!-- ── SUB-BRAND MARK SYMBOLS (from bedrock-subbrands-v9.html) — used on Donna + Finance tabs ── -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <clipPath id="rightOfStem"><rect x="17" y="0" width="51" height="68"/></clipPath>
+  <symbol id="mark-f" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g clip-path="url(#rightOfStem)">
+      <rect x="7" y="8"  width="45" height="10" fill="#F0C46A"/>
+      <rect x="7" y="29" width="37" height="10" fill="#2E5A8E"/>
+    </g>
+    <rect x="7" y="8" width="10" height="52" fill="#C9922A"/>
+  </symbol>
+  <symbol id="mark-d" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g clip-path="url(#rightOfStem)" fill="none" stroke-width="10" stroke-linecap="butt">
+      <path d="M12,9 A32,25.5 0 0 1 44,34.5" stroke="#F0C46A"/>
+      <path d="M44,34.5 A32,25.5 0 0 1 12,60" stroke="#2E5A8E"/>
+    </g>
+    <rect x="7" y="4.25" width="10" height="60.35" fill="#C9922A"/>
+  </symbol>
+</svg>
+
 <nav>
   <div class="nav-l">
     <a href="/" class="nav-logo">
@@ -471,7 +502,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     <div class="nav-tab-group" data-top="dashboard">
       <button class="nav-tab-btn" onclick="goTab('dashboard','default')">Dashboard</button>
     </div>
-    <div class="nav-tab-group" data-top="profile">
+    <!-- My Profile — May 2026: folded into the My Account dropdown. Standalone tab hidden, not deleted. -->
+    <div class="nav-tab-group" data-top="profile" style="display:none">
       <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
     </div>
     <div class="nav-tab-group" data-top="website">
@@ -491,13 +523,30 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('wizard')"><span class="tsl-eyebrow">Soon</span>Integrations</button>
       </div>
     </div>
-    <div class="nav-tab-group" data-top="cfo">
+    <!-- Donna + Finance — May 2026: the old single CFO tab split into two products. -->
+    <div class="nav-tab-group locked" data-top="donna">
+      <button class="nav-tab-btn" onclick="launchDonna()" title="Bedrock Operations · Donna">
+        <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg>
+        Donna
+        <svg class="nav-tab-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </button>
+    </div>
+    <div class="nav-tab-group locked" data-top="finance">
+      <button class="nav-tab-btn" onclick="launchFinance()" title="Bedrock Finance · Analytics">
+        <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg>
+        Finance
+        <svg class="nav-tab-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </button>
+    </div>
+    <!-- CFO — May 2026: replaced by Donna + Finance above. Old tab hidden, not deleted. -->
+    <div class="nav-tab-group" data-top="cfo" style="display:none">
       <button class="nav-tab-btn" onclick="goTab('cfo','default')">CFO</button>
     </div>
     <div class="nav-tab-group" data-top="subs">
-      <button class="nav-tab-btn" onclick="goTab('subs','cart')">My Subscriptions <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="goTab('subs','cart')">My Account <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Manage</span>Manage My Plan</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('profile','default')"><span class="tsl-eyebrow">Business</span>My Profile</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Plan</span>Subscriptions</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','active')"><span class="tsl-eyebrow">History</span>Billing History</button>
       </div>
     </div>
@@ -1815,6 +1864,37 @@ function launchMarketing(view) {
   window.open(url, '_blank', 'noopener');
 }
 
+// ── DONNA + FINANCE LAUNCH ────────────────────────────────────────────────────
+// Donna + Finance are roadmap products — not yet on any contractor's plan.
+// Tabs show a locked state; clicking still opens the tool in preview (rough draft).
+var TOOL_SUBSCRIBED = { donna:false, finance:false };
+
+function toolQuery() {
+  var email = '';
+  if (currentSession && currentSession.user && currentSession.user.email) email = currentSession.user.email;
+  else if (currentLead && currentLead.email) email = currentLead.email;
+  var qp = [];
+  if (email) qp.push('email=' + encodeURIComponent(email));
+  if (currentSession && currentSession.access_token && !DEMO) qp.push('token=' + encodeURIComponent(currentSession.access_token));
+  return qp.length ? ('?' + qp.join('&')) : '';
+}
+
+function launchDonna() {
+  if (!TOOL_SUBSCRIBED.donna) {
+    var go = confirm('Bedrock Donna isn’t on your plan yet.\n\nDonna handles your estimates, invoices, receipts, and scheduling.\n\nOpen a preview now? (Manage your plan under My Account → Subscriptions.)');
+    if (!go) { goTab('subs','cart'); return; }
+  }
+  window.open('/bedrock-donna-v1.html' + toolQuery(), '_blank', 'noopener');
+}
+
+function launchFinance() {
+  if (!TOOL_SUBSCRIBED.finance) {
+    var go = confirm('Bedrock Finance isn’t on your plan yet.\n\nFinance shows your revenue, margins, and job profitability at a glance.\n\nOpen a preview now? (Manage your plan under My Account → Subscriptions.)');
+    if (!go) { goTab('subs','cart'); return; }
+  }
+  window.open('/bedrock-finance-v1.html' + toolQuery(), '_blank', 'noopener');
+}
+
 // ── TAB / SUBTAB NAV ──────────────────────────────────────────────────────────
 var CURRENT_TAB = { top:'website', sub:'editor' };
 
@@ -1824,7 +1904,7 @@ var TAB_DEFS = {
   marketing: { label:'Marketing',       subs:{ hub:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', library:'Asset Library', integrations:'Integrations' } },
   cfo:       { label:'CFO',             subs:{ default:'CFO' } },
   profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
-  subs:      { label:'My Subscriptions',subs:{ hub:'Billing Hub', cart:'Plan &amp; Cart', active:'Active Subscriptions' } },
+  subs:      { label:'My Account',      subs:{ hub:'Billing Hub', cart:'Subscriptions', active:'Billing History' } },
 };
 
 function goTab(top, sub) {
