@@ -1641,6 +1641,21 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     </g>
     <rect x="7" y="4.25" width="10" height="60.35" fill="#C9922A"/>
   </symbol>
+  <symbol id="mark-b" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g clip-path="url(#rightOfStem)" fill="none" stroke-width="10" stroke-linecap="butt">
+      <path d="M12,9 A27,12.75 0 0 1 12,34.5" stroke="#F0C46A"/>
+      <path d="M12,34.5 A31,12.75 0 0 1 12,60" stroke="#2E5A8E"/>
+    </g>
+    <rect x="7" y="4.25" width="10" height="60.35" fill="#C9922A"/>
+  </symbol>
+  <symbol id="mark-m" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <polygon points="17.00,7.63 34.00,36.22 34.00,55.78 17.00,27.19" fill="#F0C46A"/>
+    <polygon points="34.00,36.22 51.00,7.63 51.00,27.19 34.00,55.78" fill="#2E5A8E"/>
+    <rect x="7"  y="9" width="10" height="51" fill="#C9922A"/>
+    <rect x="51" y="9" width="10" height="51" fill="#4A7DB5"/>
+  </symbol>
 </svg>
 
 <!-- Embed mode: strip all chrome when loaded as ?embed=optimizer (used by the My Website hub) -->
@@ -4257,6 +4272,21 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   #tools .pv-fin-chart{display:flex;align-items:flex-end;gap:6px;height:74px;background:rgba(255,255,255,0.04);border-radius:5px;padding:0.6rem}
   #tools .pv-fin-chart i{flex:1;background:#C9922A;border-radius:2px 2px 0 0;opacity:0.9}
   @media(max-width:620px){#tools .pv-fin-kpis{grid-template-columns:1fr 1fr}}
+  /* marketing + website preview mocks */
+  #tools .pv-mkt{display:flex;gap:0.7rem}
+  #tools .pv-mkt-kit{flex:0 0 36%;background:rgba(255,255,255,0.05);border-radius:6px;padding:0.7rem;display:flex;flex-direction:column;gap:0.38rem}
+  #tools .pv-sw{width:100%;height:11px;border-radius:3px;display:block}
+  #tools .pv-mkt-flyer{flex:1;background:linear-gradient(150deg,#1F4E79,#0D1B2E);border-radius:6px;padding:0.85rem;display:flex;flex-direction:column;justify-content:center;gap:0.2rem}
+  #tools .pv-fl-e{font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#C9922A}
+  #tools .pv-fl-h{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;line-height:1.15}
+  #tools .pv-fl-c{align-self:flex-start;background:#C9922A;color:#0D1B2E;font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;text-transform:uppercase;padding:3px 8px;border-radius:3px;margin-top:5px}
+  #tools .pv-site{background:#fff;border-radius:6px;overflow:hidden}
+  #tools .pv-site-bar{background:#0D1B2E;padding:7px 9px;display:flex;gap:5px}
+  #tools .pv-site-bar span{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.3)}
+  #tools .pv-site-body{padding:1.1rem;background:linear-gradient(160deg,#FAF7F2,#fff)}
+  #tools .pv-site-h{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:#0D1B2E;line-height:1.2}
+  #tools .pv-site-sub{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:#4A5568;margin-top:5px}
+  #tools .pv-site-cta{display:inline-block;background:#C9922A;color:#fff;font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:5px 13px;border-radius:4px;margin-top:9px}
 </style>
 <div id="tools" class="page">
   <div class="tools-hero">
@@ -4283,80 +4313,38 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     </style>
     <div class="tir-caption">5 tools. 1 connected system.</div>
     <div class="tir-grid">
-      <a class="tir-item" href="/sites.html">
-        <div class="tir-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
-        <div class="tir-label">Website</div>
+      <a class="tir-item" href="/bedrock-donna-v1.html">
+        <div class="tir-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div class="tir-label">Operations<span class="tir-soon">Soon</span></div>
+      </a>
+      <a class="tir-item" href="/bedrock-finance-v1.html">
+        <div class="tir-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="tir-label">Finance<span class="tir-soon">Soon</span></div>
       </a>
       <a class="tir-item" href="/bedrock-marketing-v1.html">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><path d="M3 11l18-8v18l-7-3"/><path d="M3 11v6h4l3 4V8z"/></svg></div>
         <div class="tir-label">Marketing</div>
       </a>
+      <a class="tir-item" href="/sites.html">
+        <div class="tir-ico"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div class="tir-label">Website</div>
+      </a>
       <a class="tir-item" href="#optimizer" onclick="showPage('optimizer',event)">
         <div class="tir-ico"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
         <div class="tir-label">Optimizer</div>
-      </a>
-      <a class="tir-item" href="/bedrock-donna-v1.html">
-        <div class="tir-ico"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-        <div class="tir-label">Donna<span class="tir-soon">Soon</span></div>
-      </a>
-      <a class="tir-item" href="/bedrock-finance-v1.html">
-        <div class="tir-ico"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-        <div class="tir-label">Finance<span class="tir-soon">Soon</span></div>
       </a>
     </div>
   </div>
 
   <div class="tools-wrap">
 
-    <!-- OPTIMIZER — free scan, the forward hook -->
-    <div class="tool-card optimizer">
-      <div class="tool-eyebrow">Completely Free Scan</div>
-      <h2>Bedrock Optimizer</h2>
-      <p>Paste in any contractor website and get a real audit &mdash; the same checks Google and AI search use to decide who shows up. Score out of 100, plus a ranked list of what's costing you jobs.</p>
-      <ul class="tool-points">
-        <li>Mobile speed, local SEO, schema, and FAQ coverage</li>
-        <li>GEO readiness &mdash; how AI assistants describe your business</li>
-        <li>A prioritized fix list, in plain English</li>
-      </ul>
-      <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-btn-gold" style="font-size:0.7rem">Run My Free Scan &rarr;</a>
-    </div>
-
-    <!-- BEDROCK SITES -->
-    <div class="tool-card">
-      <div class="tool-eyebrow">Website Builder &middot; Live Now</div>
-      <h2>Bedrock Sites</h2>
-      <p>A professional website built for your trade, live the same day. No tech skills, no agency runaround, no waiting weeks. You answer a few plain questions, Bedrock builds the whole site, and you preview it free before you pay a cent.</p>
-      <ul class="tool-points">
-        <li>Built in about 15 minutes &mdash; mobile-first and SEO-ready</li>
-        <li>$200 setup + $20/month &mdash; domain and hosting included</li>
-        <li>Edit it anytime from your portal</li>
-      </ul>
-      <div style="display:flex;gap:0.6rem;flex-wrap:wrap">
-        <a href="/sites.html" class="bd-btn-gold" style="font-size:0.7rem">See Bedrock Sites &rarr;</a>
-        <a href="/sites.html?embed=builder" class="bd-btn-outline" style="font-size:0.7rem;color:#0D1B2E;border-color:rgba(13,27,46,0.25)">Build a Free Preview</a>
-      </div>
-    </div>
-
-    <!-- BEDROCK MARKETING -->
-    <div class="tool-card">
-      <div class="tool-eyebrow">Marketing Studio &middot; Live Now</div>
-      <h2>Bedrock Marketing</h2>
-      <p>Set up your Brand Kit once &mdash; colors, fonts, voice, logo &mdash; then turn out professional marketing material in minutes. Flyers, social posts, door hangers, yard signs, business cards, and more, all looking like you hired an agency.</p>
-      <ul class="tool-points">
-        <li>8 material types, 3 layouts, your brand applied automatically</li>
-        <li>AI writes your headline and copy in your voice</li>
-        <li>Download as PNG, JPG, or PDF &mdash; print or post anywhere</li>
-      </ul>
-      <a href="/bedrock-marketing-v1.html" class="bd-btn-gold" style="font-size:0.7rem">Open Bedrock Marketing &rarr;</a>
-    </div>
-
-    <!-- BEDROCK DONNA -->
+    <!-- OPERATIONS · DONNA -->
     <div class="tool-card">
       <div class="tool-head">
         <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg>
         <div class="th-text">
           <div class="tool-eyebrow">Operations Assistant<span class="tool-soon-tag">Coming Soon</span></div>
-          <h2>Bedrock Donna</h2>
+          <h2>Operations &middot; Donna</h2>
         </div>
       </div>
       <p>Donna handles the paperwork &mdash; estimates, invoices, receipts, and scheduling. Tell her what you need in plain words, she drafts it, and you approve it. She's an office manager that fits in your truck, not another app to learn.</p>
@@ -4424,7 +4412,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="tool-int-chip">Google Calendar</span>
       </div>
 
-      <a href="/bedrock-donna-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Preview Bedrock Donna &rarr;</a>
+      <a href="/bedrock-donna-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Preview Operations &rarr;</a>
     </div>
 
     <!-- BEDROCK FINANCE -->
@@ -4433,7 +4421,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg>
         <div class="th-text">
           <div class="tool-eyebrow">Business Dashboard<span class="tool-soon-tag">Coming Soon</span></div>
-          <h2>Bedrock Finance</h2>
+          <h2>Finance &middot; Analytics</h2>
         </div>
       </div>
       <p>Understand your margins, track job profitability, and see where your money is going. Finance is a plain-English dashboard &mdash; charts and tables, no accounting degree required. It shows you which jobs made money and which ones quietly didn't.</p>
@@ -4499,7 +4487,141 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="tool-int-chip">Shares Donna's connection</span>
       </div>
 
-      <a href="/bedrock-finance-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Open Bedrock Finance &rarr;</a>
+      <a href="/bedrock-finance-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Open Finance &rarr;</a>
+    </div>
+
+    <!-- MARKETING -->
+    <div class="tool-card">
+      <div class="tool-head">
+        <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-m"/></svg>
+        <div class="th-text">
+          <div class="tool-eyebrow">Marketing Studio<span class="tool-soon-tag" style="background:rgba(59,109,17,0.12);color:#3b6d11">Live Now</span></div>
+          <h2>Marketing</h2>
+        </div>
+      </div>
+      <p>Set up your Brand Kit once &mdash; colors, fonts, voice, logo &mdash; then turn out professional marketing material in minutes. Flyers, social posts, door hangers, yard signs, and business cards, all looking like you hired an agency.</p>
+      <div class="tool-split">
+        <div>
+          <div class="tool-col-title">What it does</div>
+          <ul class="tool-list pos">
+            <li>Brand Kit setup once &mdash; every piece comes out on-brand</li>
+            <li>8 material types: flyers, social, door hangers, signs, cards</li>
+            <li>AI writes your headline and copy in your voice</li>
+            <li>3 layouts, applied to your brand automatically</li>
+            <li>Download as PNG, JPG, or PDF &mdash; print or post anywhere</li>
+            <li>Pulls your business info from the shared profile</li>
+          </ul>
+        </div>
+        <div>
+          <div class="tool-col-title">What it does not do</div>
+          <ul class="tool-list neg">
+            <li>Print or mail the materials for you</li>
+            <li>Run or pay for your ad campaigns</li>
+            <li>Post to your social accounts on a schedule</li>
+            <li>Design a brand-new logo from scratch</li>
+            <li>Guarantee leads &mdash; it makes the materials, you run them</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tool-preview">
+        <div class="tool-pv-cap">What Marketing looks like</div>
+        <div class="tool-pv-body">
+          <div class="pv-mkt">
+            <div class="pv-mkt-kit"><span class="pv-sw" style="background:#1F4E79"></span><span class="pv-sw" style="background:#C9922A"></span><span class="pv-sw" style="background:#6B7280"></span></div>
+            <div class="pv-mkt-flyer"><div class="pv-fl-e">Ridgeline Concrete &middot; Bend, OR</div><div class="pv-fl-h">Driveways done before the frost.</div><div class="pv-fl-c">Call Today</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tool-workflow">
+        <div class="tw-label">Example workflow</div>
+        <ol>
+          <li>Dana sets up her Brand Kit once &mdash; colors, logo, the voice her business speaks in.</li>
+          <li>She picks "door hanger," drops in two job photos, and taps generate.</li>
+          <li>Marketing writes the headline in her voice and lays it out on-brand.</li>
+          <li>She downloads a print-ready PDF and takes it to the print shop. About 5 minutes.</li>
+        </ol>
+      </div>
+      <div class="tool-integrations">
+        <span class="tool-int-label">Works with</span>
+        <span class="tool-int-chip">Shared Business Profile</span>
+        <span class="tool-int-chip">Brand Kit</span>
+      </div>
+      <a href="/bedrock-marketing-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Open Marketing &rarr;</a>
+    </div>
+
+    <!-- BEDROCK WEBSITE -->
+    <div class="tool-card">
+      <div class="tool-head">
+        <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-b"/></svg>
+        <div class="th-text">
+          <div class="tool-eyebrow">Website Builder<span class="tool-soon-tag" style="background:rgba(59,109,17,0.12);color:#3b6d11">Live Now</span></div>
+          <h2>Bedrock Website</h2>
+        </div>
+      </div>
+      <p>A professional website built for your trade, live the same day. No tech skills, no agency runaround, no waiting weeks. You answer a few plain questions, Bedrock builds the whole site, and you preview it free before you pay a cent.</p>
+      <div class="tool-split">
+        <div>
+          <div class="tool-col-title">What it does</div>
+          <ul class="tool-list pos">
+            <li>A polished site for your trade in about 15 minutes</li>
+            <li>Mobile-first and built to rank in local search</li>
+            <li>Domain, hosting, and SSL all included</li>
+            <li>Preview the whole thing free before you pay</li>
+            <li>Edit your copy and photos anytime from the portal</li>
+            <li>Feeds your business info into the shared profile</li>
+          </ul>
+        </div>
+        <div>
+          <div class="tool-col-title">What it does not do</div>
+          <ul class="tool-list neg">
+            <li>Make you write code or wrestle a page builder</li>
+            <li>Lock you into a long contract</li>
+            <li>Charge you anything until you decide to launch</li>
+            <li>Require a designer or developer</li>
+            <li>Run your ads or social &mdash; that's Marketing's job</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tool-preview">
+        <div class="tool-pv-cap">What a Bedrock website looks like</div>
+        <div class="tool-pv-body">
+          <div class="pv-site">
+            <div class="pv-site-bar"><span></span><span></span><span></span></div>
+            <div class="pv-site-body"><div class="pv-site-h">Plumbing done right, the first time.</div><div class="pv-site-sub">Family-owned &middot; Master plumber on every job</div><div class="pv-site-cta">Call Now</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tool-workflow">
+        <div class="tw-label">Example workflow</div>
+        <ol>
+          <li>Marco answers a few plain questions about his plumbing business.</li>
+          <li>He picks a style and drops in photos of recent jobs.</li>
+          <li>Bedrock builds the full site &mdash; he previews it free and makes a couple edits.</li>
+          <li>He pays, and the site is live on its own domain the same day.</li>
+        </ol>
+      </div>
+      <div class="tool-integrations">
+        <span class="tool-int-label">Works with</span>
+        <span class="tool-int-chip">Shared Business Profile</span>
+        <span class="tool-int-chip">SEO/Geo Optimizer</span>
+      </div>
+      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:1.25rem">
+        <a href="/sites.html" class="bd-btn-gold" style="font-size:0.7rem">See Bedrock Website &rarr;</a>
+        <a href="/sites.html?embed=builder" class="bd-btn-outline" style="font-size:0.7rem;color:#0D1B2E;border-color:rgba(13,27,46,0.25)">Build a Free Preview</a>
+      </div>
+    </div>
+
+    <!-- SEO/GEO OPTIMIZER -->
+    <div class="tool-card optimizer">
+      <div class="tool-eyebrow">Completely Free Scan</div>
+      <h2>SEO / Geo Optimizer</h2>
+      <p>Paste in any contractor website and get a real audit &mdash; the same checks Google and AI search use to decide who shows up. Score out of 100, plus a ranked list of what's costing you jobs.</p>
+      <ul class="tool-points">
+        <li>Mobile speed, local SEO, schema, and FAQ coverage</li>
+        <li>GEO readiness &mdash; how AI assistants describe your business</li>
+        <li>A prioritized fix list, in plain English</li>
+      </ul>
+      <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-btn-gold" style="font-size:0.7rem">Run My Free Scan &rarr;</a>
     </div>
 
   </div>
