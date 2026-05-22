@@ -4,7 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bedrock Operations — Donna handles the paperwork</title>
+<meta name="description" content="Donna drafts estimates and invoices, files receipts, schedules jobs, and keeps customer records — every action waits for your approval before it sends.">
 <meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://bedrock-sites.com/bedrock-donna-v1.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bedrock Digital">
+<meta property="og:title" content="Bedrock Operations — Donna handles the paperwork">
+<meta property="og:description" content="Estimates, invoices, receipts, scheduling — drafted by Donna, approved by you.">
+<meta property="og:url" content="https://bedrock-sites.com/bedrock-donna-v1.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bedrock Operations · Donna">
+<meta name="twitter:description" content="Donna handles the paperwork. You approve everything.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 68 68'%3E%3Crect width='68' height='68' rx='14' fill='%230D1B2E'/%3E%3Cpath d='M12,9 A32,25.5 0 0 1 44,34.5' fill='none' stroke='%23F0C46A' stroke-width='10'/%3E%3Cpath d='M44,34.5 A32,25.5 0 0 1 12,60' fill='none' stroke='%232E5A8E' stroke-width='10'/%3E%3Crect x='7' y='4.25' width='10' height='60.35' fill='%23C9922A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -84,7 +94,27 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .donna-app.no-panel{grid-template-columns:240px 1fr}
 .donna-app.no-panel .d-panel{display:none}
 @media(max-width:1080px){.donna-app{grid-template-columns:210px 1fr}.donna-app .d-panel{display:none}}
-@media(max-width:720px){.donna-app{grid-template-columns:1fr;height:auto}.donna-app .d-sidebar{display:none}}
+@media(max-width:720px){
+  .donna-app{grid-template-columns:1fr;grid-template-rows:auto auto;height:auto;min-height:0;padding-bottom:72px}
+  .donna-app .d-sidebar{display:none}
+  /* Below 720px the approval panel stacks under the chat instead of being hidden. */
+  .donna-app .d-panel{display:flex;border-left:none;border-top:1px solid var(--border-light);max-height:none}
+  .donna-app.no-panel .d-panel{display:none}
+  .d-main, .d-panel{height:auto;min-height:0;overflow:visible}
+  .d-thread{max-height:50vh}
+  .view-body{padding:1rem}
+  .d-mobile-bar{display:flex}
+}
+/* Mobile bottom-nav bar (replaces the hidden sidebar below 720px) */
+.d-mobile-bar{display:none;position:fixed;left:0;right:0;bottom:0;background:var(--navy-deep);border-top:1px solid rgba(255,255,255,0.1);z-index:40;padding:0.4rem;gap:0.25rem;justify-content:space-around}
+.d-mobile-bar button{flex:1;background:transparent;border:none;color:rgba(255,255,255,0.6);font-family:'DM Sans',sans-serif;font-size:0.54rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;padding:0.4rem 0.2rem;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-radius:6px}
+.d-mobile-bar button.active{color:var(--gold);background:rgba(201,146,42,0.13)}
+.d-mobile-bar svg{width:18px;height:18px}
+/* + menu becomes a bottom sheet on mobile */
+@media(max-width:720px){
+  .plus-menu{position:fixed;left:0;right:0;bottom:72px;top:auto;width:auto;border-radius:12px 12px 0 0;border-top:3px solid var(--gold);max-height:60vh;overflow-y:auto;z-index:50;box-shadow:0 -8px 28px rgba(13,27,46,0.2)}
+  .plus-item{padding:0.95rem 1rem;font-size:0.9rem}
+}
 
 .d-sidebar{background:var(--navy-deep);color:#fff;padding:1.25rem 0;overflow-y:auto;display:flex;flex-direction:column}
 .d-side-brand{display:flex;align-items:center;gap:0.6rem;padding:0 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,0.07);margin-bottom:0.9rem}
@@ -187,6 +217,31 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .tot-row{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--slate);padding:0.16rem 0}
 .tot-row.grand{font-size:0.95rem;font-weight:700;color:var(--navy-deep);border-top:1px solid var(--border-light);margin-top:0.3rem;padding-top:0.5rem}
 .draft-note{font-size:0.7rem;color:var(--slate);font-style:italic;background:var(--off-white);padding:0.55rem 0.7rem;border-radius:5px;margin-top:0.7rem;line-height:1.5}
+/* ── EDITABLE LINE-ITEM BUILDER (manual + menu estimate/invoice) ── */
+.bld-sublabel{font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--slate);margin:0.7rem 0 0.45rem}
+.bld-li{border:1px solid var(--border-light);border-radius:7px;padding:0.5rem 0.55rem;margin-bottom:0.45rem;background:#fff}
+.bld-li input{border:1px solid var(--border-light);border-radius:5px;font-size:0.8rem;font-family:inherit;outline:none;padding:0.42rem 0.5rem;color:var(--navy-deep)}
+.bld-li input:focus{border-color:var(--navy-deep)}
+.bld-desc{width:100%}
+.bld-li-grid{display:grid;grid-template-columns:1fr 1fr auto auto;gap:0.35rem;align-items:center;margin-top:0.35rem}
+.bld-li-grid input{width:100%;text-align:right}
+.bld-tot{font-size:0.8rem;font-weight:700;color:var(--navy-deep);white-space:nowrap;min-width:56px;text-align:right}
+.bld-rm{width:28px;height:28px;border:1px solid var(--border-light);background:#fff;border-radius:5px;cursor:pointer;color:var(--red);flex-shrink:0;font-size:0.78rem;line-height:1}
+.bld-rm:hover{border-color:var(--red);background:var(--red-bg)}
+.bld-addrow{width:100%;padding:0.55rem;border:1px dashed var(--border-light);background:var(--off-white);border-radius:6px;cursor:pointer;font-size:0.74rem;font-weight:600;color:var(--navy);margin:0.2rem 0 0.85rem;font-family:inherit}
+.bld-addrow:hover{border-color:var(--gold);color:var(--gold)}
+.bld-set{display:flex;gap:0.5rem;align-items:center;margin-bottom:0.5rem;font-size:0.78rem}
+.bld-set>label{flex:1;color:var(--navy-deep);font-weight:600;display:flex;align-items:center;gap:0.4rem;margin:0}
+.bld-set input[type=number]{width:72px;padding:0.42rem 0.5rem;border:1px solid var(--border-light);border-radius:5px;font-size:0.8rem;font-family:inherit;text-align:right;outline:none;color:var(--navy-deep)}
+.bld-set input[type=checkbox]{width:auto;accent-color:var(--gold);margin:0;flex-shrink:0}
+.bld-mini{font-family:inherit;font-size:0.62rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;background:var(--navy-deep);color:#fff;border:none;padding:0.42rem 0.6rem;border-radius:5px;cursor:pointer;white-space:nowrap}
+.bld-mini:hover{background:var(--navy)}
+/* Toast — short floating confirmation/error message */
+.dt-toast{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:24px;background:var(--navy-deep);color:#fff;font-size:0.84rem;font-weight:500;padding:0.7rem 1.15rem;border-radius:8px;box-shadow:0 8px 22px rgba(13,27,46,0.25);z-index:300;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;border-left:3px solid var(--gold);max-width:90vw}
+.dt-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.dt-toast.ok{border-left-color:var(--green)}
+.dt-toast.err{border-left-color:var(--red)}
+@media(max-width:720px){.dt-toast{bottom:84px;left:12px;right:12px;transform:translateY(8px);max-width:none}.dt-toast.show{transform:translateY(0)}}
 .approval-row{display:grid;grid-template-columns:1fr 1fr;gap:0.45rem;padding:0.9rem 1.1rem;background:var(--off-white);border-top:1px solid var(--border-light)}
 .appr-btn{font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;border:1px solid var(--border-light);padding:0.65rem 0.4rem;border-radius:5px;cursor:pointer;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px}
 .appr-approve{background:var(--green);color:#fff;border-color:var(--green);grid-column:1/-1}
@@ -376,9 +431,9 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="d-side-spacer"></div>
       <div class="d-side-label">Connections</div>
       <div class="d-conn-card">
-        <div class="d-conn-row"><span class="d-conn-dot"></span> QuickBooks</div>
-        <div class="d-conn-row"><span class="d-conn-dot"></span> Gmail</div>
-        <div class="d-conn-row"><span class="d-conn-dot"></span> Calendar</div>
+        <div class="d-conn-row"><span class="d-conn-dot" id="dotQbo"></span> QuickBooks</div>
+        <div class="d-conn-row"><span class="d-conn-dot" id="dotGmail"></span> Gmail</div>
+        <div class="d-conn-row"><span class="d-conn-dot" id="dotCalendar"></span> Calendar</div>
         <button class="d-conn-setup" onclick="navView('connections')">Setup Connections</button>
       </div>
       <button class="d-nav" data-view="help" onclick="navView('help')" style="margin-top:0.3rem">
@@ -453,10 +508,10 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="d-view" id="view-connections">
         <div class="view-head"><div><h2>Setup Connections</h2><p>Connect the tools you already use. One connection works for Operations and Finance both.</p></div></div>
         <div class="view-body">
-          <div class="conn-big"><div class="cb-ic">📊</div><div><h4>QuickBooks Online</h4><p>So Donna's estimates, invoices, and expenses land in your books automatically.</p><div class="cb-status"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('QuickBooks')">Set Up</button></div>
-          <div class="conn-big"><div class="cb-ic">✉️</div><div><h4>Gmail</h4><p>So Donna can send estimates and invoices from your own email address.</p><div class="cb-status"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('Gmail')">Set Up</button></div>
-          <div class="conn-big"><div class="cb-ic">📅</div><div><h4>Google Calendar</h4><p>So scheduled jobs show up on your calendar and customers get reminders.</p><div class="cb-status"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('Calendar')">Set Up</button></div>
-          <div class="notebox warn" style="margin-top:0.5rem">These connections aren't wired up yet in this preview. Donna shows them as unconnected until each one is actually verified &mdash; she'll never fake a green light.</div>
+          <div class="conn-big"><div class="cb-ic">📊</div><div><h4>QuickBooks Online</h4><p>So Donna's estimates, invoices, and expenses land in your books automatically.</p><div class="cb-status" id="connStatusQbo"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('QuickBooks')">Set Up</button></div>
+          <div class="conn-big"><div class="cb-ic">✉️</div><div><h4>Gmail</h4><p>So Donna can send estimates and invoices from your own email address.</p><div class="cb-status" id="connStatusGmail"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('Google')">Set Up</button></div>
+          <div class="conn-big"><div class="cb-ic">📅</div><div><h4>Google Calendar</h4><p>So scheduled jobs show up on your calendar and customers get reminders.</p><div class="cb-status" id="connStatusCalendar"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('Google')">Set Up</button></div>
+          <div class="notebox" style="margin-top:0.5rem">Connections are shared with Bedrock Finance — connect once and both tools use it. Donna shows a connection as live only when it's actually verified against your account &mdash; she'll never fake a green light.</div>
         </div>
       </div>
       <!-- HELP -->
@@ -478,6 +533,30 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="d-panel-body" id="panelBody"></div>
     </aside>
 
+    <!-- Mobile bottom-nav bar — shows only below 720px (sidebar replacement) -->
+    <nav class="d-mobile-bar" id="dMobileBar" aria-label="Donna navigation">
+      <button data-view="chat" onclick="navView('chat')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Chat
+      </button>
+      <button data-view="customers" onclick="navView('customers')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        Customers
+      </button>
+      <button data-view="projects" onclick="navView('projects')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3"/></svg>
+        Projects
+      </button>
+      <button data-view="jobs" onclick="navView('jobs')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
+        Jobs
+      </button>
+      <button data-view="notes" onclick="navView('notes')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Notes
+      </button>
+    </nav>
+
   </div>
 </div>
 
@@ -494,12 +573,12 @@ footer a{color:var(--gold);text-decoration:none}
   </div>
 </div>
 
-<footer>Bedrock Operations · Donna &mdash; rough draft preview. <a href="/portal.html">Back to Portal</a></footer>
+<footer>Bedrock Operations · Donna &mdash; part of <a href="/">Bedrock Digital</a>. <a href="/portal.html">Back to Portal</a></footer>
 
 <script>
 // ═══════════════ SHARED PROFILE (Supabase-only; no localStorage) ═══════════════
 var BedrockProfile = (function(){
-  var TOKEN='', data={}, subs=[];
+  var TOKEN='', data={}, subs=[], conns={};
   var EXTRA=['labor_rate','material_markup_pct','travel_fee','cleanup_fee','default_payment_terms','tax_on_labor','tax_on_materials'];
   var COLS=['business_name','contact_name','phone','trade','city','service_areas'];
   function flatten(p){ if(!p)return {}; var o={}; COLS.forEach(function(k){if(p[k]!=null&&p[k]!=='')o[k]=p[k];}); var x=p.extra||{}; EXTRA.forEach(function(k){if(x[k]!=null&&x[k]!=='')o[k]=x[k];}); if(p.is_admin===true)o.is_admin=true; if(p.brand_colors)o.brand_colors=p.brand_colors; return o; }
@@ -510,12 +589,14 @@ var BedrockProfile = (function(){
       if(!TOKEN) return Promise.resolve(data);
       return fetch('/.netlify/functions/get-profile',{headers:{Authorization:'Bearer '+TOKEN}})
         .then(function(r){return r.ok?r.json():null;})
-        .then(function(d){ if(d){ if(d.profile){var l=flatten(d.profile);Object.keys(l).forEach(function(k){data[k]=l[k];});} if(d.subscriptions)subs=d.subscriptions; } return data; })
+        .then(function(d){ if(d){ if(d.profile){var l=flatten(d.profile);Object.keys(l).forEach(function(k){data[k]=l[k];});} if(d.subscriptions)subs=d.subscriptions; if(d.connections)conns=d.connections; } return data; })
         .catch(function(){return data;});
     },
     get:function(k){return data[k];},
     has:function(k){var v=data[k];return v!=null&&v!=='';},
-    subscribedTo:function(tools){ return subs.some(function(s){ return s.status==='active' && tools.indexOf(s.tool)!==-1; }); },
+    token:function(){return TOKEN;},
+    connections:function(){return conns;},
+    subscribedTo:function(tools){ return subs.some(function(s){ return (s.status==='active'||s.status==='past_due') && tools.indexOf(s.tool)!==-1; }); },
     set:function(k,v){
       if(v==null||v==='')return;
       data[k]=v;
@@ -549,7 +630,11 @@ function showGate(){
     + '</div></div>', true);
 }
 
-// ═══════════════ IN-MEMORY STORE (CRUD) ═══════════════
+// ═══════════════ STORE (CRUD CACHE) ═══════════════
+// STORE is an in-memory cache. With a signed-in session it's populated from
+// donna-crud.js and every write persists to Supabase (survives a refresh).
+// Without a session (free preview) the sample rows below stay and edits are
+// in-memory only — same behavior the preview always had.
 var STORE = {
   customers:[ {id:'c1',name:'Joe Smith',phone:'(414) 555-0174',email:'joe.smith@email.com',address:'1820 Oak Ridge Dr, Menomonee Falls, WI'} ],
   projects:[ {id:'p1',name:'Smith Backyard',customerId:'c1',status:'active'} ],
@@ -558,6 +643,86 @@ var STORE = {
 };
 var SEQ = 100;
 function newId(p){ SEQ++; return p+SEQ; }
+
+// The Supabase session token (passed by the portal as ?token=…).
+var DONNA_TOKEN = (new URLSearchParams(location.search).get('token')||'').trim();
+
+// ═══════════════ DONNA DATA — Supabase-backed CRUD ═══════════════
+// Reads/writes the donna_customers / donna_projects / donna_jobs / donna_notes
+// tables through donna-crud.js. The UI render functions keep reading STORE —
+// this layer just keeps STORE in sync with the database.
+var DonnaData = (function(){
+  function fmtDate(d){ try{return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});}catch(e){return d;} }
+  // backend row (snake_case) → cache object (camelCase the render fns expect)
+  function map(type,row){
+    if(type==='project') return Object.assign({},row,{customerId:row.customer_id});
+    if(type==='job')     return Object.assign({},row,{customerId:row.customer_id,projectId:row.project_id});
+    if(type==='note')    return Object.assign({},row,{customerId:row.customer_id,date:row.note_date?fmtDate(row.note_date):''});
+    return row;
+  }
+  // UI form values → backend columns
+  function unmap(type,rec){
+    var o={};
+    if(type==='customer'){ ['name','phone','email','address','qbo_customer_id'].forEach(function(k){ if(k in rec)o[k]=rec[k]; }); }
+    else if(type==='project'){ if('name'in rec)o.name=rec.name; if('customerId'in rec)o.customer_id=rec.customerId||null; if('status'in rec)o.status=rec.status; }
+    else if(type==='job'){ if('name'in rec)o.name=rec.name; if('customerId'in rec)o.customer_id=rec.customerId||null; if('projectId'in rec)o.project_id=rec.projectId||null; if('amount'in rec)o.amount=rec.amount?Number(rec.amount):null; if('status'in rec)o.status=rec.status; }
+    else if(type==='note'){ if('customerId'in rec)o.customer_id=rec.customerId||null; if('text'in rec)o.text=rec.text; }
+    return o;
+  }
+  function call(payload){
+    return fetch('/.netlify/functions/donna-crud',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},body:JSON.stringify(payload)})
+      .then(function(r){ if(!r.ok)throw new Error('crud failed'); return r.json(); });
+  }
+  function cacheReplace(type,id,obj){
+    var key=STORE_KEY[type], arr=STORE[key];
+    for(var i=0;i<arr.length;i++){ if(arr[i].id===id){ arr[i]=obj; return; } }
+  }
+  return {
+    active:function(){ return !!DONNA_TOKEN; },
+    load:function(){
+      if(!DONNA_TOKEN) return Promise.resolve(false);
+      return call({action:'load'}).then(function(d){
+        if(!d) return false;
+        STORE.customers=(d.customers||[]).map(function(x){return map('customer',x);});
+        STORE.projects =(d.projects ||[]).map(function(x){return map('project',x);});
+        STORE.jobs     =(d.jobs     ||[]).map(function(x){return map('job',x);});
+        STORE.notes    =(d.notes    ||[]).map(function(x){return map('note',x);});
+        return true;
+      }).catch(function(){return false;});
+    },
+    save:function(type,id,rec){
+      var key=STORE_KEY[type];
+      if(!DONNA_TOKEN){
+        // preview mode — in-memory only
+        if(id){ var ex=STORE[key].filter(function(x){return x.id===id;})[0]; if(ex)Object.keys(rec).forEach(function(k){ex[k]=rec[k];}); return Promise.resolve(ex); }
+        rec.id=newId(type[0]); if(type==='note')rec.date=todayShort(); STORE[key].push(rec); return Promise.resolve(rec);
+      }
+      return call({action:'save',entity:type,id:id||undefined,record:unmap(type,rec)}).then(function(d){
+        if(!d||!d.row) throw new Error('save failed');
+        var obj=map(type,d.row);
+        if(id) cacheReplace(type,id,obj); else STORE[key].push(obj);
+        return obj;
+      });
+    },
+    remove:function(type,id){
+      var key=STORE_KEY[type];
+      if(!DONNA_TOKEN){ STORE[key]=STORE[key].filter(function(x){return x.id!==id;}); return Promise.resolve(true); }
+      return call({action:'delete',entity:type,id:id}).then(function(){
+        STORE[key]=STORE[key].filter(function(x){return x.id!==id;}); return true;
+      });
+    }
+  };
+})();
+
+// Push an approved customer to QuickBooks (best-effort; silent if QBO is off).
+function qboSyncCustomer(cust){
+  if(!DONNA_TOKEN||!cust||cust.qbo_customer_id) return;
+  fetch('/.netlify/functions/qbo-sync',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
+    body:JSON.stringify({entity:'customer',customer:{name:cust.name,email:cust.email,phone:cust.phone}})})
+    .then(function(r){return r.json();})
+    .then(function(d){ if(d&&d.synced&&d.qbo_customer_id) DonnaData.save('customer',cust.id,{qbo_customer_id:d.qbo_customer_id}); })
+    .catch(function(){});
+}
 function custName(id){ var c=STORE.customers.filter(function(x){return x.id===id;})[0]; return c?c.name:'—'; }
 function projName(id){ var p=STORE.projects.filter(function(x){return x.id===id;})[0]; return p?p.name:'—'; }
 
@@ -623,6 +788,16 @@ function openForm(type, id){
     + '<button type="submit" class="btn-gold">Save '+schema.title+'</button></div></form>';
   openModalRaw(id?'Edit':'New', (id?'Edit ':'New ')+schema.title, html);
 }
+// Toast — short floating confirmation/error. Used by save/delete/approve.
+function donnaToast(msg, kind){
+  var el=document.getElementById('dtToast');
+  if(!el){ el=document.createElement('div'); el.id='dtToast'; el.className='dt-toast'; document.body.appendChild(el); }
+  el.className='dt-toast'+(kind?(' '+kind):'');
+  el.textContent=msg;
+  setTimeout(function(){ el.classList.add('show'); },10);
+  clearTimeout(window._dtTimer);
+  window._dtTimer=setTimeout(function(){ el.classList.remove('show'); }, 2800);
+}
 function saveForm(e, type, id){
   e.preventDefault();
   var schema = FIELDS[type], rec = {};
@@ -630,25 +805,27 @@ function saveForm(e, type, id){
   for(var i=0;i<inputs.length;i++){ rec[inputs[i].getAttribute('data-k')] = inputs[i].value.trim(); }
   var nameField = schema.fields[0];
   if(nameField.req && !rec[nameField.k]){ alert('Please fill in '+nameField.label+'.'); return; }
-  var arr = STORE[STORE_KEY[type]];
-  if(id){
-    var existing = arr.filter(function(x){return x.id===id;})[0];
-    Object.keys(rec).forEach(function(k){ existing[k]=rec[k]; });
-  } else {
-    rec.id = newId(type[0]);
-    if(type==='note') rec.date = todayShort();
-    arr.push(rec);
-  }
-  closeModal();
-  refreshView();
+  var btn = document.querySelector('#modalBody button[type="submit"]'); if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
+  DonnaData.save(type, id, rec).then(function(saved){
+    if(type==='customer' && saved) qboSyncCustomer(saved);
+    closeModal();
+    refreshView();
+    donnaToast((id?'Updated':'Saved')+' '+schema.title.toLowerCase()+'.', 'ok');
+  }).catch(function(){
+    if(btn){ btn.disabled=false; btn.textContent='Save '+schema.title; }
+    donnaToast('Could not save — check your connection and try again.', 'err');
+  });
 }
 function deleteRecord(type, id){
   if(!confirm('Delete this '+FIELDS[type].title.toLowerCase()+'? This cannot be undone.')) return;
-  var key = STORE_KEY[type];
-  STORE[key] = STORE[key].filter(function(x){return x.id!==id;});
-  closeModal();
-  if(type==='customer'){ document.getElementById('customersBody').setAttribute('data-detail',''); }
-  refreshView();
+  DonnaData.remove(type, id).then(function(){
+    closeModal();
+    if(type==='customer'){ document.getElementById('customersBody').setAttribute('data-detail',''); }
+    refreshView();
+    donnaToast('Deleted.', 'ok');
+  }).catch(function(){
+    donnaToast('Could not delete that — try again in a moment.', 'err');
+  });
 }
 function refreshView(){
   var v = CURRENT_VIEW;
@@ -666,7 +843,7 @@ function showPage(id){
 }
 function navView(view){
   CURRENT_VIEW = view;
-  document.querySelectorAll('.d-nav[data-view]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-view')===view); });
+  document.querySelectorAll('.d-nav[data-view], .d-mobile-bar button[data-view]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-view')===view); });
   document.querySelectorAll('.d-view').forEach(function(v){ v.classList.remove('active'); });
   var vw=document.getElementById('view-'+view); if(vw)vw.classList.add('active');
   document.getElementById('donnaApp').classList.toggle('no-panel', view!=='chat');
@@ -767,7 +944,87 @@ function sendDonna(){
   var box=document.getElementById('composer'); var text=(box.value||'').trim(); if(!text)return;
   if(!requireSub()) return;
   addMsg('user',esc(text)); box.value=''; autoGrow(box);
-  routeIntent(text.toLowerCase());
+  askDonna(text);
+}
+
+// ── Donna's chat now talks to the Anthropic API via donna-conversation.js ──
+// Conversation history is kept here and passed to each call. Without a session
+// token (free preview) it falls back to the local keyword router.
+var DONNA_HISTORY = [];
+// One stable session id per page load — donna-conversation.js uses it to keep
+// the whole chat in a single donna_conversations row instead of one per turn.
+var DONNA_SESSION_ID = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+  : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){
+      var r=Math.random()*16|0; return (c==='x'?r:(r&0x3|0x8)).toString(16);
+    });
+function formatReply(t){ return esc(t).replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>'); }
+function askDonna(text){
+  if(!DONNA_TOKEN){ routeIntent(text.toLowerCase()); return; }
+  showTyping();
+  var prior = DONNA_HISTORY.slice();
+  DONNA_HISTORY.push({role:'user',content:text});
+  fetch('/.netlify/functions/donna-conversation',{
+    method:'POST',
+    headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
+    body:JSON.stringify({message:text,history:prior,session_id:DONNA_SESSION_ID})
+  })
+  .then(function(r){return r.json();})
+  .then(function(d){
+    clearTyping();
+    if(d&&d.reply){
+      DONNA_HISTORY.push({role:'assistant',content:d.reply});
+      addMsg('donna',formatReply(d.reply));
+      if(d.workflow&&d.workflow.type) applyDonnaWorkflow(d.workflow);
+    } else {
+      // Drop the dangling user turn so history stays user/assistant-alternating.
+      DONNA_HISTORY.pop();
+      addMsg('donna',esc((d&&d.error)||"I hit a snag — give that another try."));
+    }
+  })
+  .catch(function(){
+    clearTyping();
+    DONNA_HISTORY.pop();
+    addMsg('donna',"I couldn't reach the server just now. Try again in a moment.");
+  });
+}
+// Bridge Donna's structured workflow data into the existing approval panel.
+function applyDonnaWorkflow(wf){
+  if(!wf||!wf.type) return;
+  if(wf.type==='customer'){
+    var c=wf.customer||{};
+    openForm('customer',null);
+    setTimeout(function(){
+      ['name','phone','email','address'].forEach(function(k){
+        var el=document.querySelector('#modalBody [data-k="'+k+'"]'); if(el&&c[k])el.value=c[k];
+      });
+    },10);
+    return;
+  }
+  if(wf.type==='estimate'||wf.type==='invoice'){ renderAIDraft(wf); return; }
+  if(wf.type==='receipt'){ runWorkflow('receipt',null); return; }
+  if(wf.type==='schedule'){ runWorkflow('schedule',(wf.customer&&wf.customer.name)||null); return; }
+}
+// Render an estimate/invoice draft from Donna's AI-generated line items,
+// reusing the same approval-panel structure the manual workflows use.
+function renderAIDraft(wf){
+  navView('chat');
+  var isInv=wf.type==='invoice';
+  var who=(wf.customer&&wf.customer.name)||'a customer';
+  var items=Array.isArray(wf.line_items)?wf.line_items:[];
+  var subtotal=wf.subtotal!=null?Number(wf.subtotal):items.reduce(function(s,li){return s+(Number(li.total)||0);},0);
+  var total=wf.total!=null?Number(wf.total):subtotal;
+  lastDraft={flow:wf.type,customerId:(PENDING_CUST||null),aiData:wf};
+  var rows=items.length?items.map(function(li){
+    var sub=(li.qty?li.qty+(li.unit_price?' @ '+money(li.unit_price):''):'');
+    return liRow(esc(li.description||'Line item'),sub,Number(li.total)||0);
+  }).join(''):liRow(esc(wf.notes||'Work'),'',total);
+  setPanel('Pending approval',(isInv?'Invoice draft':'Estimate draft'),
+    '<div class="draft"><div class="draft-head"><div class="dh-type">'+(isInv?'Invoice':'Estimate')+' &middot; draft</div>'
+    +'<div class="dh-title">'+esc(who)+'</div><div class="dh-meta">Drafted by Donna</div></div>'
+    +'<div class="draft-body">'+rows
+    +'<div class="draft-totals">'+totRow('Subtotal',subtotal)+totRow('Total',total,true)+'</div>'
+    +(wf.notes?'<div class="draft-note">'+esc(wf.notes)+'</div>':'')
+    +'</div>'+approvalRow(wf.type)+'</div>');
 }
 function routeIntent(t){
   if(/(estimate|bid|quote)/.test(t)) return startWhoFor('estimate');
@@ -785,12 +1042,47 @@ function chipClick(btn,action){
   else if(action==='travel') donnaReply("Good call — added your $"+(BedrockProfile.get('travel_fee')||75)+" travel fee. Updated estimate's on the right.");
   else donnaReply("On it.");
 }
+// Voice input via the browser-native Web Speech API — no external vendor.
+// Tap to start listening, tap again (or stop speaking) to stop. The transcript
+// lands in the composer; the contractor reviews it before sending.
+var DONNA_RECOG = null;
 function toggleMic(){
   if(!requireSub()) return;
   var btn=document.getElementById('micBtn');
-  if(btn.classList.contains('recording')){ btn.classList.remove('recording'); return; }
-  btn.classList.add('recording');
-  setTimeout(function(){ btn.classList.remove('recording'); var box=document.getElementById('composer'); box.value='New estimate for Joe Smith — 600 square foot paver patio, charcoal border'; autoGrow(box); },1400);
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    donnaReply("Voice input isn't supported in this browser — try Chrome, Edge, or Safari, or just type it to me.");
+    return;
+  }
+  // Already listening → tapping again stops.
+  if(DONNA_RECOG && btn.classList.contains('recording')){
+    try { DONNA_RECOG.stop(); } catch(e){}
+    return;
+  }
+  var box=document.getElementById('composer');
+  var baseText = box.value ? (box.value.replace(/\s*$/,'') + ' ') : '';
+  DONNA_RECOG = new SR();
+  DONNA_RECOG.lang='en-US';
+  DONNA_RECOG.continuous=false;
+  DONNA_RECOG.interimResults=true;
+  DONNA_RECOG.onstart=function(){ btn.classList.add('recording'); };
+  DONNA_RECOG.onresult=function(e){
+    var txt='';
+    for(var i=0;i<e.results.length;i++){ txt+=e.results[i][0].transcript; }
+    box.value=baseText+txt;
+    autoGrow(box);
+  };
+  DONNA_RECOG.onerror=function(ev){
+    btn.classList.remove('recording');
+    if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){
+      donnaReply("I need microphone permission to listen — turn it on in your browser, then tap the mic again.");
+    } else if(ev.error==='no-speech'){
+      donnaReply("Didn't catch anything — tap the mic and try again.");
+    }
+  };
+  DONNA_RECOG.onend=function(){ btn.classList.remove('recording'); box.focus(); };
+  try { DONNA_RECOG.start(); }
+  catch(err){ btn.classList.remove('recording'); }
 }
 function togglePlus(){ document.getElementById('plusMenu').classList.toggle('open'); document.getElementById('plusBtn').classList.toggle('open'); }
 function closePlus(){ document.getElementById('plusMenu').classList.remove('open'); document.getElementById('plusBtn').classList.remove('open'); }
@@ -828,10 +1120,12 @@ function saveWhoCustomer(e){
   e.preventDefault();
   var rec={}; document.querySelectorAll('#modalBody [data-k]').forEach(function(el){ rec[el.getAttribute('data-k')]=el.value.trim(); });
   if(!rec.name){ alert('Please fill in Name.'); return; }
-  rec.id=newId('c'); STORE.customers.push(rec);
-  PENDING_CUST = rec.id;
-  closeModal();
-  runWorkflow(PENDING_FLOW, rec.id);
+  DonnaData.save('customer',null,rec).then(function(saved){
+    PENDING_CUST = saved.id;
+    qboSyncCustomer(saved);
+    closeModal();
+    runWorkflow(PENDING_FLOW, saved.id);
+  }).catch(function(){ alert('Could not save the customer — try again.'); });
 }
 function whoProceed(flow, skip){
   var sel = document.getElementById('whoSelect');
@@ -850,11 +1144,10 @@ function runWorkflow(flow, customerId){
   var labels={estimate:'New estimate',invoice:'New invoice',receipt:'Upload a receipt',schedule:'Schedule a job'};
   addMsg('user',labels[flow]+(cust?(' for '+cust.name):''));
   if(flow==='estimate'){
-    var rate=BedrockProfile.get('labor_rate')||65,mk=BedrockProfile.get('material_markup_pct')||18;
-    donnaReply("Alright — roughed out an estimate for <strong>"+esc(who)+"</strong> using your profile: $"+rate+"/hr labor and a "+mk+"% material markup. It's on the right.");
+    donnaReply("Let's build that estimate for <strong>"+esc(who)+"</strong>. I pre-filled your labor rate and markup on the right — add your line items, tweak any number, then approve.");
     renderEstimate(who);
   } else if(flow==='invoice'){
-    donnaReply("Done — built the invoice for <strong>"+esc(who)+"</strong>. Terms: "+(BedrockProfile.get('default_payment_terms')||'Net 30')+". Take a look on the right.");
+    donnaReply("Let's build the invoice for <strong>"+esc(who)+"</strong>. Add your line items on the right — terms are "+(BedrockProfile.get('default_payment_terms')||'Net 30')+". Approve when it's right.");
     renderInvoice(who);
   } else if(flow==='receipt'){
     donnaReply("Snap a photo of the receipt or drop the file on the right. I'll read it and ask which job it belongs to.");
@@ -899,41 +1192,160 @@ function estimateNumbers(){
   var labor=rate*14,materials=4200,markup=Math.round(materials*(mkPct/100)),equip=380;
   return {rate:rate,mkPct:mkPct,labor:labor,materials:materials,markup:markup,equip:equip,total:labor+materials+markup+equip};
 }
-function renderEstimate(who){
-  var n=estimateNumbers();
-  setPanel('Pending approval','Estimate draft',
-    '<div class="draft"><div class="draft-head"><div class="dh-type">Estimate · EST-1042</div>'
-    +'<div class="dh-title">600 sq ft Paver Patio</div><div class="dh-meta">'+esc(who)+'</div></div>'
+// ── Editable line-item builder ──────────────────────────────────────────────
+// The manual + menu New Estimate / New Invoice flows. Donna pre-fills the
+// contractor's labor rate, markup, and tax preference; every number is editable
+// and totals recalculate live. collectDocDraft() reads this builder on approve.
+var BUILDER = null;
+function renderEstimate(who){ renderDocBuilder('estimate', who); }
+function renderInvoice(who){ renderDocBuilder('invoice', who); }
+function renderDocBuilder(kind, who){
+  var isInv=kind==='invoice';
+  var rate=Number(BedrockProfile.get('labor_rate'))||65;
+  var mk=Number(BedrockProfile.get('material_markup_pct'))||0;
+  var taxPref=BedrockProfile.get('tax_on_materials')||BedrockProfile.get('tax_on_labor');
+  var taxDefault=(taxPref==='Yes'||taxPref===true||taxPref==='yes');
+  var terms=BedrockProfile.get('default_payment_terms')||'Net 30';
+  BUILDER={kind:kind,who:who,lines:[{description:'',qty:1,unit_price:0}]};
+  if(lastDraft) lastDraft.builderActive=true;
+  setPanel('Build it out',(isInv?'New invoice':'New estimate'),
+    '<div class="draft"><div class="draft-head"><div class="dh-type">'+(isInv?'Invoice':'Estimate')+' · draft</div>'
+    +'<div class="dh-title">'+(isInv?'New Invoice':'New Estimate')+'</div><div class="dh-meta">'+esc(who)+(isInv?(' · '+esc(terms)):'')+'</div></div>'
     +'<div class="draft-body">'
-    +liRow('Labor','14 hrs @ $'+n.rate+'/hr (your rate)',n.labor)
-    +liRow('Belgard pavers + base','Charcoal border, materials',n.materials)
-    +liRow('Material markup',n.mkPct+'% (your standard)',n.markup)
-    +liRow('Skid steer rental','Site access — 1 day',n.equip)
-    +'<div class="draft-totals">'+totRow('Subtotal',n.total)+totRow('Tax',0)+totRow('Total',n.total,true)+'</div>'
-    +'<div class="draft-note">Donna: "Used your profile — $'+n.rate+'/hr and '+n.mkPct+'% markup. Edit anything before you approve."</div>'
-    +'</div>'+approvalRow('estimate')+'</div>');
+    +'<div class="fld"><label>Job description</label><input id="bldJob" placeholder="e.g. 600 sq ft paver patio"></div>'
+    +'<div class="bld-sublabel">Line items</div>'
+    +'<div id="bldLines"></div>'
+    +'<button type="button" class="bld-addrow" onclick="builderAddLine()">+ Add line item</button>'
+    +'<div class="bld-set"><label>Labor rate ($/hr)</label><input type="number" id="bldLabor" min="0" step="1" value="'+rate+'" oninput="recalcBuilder()"><button type="button" class="bld-mini" onclick="builderAddLabor()">+ Labor line</button></div>'
+    +'<div class="bld-set"><label><input type="checkbox" id="bldMarkupOn" '+(mk>0?'checked':'')+' onchange="recalcBuilder()"> Material markup</label><input type="number" id="bldMarkup" min="0" step="1" value="'+mk+'" oninput="recalcBuilder()"><span style="color:var(--slate);font-weight:600">%</span></div>'
+    +'<div class="bld-set"><label><input type="checkbox" id="bldTaxOn" '+(taxDefault?'checked':'')+' onchange="recalcBuilder()"> Charge sales tax</label><input type="number" id="bldTax" min="0" step="0.1" value="0" oninput="recalcBuilder()"><span style="color:var(--slate);font-weight:600">%</span></div>'
+    +'<div class="draft-totals" id="bldTotals"></div>'
+    +'<div class="fld" style="margin-top:0.8rem"><label>Notes</label><textarea id="bldNotes" placeholder="Anything the customer should know">'+(isInv?('Payment terms: '+esc(terms)):'')+'</textarea></div>'
+    +'<div class="draft-note">Donna pre-filled your rate and markup — change any number, then approve when it looks right.</div>'
+    +'</div>'+builderApprovalRow(kind)+'</div>');
+  renderBuilderLines();
+  recalcBuilder();
 }
-function renderInvoice(who){
-  var n=estimateNumbers();
-  setPanel('Pending approval','Invoice draft',
-    '<div class="draft"><div class="draft-head"><div class="dh-type">Invoice · INV-2087</div>'
-    +'<div class="dh-title">600 sq ft Paver Patio</div><div class="dh-meta">'+esc(who)+' · '+(BedrockProfile.get('default_payment_terms')||'Net 30')+' · Due '+datePlus(30)+'</div></div>'
-    +'<div class="draft-body">'
-    +liRow('Patio install — labor','14 hrs completed',n.labor)
-    +liRow('Materials','Belgard pavers, base, border',n.materials)
-    +liRow('Material markup',n.mkPct+'%',n.markup)
-    +liRow('Equipment','Skid steer rental',n.equip)
-    +'<div class="draft-totals">'+totRow('Subtotal',n.total)+totRow('Paid to date',0)+totRow('Amount due',n.total,true)+'</div>'
-    +'<div class="draft-note">Donna: "I\'ll send it from your email and log it in QuickBooks once you approve."</div>'
-    +'</div>'+approvalRow('invoice')+'</div>');
+function builderApprovalRow(kind){
+  return '<div class="approval-row">'
+    +'<button class="appr-btn appr-approve" onclick="approve(\''+kind+'\')">✓ Approve &amp; Send</button>'
+    +'<button class="appr-btn appr-pdf" onclick="generatePDF(\''+kind+'\')">View Full PDF</button>'
+    +'<button class="appr-btn appr-reject" onclick="rejectDraft()">Reject</button>'
+    +'</div><div class="approval-banner">Nothing is sent to the customer until you approve.</div>';
+}
+// Read the builder's current line items from the DOM into BUILDER.lines.
+function builderSyncLines(){
+  if(!BUILDER) return;
+  var rows=document.querySelectorAll('#bldLines .bld-li'), arr=[];
+  rows.forEach(function(el){
+    arr.push({
+      description:(el.querySelector('.bld-desc').value||'').trim(),
+      qty:Number(el.querySelector('.bld-qty').value)||0,
+      unit_price:Number(el.querySelector('.bld-price').value)||0
+    });
+  });
+  if(arr.length) BUILDER.lines=arr;
+}
+function renderBuilderLines(){
+  var box=document.getElementById('bldLines'); if(!box||!BUILDER) return;
+  if(!BUILDER.lines.length) BUILDER.lines=[{description:'',qty:1,unit_price:0}];
+  box.innerHTML=BUILDER.lines.map(function(li,i){
+    return '<div class="bld-li">'
+      +'<input class="bld-desc" placeholder="Line item description" value="'+esc(li.description||'')+'" oninput="recalcBuilder()">'
+      +'<div class="bld-li-grid">'
+        +'<input class="bld-qty" type="number" min="0" step="0.5" placeholder="Qty" value="'+(li.qty!=null?li.qty:'')+'" oninput="recalcBuilder()">'
+        +'<input class="bld-price" type="number" min="0" step="0.01" placeholder="Unit $" value="'+(li.unit_price!=null?li.unit_price:'')+'" oninput="recalcBuilder()">'
+        +'<span class="bld-tot">'+money((Number(li.qty)||0)*(Number(li.unit_price)||0))+'</span>'
+        +'<button type="button" class="bld-rm" title="Remove line" onclick="builderRemoveLine('+i+')">✕</button>'
+      +'</div></div>';
+  }).join('');
+}
+function builderAddLine(){ builderSyncLines(); BUILDER.lines.push({description:'',qty:1,unit_price:0}); renderBuilderLines(); recalcBuilder(); }
+function builderAddLabor(){
+  builderSyncLines();
+  var rate=Number(document.getElementById('bldLabor').value)||0;
+  BUILDER.lines.push({description:'Labor',qty:1,unit_price:rate});
+  renderBuilderLines(); recalcBuilder();
+}
+function builderRemoveLine(i){ builderSyncLines(); BUILDER.lines.splice(i,1); renderBuilderLines(); recalcBuilder(); }
+// Read every builder field from the DOM and compute the live totals.
+function builderState(){
+  var lines=[];
+  document.querySelectorAll('#bldLines .bld-li').forEach(function(el){
+    var qty=Number(el.querySelector('.bld-qty').value)||0;
+    var price=Number(el.querySelector('.bld-price').value)||0;
+    lines.push({description:(el.querySelector('.bld-desc').value||'').trim(),qty:qty,unit_price:price,total:qty*price});
+  });
+  var subtotal=lines.reduce(function(s,l){return s+l.total;},0);
+  var markupOn=document.getElementById('bldMarkupOn').checked;
+  var markupPct=Number(document.getElementById('bldMarkup').value)||0;
+  var markup=markupOn?subtotal*markupPct/100:0;
+  var taxOn=document.getElementById('bldTaxOn').checked;
+  var taxPct=Number(document.getElementById('bldTax').value)||0;
+  var tax=taxOn?(subtotal+markup)*taxPct/100:0;
+  return {lines:lines,subtotal:subtotal,markupOn:markupOn,markupPct:markupPct,markup:markup,
+    taxOn:taxOn,taxPct:taxPct,tax:tax,total:subtotal+markup+tax,
+    job:(document.getElementById('bldJob').value||'').trim(),
+    laborRate:Number(document.getElementById('bldLabor').value)||0,
+    notes:(document.getElementById('bldNotes').value||'').trim()};
+}
+function recalcBuilder(){
+  if(!document.getElementById('bldTotals')) return;
+  var s=builderState();
+  var tots=document.querySelectorAll('#bldLines .bld-tot');
+  s.lines.forEach(function(li,i){ if(tots[i]) tots[i].textContent=money(li.total); });
+  var html=totRow('Subtotal',s.subtotal);
+  if(s.markupOn) html+=totRow('Material markup ('+s.markupPct+'%)',s.markup);
+  if(s.taxOn) html+=totRow('Sales tax ('+s.taxPct+'%)',s.tax);
+  html+=totRow((BUILDER&&BUILDER.kind==='invoice')?'Amount due':'Total',s.total,true);
+  document.getElementById('bldTotals').innerHTML=html;
 }
 function renderReceipt(){
   setPanel('Upload receipt','File a receipt',
-    '<div class="receipt-drop" onclick="mockReceiptScan()">'
+    '<label class="receipt-drop" for="receiptFile">'
     +'<div class="es-ic" style="margin:0 auto 0.6rem"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>'
     +'<div style="font-size:0.84rem;font-weight:600;color:var(--navy-deep)">Snap or upload a receipt</div>'
-    +'<div style="font-size:0.72rem;color:var(--slate);margin-top:3px">Donna reads it and fills in the details</div></div>'
+    +'<div style="font-size:0.72rem;color:var(--slate);margin-top:3px">Donna reads it and fills in the details</div></label>'
+    +'<input id="receiptFile" type="file" accept="image/*" capture="environment" style="display:none" onchange="scanReceipt(event)">'
     +'<div id="receiptResult" style="margin-top:1rem"><div class="empty-state" style="padding-top:0.5rem"><h4>Nothing filed yet</h4><p>Add a receipt and Donna pulls out the vendor, amount, and date.</p></div></div>');
+}
+// Send the receipt photo to Google Vision OCR (vision-ocr.js) and pre-fill
+// the form with the vendor / amount / date it reads back.
+function scanReceipt(e){
+  var file=e.target.files&&e.target.files[0]; if(!file) return;
+  var result=document.getElementById('receiptResult');
+  result.innerHTML='<div class="notebox">Reading the receipt…</div>';
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    if(!DONNA_TOKEN){ renderReceiptForm({}); return; }
+    fetch('/.netlify/functions/vision-ocr',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
+      body:JSON.stringify({image_base64:ev.target.result})})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d&&!d.error){
+          renderReceiptForm(d);
+          donnaReply("Read it — <strong>"+esc(d.vendor||'receipt')+"</strong>"+(d.amount?(', $'+d.amount):'')+". Check the details on the right, fix anything I missed, then file it.");
+        } else {
+          renderReceiptForm({});
+          donnaReply((d&&d.error)||"Couldn't quite read that one — go ahead and fill it in by hand.");
+        }
+      })
+      .catch(function(){ renderReceiptForm({}); });
+  };
+  reader.readAsDataURL(file);
+}
+function renderReceiptForm(d){
+  d=d||{};
+  document.getElementById('receiptResult').innerHTML=
+    '<div class="draft"><div class="draft-head"><div class="dh-type">Receipt &middot; scanned</div>'
+    +'<div class="dh-title">Receipt details</div><div class="dh-meta">Donna pre-filled what she could read</div></div>'
+    +'<div class="draft-body">'
+    +'<div class="fld"><label>Vendor</label><input id="rcVendor" value="'+esc(d.vendor||'')+'"></div>'
+    +'<div class="fld"><label>Amount ($)</label><input id="rcAmount" type="number" step="0.01" value="'+esc(d.amount!=null?d.amount:'')+'"></div>'
+    +'<div class="fld"><label>Date</label><input id="rcDate" type="date" value="'+esc(d.date||'')+'"></div>'
+    +'<div class="draft-note">Donna: "Fix anything I got wrong, then confirm and I\'ll file it."</div></div>'
+    +'<div class="approval-row"><button class="appr-btn appr-approve" onclick="approve(\'receipt\')">✓ Confirm &amp; File</button>'
+    +'<button class="appr-btn appr-reject" onclick="rejectDraft()">Discard</button></div></div>';
 }
 function mockReceiptScan(){
   document.getElementById('receiptResult').innerHTML=
@@ -945,6 +1357,16 @@ function mockReceiptScan(){
   donnaReply("Read it — <strong>Menards, $248.17</strong>. Confirm it on the right and I'll file it as an expense.");
 }
 function renderSchedule(who){
+  // Real start/end datetimes — stashed on lastDraft so approve() can create a
+  // Google Calendar event (calendar-create.js).
+  var start=new Date(); start.setDate(start.getDate()+5); start.setHours(7,30,0,0);
+  var end=new Date(start); end.setHours(16,0,0,0);
+  var hasWho=who&&who!=='a new customer';
+  if(lastDraft) lastDraft.scheduleData={
+    summary:'Patio Install'+(hasWho?(' — '+who):''),
+    description:'600 sq ft Paver Patio. Crew note: skid steer access — confirm gate width.',
+    startISO:start.toISOString(), endISO:end.toISOString()
+  };
   setPanel('Pending approval','Schedule a job',
     '<div class="draft"><div class="draft-head"><div class="dh-type">Calendar event · draft</div>'
     +'<div class="dh-title">Patio Install</div><div class="dh-meta">'+esc(who)+' · '+datePlus(5)+' · 7:30 AM – 4:00 PM</div></div>'
@@ -954,12 +1376,139 @@ function renderSchedule(who){
     +'<button class="appr-btn appr-reject" onclick="rejectDraft()">Reject</button></div>'
     +'<div class="approval-banner">Calendar event and reminder both wait for your approval.</div></div>');
 }
+// Persist an approved document to Supabase (donna_estimates / donna_invoices /
+// donna_receipts) via donna-crud.js. Returns a promise of the saved row so the
+// caller can link the QuickBooks id back onto it.
+function persistDoc(entity, record){
+  if(!DONNA_TOKEN || !record) return Promise.resolve(null);
+  return fetch('/.netlify/functions/donna-crud',{method:'POST',
+    headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
+    body:JSON.stringify({action:'save',entity:entity,record:record})})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){return d&&d.row?d.row:null;})
+    .catch(function(){return null;});
+}
+// Build the estimate/invoice row from the current draft. The AI chat path uses
+// the AI's structured data; the manual + menu path reads lastDraft.manualData —
+// the exact line items the approval panel was rendered from — so the persisted
+// row matches what the contractor actually saw and approved.
+function collectDocDraft(){
+  if(lastDraft && lastDraft.aiData){
+    var wf=lastDraft.aiData;
+    var items=Array.isArray(wf.line_items)?wf.line_items:[];
+    var subtotal=wf.subtotal!=null?Number(wf.subtotal):items.reduce(function(s,li){return s+(Number(li.total)||0);},0);
+    var total=wf.total!=null?Number(wf.total):subtotal;
+    var who=(wf.customer&&wf.customer.name)?wf.customer.name:'';
+    return { line_items:items, subtotal:subtotal, total:total, status:'approved',
+      notes:(who?('Customer: '+who):'')+(wf.notes?((who?' — ':'')+wf.notes):'') };
+  }
+  // Manual + menu path — read the editable builder live from the DOM so the
+  // persisted row is exactly what the contractor entered and approved.
+  if(lastDraft && lastDraft.builderActive && document.getElementById('bldTotals')){
+    var s=builderState();
+    var items=s.lines.filter(function(l){return (l.description||l.total);})
+      .map(function(l){return {description:l.description||'Line item',qty:l.qty,unit_price:l.unit_price,total:l.total};});
+    if(s.markupOn && s.markup>0) items.push({description:'Material markup ('+s.markupPct+'%)',qty:1,unit_price:s.markup,total:s.markup});
+    var noteParts=[];
+    if(s.job) noteParts.push('Job: '+s.job);
+    var bc=approvalCustomer();
+    if(bc && bc.name) noteParts.push('Customer: '+bc.name);
+    if(s.notes) noteParts.push(s.notes);
+    return { line_items:items, subtotal:s.subtotal+s.markup, tax_rate:(s.taxOn?s.taxPct:0),
+      total:s.total, status:'approved', notes:noteParts.join(' — ') };
+  }
+  // No draft context — persist an honest empty doc rather than fake numbers.
+  return { line_items:[], subtotal:0, total:0, status:'approved', notes:'' };
+}
+// Build the receipt row from the receipt approval form.
+function collectReceiptDraft(){
+  var v=document.getElementById('rcVendor');
+  if(!v) return null;
+  var a=document.getElementById('rcAmount'), dt=document.getElementById('rcDate');
+  return {
+    vendor:(v.value||'').trim()||null,
+    amount:(a&&a.value!=='')?Number(a.value):null,
+    date:(dt&&dt.value)||null,
+    status:'approved'
+  };
+}
+// Resolve the customer for the current draft — the AI draft's customer, or the
+// manual workflow's selected customer from STORE.
+function approvalCustomer(){
+  if(lastDraft && lastDraft.aiData && lastDraft.aiData.customer) return lastDraft.aiData.customer;
+  if(lastDraft && lastDraft.customerId){
+    var c=STORE.customers.filter(function(x){return x.id===lastDraft.customerId;})[0];
+    if(c) return {name:c.name,email:c.email,phone:c.phone,qbo_customer_id:c.qbo_customer_id};
+  }
+  return {};
+}
 function approve(kind){
-  var msgs={estimate:"Approved. I sent the estimate and logged it. I'll tell you the second they respond. 😉",
-    invoice:"Approved — invoice is on its way and recorded. I'll watch for the payment.",
-    receipt:"Filed. Logged as a materials expense on the Smith patio job.",
-    schedule:"Done — it's on your calendar, and the reminder is queued for the day before."};
+  var msgs={estimate:"Approved — sending it to your customer now.",
+    invoice:"Approved — sending the invoice now.",
+    receipt:"Filed. Logged as an expense — it'll show up in Finance.",
+    schedule:"Approved — getting it on your calendar."};
   donnaReply(msgs[kind]||"Approved — handled.");
+
+  if(kind==='estimate'||kind==='invoice'){
+    var draft=collectDocDraft();
+    var customer=approvalCustomer();
+    // Shared-profile rule: capture the builder's labor rate / markup into the
+    // profile if the contractor didn't have them on file yet.
+    if(lastDraft && lastDraft.builderActive && document.getElementById('bldLabor')){
+      var bs=builderState();
+      if(bs.laborRate && !BedrockProfile.has('labor_rate')) BedrockProfile.set('labor_rate',bs.laborRate);
+      if(bs.markupOn && bs.markupPct && !BedrockProfile.has('material_markup_pct')) BedrockProfile.set('material_markup_pct',bs.markupPct);
+    }
+    // Persist to Supabase — saveP resolves to the saved row (for QBO linkback).
+    var saveP=persistDoc(kind,draft);
+    // Send the document — from the contractor's Gmail if connected, else Resend.
+    if(DONNA_TOKEN){
+      fetch('/.netlify/functions/gmail-send',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
+        body:JSON.stringify({doc_type:kind,to:customer.email||'',customer_name:customer.name||'',
+          line_items:draft.line_items,subtotal:draft.subtotal,total:draft.total,notes:draft.notes})})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(d&&d.sent) donnaReply(d.via==='gmail'?"Sent it straight from your Gmail. ✓":"Sent it to your customer. ✓");
+          else if(d&&d.reason==='no recipient email') donnaReply("It's saved — add an email address for this customer and I'll send it for you.");
+        })
+        .catch(function(){});
+    }
+    // QBO sync for AI-chat drafts, then link the QuickBooks id back onto the row.
+    if(DONNA_TOKEN && lastDraft && lastDraft.aiData){
+      var wf=lastDraft.aiData;
+      var syncP=fetch('/.netlify/functions/qbo-sync',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
+        body:JSON.stringify({entity:kind,record:{line_items:draft.line_items,total:draft.total,notes:draft.notes,due_date:wf.due_date},customer:wf.customer||{}})})
+        .then(function(r){return r.json();}).catch(function(){return null;});
+      Promise.all([saveP,syncP]).then(function(res){
+        var savedRow=res[0], sync=res[1];
+        if(sync&&sync.synced){
+          donnaReply("Logged it in QuickBooks too. ✓");
+          // Linkback: write the QBO id onto the donna row now both writes are done.
+          if(savedRow&&savedRow.id&&sync.qbo_id){
+            var patch={}; patch[kind==='estimate'?'qbo_estimate_id':'qbo_invoice_id']=sync.qbo_id;
+            fetch('/.netlify/functions/donna-crud',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
+              body:JSON.stringify({action:'save',entity:kind,id:savedRow.id,record:patch})}).catch(function(){});
+          }
+        }
+      });
+    }
+  } else if(kind==='receipt'){
+    persistDoc('receipt',collectReceiptDraft());
+  } else if(kind==='schedule'){
+    // Create a real Google Calendar event when Calendar is connected.
+    if(DONNA_TOKEN && lastDraft && lastDraft.scheduleData){
+      var s=lastDraft.scheduleData;
+      fetch('/.netlify/functions/calendar-create',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
+        body:JSON.stringify({summary:s.summary,description:s.description,start:s.startISO,end:s.endISO})})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(d&&d.created) donnaReply("It's on your Google Calendar. ✓");
+          else donnaReply("Drafted the schedule. Connect Google Calendar in My Integrations and I'll put the next one straight on your calendar.");
+        })
+        .catch(function(){});
+    }
+  }
+
   setPanel('Done','All set',
     '<div class="empty-state"><div class="es-ic" style="color:var(--green)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>'
     +'<h4>Approved</h4><p>Donna handled it. Start the next thing whenever you\'re ready.</p>'
@@ -970,13 +1519,21 @@ function rejectDraft(){ donnaReply("No problem — tossed it. Nothing was sent o
 
 // ═══════════════ REAL PDF (jsPDF) ═══════════════
 function generatePDF(kind){
-  var n=estimateNumbers();
   var isInv = kind==='invoice';
   var biz = BedrockProfile.get('business_name') || 'Your Business';
   var colors = BedrockProfile.get('brand_colors');
   var hasBrand = colors && colors.primary;
   var band = hasBrand ? colors.primary : '#0D1B2E';
-  var who = (lastDraft && lastDraft.customerId) ? custName(lastDraft.customerId) : 'Customer';
+  // Build the PDF from the current draft — AI chat draft or the manual builder
+  // (collectDocDraft handles both).
+  var draft = collectDocDraft();
+  var pdfCust = approvalCustomer();
+  var who = (pdfCust && pdfCust.name) ? pdfCust.name
+          : ((lastDraft && lastDraft.customerId) ? custName(lastDraft.customerId) : 'Customer');
+  var rows = (draft.line_items||[]).map(function(li){ return [String(li.description||'Line item'), Number(li.total)||0]; });
+  var grandTotal = draft.total!=null ? Number(draft.total) : rows.reduce(function(s,r){return s+r[1];},0);
+  if(!rows.length) rows=[[String(draft.notes||'Work'), grandTotal]];
+  var jobLine = draft.notes ? String(draft.notes).slice(0,80) : (isInv?'Invoice':'Estimate');
   try {
     var jsPDF = window.jspdf.jsPDF;
     var doc = new jsPDF({unit:'pt',format:'letter'});
@@ -986,14 +1543,13 @@ function generatePDF(kind){
     doc.setTextColor(255,255,255);
     doc.setFont('helvetica','bold'); doc.setFontSize(22); doc.text(biz,40,52);
     doc.setFontSize(10); doc.setFont('helvetica','normal');
-    doc.text((isInv?'INVOICE  INV-2087':'ESTIMATE  EST-1042'),40,72);
+    doc.text((isInv?'INVOICE':'ESTIMATE'),40,72);
     doc.setTextColor(13,27,46);
     doc.setFontSize(11); doc.setFont('helvetica','bold');
     doc.text('Prepared for: '+who,40,140);
-    doc.text('600 sq ft Paver Patio',40,158);
+    doc.text(jobLine,40,158);
     doc.setFont('helvetica','normal'); doc.setTextColor(90,90,90);
     doc.text((isInv?('Due '+datePlus(30)):'Valid 30 days'),W-40,140,{align:'right'});
-    var rows=[['Labor — 14 hrs @ $'+n.rate+'/hr',n.labor],['Belgard pavers + base',n.materials],['Material markup ('+n.mkPct+'%)',n.markup],['Skid steer rental',n.equip]];
     var y=200; doc.setDrawColor(220,220,220); doc.setTextColor(13,27,46);
     rows.forEach(function(r){
       doc.setFont('helvetica','normal'); doc.setFontSize(10);
@@ -1002,7 +1558,7 @@ function generatePDF(kind){
     });
     doc.setFont('helvetica','bold'); doc.setFontSize(13);
     doc.text(isInv?'Amount Due':'Estimated Total',40,y+14);
-    doc.text(money(n.total),W-40,y+14,{align:'right'});
+    doc.text(money(grandTotal),W-40,y+14,{align:'right'});
     doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(120,120,120);
     doc.text('Generated by Bedrock Operations · Donna. Review before sending. Not tax or legal advice.',40,740);
     doc.save((isInv?'invoice':'estimate')+'-'+who.replace(/\s+/g,'-').toLowerCase()+'.pdf');
@@ -1104,25 +1660,46 @@ function renderNotes(){
   body.innerHTML=html;
 }
 function setupConnection(name){
-  if(name==='QuickBooks'){
-    var tok=(new URLSearchParams(location.search).get('token')||'').trim();
-    if(!tok){ alert('Open Operations from your portal while signed in to connect QuickBooks.'); return; }
-    fetch('/.netlify/functions/qbo-auth',{headers:{Authorization:'Bearer '+tok}})
-      .then(function(r){return r.json();})
-      .then(function(d){ if(d&&d.url){ window.location.href=d.url; } else { alert(d&&d.error?d.error:'QuickBooks isn’t available yet.'); } })
-      .catch(function(){ alert('Could not reach QuickBooks. Try again in a moment.'); });
-    return;
-  }
-  alert(name+' setup isn\'t available yet in this preview.\n\nDonna will never show a green "connected" light until the connection is actually verified.');
+  if(!DONNA_TOKEN){ alert('Open Operations from your portal while signed in to connect '+name+'.'); return; }
+  var fn = name==='QuickBooks' ? 'qbo-auth' : 'google-oauth-auth';
+  fetch('/.netlify/functions/'+fn,{headers:{Authorization:'Bearer '+DONNA_TOKEN}})
+    .then(function(r){return r.json();})
+    .then(function(d){ if(d&&d.url){ window.location.href=d.url; } else { alert(d&&d.error?d.error:name+' isn’t available yet.'); } })
+    .catch(function(){ alert('Could not reach '+name+'. Try again in a moment.'); });
+}
+
+// Paint the real connection dots from get-profile's `connections` data.
+// Green ONLY when a verified, non-expired connection exists for this user.
+function applyConnDots(){
+  var c=BedrockProfile.connections()||{};
+  var scopes=c.google_scopes||'';
+  var on={ qbo:!!c.qbo,
+           gmail:!!c.google && scopes.indexOf('gmail.send')!==-1,
+           calendar:!!c.google && scopes.indexOf('calendar')!==-1 };
+  // sidebar dots
+  [['dotQbo','qbo'],['dotGmail','gmail'],['dotCalendar','calendar']].forEach(function(p){
+    var el=document.getElementById(p[0]); if(el) el.classList.toggle('on',on[p[1]]);
+  });
+  // connections-view status rows
+  [['connStatusQbo','qbo'],['connStatusGmail','gmail'],['connStatusCalendar','calendar']].forEach(function(p){
+    var el=document.getElementById(p[0]); if(!el) return;
+    el.innerHTML='<span class="d-conn-dot'+(on[p[1]]?' on':'')+'"></span> '+(on[p[1]]?'Connected':'Not connected');
+  });
 }
 
 // ═══════════════ INIT ═══════════════
 renderPanelDefault();
 BedrockProfile.load().then(function(){
   IS_SUBSCRIBED = !!BedrockProfile.get('is_admin') || BedrockProfile.subscribedTo(['finance_operations','operations']);
+  applyConnDots();
   var _qbo = new URLSearchParams(location.search).get('qbo');
   if (_qbo === 'connected') setTimeout(function(){ alert('QuickBooks connected. Donna can now sync your customers, estimates, and invoices.'); }, 500);
   else if (_qbo === 'error' || _qbo === 'declined') setTimeout(function(){ alert('QuickBooks didn’t connect. You can try again from Setup Connections.'); }, 500);
+  var _g = new URLSearchParams(location.search).get('google');
+  if (_g === 'connected') setTimeout(function(){ alert('Google connected. Donna can now use Gmail and your Calendar.'); }, 500);
+  // Load this contractor's saved customers/projects/jobs/notes from Supabase
+  // (replaces the in-memory sample data once a session is present).
+  DonnaData.load().then(function(){ refreshView(); });
   var needOnboarding = buildOnboarding();
   if(needOnboarding) showPage('pageOnboard');
   else enterApp();

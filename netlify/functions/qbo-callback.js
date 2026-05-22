@@ -11,10 +11,22 @@
 
 exports.handler = async (event) => {
   const siteUrl = process.env.SITE_URL || 'https://bedrock-sites.com';
-  // Always end by sending the contractor back to Operations with a status flag.
+
+  const q       = event.queryStringParameters || {};
+  const code    = q.code;
+  const realmId = q.realmId;                       // QBO company id, from Intuit
+  // state is "userId" or "userId|return" — set by qbo-auth.js.
+  const stateParts = (q.state || '').split('|');
+  const userId  = stateParts[0];
+  const dest    = stateParts[1] || 'donna';
+
+  // Send the contractor back where they started — the portal's Integrations
+  // tab, or Operations/Donna by default.
   const back = (status) => ({
     statusCode: 302,
-    headers: { Location: `${siteUrl}/bedrock-donna-v1.html?qbo=${status}` },
+    headers: { Location: dest === 'portal'
+      ? `${siteUrl}/portal.html?qbo=${status}#integrations`
+      : `${siteUrl}/bedrock-donna-v1.html?qbo=${status}` },
     body: '',
   });
 
@@ -27,11 +39,6 @@ exports.handler = async (event) => {
     console.error('[qbo-callback] missing env config');
     return back('error');
   }
-
-  const q       = event.queryStringParameters || {};
-  const code    = q.code;
-  const realmId = q.realmId;          // the QBO company id, supplied by Intuit
-  const userId  = q.state;            // the user id, set by qbo-auth.js
   if (q.error) { console.error('[qbo-callback] intuit error:', q.error); return back('declined'); }
   if (!code || !realmId || !userId) return back('error');
 

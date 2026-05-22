@@ -4,7 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bedrock Finance — Understand your business at a glance</title>
+<meta name="description" content="Bedrock Finance turns your QuickBooks and Donna data into plain-language dashboards: revenue, expenses, margins, and which jobs actually made money.">
 <meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://bedrock-sites.com/bedrock-finance-v1.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bedrock Digital">
+<meta property="og:title" content="Bedrock Finance — Understand your business at a glance">
+<meta property="og:description" content="Revenue, margins, and per-job profitability for contractors — built from QuickBooks and Donna.">
+<meta property="og:url" content="https://bedrock-sites.com/bedrock-finance-v1.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bedrock Finance · Analytics">
+<meta name="twitter:description" content="Plain-language dashboards from your QuickBooks + Donna data.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 68 68'%3E%3Crect width='68' height='68' rx='14' fill='%230D1B2E'/%3E%3Crect x='17' y='8' width='35' height='10' fill='%23F0C46A'/%3E%3Crect x='17' y='29' width='27' height='10' fill='%232E5A8E'/%3E%3Crect x='7' y='8' width='10' height='52' fill='%23C9922A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +56,16 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 
 /* ── APP LAYOUT ── */
 .fin-app{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 64px)}
-@media(max-width:760px){.fin-app{grid-template-columns:1fr}.fin-sidebar{display:none}}
+@media(max-width:760px){.fin-app{grid-template-columns:1fr}.fin-sidebar{display:none}.fin-mobile-tabs{display:flex}}
+/* Mobile sub-nav (replaces the hidden sidebar below 760px) */
+.fin-mobile-tabs{display:none;background:#fff;border-bottom:1px solid var(--border-light);padding:0.5rem 0.75rem;gap:0.3rem;overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:30}
+.fin-mobile-tabs::-webkit-scrollbar{display:none}
+.fin-mobile-tabs button{flex-shrink:0;background:transparent;border:1px solid var(--border-light);color:var(--slate);font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;padding:0.42rem 0.95rem;cursor:pointer;border-radius:999px;white-space:nowrap}
+.fin-mobile-tabs button.active{background:var(--navy-deep);color:#fff;border-color:var(--navy-deep)}
+/* KPI skeleton — shimmering placeholder while data loads */
+.kpi-card.skel .kpi-value{color:transparent;background:linear-gradient(90deg,var(--off-white),#eee,var(--off-white));background-size:200% 100%;border-radius:4px;animation:kpiShim 1.4s infinite linear;display:inline-block;min-width:100px;height:1.7rem}
+.kpi-card.skel .kpi-sub{color:transparent;background:var(--off-white);border-radius:3px;animation:kpiShim 1.4s infinite linear;display:inline-block;min-width:120px;height:0.7rem}
+@keyframes kpiShim{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
 /* sidebar */
 .fin-sidebar{background:var(--navy-deep);color:#fff;padding:1.25rem 0;display:flex;flex-direction:column}
@@ -232,6 +251,15 @@ footer a{color:var(--gold);text-decoration:none}
   </div>
 </nav>
 
+<!-- Mobile sub-nav — shows only below 760px (sidebar replacement) -->
+<nav class="fin-mobile-tabs" aria-label="Finance sections">
+  <button data-view="graphs" class="active" onclick="navView('graphs')">Graphs</button>
+  <button data-view="statements" onclick="navView('statements')">Statements</button>
+  <button data-view="projects" onclick="navView('projects')">Projects</button>
+  <button data-view="analytics" onclick="navView('analytics')">Analytics</button>
+  <button data-view="connect" onclick="navView('connect')">Connect</button>
+</nav>
+
 <div class="fin-app">
 
   <!-- SIDEBAR -->
@@ -263,6 +291,10 @@ footer a{color:var(--gold);text-decoration:none}
       <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0l3-3m-3 3L9 5"/><rect x="3" y="12" width="18" height="9" rx="2"/></svg>
       <span>Connect Your Numbers</span>
     </button>
+    <div id="finSideConn" style="padding:0.6rem 1.25rem 0;font-size:0.68rem;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:0.45rem">
+      <span id="finQboDot" style="width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.4)"></span>
+      <span id="finQboLabel">QuickBooks — not connected</span>
+    </div>
     <div class="fin-side-foot">Read-only dashboard. Finance never edits your books.</div>
   </aside>
 
@@ -278,6 +310,7 @@ footer a{color:var(--gold);text-decoration:none}
       </div>
       <div class="view-wrap">
         <div id="profileBanner"></div>
+        <div id="dataSourceBar"></div>
         <div class="filter-bar">
           <span class="filter-label">Time period</span>
           <button class="filter-btn" data-period="7d" onclick="setPeriod('7d',this)">7 days</button>
@@ -348,6 +381,7 @@ footer a{color:var(--gold);text-decoration:none}
       </div>
       <div class="view-wrap">
         <div class="disclaimer"><strong>Heads up:</strong> Margins are estimates based on available data. Actual profitability may vary. This is not official financial reporting.</div>
+        <div id="donnaDataBadge"></div>
         <div class="filter-bar">
           <span class="filter-label">Filter</span>
           <select class="select-mini" id="projServiceFilter" onchange="renderProjects()">
@@ -433,7 +467,7 @@ footer a{color:var(--gold);text-decoration:none}
         <div class="connect-grid">
           <div class="connect-card">
             <div class="cc-ic">📊</div>
-            <h3>Connect QuickBooks <span class="coming-soon-pill">Soon</span></h3>
+            <h3>Connect QuickBooks</h3>
             <p>Pull your invoices, estimates, and expenses straight from QuickBooks Online. One connection works for Finance and Donna both.</p>
             <button class="btn-gold" onclick="connectQBO()">Connect QuickBooks</button>
           </div>
@@ -453,9 +487,9 @@ footer a{color:var(--gold);text-decoration:none}
         <div class="section-title" style="margin-top:1.9rem">Your Connections</div>
         <div class="section-sub">Shared with Bedrock Operations — connect once and both tools use it.</div>
         <div style="background:#fff;border:1px solid var(--border-light);border-radius:8px;overflow:hidden">
-          <div class="conn-row"><span style="font-size:1.2rem">📊</span><div style="flex:1"><div class="cr-name">QuickBooks Online</div><div class="cr-sub">Invoices, estimates, and expenses</div></div><span class="cr-status">● Not connected</span><button class="btn-outline" onclick="setupConnection('QuickBooks')">Set Up</button></div>
-          <div class="conn-row"><span style="font-size:1.2rem">✉️</span><div style="flex:1"><div class="cr-name">Gmail</div><div class="cr-sub">Send reports and statements</div></div><span class="cr-status">● Not connected</span><button class="btn-outline" onclick="setupConnection('Gmail')">Set Up</button></div>
-          <div class="conn-row"><span style="font-size:1.2rem">📅</span><div style="flex:1"><div class="cr-name">Google Calendar</div><div class="cr-sub">Job dates feed the timeline</div></div><span class="cr-status">● Not connected</span><button class="btn-outline" onclick="setupConnection('Calendar')">Set Up</button></div>
+          <div class="conn-row"><span style="font-size:1.2rem">📊</span><div style="flex:1"><div class="cr-name">QuickBooks Online</div><div class="cr-sub">Invoices, estimates, and expenses</div></div><span class="cr-status" id="crStatusQbo">● Not connected</span><button class="btn-outline" onclick="setupConnection('QuickBooks')">Set Up</button></div>
+          <div class="conn-row"><span style="font-size:1.2rem">✉️</span><div style="flex:1"><div class="cr-name">Gmail</div><div class="cr-sub">Send reports and statements</div></div><span class="cr-status" id="crStatusGmail">● Not connected</span><button class="btn-outline" onclick="setupConnection('Google')">Set Up</button></div>
+          <div class="conn-row"><span style="font-size:1.2rem">📅</span><div style="flex:1"><div class="cr-name">Google Calendar</div><div class="cr-sub">Job dates feed the timeline</div></div><span class="cr-status" id="crStatusCalendar">● Not connected</span><button class="btn-outline" onclick="setupConnection('Google')">Set Up</button></div>
         </div>
         <div class="notebox" style="margin-top:1.25rem">Until you connect a real source, every page shows realistic sample data so you can see exactly what Finance looks like in use. Bedrock never shows a connection as live until it's actually verified.</div>
       </div>
@@ -476,7 +510,7 @@ footer a{color:var(--gold);text-decoration:none}
   </div>
 </div>
 
-<footer>Bedrock Finance · Analytics &mdash; rough draft preview, sample data shown. <a href="/portal.html">Back to Portal</a></footer>
+<footer>Bedrock Finance · Analytics &mdash; part of <a href="/">Bedrock Digital</a>. <a href="/portal.html">Back to Portal</a></footer>
 
 <script>
 // ═════════════════════════════════════════════════════════════════════════════
@@ -484,7 +518,7 @@ footer a{color:var(--gold);text-decoration:none}
 // Finance reads labor rate + markup from the shared profile; never re-asks.
 // ═════════════════════════════════════════════════════════════════════════════
 var BedrockProfile = (function(){
-  var LS_KEY = 'bedrock_shared_profile', TOKEN = '', data = {}, subs = [];
+  var LS_KEY = 'bedrock_shared_profile', TOKEN = '', data = {}, subs = [], conns = {};
   var EXTRA = ['labor_rate','material_markup_pct','travel_fee','cleanup_fee','default_payment_terms','tax_on_labor','tax_on_materials'];
   var COLS = ['business_name','contact_name','phone','trade','city','service_areas'];
   // Profile data syncs to Supabase only — never localStorage. No account = nothing persists.
@@ -497,12 +531,14 @@ var BedrockProfile = (function(){
       if(!TOKEN) return Promise.resolve(data);
       return fetch('/.netlify/functions/get-profile',{headers:{Authorization:'Bearer '+TOKEN}})
         .then(function(r){ return r.ok?r.json():null; })
-        .then(function(d){ if(d){ if(d.profile){ var l=flatten(d.profile); Object.keys(l).forEach(function(k){data[k]=l[k];}); } if(d.subscriptions)subs=d.subscriptions; } return data; })
+        .then(function(d){ if(d){ if(d.profile){ var l=flatten(d.profile); Object.keys(l).forEach(function(k){data[k]=l[k];}); } if(d.subscriptions)subs=d.subscriptions; if(d.connections)conns=d.connections; } return data; })
         .catch(function(){ return data; });
     },
     get:function(k){ return data[k]; },
     has:function(k){ var v=data[k]; return v!=null&&v!==''; },
-    subscribedTo:function(tools){ return subs.some(function(s){ return s.status==='active' && tools.indexOf(s.tool)!==-1; }); }
+    token:function(){ return TOKEN; },
+    connections:function(){ return conns; },
+    subscribedTo:function(tools){ return subs.some(function(s){ return (s.status==='active'||s.status==='past_due') && tools.indexOf(s.tool)!==-1; }); }
   };
 })();
 
@@ -559,7 +595,7 @@ function statusClass(s){ return 'st-'+s.toLowerCase(); }
 // VIEW NAV
 // ─────────────────────────────────────────────────────────────────────────────
 function navView(view){
-  document.querySelectorAll('.fin-nav[data-view]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-view')===view); });
+  document.querySelectorAll('.fin-nav[data-view], .fin-mobile-tabs button[data-view]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-view')===view); });
   document.querySelectorAll('.fin-view').forEach(function(v){ v.classList.remove('active'); });
   var vw = document.getElementById('view-'+view); if(vw) vw.classList.add('active');
   if(view==='graphs') setTimeout(resizeCharts,30);
@@ -647,16 +683,27 @@ function renderEstimates(){
 // ─────────────────────────────────────────────────────────────────────────────
 function marginColor(m){ return m>=50?'#3b6d11':(m>=35?'#C9922A':'#b91c1c'); }
 function renderProjects(){
+  var badge=document.getElementById('donnaDataBadge');
+  if(badge) badge.innerHTML = DONNA_PROJECTS_ACTIVE
+    ? '<div style="display:inline-flex;align-items:center;gap:0.4rem;background:var(--green-bg);border:1px solid rgba(59,109,17,0.3);color:#33571a;font-size:0.72rem;font-weight:600;padding:0.4rem 0.8rem;border-radius:999px;margin-bottom:1rem">'
+      + '<span style="font-size:0.9rem">✓</span> Powered by Donna data &mdash; these margins use your real approved estimates and invoices.</div>'
+    : '';
   var svc=document.getElementById('projServiceFilter').value, df=document.getElementById('projDateFilter').value, mf=document.getElementById('projMarginFilter').value;
   var rows = PROJECTS.filter(function(p){
-    var m=(p.revenue-p.cost)/p.revenue*100;
+    var m=(p.cost!=null)?(p.revenue-p.cost)/p.revenue*100:null;
     if(svc!=='all'&&p.service!==svc)return false;
     if(df!=='all'&&p.daysAgo>parseInt(df,10))return false;
-    if(mf==='high'&&m<45)return false; if(mf==='low'&&m>=45)return false;
+    if(mf==='high'&&(m==null||m<45))return false;
+    if(mf==='low'&&(m==null||m>=45))return false;
     return true;
   });
   var tb = document.getElementById('projectRows');
   tb.innerHTML = rows.length ? rows.map(function(p){
+    if(p.cost==null){
+      // QBO gives revenue, not job-level cost — show revenue honestly, no fake margin.
+      return '<tr><td class="cust">'+p.job+'</td><td class="job-sub">'+p.customer+'</td><td class="num amt">'+money(p.revenue)+'</td>'
+        +'<td class="num" style="color:var(--slate)">&mdash;</td><td class="num" style="color:var(--slate)">&mdash;</td></tr>';
+    }
     var m=Math.round((p.revenue-p.cost)/p.revenue*100), c=marginColor(m);
     return '<tr><td class="cust">'+p.job+'</td><td class="job-sub">'+p.customer+'</td><td class="num amt">'+money(p.revenue)+'</td><td class="num">'+money(p.cost)+'</td>'
       +'<td class="num"><div class="margin-bar"><div class="margin-track"><div class="margin-fill" style="width:'+Math.max(m,4)+'%;background:'+c+'"></div></div><span class="margin-pct" style="color:'+c+'">'+m+'%</span></div></td></tr>';
@@ -668,28 +715,40 @@ function renderProjects(){
 // ─────────────────────────────────────────────────────────────────────────────
 var analyticsBuilt = false;
 function buildAnalytics(){
-  // Most profitable service — avg margin by service type
-  var svc = {};
-  PROJECTS.forEach(function(p){
-    if(!svc[p.service]) svc[p.service]={rev:0,cost:0};
-    svc[p.service].rev+=p.revenue; svc[p.service].cost+=p.cost;
-  });
-  var svcArr = Object.keys(svc).map(function(s){ return {name:s,margin:Math.round((svc[s].rev-svc[s].cost)/svc[s].rev*100)}; })
-    .sort(function(a,b){ return b.margin-a.margin; });
-  document.getElementById('svcRank').innerHTML = svcArr.map(function(s,i){
-    return '<div class="rank-row"><span class="rank-num">'+(i+1)+'</span><span class="rk-name">'+s.name+'</span>'
-      +'<span class="rank-track"><span class="rank-fill" style="width:'+s.margin+'%"></span></span><span class="rk-val">'+s.margin+'%</span></div>';
-  }).join('');
+  // Most profitable service — needs job-level cost (cost is null on QBO-only data).
+  var costed = PROJECTS.filter(function(p){ return p.cost!=null && p.revenue>0; });
+  var svcEl = document.getElementById('svcRank');
+  if(!costed.length){
+    svcEl.innerHTML = '<div style="font-size:0.78rem;color:var(--slate);line-height:1.6">Job-by-job costs come from Bedrock Operations (Donna). Connect Donna and Finance will rank your most profitable services here.</div>';
+  } else {
+    var svc = {};
+    costed.forEach(function(p){
+      var k=p.service||'Other';
+      if(!svc[k]) svc[k]={rev:0,cost:0};
+      svc[k].rev+=p.revenue; svc[k].cost+=p.cost;
+    });
+    var svcArr = Object.keys(svc).map(function(s){ return {name:s,margin:Math.round((svc[s].rev-svc[s].cost)/svc[s].rev*100)}; })
+      .sort(function(a,b){ return b.margin-a.margin; });
+    svcEl.innerHTML = svcArr.map(function(s,i){
+      return '<div class="rank-row"><span class="rank-num">'+(i+1)+'</span><span class="rk-name">'+s.name+'</span>'
+        +'<span class="rank-track"><span class="rank-fill" style="width:'+Math.max(s.margin,0)+'%"></span></span><span class="rk-val">'+s.margin+'%</span></div>';
+    }).join('');
+  }
 
-  // Top customers by revenue
+  // Top customers by revenue — works from invoices alone.
   var cust = {};
   PROJECTS.forEach(function(p){ cust[p.customer]=(cust[p.customer]||0)+p.revenue; });
   var custArr = Object.keys(cust).map(function(c){ return {name:c,rev:cust[c]}; }).sort(function(a,b){ return b.rev-a.rev; }).slice(0,5);
-  var maxRev = custArr[0].rev;
-  document.getElementById('custRank').innerHTML = custArr.map(function(c,i){
-    return '<div class="rank-row"><span class="rank-num">'+(i+1)+'</span><span class="rk-name">'+c.name+'</span>'
-      +'<span class="rank-track"><span class="rank-fill" style="width:'+(c.rev/maxRev*100)+'%"></span></span><span class="rk-val">'+money(c.rev)+'</span></div>';
-  }).join('');
+  var custEl = document.getElementById('custRank');
+  if(!custArr.length){
+    custEl.innerHTML = '<div style="font-size:0.78rem;color:var(--slate)">No customer revenue on file yet.</div>';
+  } else {
+    var maxRev = custArr[0].rev || 1;
+    custEl.innerHTML = custArr.map(function(c,i){
+      return '<div class="rank-row"><span class="rank-num">'+(i+1)+'</span><span class="rk-name">'+c.name+'</span>'
+        +'<span class="rank-track"><span class="rank-fill" style="width:'+(c.rev/maxRev*100)+'%"></span></span><span class="rk-val">'+money(c.rev)+'</span></div>';
+    }).join('');
+  }
 
   if(analyticsBuilt){ resizeCharts(); return; }
   analyticsBuilt = true;
@@ -715,16 +774,253 @@ document.getElementById('gateModal').addEventListener('click', function(e){ if(e
 // ─────────────────────────────────────────────────────────────────────────────
 // CONNECT — QBO placeholder + SheetJS spreadsheet upload
 // ─────────────────────────────────────────────────────────────────────────────
+// Start the QuickBooks OAuth flow (shared with Operations — one connection).
 function connectQBO(){
   if(!requireSub()) return;
-  document.getElementById('sheetResult').innerHTML =
-    '<div class="notebox" style="border-left-color:var(--gold)"><strong>QuickBooks connection is coming soon.</strong> '
-    + 'We\'ll notify you when it\'s ready. In the meantime, upload a spreadsheet to see your real numbers now.</div>';
+  setupConnection('QuickBooks');
 }
 function setupConnection(name){
   if(!requireSub()) return;
-  alert(name + ' setup isn\'t available yet in this preview. Bedrock never shows a connection as live until it\'s actually verified.');
+  var tok=BedrockProfile.token();
+  if(!tok){ alert('Open Finance from your portal while signed in to connect '+name+'.'); return; }
+  var fn = name==='QuickBooks' ? 'qbo-auth' : 'google-oauth-auth';
+  fetch('/.netlify/functions/'+fn,{headers:{Authorization:'Bearer '+tok}})
+    .then(function(r){return r.json();})
+    .then(function(d){ if(d&&d.url){ window.location.href=d.url; } else { alert(d&&d.error?d.error:name+' isn’t available yet.'); } })
+    .catch(function(){ alert('Could not reach '+name+'. Try again in a moment.'); });
 }
+
+// ═════════════════════════════════════════════════════════════════════════════
+// LIVE DATA — QuickBooks (finance-qbo-fetch.js) + spreadsheet upload
+// ═════════════════════════════════════════════════════════════════════════════
+var DATA_SOURCE = 'sample';   // 'sample' | 'qbo' | 'sheet'
+var LIVE = false;
+var LAST_UPDATED = null;
+var QBO_CONNECTED = false;
+var DONNA_PROJECTS_ACTIVE = false;   // true once the Projects page uses Donna data
+
+function timeAgo(iso){
+  if(!iso) return 'just now';
+  var s=Math.floor((Date.now()-new Date(iso).getTime())/1000);
+  if(s<60) return 'just now';
+  if(s<3600) return Math.floor(s/60)+' min ago';
+  if(s<86400) return Math.floor(s/3600)+' hr ago';
+  return Math.floor(s/86400)+' day(s) ago';
+}
+function shortDate(d){ return d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function daysAgoOf(d){ return Math.floor((Date.now()-d.getTime())/86400000); }
+function qDate(s){ var d=new Date(String(s).length>10?s:(s+'T00:00:00')); return isNaN(d.getTime())?new Date():d; }
+
+// The sample-vs-live banner above the filters, with a Refresh button when live.
+function renderDataSourceBar(state){
+  var el=document.getElementById('dataSourceBar'); if(!el) return;
+  if(state==='loading'){
+    el.innerHTML='<div class="profile-banner ok" style="background:#fff;border-color:var(--border-light);color:var(--slate)"><span>⏳</span><div class="pb-txt">Loading your QuickBooks data…</div></div>';
+    return;
+  }
+  if(LIVE && DATA_SOURCE==='donna'){
+    el.innerHTML='<div class="profile-banner ok"><span style="font-size:1rem">✓</span>'
+      +'<div class="pb-txt"><strong>Powered by Donna data.</strong> These numbers come from the estimates, invoices, and receipts you\'ve approved in Operations. Connect QuickBooks for your complete books.</div>'
+      +'<button class="btn-gold" onclick="navView(\'connect\')">Connect QuickBooks</button></div>';
+    return;
+  }
+  if(LIVE){
+    var src=DATA_SOURCE==='sheet'?'your uploaded spreadsheet':'QuickBooks';
+    el.innerHTML='<div class="profile-banner ok"><span style="font-size:1rem">●</span>'
+      +'<div class="pb-txt">Live data from '+src+(LAST_UPDATED?(' — updated '+timeAgo(LAST_UPDATED)):'')+'.</div>'
+      +(DATA_SOURCE==='qbo'?'<button class="btn-gold" onclick="refreshFinance()">Refresh</button>':'')+'</div>';
+    return;
+  }
+  el.innerHTML='<div class="profile-banner missing"><span style="font-size:1.1rem">📊</span>'
+    +'<div class="pb-txt"><strong>Sample data shown.</strong> Connect a data source to see your real numbers — link QuickBooks, or start creating estimates and invoices in Operations (Donna).</div>'
+    +'<button class="btn-gold" onclick="navView(\'connect\')">Connect QuickBooks</button></div>';
+}
+function refreshFinance(){ loadFinanceData(true); }
+
+function setKpiSkeleton(on){
+  document.querySelectorAll('.kpi-card').forEach(function(el){ el.classList.toggle('skel',!!on); });
+}
+// Pull QBO data via finance-qbo-fetch.js and swap it in for the mock arrays.
+function loadFinanceData(force){
+  var tok=BedrockProfile.token(); if(!tok) return;
+  renderDataSourceBar('loading');
+  setKpiSkeleton(true);
+  fetch('/.netlify/functions/finance-qbo-fetch',{method:'POST',
+    headers:{'Content-Type':'application/json',Authorization:'Bearer '+tok},
+    body:JSON.stringify({force:!!force})})
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d||!d.data){ LIVE=false; DATA_SOURCE='sample'; renderDataSourceBar(); return; }
+      var donnaEst=d.data.donna_estimates||[], donnaInv=d.data.donna_invoices||[];
+      var donnaReceipts=(d.data.expenses||[]).filter(function(e){return e&&e._source==='donna';});
+      var hasDonna=(donnaEst.length+donnaInv.length+donnaReceipts.length)>0;
+      if(d.connected){
+        // QuickBooks is the fuller source — it drives Graphs + Statements.
+        applyQboData(d.data);
+        DATA_SOURCE='qbo'; LIVE=true; LAST_UPDATED=d.fetched_at;
+      } else if(hasDonna){
+        // No QBO, but the contractor has real Donna data — drive the whole
+        // dashboard (KPIs, charts, Statements) from it.
+        applyDonnaData(d.data);
+        DATA_SOURCE='donna'; LIVE=true; LAST_UPDATED=null;
+      } else {
+        // Neither — keep the labeled sample data + connect prompt.
+        LIVE=false; DATA_SOURCE='sample';
+      }
+      // Donna estimates/invoices give real per-job margins for the Projects page.
+      DONNA_PROJECTS_ACTIVE=false;
+      if((donnaEst.length+donnaInv.length)>0 && applyDonnaProjects(donnaEst,donnaInv)) DONNA_PROJECTS_ACTIVE=true;
+      if(d.connected||hasDonna) rerenderAll();
+      renderDataSourceBar();
+      setKpiSkeleton(false);
+    })
+    .catch(function(){
+      LIVE=false; DATA_SOURCE='sample';
+      setKpiSkeleton(false);
+      var el=document.getElementById('dataSourceBar');
+      if(el) el.innerHTML='<div class="profile-banner missing" style="border-color:var(--red);background:var(--red-bg);color:#7a1f1f"><span>⚠</span><div class="pb-txt"><strong>Couldn\'t load your data.</strong> Check your connection and try again.</div><button class="btn-gold" onclick="loadFinanceData(true)">Retry</button></div>';
+    });
+}
+
+// Transform raw QBO objects into the arrays the dashboard already renders.
+function applyQboData(data){
+  var today=new Date();
+  var invoices=(data.invoices||[]).map(function(inv){
+    var d=qDate(inv.TxnDate);
+    var bal=Number(inv.Balance||0), tot=Number(inv.TotalAmt||0);
+    var due=inv.DueDate?qDate(inv.DueDate):null;
+    var status=bal<=0?'Paid':((due&&due<today)?'Overdue':'Outstanding');
+    var line=(inv.Line||[]).filter(function(l){return l.DetailType==='SalesItemLineDetail';})[0];
+    return {customer:(inv.CustomerRef&&inv.CustomerRef.name)||'Customer',
+      job:(line&&line.Description)||('Invoice '+(inv.DocNumber||inv.Id||'')),
+      amount:tot,date:shortDate(d),daysAgo:daysAgoOf(d),status:status,_t:d.getTime(),balance:bal};
+  });
+  var estMap={Accepted:'Approved',Closed:'Approved',Rejected:'Declined',Pending:'Sent'};
+  var estimates=(data.estimates||[]).map(function(es){
+    var d=qDate(es.TxnDate);
+    var line=(es.Line||[]).filter(function(l){return l.DetailType==='SalesItemLineDetail';})[0];
+    return {customer:(es.CustomerRef&&es.CustomerRef.name)||'Customer',
+      job:(line&&line.Description)||('Estimate '+(es.DocNumber||es.Id||'')),
+      amount:Number(es.TotalAmt||0),date:shortDate(d),daysAgo:daysAgoOf(d),
+      status:estMap[es.TxnStatus]||'Draft'};
+  });
+  var expenses=(data.expenses||[]).map(function(p){ return {amount:Number(p.TotalAmt||0),date:qDate(p.TxnDate)}; });
+
+  INVOICES=invoices;
+  ESTIMATES=estimates;
+  OUTSTANDING_TOTAL=invoices.filter(function(i){return i.status!=='Paid';}).reduce(function(s,i){return s+(i.balance||i.amount);},0);
+  // QBO invoices give real revenue; per-job cost needs Donna, so cost stays null.
+  // (applyDonnaProjects overrides PROJECTS afterward when Donna data exists.)
+  PROJECTS=invoices.map(function(i){ return {job:i.job,customer:i.customer,service:'',revenue:i.amount,cost:null,daysAgo:i.daysAgo}; });
+  rebuildPeriods(invoices,expenses);
+}
+
+// Build the Projects list from Donna's own approved estimates + invoices. These
+// carry real line items, so per-job cost/margin can be computed — richer than
+// QBO's invoice-only data. An invoice supersedes the estimate it came from.
+function applyDonnaProjects(estimates,invoices){
+  estimates=estimates||[]; invoices=invoices||[];
+  var supersededEst={};
+  invoices.forEach(function(iv){ if(iv.estimate_id) supersededEst[iv.estimate_id]=true; });
+  var rows=[];
+  invoices.forEach(function(iv){ rows.push(donnaProjectRow(iv)); });
+  estimates.forEach(function(es){ if(!supersededEst[es.id]) rows.push(donnaProjectRow(es)); });
+  if(!rows.length) return false;
+  PROJECTS=rows;
+  return true;
+}
+// Parse the customer / job name out of a Donna doc's notes field
+// ("Job: … — Customer: … — …"), falling back to the first line item.
+function donnaCustomerOf(row){
+  var m=String(row.notes||'').match(/Customer:\s*([^—\n]+)/i);
+  return m?m[1].trim():'—';
+}
+function donnaJobOf(row){
+  var m=String(row.notes||'').match(/Job:\s*([^—\n]+)/i);
+  if(m) return m[1].trim().slice(0,60);
+  var items=Array.isArray(row.line_items)?row.line_items:[];
+  return (items.length?String(items[0].description||'Job'):'Job').slice(0,60);
+}
+function donnaProjectRow(row){
+  var items=Array.isArray(row.line_items)?row.line_items:[];
+  var revenue=Number(row.total)||items.reduce(function(s,li){return s+(Number(li.total)||0);},0);
+  // Cost = line items that are pass-through cost (materials, equipment, rental,
+  // etc.) — labor, markup, and fee lines are the contractor's margin, not cost.
+  var costItems=items.filter(function(li){
+    return !/labor|markup|fee|service charge|profit|deposit|discount/i.test(String(li.description||''));
+  });
+  var cost=(items.length && costItems.length)
+    ? costItems.reduce(function(s,li){return s+(Number(li.total)||0);},0) : null;
+  var d=row.created_at?new Date(row.created_at):new Date();
+  return {
+    job:donnaJobOf(row), customer:donnaCustomerOf(row),
+    service:'', revenue:revenue, cost:cost, daysAgo:daysAgoOf(d)
+  };
+}
+
+// Drive the whole dashboard (KPIs, charts, Statements) from Donna data when the
+// contractor hasn't connected QuickBooks. donna_invoices = billed revenue;
+// donna receipts (in data.expenses, _source:'donna') = expenses.
+function applyDonnaData(data){
+  var donnaInv=data.donna_invoices||[], donnaEst=data.donna_estimates||[];
+  var invoices=donnaInv.map(function(iv){
+    var d=iv.created_at?new Date(iv.created_at):new Date();
+    var amt=Number(iv.total)||0;
+    // Donna doesn't track payment — a sent invoice is money still owed.
+    return {customer:donnaCustomerOf(iv),job:donnaJobOf(iv),amount:amt,
+      date:shortDate(d),daysAgo:daysAgoOf(d),status:'Outstanding',_t:d.getTime(),balance:amt};
+  });
+  var estimates=donnaEst.map(function(es){
+    var d=es.created_at?new Date(es.created_at):new Date();
+    return {customer:donnaCustomerOf(es),job:donnaJobOf(es),amount:Number(es.total)||0,
+      date:shortDate(d),daysAgo:daysAgoOf(d),status:'Sent'};
+  });
+  var expenses=(data.expenses||[]).map(function(p){ return {amount:Number(p.TotalAmt||0),date:qDate(p.TxnDate)}; });
+  INVOICES=invoices;
+  ESTIMATES=estimates;
+  OUTSTANDING_TOTAL=invoices.reduce(function(s,i){return s+i.amount;},0);
+  PROJECTS=invoices.map(function(i){ return {job:i.job,customer:i.customer,service:'',revenue:i.amount,cost:null,daysAgo:i.daysAgo}; });
+  rebuildPeriods(invoices,expenses);
+}
+
+// Bucket invoices + expenses into a time series for one period filter.
+function bucketize(invoices,expenses,windowDays,bucketCount){
+  var now=Date.now(), start=now-windowDays*86400000, span=(now-start)/bucketCount;
+  var b=[]; for(var i=0;i<bucketCount;i++) b.push({start:start+i*span,rev:0,exp:0,jobs:0});
+  function idx(t){ var i=Math.floor((t-start)/span); return i<0?-1:(i>=bucketCount?bucketCount-1:i); }
+  invoices.forEach(function(inv){ if(inv._t>=start){ var i=idx(inv._t); if(i>=0){ b[i].rev+=inv.amount; b[i].jobs++; } } });
+  expenses.forEach(function(ex){ var t=ex.date.getTime(); if(t>=start){ var i=idx(t); if(i>=0) b[i].exp+=ex.amount; } });
+  var revenue=b.map(function(x){return Math.round(x.rev);});
+  var expense=b.map(function(x){return Math.round(x.exp);});
+  var totRev=revenue.reduce(function(a,c){return a+c;},0), totExp=expense.reduce(function(a,c){return a+c;},0);
+  return {
+    revLabels:b.map(function(x){return new Date(x.start).toLocaleDateString('en-US',{month:'short',day:'numeric'});}),
+    revenue:revenue, expense:expense, jobs:b.map(function(x){return x.jobs;}),
+    margin:b.map(function(x){return x.rev>0?Math.round((x.rev-x.exp)/x.rev*100):0;}),
+    kpi:{revenue:totRev,expenses:totExp,margin:totRev>0?Math.round((totRev-totExp)/totRev*100):0}
+  };
+}
+function rebuildPeriods(invoices,expenses){
+  PERIODS={
+    '7d':     bucketize(invoices,expenses,7,7),
+    '30d':    bucketize(invoices,expenses,30,5),
+    '90d':    bucketize(invoices,expenses,90,3),
+    'month':  bucketize(invoices,expenses,30,4),
+    'quarter':bucketize(invoices,expenses,90,3),
+    'year':   bucketize(invoices,expenses,365,12),
+    'custom': bucketize(invoices,expenses,30,5)
+  };
+}
+// Re-render every page from whatever is currently in the data arrays.
+// buildAnalytics() re-runs its rankings each call; its illustrative charts
+// build once (Chart.js rejects a second chart on the same canvas).
+function rerenderAll(){
+  updateCharts(); updateKPIs();
+  renderInvoices(); renderEstimates(); renderProjects();
+  buildAnalytics();
+}
+
+// ── Spreadsheet upload — map Date / Description / Amount / Category columns ──
 function handleSheet(e){
   if(!requireSub()){ e.target.value=''; return; }
   var file = e.target.files[0]; if(!file) return;
@@ -734,25 +1030,117 @@ function handleSheet(e){
       var wb = XLSX.read(ev.target.result, {type:'array'});
       var sheet = wb.Sheets[wb.SheetNames[0]];
       var rows = XLSX.utils.sheet_to_json(sheet, {header:1});
-      renderSheet(file.name, rows);
+      mapSheet(file.name, rows);
     } catch(err) {
       document.getElementById('sheetResult').innerHTML = '<div class="notebox" style="border-left-color:var(--red)">Couldn\'t read that file. Make sure it\'s a valid .xlsx or .csv.</div>';
     }
   };
   reader.readAsArrayBuffer(file);
 }
-function renderSheet(name, rows){
+function findCol(head,names){
+  for(var i=0;i<head.length;i++){
+    var h=String(head[i]==null?'':head[i]).toLowerCase().trim();
+    for(var j=0;j<names.length;j++){ if(h && h.indexOf(names[j])!==-1) return i; }
+  }
+  return -1;
+}
+function mapSheet(name, rows){
   if(!rows.length){ document.getElementById('sheetResult').innerHTML='<div class="notebox">That file looks empty.</div>'; return; }
+  var head=rows[0]||[];
+  var ci={
+    date:    findCol(head,['date']),
+    desc:    findCol(head,['description','desc','memo','vendor','customer','payee','name']),
+    amount:  findCol(head,['amount','total','price','value','cost']),
+    category:findCol(head,['category','type','account','class','service'])
+  };
+  // Need at least a date + an amount to drive the dashboard.
+  if(ci.date===-1 || ci.amount===-1){ renderRawSheet(name,rows); return; }
+
+  var txns=[];
+  rows.slice(1).forEach(function(r){
+    var rawAmt=r[ci.amount];
+    if(rawAmt==null||rawAmt==='') return;
+    var amt=parseFloat(String(rawAmt).replace(/[$,\s]/g,'').replace(/[()]/g,''));
+    if(isNaN(amt)) return;
+    if(String(rawAmt).indexOf('(')!==-1) amt=-Math.abs(amt);  // (123.45) = negative
+    var d=new Date(r[ci.date]);
+    txns.push({
+      date: isNaN(d.getTime())?null:d,
+      rawDate: r[ci.date],
+      desc: ci.desc>-1?String(r[ci.desc]||''):'',
+      amount: amt,
+      category: ci.category>-1?String(r[ci.category]||''):''
+    });
+  });
+  if(!txns.length){ renderRawSheet(name,rows); return; }
+  applySheetData(name, txns, ci);
+}
+function applySheetData(name, txns, ci){
+  var anyNeg=txns.some(function(t){return t.amount<0;});
+  function isRevenue(t){
+    if(anyNeg) return t.amount>0;
+    if(ci.category===-1) return true;   // a plain amount list — treat as income
+    return /income|revenue|sale|invoice|payment|deposit|paid|job/i.test(t.category||'');
+  }
+  var invs=[], exps=[];
+  txns.forEach(function(t){
+    var amt=Math.abs(t.amount);
+    if(isRevenue(t)){
+      invs.push({customer:t.desc||'(spreadsheet)',job:t.category||'Revenue',amount:amt,
+        date:t.date?shortDate(t.date):String(t.rawDate||''),
+        daysAgo:t.date?daysAgoOf(t.date):999,status:'Paid',_t:t.date?t.date.getTime():Date.now(),balance:0});
+    } else {
+      exps.push({amount:amt,date:t.date||new Date()});
+    }
+  });
+  INVOICES=invs;
+  ESTIMATES=[];
+  OUTSTANDING_TOTAL=0;
+  PROJECTS=invs.map(function(i){ return {job:i.job,customer:i.customer,service:i.job,revenue:i.amount,cost:null,daysAgo:i.daysAgo}; });
+  rebuildPeriods(invs,exps);
+  DATA_SOURCE='sheet'; LIVE=true; LAST_UPDATED=null;
+  rerenderAll();
+  renderDataSourceBar();
+
+  var revTot=invs.reduce(function(s,i){return s+i.amount;},0);
+  var expTot=exps.reduce(function(s,e){return s+e.amount;},0);
+  document.getElementById('sheetResult').innerHTML=
+    '<div class="table-block"><div class="table-block-head"><div class="tb-eyebrow">Mapped &amp; loaded</div><h3>'+name+'</h3>'
+    +'<div class="tb-sub">Mapped '+txns.length+' row'+(txns.length!==1?'s':'')+' — '+money(revTot)+' revenue, '+money(expTot)+' expenses. Your dashboard now reflects this file.</div></div>'
+    +'<div class="table-scroll"><table class="fin-table"><thead><tr><th>Date</th><th>Description</th><th class="num">Amount</th><th>Category</th></tr></thead><tbody>'
+    +txns.slice(0,25).map(function(t){
+      return '<tr><td>'+(t.date?shortDate(t.date):String(t.rawDate||''))+'</td><td class="job-sub">'+(t.desc||'—')
+        +'</td><td class="num amt">'+money(Math.abs(t.amount))+'</td><td>'+(t.category||'—')+'</td></tr>';
+    }).join('')
+    +'</tbody></table></div></div>'
+    +'<div class="notebox" style="border-left-color:var(--green)">File mapped in your browser — nothing was uploaded anywhere. Showing the first 25 rows; the Graphs and Statements pages now use this data.</div>';
+}
+// Fallback when the columns can't be matched — show the raw rows as before.
+function renderRawSheet(name, rows){
   var head = rows[0] || [];
   var bodyRows = rows.slice(1, 21);
-  var html = '<div class="table-block"><div class="table-block-head"><div class="tb-eyebrow">Uploaded</div><h3>'+name+'</h3>'
-    + '<div class="tb-sub">Read '+(rows.length-1)+' row'+(rows.length-1!==1?'s':'')+' in your browser — nothing was sent anywhere. Showing the first 20.</div></div>'
+  document.getElementById('sheetResult').innerHTML =
+    '<div class="table-block"><div class="table-block-head"><div class="tb-eyebrow">Uploaded</div><h3>'+name+'</h3>'
+    + '<div class="tb-sub">Read '+(rows.length-1)+' row'+(rows.length-1!==1?'s':'')+' in your browser. Couldn\'t auto-detect Date/Amount columns — showing the raw rows.</div></div>'
     + '<div class="table-scroll"><table class="fin-table" style="min-width:0"><thead><tr>'
     + head.map(function(h){ return '<th>'+(h==null?'':String(h))+'</th>'; }).join('') + '</tr></thead><tbody>'
     + bodyRows.map(function(r){ return '<tr>'+head.map(function(_,i){ return '<td>'+(r[i]==null?'':String(r[i]))+'</td>'; }).join('')+'</tr>'; }).join('')
     + '</tbody></table></div></div>'
-    + '<div class="notebox" style="border-left-color:var(--green)">File read successfully. In the full version, Finance maps these columns to your dashboard automatically.</div>';
-  document.getElementById('sheetResult').innerHTML = html;
+    + '<div class="notebox" style="border-left-color:var(--gold)">Tip: name your columns <strong>Date</strong>, <strong>Description</strong>, <strong>Amount</strong>, and <strong>Category</strong> and Finance will map them straight into the dashboard.</div>';
+}
+
+// Paint the connection dots from the database — green only when verified.
+function applyFinanceConnDots(){
+  var c=BedrockProfile.connections()||{};
+  var scopes=c.google_scopes||'';
+  var on={ qbo:!!c.qbo,
+           gmail:!!c.google && scopes.indexOf('gmail.send')!==-1,
+           calendar:!!c.google && scopes.indexOf('calendar')!==-1 };
+  var dot=document.getElementById('finQboDot'), lbl=document.getElementById('finQboLabel');
+  if(dot){ dot.style.background=on.qbo?'#7bbf4a':'transparent'; dot.style.borderColor=on.qbo?'#7bbf4a':'rgba(255,255,255,0.4)'; }
+  if(lbl) lbl.textContent='QuickBooks — '+(on.qbo?'connected':'not connected');
+  function st(id,isOn){ var el=document.getElementById(id); if(el){ el.textContent=(isOn?'● Connected':'● Not connected'); el.style.color=isOn?'#3b6d11':'var(--slate)'; } }
+  st('crStatusQbo',on.qbo); st('crStatusGmail',on.gmail); st('crStatusCalendar',on.calendar);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -764,9 +1152,16 @@ renderInvoices();
 renderEstimates();
 renderProjects();
 window.addEventListener('resize', resizeCharts);
+renderDataSourceBar();
 BedrockProfile.load().then(function(){
   IS_SUBSCRIBED = !!BedrockProfile.get('is_admin') || BedrockProfile.subscribedTo(['finance_operations','finance']);
   renderProfileBanner();
+  applyFinanceConnDots();
+  var conns = BedrockProfile.connections() || {};
+  QBO_CONNECTED = !!conns.qbo;
+  // QBO connected → load real data on open. Not connected → sample data stays.
+  if(QBO_CONNECTED) loadFinanceData(false);
+  else renderDataSourceBar();
 });
 </script>
 </body>

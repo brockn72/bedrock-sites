@@ -4,7 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bedrock Marketing — Make marketing materials in minutes</title>
+<meta name="description" content="Bedrock Marketing — flyers, social posts, business cards, and yard signs for contractors. Build with your Brand Kit, download in seconds.">
 <meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://bedrock-sites.com/bedrock-marketing-v1.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bedrock Digital">
+<meta property="og:title" content="Bedrock Marketing — Make marketing materials in minutes">
+<meta property="og:description" content="Flyers, posts, signs, and cards built from your Brand Kit. Download and share in seconds.">
+<meta property="og:url" content="https://bedrock-sites.com/bedrock-marketing-v1.html">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Bedrock Marketing">
+<meta name="twitter:description" content="Marketing materials for contractors — built from your Brand Kit.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D1B2E'/%3E%3Crect x='12' y='16' width='28' height='6' rx='2' fill='%23C9922A'/%3E%3Crect x='12' y='26' width='22' height='6' rx='2' fill='%23A8711A'/%3E%3Crect x='12' y='36' width='32' height='6' rx='2' fill='%232E5A8E'/%3E%3Crect x='12' y='46' width='24' height='6' rx='2' fill='%234A7DB5'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -283,6 +293,29 @@ p.hero-sub{font-family:'DM Sans',sans-serif;font-size:clamp(0.95rem,1.4vw,1.05re
 .placeholder-icon{font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--gold);margin-bottom:0.75rem;font-weight:300;line-height:1}
 .placeholder-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--navy-deep);margin-bottom:0.5rem;font-weight:600}
 .placeholder-sub{font-family:'DM Sans',sans-serif;font-size:0.86rem;color:var(--slate);line-height:1.65;margin-bottom:1.5rem}
+/* ── ASSET LIBRARY + CAMPAIGNS ── */
+.asset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-top:1rem}
+.asset-card{background:#fff;border:1px solid var(--border-light);border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;text-decoration:none;color:inherit;display:block}
+.asset-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(13,27,46,0.08)}
+.asset-thumb{aspect-ratio:1/1;background:var(--off-white);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.asset-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.asset-meta{padding:0.55rem 0.7rem;font-size:0.7rem;color:var(--slate);line-height:1.4}
+.asset-meta .a-name{font-weight:700;color:var(--navy-deep);font-size:0.74rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.asset-meta .a-camp{display:inline-block;background:rgba(201,146,42,0.12);color:var(--gold);font-size:0.58rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;padding:0.18rem 0.45rem;border-radius:99px;margin-top:0.3rem}
+.lib-filters{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.lib-filter-btn{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:600;background:#fff;border:1px solid var(--border-light);color:var(--slate);padding:0.42rem 0.85rem;border-radius:999px;cursor:pointer}
+.lib-filter-btn:hover{border-color:var(--navy-deep)}
+.lib-filter-btn.active{background:var(--navy-deep);color:#fff;border-color:var(--navy-deep)}
+.campaign-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:1rem}
+.campaign-card{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);border-radius:8px;padding:1.1rem;cursor:pointer;transition:transform .15s,box-shadow .15s;font-family:inherit;text-align:left;width:100%}
+.campaign-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(13,27,46,0.08)}
+.campaign-card .cc-name{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--navy-deep);margin-bottom:0.25rem}
+.campaign-card .cc-meta{font-size:0.72rem;color:var(--slate);margin-bottom:0.6rem}
+.campaign-card .cc-thumbs{display:flex;gap:0.3rem;flex-wrap:wrap}
+.campaign-card .cc-thumb{width:34px;height:34px;border-radius:4px;background:var(--off-white);overflow:hidden;display:inline-flex;align-items:center;justify-content:center}
+.campaign-card .cc-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.lib-empty{padding:2rem 1rem;text-align:center;color:var(--slate);font-size:0.86rem;background:var(--off-white);border-radius:8px;line-height:1.6}
+.lib-empty a{color:var(--gold);text-decoration:underline;cursor:pointer}
 
 /* ── NOTE / NOTICE BOXES ── */
 .notebox{padding:0.85rem 1rem;background:#fff;border-left:3px solid var(--navy-deep);font-size:0.78rem;color:var(--slate);line-height:1.55;margin-bottom:1rem;border-radius:4px}
@@ -343,7 +376,8 @@ footer a:hover{text-decoration:underline}
     </a>
     <a href="/bedrock-website-v1.html" class="tnav-link">My Website</a>
     <a href="/bedrock-marketing-v1.html" class="tnav-link tnav-active">Marketing</a>
-    <a class="tnav-link tnav-soon" onclick="alert('Bedrock CFO is coming soon.')">CFO</a>
+    <a class="tnav-link" href="/bedrock-donna-v1.html">Operations</a>
+    <a class="tnav-link" href="/bedrock-finance-v1.html">Finance</a>
     <!-- hidden May 2026 — old nav (Other Bedrock Tools dropdown + Take me Home) replaced by the tool nav above -->
     <div style="display:none">
       <div class="nav-dd" id="otherToolsDD">
@@ -713,40 +747,31 @@ footer a:hover{text-decoration:underline}
       </div>
 
       <!-- ────────────────────────────────────────────────────── -->
-      <!-- VIEW: CAMPAIGNS (placeholder)                          -->
+      <!-- VIEW: CAMPAIGNS                                        -->
       <!-- ────────────────────────────────────────────────────── -->
       <div class="view" id="view-campaigns" style="display:none">
         <div class="section-head">
-          <div class="eyebrow light">Coming soon</div>
+          <div class="eyebrow light">Past work, organized</div>
           <h1 class="section-h">My <em>Campaigns.</em></h1>
-          <p class="section-sub">Group your materials into campaigns &mdash; "Spring HVAC," "Holiday Lighting," "Storm Cleanup" &mdash; so you can find them later, re-use them next season, and track what worked.</p>
+          <p class="section-sub">Anything you save with a Campaign / Goal label in Build Materials lands here, grouped by name. Pull up a season or promotion to find every piece together.</p>
         </div>
         <div class="section-content">
-          <div class="placeholder-card">
-            <div class="placeholder-icon">◈</div>
-            <div class="placeholder-title">Campaign organizer is on the way</div>
-            <div class="placeholder-sub">For now, you can use the "Campaign / Goal" field in Build Materials to label what you're making. We'll bring saved campaigns and re-use online in the next update.</div>
-            <button class="btn-gold" onclick="navTo('build')">Go Build Something →</button>
-          </div>
+          <div id="campaignsBody"><div class="lib-empty">Loading your campaigns…</div></div>
         </div>
       </div>
 
       <!-- ────────────────────────────────────────────────────── -->
-      <!-- VIEW: LIBRARY (placeholder)                            -->
+      <!-- VIEW: LIBRARY                                          -->
       <!-- ────────────────────────────────────────────────────── -->
       <div class="view" id="view-library" style="display:none">
         <div class="section-head">
-          <div class="eyebrow light">Coming soon</div>
+          <div class="eyebrow light">Everything you've made</div>
           <h1 class="section-h">Asset <em>Library.</em></h1>
-          <p class="section-sub">Everything you&rsquo;ve made, saved in one place. Re-download, duplicate, or tweak older pieces without starting over.</p>
+          <p class="section-sub">Every flyer, post, and card you've downloaded. Click any to preview or re-download.</p>
         </div>
         <div class="section-content">
-          <div class="placeholder-card">
-            <div class="placeholder-icon">▣</div>
-            <div class="placeholder-title">Your saved assets will live here</div>
-            <div class="placeholder-sub">For now, downloads save to your computer when you click PNG / JPG / PDF. Persistent storage of past designs is coming next.</div>
-            <button class="btn-gold" onclick="navTo('build')">Build a New One →</button>
-          </div>
+          <div class="lib-filters" id="libFilters"></div>
+          <div id="libraryBody"><div class="lib-empty">Loading your assets…</div></div>
         </div>
       </div>
 
@@ -853,7 +878,83 @@ function navTo(view) {
     paintMatGrid();
     renderPreview();
   }
+  if (view === 'library' || view === 'campaigns') loadMarketingAssets();
   try { window.scrollTo({ top:0, behavior:'instant' }); } catch(e){}
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ASSET LIBRARY + CAMPAIGNS (browse — saves auto-happen on download)
+// ─────────────────────────────────────────────────────────────────────────────
+var MKT_ASSETS = null;
+var LIB_FILTER = 'all';
+function escMkt(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+async function loadMarketingAssets(force){
+  var libBody=document.getElementById('libraryBody'), campBody=document.getElementById('campaignsBody');
+  if(!STATE.authToken){
+    if(libBody)  libBody.innerHTML='<div class="lib-empty">Open Marketing from your portal while signed in to see your saved assets.</div>';
+    if(campBody) campBody.innerHTML='<div class="lib-empty">Open Marketing from your portal while signed in to see your campaigns.</div>';
+    var lf=document.getElementById('libFilters'); if(lf) lf.innerHTML='';
+    return;
+  }
+  if(MKT_ASSETS && !force){ renderLibrary(); renderCampaigns(); return; }
+  try{
+    var r=await fetch('/.netlify/functions/list-assets?limit=200',{headers:{Authorization:'Bearer '+STATE.authToken}});
+    if(!r.ok) throw new Error('list-assets '+r.status);
+    var d=await r.json();
+    MKT_ASSETS=(d&&d.assets)||[];
+  }catch(e){
+    MKT_ASSETS=[];
+  }
+  renderLibrary();
+  renderCampaigns();
+}
+function setLibFilter(c){ LIB_FILTER=c; renderLibrary(); }
+function renderLibrary(){
+  var body=document.getElementById('libraryBody'); if(!body) return;
+  var assets=MKT_ASSETS||[];
+  // Build the campaign filter chips from distinct campaign labels.
+  var camps={}; assets.forEach(function(a){ if(a.campaign) camps[a.campaign]=true; });
+  var chips='<button class="lib-filter-btn '+(LIB_FILTER==='all'?'active':'')+'" onclick="setLibFilter(\'all\')">All ('+assets.length+')</button>';
+  Object.keys(camps).sort().forEach(function(c){
+    var count=assets.filter(function(a){return a.campaign===c;}).length;
+    chips+='<button class="lib-filter-btn '+(LIB_FILTER===c?'active':'')+'" onclick="setLibFilter('+JSON.stringify(c).replace(/"/g,'&quot;')+')">'+escMkt(c)+' ('+count+')</button>';
+  });
+  document.getElementById('libFilters').innerHTML=chips;
+  var filtered=LIB_FILTER==='all'?assets:assets.filter(function(a){return (a.campaign||'')===LIB_FILTER;});
+  if(!filtered.length){
+    body.innerHTML='<div class="lib-empty">No saved assets yet. Build a flyer or post in <a onclick="navTo(\'build\')">Build Materials</a> — every download is saved to your library automatically.</div>';
+    return;
+  }
+  body.innerHTML='<div class="asset-grid">'+filtered.map(function(a){
+    var thumb=a.signed_url?'<img src="'+a.signed_url+'" alt="" loading="lazy">':'<div style="font-size:1.6rem;color:var(--slate)">📄</div>';
+    var date=a.created_at?new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}):'';
+    return '<a class="asset-card" href="'+(a.signed_url||'#')+'" target="_blank" rel="noopener" download="'+escMkt(a.filename||'asset')+'">'
+      +'<div class="asset-thumb">'+thumb+'</div>'
+      +'<div class="asset-meta"><span class="a-name" title="'+escMkt(a.filename||'')+'">'+escMkt(a.filename||'Asset')+'</span>'
+      + date + (a.format?(' · '+escMkt(a.format)):'')
+      + (a.campaign?('<br><span class="a-camp">'+escMkt(a.campaign)+'</span>'):'')
+      +'</div></a>';
+  }).join('')+'</div>';
+}
+function renderCampaigns(){
+  var body=document.getElementById('campaignsBody'); if(!body) return;
+  var assets=MKT_ASSETS||[];
+  if(!assets.length){
+    body.innerHTML='<div class="lib-empty">No campaigns yet. Add a "Campaign / Goal" label in <a onclick="navTo(\'build\')">Build Materials</a>, then download an asset — it auto-saves to that campaign.</div>';
+    return;
+  }
+  var groups={};
+  assets.forEach(function(a){ var k=a.campaign||'Untagged'; if(!groups[k]) groups[k]=[]; groups[k].push(a); });
+  var keys=Object.keys(groups).sort();
+  body.innerHTML='<div class="campaign-grid">'+keys.map(function(k){
+    var arr=groups[k], thumbs=arr.slice(0,4).map(function(a){
+      return '<span class="cc-thumb">'+(a.signed_url?'<img src="'+a.signed_url+'" alt="" loading="lazy">':'')+'</span>';
+    }).join('');
+    return '<button class="campaign-card" type="button" onclick="setLibFilter('+JSON.stringify(k).replace(/"/g,'&quot;')+');navTo(\'library\')">'
+      +'<div class="cc-name">'+escMkt(k)+'</div>'
+      +'<div class="cc-meta">'+arr.length+' asset'+(arr.length!==1?'s':'')+'</div>'
+      +'<div class="cc-thumbs">'+thumbs+'</div></button>';
+  }).join('')+'</div>';
 }
 
 function toggleDD(id) {
@@ -1417,6 +1518,8 @@ async function saveToAssetLibrary(dataUrl, ext) {
         campaign: STATE.campaign_note || null,
       }),
     });
+    // Bust the library cache so the next Library/Campaigns visit reloads.
+    MKT_ASSETS = null;
   } catch(_) {}  // never block the download on a library save
 }
 

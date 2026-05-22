@@ -90,9 +90,14 @@ exports.handler = async (event) => {
     const toolsStr = sub.metadata && sub.metadata.tools;
     if (userId && toolsStr) {
       const tools = toolsStr.split(',').map((s) => s.trim()).filter(Boolean);
+      // Status mapping:
+      //   active / trialing      → 'active'   (tools fully unlocked)
+      //   past_due               → 'past_due' (tools still work; portal shows a "update your card" banner)
+      //   unpaid / canceled      → 'canceled' (tools locked — every retry failed or the contractor canceled)
       let status = 'active';
-      if (stripeEvent.type === 'customer.subscription.deleted' || sub.status === 'canceled') status = 'canceled';
-      else if (sub.status === 'past_due' || sub.status === 'unpaid') status = 'past_due';
+      if (stripeEvent.type === 'customer.subscription.deleted'
+          || sub.status === 'canceled' || sub.status === 'unpaid') status = 'canceled';
+      else if (sub.status === 'past_due') status = 'past_due';
       else if (sub.status === 'active' || sub.status === 'trialing') status = 'active';
       else status = sub.status || 'active';
       await upsertToolSubs(supabaseUrl, supabaseKey, userId, tools, status, sub.id, sub.customer || '');

@@ -1,7 +1,20 @@
 # bedrock-context.md — Bedrock Sites Project
 
-> Load this file when working on the Bedrock project in Cursor or Claude.ai.
-> Pair with CLAUDE.md for full context.
+> ⚠️ **ARCHIVED — This file is stale. Do not load into Claude Code sessions.**
+>
+> **What's wrong with this file:**
+> - References "JPB Business Solutions" — old brand name (now **Bedrock Digital**)
+> - References Namecheap — registrar is **Name.com** (not Namecheap)
+> - References `bedrock-v28.html` — current canonical file is `index.html`
+> - Says deploy is not built — **auto-deploy has been working since May 2026**
+>
+> **Use instead:** `bedrock-vault/CLAUDE-CODE-CONTEXT.md` for all current project context.
+> **Archived copy:** `bedrock-vault/Archive/bedrock-context-stale.md`
+
+---
+
+> ~~Load this file when working on the Bedrock project in Cursor or Claude.ai.~~
+> ~~Pair with CLAUDE.md for full context.~~
 
 ---
 

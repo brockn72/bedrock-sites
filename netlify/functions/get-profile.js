@@ -48,11 +48,40 @@ exports.handler = async (event) => {
     if (subRes.ok) subscriptions = await subRes.json();
   } catch (_) { /* subscriptions table may not exist yet — non-fatal */ }
 
+  // Integration connection status — read from the database so Donna, Finance,
+  // and the portal show a green dot ONLY when a connection actually exists.
+  // A QBO/Google connection row carries a refresh token (the durable
+  // credential); access tokens auto-refresh, so a row = genuinely connected.
+  const connections = { qbo: false, google: false, google_scopes: '' };
+  try {
+    const qboRes = await fetch(
+      `${supabaseUrl}/rest/v1/donna_qbo_tokens?user_id=eq.${userId}&select=user_id,refresh_token&limit=1`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+    );
+    if (qboRes.ok) {
+      const rows = await qboRes.json();
+      connections.qbo = rows.length > 0 && !!rows[0].refresh_token;
+    }
+  } catch (_) { /* table may not exist yet — non-fatal */ }
+  try {
+    const gRes = await fetch(
+      `${supabaseUrl}/rest/v1/oauth_connections?user_id=eq.${userId}&provider=eq.google&select=refresh_token,scopes&limit=1`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+    );
+    if (gRes.ok) {
+      const rows = await gRes.json();
+      if (rows.length && rows[0].refresh_token) {
+        connections.google = true;
+        connections.google_scopes = rows[0].scopes || '';
+      }
+    }
+  } catch (_) { /* table may not exist yet — non-fatal */ }
+
   if (profiles.length) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ profile: profiles[0], subscriptions }),
+      body: JSON.stringify({ profile: profiles[0], subscriptions, connections }),
     };
   }
 
@@ -75,6 +104,7 @@ exports.handler = async (event) => {
       profile: null,
       draft: { email, user_id: userId, ...seed },
       subscriptions,
+      connections,
     }),
   };
 };

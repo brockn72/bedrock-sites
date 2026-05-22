@@ -1,63 +1,42 @@
 // finance-qbo-fetch.js
 // Pulls the contractor's QuickBooks data (invoices, estimates, expenses,
-// customers) and caches it in finance_qbo_cache. Called when the Finance tab
-// opens, by the manual Refresh button, and (later) by a nightly scheduled job.
+// customers), caches it in finance_qbo_cache, and RETURNS it so the Finance
+// dashboard can render real numbers. Called when the Finance tab opens, by the
+// manual Refresh button (force=true), and by the nightly scheduled job.
 //
-// Requires the contractor has connected QBO (a donna_qbo_tokens row — created
-// by qbo-callback.js). Shares that one QBO connection with Operations/Donna.
+// Smart cache: if the cache is fresher than FINANCE_CACHE_TTL_MINUTES (default
+// 15) and force isn't set, this returns the cached data without touching the
+// QBO API — exactly the "perceived real-time" model in BEDROCK-FINANCE.md.
 //
-// ── Env vars ────────────────────────────────────────────────────────────────
-//   QBO_CLIENT_ID, QBO_CLIENT_SECRET — for token refresh
-//   QBO_SANDBOX                      — 'false' for production, anything else = sandbox
+// Shares the one QBO connection (donna_qbo_tokens) with Operations/Donna via
+// the qbo-refresh.js shared utility.
+//
+// ── Request ────────────────────────────────────────────────────────────────
+//   POST { force?: true }   — force a fresh QBO pull, ignoring the cache
+//
+// Donna data is folded in on every response (regardless of QBO connection):
+//   • donna_receipts → merged into data.expenses (they never sync to QBO, so
+//     no double-count) so Finance shows every expense.
+//   • donna_estimates / donna_invoices → returned raw so the Projects page can
+//     compute real per-job margins QBO alone can't provide.
+//
+// ── Returns ────────────────────────────────────────────────────────────────
+//   { connected, fetched_at, from_cache, counts,
+//     data: { invoices:[], estimates:[], expenses:[], customers:[],
+//             donna_estimates:[], donna_invoices:[] } }
+//
+// ── Required Netlify env vars ──────────────────────────────────────────────
+//   QBO_CLIENT_ID, QBO_CLIENT_SECRET, QBO_SANDBOX
 //   SUPABASE_URL, SUPABASE_SERVICE_KEY
-//
-// Requires the finance_qbo_cache table (see BEDROCK-FINANCE.md schema).
+//   FINANCE_CACHE_TTL_MINUTES (optional, default 15)
 
-// QBO data API base — sandbox vs production. (The OAuth endpoints are the same
-// for both; only the data API differs.)
+const { getQboConnection } = require('./qbo-refresh');
+
+// QBO data API base — sandbox vs production.
 function qboApiBase() {
   return process.env.QBO_SANDBOX === 'false'
     ? 'https://quickbooks.api.intuit.com'
     : 'https://sandbox-quickbooks.api.intuit.com';
-}
-
-// Return a valid access token, refreshing it first if it's expired or within
-// 5 minutes of expiry. QBO access tokens last ~60 min; refresh tokens ~100 days
-// and Intuit rotates them on each refresh, so we persist whatever comes back.
-async function ensureFreshToken(tok, supabaseUrl, supabaseKey) {
-  const expMs = tok.token_expires_at ? new Date(tok.token_expires_at).getTime() : 0;
-  if (Date.now() < expMs - 5 * 60 * 1000) return tok.access_token;
-
-  const basic = Buffer.from(`${process.env.QBO_CLIENT_ID}:${process.env.QBO_CLIENT_SECRET}`).toString('base64');
-  const res = await fetch('https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer', {
-    method: 'POST',
-    headers: {
-      Authorization:  `Basic ${basic}`,
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept:         'application/json',
-    },
-    body: new URLSearchParams({ grant_type: 'refresh_token', refresh_token: tok.refresh_token }).toString(),
-  });
-  if (!res.ok) throw new Error('QBO token refresh failed (' + res.status + ')');
-  const fresh = await res.json();
-  const expiresAt = new Date(Date.now() + ((fresh.expires_in || 3600) * 1000)).toISOString();
-
-  await fetch(`${supabaseUrl}/rest/v1/donna_qbo_tokens?user_id=eq.${tok.user_id}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      apikey:         supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-      Prefer:        'return=minimal',
-    },
-    body: JSON.stringify({
-      access_token:     fresh.access_token,
-      refresh_token:    fresh.refresh_token || tok.refresh_token,
-      token_expires_at: expiresAt,
-      updated_at:       new Date().toISOString(),
-    }),
-  });
-  return fresh.access_token;
 }
 
 // Run a QBO query and return the QueryResponse object.
@@ -68,8 +47,94 @@ async function qboQuery(accessToken, realmId, query) {
     console.error('[finance-qbo-fetch] query failed', res.status, query);
     return {};
   }
-  const j = await res.json();
-  return j.QueryResponse || {};
+  return (await res.json()).QueryResponse || {};
+}
+
+const DATASETS = {
+  invoices:  'SELECT * FROM Invoice MAXRESULTS 200',
+  estimates: 'SELECT * FROM Estimate MAXRESULTS 200',
+  expenses:  'SELECT * FROM Purchase MAXRESULTS 200',
+  customers: 'SELECT * FROM Customer MAXRESULTS 200',
+};
+
+// Pull every QBO dataset for one connected contractor and upsert the cache.
+// Shared by this function's handler and finance-sync-nightly.js. `fallback`
+// (optional) is a { data_type: rows } map used when a single query fails.
+async function pullAndCache(userId, conn, supabaseUrl, supabaseKey, fallback) {
+  fallback = fallback || {};
+  const fetchedAt = new Date().toISOString();
+  const out = {};
+  for (const type of Object.keys(DATASETS)) {
+    let data = [];
+    try {
+      const qr = await qboQuery(conn.access_token, conn.realm_id, DATASETS[type]);
+      data = qr.Invoice || qr.Estimate || qr.Purchase || qr.Customer || [];
+    } catch (e) {
+      console.error(`[finance-qbo-fetch] ${type}:`, e.message);
+      data = fallback[type] || [];   // keep the last good data for this dataset
+    }
+    out[type] = data;
+  }
+
+  // Upsert one cache row per data type (finance_qbo_cache is UNIQUE(user_id,data_type)).
+  const cacheRows = Object.keys(out).map((t) => ({ user_id: userId, data_type: t, data: out[t], fetched_at: fetchedAt }));
+  try {
+    const cacheRes = await fetch(`${supabaseUrl}/rest/v1/finance_qbo_cache?on_conflict=user_id,data_type`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey:         supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer:        'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(cacheRows),
+    });
+    if (!cacheRes.ok) console.error('[finance-qbo-fetch] cache upsert', cacheRes.status, await cacheRes.text());
+  } catch (e) {
+    console.error('[finance-qbo-fetch] cache upsert failed:', e.message);
+  }
+  return { fetchedAt, out };
+}
+exports.pullAndCache = pullAndCache;
+
+// Fetch the contractor's Donna-sourced finance data: estimates, invoices, and
+// receipts. Receipts are reshaped as QBO-Purchase-like objects so they merge
+// straight into the expense dataset the dashboard already understands.
+async function getDonnaFinanceData(userId, supabaseUrl, supabaseKey) {
+  const hdr = { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } };
+  const out = { estimates: [], invoices: [], receiptExpenses: [] };
+  try {
+    const r = await fetch(`${supabaseUrl}/rest/v1/donna_estimates?user_id=eq.${userId}&select=*`, hdr);
+    if (r.ok) out.estimates = await r.json();
+  } catch (e) { console.error('[finance-qbo-fetch] donna_estimates:', e.message); }
+  try {
+    const r = await fetch(`${supabaseUrl}/rest/v1/donna_invoices?user_id=eq.${userId}&select=*`, hdr);
+    if (r.ok) out.invoices = await r.json();
+  } catch (e) { console.error('[finance-qbo-fetch] donna_invoices:', e.message); }
+  try {
+    const r = await fetch(`${supabaseUrl}/rest/v1/donna_receipts?user_id=eq.${userId}&select=*`, hdr);
+    if (r.ok) {
+      const receipts = await r.json();
+      out.receiptExpenses = receipts.map((rc) => ({
+        Id:       'donna-' + rc.id,
+        TxnDate:  rc.date || (rc.created_at ? String(rc.created_at).slice(0, 10) : null),
+        TotalAmt: Number(rc.amount) || 0,
+        _source:  'donna',
+        vendor:   rc.vendor || '',
+      }));
+    }
+  } catch (e) { console.error('[finance-qbo-fetch] donna_receipts:', e.message); }
+  return out;
+}
+
+// Merge Donna data into a QBO data object: receipts into expenses, estimates
+// and invoices as their own fields.
+function withDonna(qboData, donna) {
+  return Object.assign({}, qboData, {
+    expenses:        (qboData.expenses || []).concat(donna.receiptExpenses || []),
+    donna_estimates: donna.estimates || [],
+    donna_invoices:  donna.invoices || [],
+  });
 }
 
 exports.handler = async (event) => {
@@ -86,6 +151,10 @@ exports.handler = async (event) => {
     return { statusCode: 503, body: JSON.stringify({ error: 'QuickBooks not configured yet — set the QBO_* env vars.' }) };
   }
 
+  let body = {};
+  try { body = JSON.parse(event.body || '{}'); } catch (_) { /* GET / empty body */ }
+  const force = body.force === true || (event.queryStringParameters || {}).force === 'true';
+
   // Identify the contractor from their Supabase session.
   const auth  = (event.headers.authorization || event.headers.Authorization || '').trim();
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
@@ -96,71 +165,72 @@ exports.handler = async (event) => {
   if (!userRes.ok) return { statusCode: 401, body: JSON.stringify({ error: 'Invalid or expired session' }) };
   const userId = (await userRes.json()).id;
 
-  // Look up this contractor's QBO connection (shared with Operations/Donna).
-  const tokRes = await fetch(
-    `${supabaseUrl}/rest/v1/donna_qbo_tokens?user_id=eq.${userId}&select=*&limit=1`,
-    { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
-  );
-  const tokRows = tokRes.ok ? await tokRes.json() : [];
-  if (!tokRows.length) {
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ connected: false, message: 'QuickBooks not connected — connect it in Operations.' }),
-    };
-  }
-  const tok = tokRows[0];
-
-  let accessToken;
-  try {
-    accessToken = await ensureFreshToken(tok, supabaseUrl, supabaseKey);
-  } catch (e) {
-    return { statusCode: 502, body: JSON.stringify({ error: e.message }) };
-  }
-
-  // Pull the four datasets Finance reads. Each query returns one entity type.
-  const datasets = {
-    invoices:  'SELECT * FROM Invoice MAXRESULTS 200',
-    estimates: 'SELECT * FROM Estimate MAXRESULTS 200',
-    expenses:  'SELECT * FROM Purchase MAXRESULTS 200',
-    customers: 'SELECT * FROM Customer MAXRESULTS 200',
-  };
-  const fetchedAt = new Date().toISOString();
-  const cacheRows = [];
-  for (const type of Object.keys(datasets)) {
-    let data = [];
-    try {
-      const qr = await qboQuery(accessToken, tok.realm_id, datasets[type]);
-      data = qr.Invoice || qr.Estimate || qr.Purchase || qr.Customer || [];
-    } catch (e) {
-      console.error(`[finance-qbo-fetch] ${type}:`, e.message);
-    }
-    cacheRows.push({ user_id: userId, data_type: type, data, fetched_at: fetchedAt });
-  }
-
-  // Upsert one cache row per data type (finance_qbo_cache is UNIQUE(user_id,data_type)).
-  const cacheRes = await fetch(`${supabaseUrl}/rest/v1/finance_qbo_cache?on_conflict=user_id,data_type`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      apikey:         supabaseKey,
-      Authorization: `Bearer ${supabaseKey}`,
-      Prefer:        'resolution=merge-duplicates,return=minimal',
-    },
-    body: JSON.stringify(cacheRows),
+  const ok = (payload) => ({
+    statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload),
   });
-  if (!cacheRes.ok) {
-    console.error('[finance-qbo-fetch] cache upsert', cacheRes.status, await cacheRes.text());
-    return { statusCode: 500, body: JSON.stringify({ error: 'Could not cache QuickBooks data' }) };
+
+  // Donna-sourced finance data — folded into every response below, with or
+  // without a QBO connection.
+  const donna = await getDonnaFinanceData(userId, supabaseUrl, supabaseKey);
+
+  // ── Read the existing cache ───────────────────────────────────────────────
+  let cacheRowsExisting = [];
+  try {
+    const cRes = await fetch(
+      `${supabaseUrl}/rest/v1/finance_qbo_cache?user_id=eq.${userId}&select=data_type,data,fetched_at`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+    );
+    if (cRes.ok) cacheRowsExisting = await cRes.json();
+  } catch (_) { /* non-fatal */ }
+
+  const cacheData = {};
+  let cacheFetchedAt = null;
+  cacheRowsExisting.forEach((r) => {
+    cacheData[r.data_type] = r.data || [];
+    if (!cacheFetchedAt || new Date(r.fetched_at) > new Date(cacheFetchedAt)) cacheFetchedAt = r.fetched_at;
+  });
+
+  // ── Serve from cache when it's fresh and a refresh wasn't forced ──────────
+  const ttlMin = parseInt(process.env.FINANCE_CACHE_TTL_MINUTES || '15', 10) || 15;
+  const cacheAgeMs = cacheFetchedAt ? (Date.now() - new Date(cacheFetchedAt).getTime()) : Infinity;
+  if (!force && cacheFetchedAt && cacheAgeMs < ttlMin * 60 * 1000) {
+    return ok({
+      connected:  true,
+      from_cache: true,
+      fetched_at: cacheFetchedAt,
+      counts:     Object.keys(DATASETS).reduce((a, k) => { a[k] = (cacheData[k] || []).length; return a; }, {}),
+      data:       withDonna(Object.keys(DATASETS).reduce((a, k) => { a[k] = cacheData[k] || []; return a; }, {}), donna),
+    });
   }
 
-  return {
-    statusCode: 200,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      connected:  true,
-      fetched_at: fetchedAt,
-      counts:     cacheRows.reduce((a, r) => { a[r.data_type] = r.data.length; return a; }, {}),
-    }),
-  };
+  // ── Need fresh data — make sure QBO is connected ──────────────────────────
+  let conn;
+  try {
+    conn = await getQboConnection(userId, supabaseUrl, supabaseKey);
+  } catch (e) {
+    console.error('[finance-qbo-fetch] connection error:', e.message);
+    conn = { connected: false };
+  }
+  if (!conn.connected) {
+    // Not connected — hand back whatever cache exists (may be empty) so the
+    // dashboard can decide between "show stale" and "show the connect prompt".
+    return ok({
+      connected:  false,
+      from_cache: !!cacheFetchedAt,
+      fetched_at: cacheFetchedAt,
+      message:    'QuickBooks not connected — connect it in Operations or My Integrations.',
+      data:       withDonna(Object.keys(DATASETS).reduce((a, k) => { a[k] = cacheData[k] || []; return a; }, {}), donna),
+    });
+  }
+
+  // ── Pull fresh data from QBO and refresh the cache ────────────────────────
+  const { fetchedAt, out } = await pullAndCache(userId, conn, supabaseUrl, supabaseKey, cacheData);
+
+  return ok({
+    connected:  true,
+    from_cache: false,
+    fetched_at: fetchedAt,
+    counts:     Object.keys(out).reduce((a, k) => { a[k] = out[k].length; return a; }, {}),
+    data:       withDonna(out, donna),
+  });
 };

@@ -3,3 +3,8 @@
 
 [build.environment]
   NODE_VERSION = "18"
+
+# Nightly QuickBooks cache refresh for the Finance dashboard.
+# 08:00 UTC ≈ 2:00 AM US Central (Netlify cron runs in UTC).
+[functions."finance-sync-nightly"]
+  schedule = "0 8 * * *"

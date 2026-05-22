@@ -41,15 +41,19 @@ exports.handler = async (event) => {
   }
   const user = await userRes.json();
 
-  // `state` carries the user id so qbo-callback knows whose tokens to store.
+  // `state` carries the user id (so qbo-callback knows whose tokens to store)
+  // and an optional return destination — 'portal' sends the contractor back to
+  // the portal's My Integrations tab; anything else defaults to Operations.
   // HARDENING TODO: HMAC-sign this so a forged callback can't bind QBO tokens
   // to someone else's account.
+  const ret   = ((event.queryStringParameters || {}).return || '').trim();
+  const state = ret ? (user.id + '|' + ret) : user.id;
   const params = new URLSearchParams({
     client_id:     clientId,
     scope:         'com.intuit.quickbooks.accounting',
     redirect_uri:  redirectUri,
     response_type: 'code',
-    state:         user.id,
+    state:         state,
   });
 
   return {

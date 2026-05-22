@@ -551,6 +551,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <div class="nav-tab-submenu">
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('profile','default')"><span class="tsl-eyebrow">Business</span>My Profile</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Plan</span>Subscriptions</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','integrations')"><span class="tsl-eyebrow">Connect</span>My Integrations</button>
         <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','active')"><span class="tsl-eyebrow">History</span>Billing History</button>
       </div>
     </div>
@@ -575,6 +576,9 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     <button id="btnLogout" onclick="handleLogout()">Sign Out</button>
   </div>
 </nav>
+
+<!-- Payment-failed banner — appears on portal load when any subscription is past_due. -->
+<div id="billingBanner" style="display:none;position:fixed;left:0;right:0;top:64px;background:#fff8e6;border-bottom:3px solid var(--accent);color:#7a5b16;font-size:0.84rem;font-weight:600;padding:0.7rem 1.5rem;align-items:center;gap:0.8rem;z-index:35;box-shadow:0 4px 12px rgba(13,27,46,0.08);flex-wrap:wrap"></div>
 
 <main>
 
@@ -772,11 +776,32 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <div class="bc-label">Quick Links</div>
             <div class="bc-title">Jump to…</div>
             <div class="quick-links">
-              <button type="button" class="quick-link" onclick="goTab('website','hub')"><span>My Website</span><span>→</span></button>
-              <button type="button" class="quick-link" onclick="goTab('marketing','hub')"><span>Marketing Hub</span><span>→</span></button>
-              <button type="button" class="quick-link" onclick="goTab('profile','default')"><span>Complete My Profile</span><span>→</span></button>
-              <button type="button" class="quick-link" onclick="goTab('subs','hub')"><span>Billing &amp; Subscriptions</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="launchDonna()"><span>Open Donna</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="launchFinance()"><span>Open Finance</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="launchEditor()"><span>Edit My Site</span><span>→</span></button>
+              <button type="button" class="quick-link" onclick="launchMarketing('wizard')"><span>Open Marketing</span><span>→</span></button>
             </div>
+          </div>
+        </div>
+
+        <!-- YOUR GOOGLE PRESENCE — populated from the Business Profile API when Google is connected -->
+        <div class="banner-card" id="googlePresenceCard" style="margin-bottom:1rem;display:none">
+          <div class="bc-label">Your Google Presence</div>
+          <div class="bc-title">How you show up on Google</div>
+          <div id="googlePresenceBody" style="margin-top:0.5rem"></div>
+        </div>
+
+        <!-- AT-A-GLANCE: Recent Donna activity + Finance snapshot -->
+        <div class="banner-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+          <div class="banner-card">
+            <div class="bc-label">Recent Activity</div>
+            <div class="bc-title">From Donna</div>
+            <div id="dashRecentBody" style="margin-top:0.5rem;font-size:0.84rem;color:var(--text-muted)">Loading…</div>
+          </div>
+          <div class="banner-card">
+            <div class="bc-label">Finance Snapshot</div>
+            <div class="bc-title">This month</div>
+            <div id="dashFinanceBody" style="margin-top:0.5rem;font-size:0.84rem;color:var(--text-muted)">Loading…</div>
           </div>
         </div>
 
@@ -1406,8 +1431,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             </div>
           </div>
 
-          <!-- MY CONNECTIONS — shared by Operations + Finance -->
-          <div style="background:#fff;border-top:3px solid var(--accent);margin-top:1rem">
+          <!-- MY CONNECTIONS — superseded by the My Integrations tab (My Account → My Integrations). Hidden, not deleted. -->
+          <div style="background:#fff;border-top:3px solid var(--accent);margin-top:1rem;display:none">
             <div style="padding:1.15rem 1.5rem 0.4rem">
               <div style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:600;color:var(--dark)">My Connections</div>
               <div style="font-size:0.76rem;color:var(--text-muted);margin-top:3px">Connect the tools your Bedrock products use. One connection works for Operations and Finance both &mdash; Bedrock never shows a connection as live until it's actually verified.</div>
@@ -1564,6 +1589,16 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           <div class="dc-sub" style="margin-bottom:1.25rem">Everything about what you're paying for, in one place.</div>
           <div id="manageSubsBody"></div>
         </div>
+      </div>
+
+      <!-- MY INTEGRATIONS — the one place to connect external services -->
+      <div class="portal-pane subs-pane-bg" id="pane-subs-integrations">
+        <div style="background:#fff;border-top:3px solid var(--accent);padding:1.5rem 1.75rem;margin-bottom:1.25rem">
+          <div class="dc-label">My Integrations</div>
+          <div class="dc-title">Connect your tools &mdash; once.</div>
+          <div class="dc-sub" style="margin-bottom:0">This is the single place to connect the outside services your Bedrock tools use. One connection works across Operations (Donna) and Finance. Bedrock never shows a connection as live until it's actually verified against your account.</div>
+        </div>
+        <div id="integrationsCards"><div style="text-align:center;color:var(--text-muted);font-size:0.8rem;padding:2rem 1rem">Loading your connections…</div></div>
       </div>
 
     </div>
@@ -1833,19 +1868,49 @@ function loadDashboard(session) {
       showPage('pageDash');
       // default tab — honor hash deep-links (#profile, #subs, #marketing, #website)
       var hash = (window.location.hash || '').replace('#','').toLowerCase();
-      if (hash.indexOf('profile') !== -1) goTab('profile','default');
+      if (hash.indexOf('integrations') !== -1) goTab('subs','integrations');
+      else if (hash.indexOf('profile') !== -1) goTab('profile','default');
       else if (hash.indexOf('subs') !== -1) goTab('subs','hub');
       else if (hash.indexOf('marketing') !== -1) goTab('marketing','hub');
       else if (hash.indexOf('website') !== -1) goTab('website','hub');
       else goTab('dashboard','default');
       initPortalUX();
+      handleConnectRedirect();
+      checkBillingBanner();
     }).catch(function() {
       populateDashboard(null, session);
       loadStoredNotifications(session);
       showPage('pageDash');
       goTab('dashboard','default');
       initPortalUX();
+      handleConnectRedirect();
+      checkBillingBanner();
     });
+}
+
+// Show a dismissible banner when any of the contractor's tool subscriptions
+// is past_due. Dismissal lasts the session — reappears next login.
+function checkBillingBanner() {
+  if (DEMO || !currentSession || !currentSession.access_token) return;
+  if (sessionStorage.getItem('bedrock_billing_dismissed') === '1') return;
+  fetch('/.netlify/functions/get-profile', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+      var subs = (d && d.subscriptions) || [];
+      var pd = subs.filter(function(s){ return s.status === 'past_due'; });
+      if (!pd.length) return;
+      var el = document.getElementById('billingBanner'); if (!el) return;
+      el.innerHTML = '<span style="font-size:1rem">⚠</span>'
+        + '<div style="flex:1;min-width:220px">Your payment didn\'t go through — update your card to keep access to your Bedrock tools.</div>'
+        + '<button class="btn-gold" style="width:auto;padding:0.5rem 1rem" onclick="openBillingPortal(this)">Update Card</button>'
+        + '<button type="button" onclick="dismissBillingBanner()" aria-label="Dismiss" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:#7a5b16;padding:0 0.4rem;line-height:1;margin-left:auto">×</button>';
+      el.style.display = 'flex';
+    })
+    .catch(function(){});
+}
+function dismissBillingBanner() {
+  sessionStorage.setItem('bedrock_billing_dismissed', '1');
+  var el = document.getElementById('billingBanner'); if (el) el.style.display = 'none';
 }
 
 // ── POPULATE BANNER + WEBSITE STATUS ─────────────────────────────────────────
@@ -1884,6 +1949,69 @@ function populateDashboard(lead, session) {
   // pf_email field
   var em = (lead && lead.email) || (session.user && session.user.email) || '';
   var pfem = document.getElementById('pf_email'); if (pfem) pfem.value = em;
+
+  // "Your Google Presence" dashboard card — fills in if Google is connected.
+  loadGooglePresence();
+  // At-a-glance: recent Donna activity + current-month finance snapshot.
+  loadDashboardActivity();
+}
+
+// ── DASHBOARD: RECENT ACTIVITY + FINANCE SNAPSHOT ────────────────────────────
+function loadDashboardActivity() {
+  var recBody = document.getElementById('dashRecentBody');
+  var finBody = document.getElementById('dashFinanceBody');
+  if (!recBody || !finBody) return;
+  if (DEMO || !currentSession || !currentSession.access_token) {
+    recBody.innerHTML = 'Sign in to see your recent Donna activity.';
+    finBody.innerHTML = 'Sign in to see your finance snapshot.';
+    return;
+  }
+  fetch('/.netlify/functions/dashboard-snapshot', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){ renderDashboardActivity(d || {}); })
+    .catch(function(){ recBody.innerHTML = '<span style="color:var(--text-muted)">Couldn\'t load activity.</span>'; finBody.innerHTML = '<span style="color:var(--text-muted)">Couldn\'t load finance snapshot.</span>'; });
+}
+function renderDashboardActivity(d) {
+  var recBody = document.getElementById('dashRecentBody');
+  var finBody = document.getElementById('dashFinanceBody');
+  function money(n){ return '$'+(Number(n)||0).toLocaleString('en-US',{maximumFractionDigits:0}); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+  function pickJob(notes){
+    var m=String(notes||'').match(/Job:\s*([^—\n]+)/i); if(m) return m[1].trim().slice(0,42);
+    var c=String(notes||'').match(/Customer:\s*([^—\n]+)/i); if(c) return c[1].trim().slice(0,42);
+    return '—';
+  }
+  // Recent activity
+  if (recBody) {
+    var recent = d.recent || [];
+    if (!recent.length) {
+      recBody.innerHTML = '<div style="color:var(--text-muted);line-height:1.55">Nothing yet. Open Donna and approve your first estimate or invoice — it\'ll show up here.</div>';
+    } else {
+      recBody.innerHTML = recent.map(function(it){
+        var when = it.created_at ? new Date(it.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric'}) : '';
+        var statusClr = it.type==='invoice' ? '#23496f' : '#3b6d11';
+        return '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.4rem 0;border-bottom:1px dashed var(--border)">'
+          + '<div style="font-size:0.58rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:'+statusClr+';width:54px">'+(it.type==='invoice'?'Invoice':'Estimate')+'</div>'
+          + '<div style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;color:var(--dark)">'+esc(pickJob(it.notes))+'</div>'
+          + '<div style="font-weight:700;color:var(--dark);white-space:nowrap">'+money(it.total)+'</div>'
+          + '<div style="font-size:0.66rem;color:var(--text-muted);white-space:nowrap">'+when+'</div></div>';
+      }).join('');
+    }
+  }
+  // Finance snapshot
+  if (finBody) {
+    var rev=Number(d.month_revenue)||0, out=Number(d.outstanding)||0;
+    if (rev===0 && out===0) {
+      finBody.innerHTML = '<div style="color:var(--text-muted);line-height:1.55">Approve invoices in Donna and your monthly revenue + outstanding will show here.</div>';
+    } else {
+      finBody.innerHTML =
+        '<div style="display:flex;gap:1.2rem;flex-wrap:wrap;margin-top:0.3rem">'
+        + '<div><div style="font-family:\'Playfair Display\',serif;font-size:1.7rem;font-weight:700;color:var(--dark);line-height:1">'+money(rev)+'</div><div style="font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-top:3px">Revenue this month</div></div>'
+        + '<div><div style="font-family:\'Playfair Display\',serif;font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1">'+money(out)+'</div><div style="font-size:0.62rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-top:3px">Outstanding</div></div>'
+        + '</div>'
+        + '<div style="margin-top:0.7rem"><button class="btn-outline" style="width:auto;padding:0.45rem 0.85rem" onclick="launchFinance()">Open Finance →</button></div>';
+    }
+  }
 }
 
 // ── LAUNCH EDITOR ─────────────────────────────────────────────────────────────
@@ -1940,7 +2068,7 @@ var TAB_DEFS = {
   marketing: { label:'Marketing',       subs:{ hub:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', library:'Asset Library', integrations:'Integrations' } },
   cfo:       { label:'Operations',      subs:{ default:'Operations' } },
   profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
-  subs:      { label:'My Account',      subs:{ hub:'Billing Hub', cart:'Subscriptions', active:'Billing History' } },
+  subs:      { label:'My Account',      subs:{ hub:'Billing Hub', cart:'Subscriptions', integrations:'My Integrations', active:'Billing History' } },
 };
 
 function goTab(top, sub) {
@@ -1985,6 +2113,7 @@ function goTab(top, sub) {
   }
   if (top === 'subs' && sub === 'cart') renderCart();
   if (top === 'subs' && sub === 'active') renderManageSubs();
+  if (top === 'subs' && sub === 'integrations') loadIntegrations();
   if (top === 'website' && sub === 'optimizer') { prefillOptUrl(); loadAuditHistory(); }
 }
 
@@ -2348,6 +2477,7 @@ function renderManageSubs() {
           '<div class="mc-next">Next billing: ' + nbStr + '</div></div>';
   html += '</div><div style="margin-top:1.1rem;display:flex;gap:0.6rem;flex-wrap:wrap">' +
           '<button class="btn-gold" style="width:auto;padding:0.7rem 1.3rem" onclick="goTab(\'subs\',\'cart\')">Change My Plan</button>' +
+          '<button class="btn-outline" onclick="openBillingPortal(this)">Manage Billing</button>' +
           '<button class="btn-outline" onclick="goTab(\'subs\',\'cart\')">Cancel or Pause</button></div></div>';
 
   html += '<div class="ms-card"><div class="ms-label">Billing History</div>';
@@ -2377,6 +2507,23 @@ function addToolFromManage(p) {
   persistCart();
   paintCart();
   goTab('subs','cart');
+}
+// Open the Stripe-hosted Customer Portal — update payment method, change or
+// cancel a plan, view invoices. create-billing-portal.js builds the session.
+function openBillingPortal(btn) {
+  if (DEMO || !currentSession || !currentSession.access_token) { alert('Sign in to manage your billing.'); return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Opening…'; }
+  function restore(){ if (btn) { btn.disabled = false; btn.textContent = 'Manage Billing'; } }
+  fetch('/.netlify/functions/create-billing-portal', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + currentSession.access_token },
+  })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if (d && d.url) { window.location.href = d.url; }
+      else { alert(d && d.error ? d.error : 'Billing portal isn’t available yet.'); restore(); }
+    })
+    .catch(function(){ alert('Could not reach the billing portal. Try again in a moment.'); restore(); });
 }
 function pickFullBundle() { CART = { website:true, marketing:true, cfo:true }; paintCart(); persistCart(); document.getElementById('cartSummary').scrollIntoView({behavior:'smooth',block:'center'}); }
 function checkout() {
@@ -2549,6 +2696,128 @@ function renderOnboard() {
 }
 function connectTool(name) {
   alert(name + ' setup isn\'t available yet. Bedrock never shows a connection as live until it\'s actually verified — and one connection works for both Operations and Finance.');
+}
+
+// ── MY INTEGRATIONS ───────────────────────────────────────────────────────────
+// The single hub for connecting QuickBooks + Google. Status dots are read from
+// the database via get-profile — never faked.
+function loadIntegrations() {
+  var box = document.getElementById('integrationsCards'); if (!box) return;
+  if (DEMO || !currentSession || !currentSession.access_token) { renderIntegrationCards({}); return; }
+  fetch('/.netlify/functions/get-profile', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){ renderIntegrationCards((d && d.connections) || {}); })
+    .catch(function(){ renderIntegrationCards({}); });
+}
+function intgDot(on) {
+  return '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0;'
+    + (on ? 'background:#3b6d11' : 'background:transparent;border:1.5px solid var(--border)') + '"></span>';
+}
+function renderIntegrationCards(c) {
+  var box = document.getElementById('integrationsCards'); if (!box) return;
+  var scopes = c.google_scopes || '';
+  var gmail = !!c.google && scopes.indexOf('gmail.send') !== -1;
+  var cal   = !!c.google && scopes.indexOf('calendar') !== -1;
+  var biz   = !!c.google && scopes.indexOf('business.manage') !== -1;
+  function svcLine(on, name, desc) {
+    return '<div style="display:flex;align-items:center;gap:0.55rem;padding:0.28rem 0;font-size:0.78rem;color:var(--text)">'
+      + intgDot(on) + '<span style="font-weight:600">' + name + '</span>'
+      + '<span style="color:var(--text-muted)">— ' + (on ? desc : 'not connected') + '</span></div>';
+  }
+  box.innerHTML =
+    '<div class="banner-card" style="margin-bottom:1rem">'
+      + '<div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">'
+        + '<div style="font-size:1.9rem;line-height:1">📊</div>'
+        + '<div style="flex:1;min-width:210px">'
+          + '<div style="font-family:\'Playfair Display\',serif;font-size:1.2rem;font-weight:600;color:var(--dark)">QuickBooks Online</div>'
+          + '<div style="font-size:0.78rem;color:var(--text-muted);line-height:1.55;margin-top:3px">Donna syncs your approved estimates, invoices, and expenses here. Finance reads your real numbers from it.</div>'
+          + '<div style="margin-top:0.65rem;display:flex;align-items:center;gap:0.5rem;font-size:0.74rem;font-weight:700">' + intgDot(!!c.qbo)
+            + '<span style="color:' + (c.qbo ? '#3b6d11' : 'var(--text-muted)') + '">' + (c.qbo ? 'Connected' : 'Not connected') + '</span></div>'
+        + '</div>'
+        + '<button class="btn-gold" style="width:auto;padding:0.7rem 1.2rem;align-self:center" onclick="connectQuickBooks()">' + (c.qbo ? 'Reconnect' : 'Connect QuickBooks') + '</button>'
+      + '</div>'
+    + '</div>'
+    + '<div class="banner-card">'
+      + '<div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">'
+        + '<div style="font-size:1.9rem;line-height:1">🔗</div>'
+        + '<div style="flex:1;min-width:210px">'
+          + '<div style="font-family:\'Playfair Display\',serif;font-size:1.2rem;font-weight:600;color:var(--dark)">Google</div>'
+          + '<div style="font-size:0.78rem;color:var(--text-muted);line-height:1.55;margin-top:3px">One sign-in connects all three Google services your tools use.</div>'
+          + '<div style="margin-top:0.6rem">'
+            + svcLine(gmail, 'Gmail', 'send estimates &amp; invoices from your address')
+            + svcLine(cal, 'Google Calendar', 'schedule jobs &amp; customer reminders')
+            + svcLine(biz, 'Google Business Profile', 'reviews &amp; search stats on your dashboard')
+          + '</div>'
+        + '</div>'
+        + '<button class="btn-gold" style="width:auto;padding:0.7rem 1.2rem;align-self:center" onclick="connectGoogle()">' + (c.google ? 'Reconnect Google' : 'Connect Google') + '</button>'
+      + '</div>'
+    + '</div>';
+}
+function connectQuickBooks() {
+  if (DEMO || !currentSession || !currentSession.access_token) { alert('Sign in to connect QuickBooks.'); return; }
+  fetch('/.netlify/functions/qbo-auth?return=portal', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if (d && d.url) window.location.href = d.url; else alert(d && d.error ? d.error : 'QuickBooks isn’t available yet.'); })
+    .catch(function(){ alert('Could not reach QuickBooks. Try again in a moment.'); });
+}
+function connectGoogle() {
+  if (DEMO || !currentSession || !currentSession.access_token) { alert('Sign in to connect Google.'); return; }
+  fetch('/.netlify/functions/google-oauth-auth', { headers: { Authorization: 'Bearer ' + currentSession.access_token } })
+    .then(function(r){ return r.json(); })
+    .then(function(d){ if (d && d.url) window.location.href = d.url; else alert(d && d.error ? d.error : 'Google isn’t available yet.'); })
+    .catch(function(){ alert('Could not reach Google. Try again in a moment.'); });
+}
+
+// ── DASHBOARD: YOUR GOOGLE PRESENCE CARD ─────────────────────────────────────
+function loadGooglePresence() {
+  var card = document.getElementById('googlePresenceCard'); if (!card) return;
+  if (DEMO || !currentSession || !currentSession.access_token) return;
+  fetch('/.netlify/functions/google-business-stats', { method:'POST', headers: { 'Content-Type':'application/json', Authorization: 'Bearer ' + currentSession.access_token } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){ renderGooglePresence(d || {}); })
+    .catch(function(){ /* leave the card hidden — never break the dashboard */ });
+}
+function renderGooglePresence(d) {
+  var card = document.getElementById('googlePresenceCard');
+  var body = document.getElementById('googlePresenceBody');
+  if (!card || !body) return;
+  if (!d.connected) {
+    card.style.display = '';
+    body.innerHTML = '<div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6">Connect your Google Business Profile to see your star rating, reviews, and how often you show up in Google search — right here.</div>'
+      + '<button class="btn-outline" style="margin-top:0.7rem;width:auto;padding:0.55rem 1rem" onclick="goTab(\'subs\',\'integrations\')">Connect Google →</button>';
+    return;
+  }
+  card.style.display = '';
+  function num(v) { return (v == null) ? '—' : Number(v).toLocaleString('en-US'); }
+  function stat(val, label) {
+    return '<div style="text-align:center;padding:0.4rem 0.2rem"><div style="font-family:\'Playfair Display\',serif;font-size:1.45rem;font-weight:700;color:var(--dark);line-height:1">' + val + '</div>'
+      + '<div style="font-size:0.6rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-muted);margin-top:4px">' + label + '</div></div>';
+  }
+  if (!d.has_data && d.rating == null && d.review_count == null) {
+    body.innerHTML = '<div style="font-size:0.8rem;color:var(--text-muted);line-height:1.6">Google is connected. Your Business Profile stats will appear here once Google has data to share — that can take a little while for newer profiles.</div>';
+    return;
+  }
+  body.innerHTML = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(86px,1fr));gap:0.3rem">'
+    + stat(d.rating != null ? (d.rating + ' ★') : '—', 'Rating')
+    + stat(num(d.review_count), 'Reviews')
+    + stat(num(d.impressions), 'Search Views 28d')
+    + stat(num(d.website_clicks), 'Website Clicks')
+    + stat(num(d.direction_requests), 'Directions')
+    + '</div>'
+    + (d.location_name ? ('<div style="font-size:0.66rem;color:var(--text-muted);margin-top:0.6rem;text-align:center">' + d.location_name + '</div>') : '');
+}
+
+// After an OAuth round-trip the callback returns ?qbo=connected / ?google=connected.
+function handleConnectRedirect() {
+  var qs = new URLSearchParams(window.location.search);
+  var q = qs.get('qbo'), g = qs.get('google');
+  if (q === 'connected' || g === 'connected') {
+    goTab('subs','integrations');
+    loadGooglePresence();
+    setTimeout(function(){ alert((q === 'connected' ? 'QuickBooks' : 'Google') + ' connected. Your Bedrock tools can now use it.'); }, 400);
+  } else if (q === 'error' || q === 'declined' || g === 'error' || g === 'declined') {
+    setTimeout(function(){ alert('That connection didn’t finish. You can try again from My Account → My Integrations.'); }, 400);
+  }
 }
 function onboardGo(step) {
   var o = loadOnboard();
