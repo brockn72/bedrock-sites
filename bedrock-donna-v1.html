@@ -84,6 +84,7 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 /* ── DONNA APP ── */
 .donna-app{display:grid;grid-template-columns:240px 1fr 360px;height:calc(100vh - 64px);min-height:540px}
 .donna-app.no-panel{grid-template-columns:240px 1fr}
+.donna-app.no-panel .d-panel{display:none}
 @media(max-width:1080px){.donna-app{grid-template-columns:210px 1fr}.donna-app .d-panel{display:none}}
 @media(max-width:720px){.donna-app{grid-template-columns:1fr;height:auto}.donna-app .d-sidebar{display:none}}
 
@@ -550,8 +551,11 @@ var BedrockProfile = (function(){
                       'default_payment_terms','tax_on_labor','tax_on_materials'];
   var COLUMN_FIELDS = ['business_name','contact_name','phone','trade','city','service_areas'];
 
-  function readLS(){ try{ return JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }catch(e){ return {}; } }
-  function writeLS(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(data)); }catch(e){} }
+  // Saved data syncs to the contractor's profile (Supabase) only — never to
+  // localStorage. Without an account there is no token, so nothing persists:
+  // a fresh account never inherits stray data from a previous preview.
+  function readLS(){ return {}; }
+  function writeLS(){}
 
   function flatten(profile){
     if (!profile) return {};

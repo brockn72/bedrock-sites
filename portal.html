@@ -503,11 +503,10 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <button class="nav-tab-btn" onclick="goTab('dashboard','default')">Dashboard</button>
     </div>
     <!-- Operations (Donna) — May 2026: the old CFO tab, now its own product, moved up next to Dashboard. -->
-    <div class="nav-tab-group locked" data-top="operations">
+    <div class="nav-tab-group" data-top="operations">
       <button class="nav-tab-btn" onclick="launchDonna()" title="Bedrock Operations · Donna">
         <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg>
         Operations
-        <svg class="nav-tab-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </button>
     </div>
     <!-- My Profile — May 2026: folded into the My Account dropdown. Standalone tab hidden, not deleted. -->
@@ -532,11 +531,10 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       </div>
     </div>
     <!-- Finance — May 2026: its own product tab. Operations (Donna) tab now lives next to Dashboard. -->
-    <div class="nav-tab-group locked" data-top="finance">
+    <div class="nav-tab-group" data-top="finance">
       <button class="nav-tab-btn" onclick="launchFinance()" title="Bedrock Finance · Analytics">
         <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg>
         Finance
-        <svg class="nav-tab-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
       </button>
     </div>
     <!-- CFO — May 2026: replaced by Donna + Finance above. Old tab hidden, not deleted. -->
@@ -1906,19 +1904,12 @@ function toolQuery() {
   return qp.length ? ('?' + qp.join('&')) : '';
 }
 
+// Operations + Finance tabs always open — the tool itself prompts for a
+// subscription when the contractor tries a real (non-preview) action.
 function launchDonna() {
-  if (!TOOL_SUBSCRIBED.donna) {
-    var go = confirm('Bedrock Donna isn’t on your plan yet.\n\nDonna handles your estimates, invoices, receipts, and scheduling.\n\nOpen a preview now? (Manage your plan under My Account → Subscriptions.)');
-    if (!go) { goTab('subs','cart'); return; }
-  }
   window.open('/bedrock-donna-v1.html' + toolQuery(), '_blank', 'noopener');
 }
-
 function launchFinance() {
-  if (!TOOL_SUBSCRIBED.finance) {
-    var go = confirm('Bedrock Finance isn’t on your plan yet.\n\nFinance shows your revenue, margins, and job profitability at a glance.\n\nOpen a preview now? (Manage your plan under My Account → Subscriptions.)');
-    if (!go) { goTab('subs','cart'); return; }
-  }
   window.open('/bedrock-finance-v1.html' + toolQuery(), '_blank', 'noopener');
 }
 
