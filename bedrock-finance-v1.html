@@ -141,6 +141,31 @@ table.fin-table tbody tr:hover{background:var(--off-white)}
 .margin-fill{height:100%;border-radius:3px}
 .margin-pct{font-weight:700;min-width:34px;text-align:right}
 .disclaimer{background:var(--amber-bg);border-left:3px solid var(--amber);padding:0.8rem 1rem;border-radius:4px;font-size:0.74rem;color:#6e5212;line-height:1.55;margin-bottom:1.25rem}
+/* estimated financial statements */
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--navy-deep);margin:1.75rem 0 0.2rem}
+.section-sub{font-size:0.78rem;color:var(--slate);margin-bottom:1rem}
+.stmt-row{display:flex;justify-content:space-between;gap:1rem;font-size:0.8rem;color:var(--slate);padding:0.4rem 0;border-bottom:1px dashed var(--border-light)}
+.stmt-row:last-child{border-bottom:none}
+.stmt-row span:last-child{font-weight:600;color:var(--navy-deep);white-space:nowrap}
+.stmt-row.sub{font-weight:700;color:var(--navy-deep)}
+.stmt-row.sub span:last-child{font-weight:700}
+.stmt-row.total{border-top:2px solid var(--navy-deep);border-bottom:none;margin-top:0.3rem;padding-top:0.5rem;font-size:0.95rem;font-weight:700;color:var(--navy-deep)}
+.stmt-row.total span:last-child{font-size:1.05rem}
+.stmt-meta{font-size:0.68rem;color:var(--slate);margin-top:0.6rem;font-style:italic}
+.neg{color:var(--red)}
+/* modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,27,46,0.78);z-index:200;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-overlay.show{display:flex}
+.gate-card{background:#fff;max-width:440px;width:100%;border-radius:10px;border-top:3px solid var(--gold);padding:2rem 1.75rem;text-align:center}
+.gate-card .gc-mark{width:58px;height:58px;margin:0 auto 0.9rem}
+.gate-card h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--navy-deep);margin-bottom:0.4rem}
+.gate-card p{font-size:0.85rem;color:var(--slate);line-height:1.6;margin-bottom:1.25rem}
+.gate-btns{display:flex;gap:0.5rem;justify-content:center;flex-wrap:wrap}
+.conn-row{display:flex;align-items:center;gap:0.85rem;padding:0.85rem 1.1rem;border-bottom:1px solid var(--border-light);flex-wrap:wrap}
+.conn-row:last-child{border-bottom:none}
+.cr-name{font-size:0.86rem;font-weight:600;color:var(--navy-deep)}
+.cr-sub{font-size:0.72rem;color:var(--slate)}
+.cr-status{font-size:0.64rem;font-weight:700;letter-spacing:0.04em;color:var(--slate)}
 
 /* analytics */
 .an-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
@@ -163,7 +188,7 @@ table.fin-table tbody tr:hover{background:var(--off-white)}
 .connect-card .cc-ic{width:48px;height:48px;border-radius:10px;background:var(--off-white);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:0.85rem}
 .connect-card h3{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:700;color:var(--navy-deep);margin-bottom:0.3rem}
 .connect-card p{font-size:0.8rem;color:var(--slate);line-height:1.6;margin-bottom:1rem}
-.upload-zone{border:2px dashed var(--border-light);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;background:var(--off-white);transition:border-color .15s}
+.upload-zone{display:block;border:2px dashed var(--border-light);border-radius:8px;padding:1.25rem;text-align:center;cursor:pointer;background:var(--off-white);transition:border-color .15s}
 .upload-zone:hover{border-color:var(--gold)}
 .upload-zone .uz-t{font-size:0.82rem;font-weight:600;color:var(--navy-deep)}
 .upload-zone .uz-s{font-size:0.72rem;color:var(--slate);margin-top:3px}
@@ -361,6 +386,39 @@ footer a{color:var(--gold);text-decoration:none}
           <div class="an-card"><h3>Busiest months</h3><div class="ch-sub">When the work actually comes in.</div><div class="chart-box" style="height:200px"><canvas id="chartSeason"></canvas></div></div>
         </div>
         <div class="an-card"><h3>Material cost as % of revenue</h3><div class="ch-sub">Lower is better — it means more of every dollar stays with you.</div><div class="chart-box" style="height:210px"><canvas id="chartMatPct"></canvas></div></div>
+
+        <div class="section-title">Estimated Financial Statements</div>
+        <div class="section-sub">A big-picture read on your year — built from the data Bedrock has.</div>
+        <div class="disclaimer"><strong>Estimates only — not official statements.</strong> These are rough, big-picture numbers from available data. Not accounting-grade, not tax advice, and not legal advice. For filing and official books, work with your accountant.</div>
+        <div class="an-grid" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="an-card">
+            <h3>Income Statement</h3><div class="ch-sub">Year to date — earned vs. what it cost.</div>
+            <div class="stmt-row"><span>Revenue</span><span>$142,650</span></div>
+            <div class="stmt-row"><span>Materials &amp; labor</span><span class="neg">&minus;$85,700</span></div>
+            <div class="stmt-row sub"><span>Gross profit</span><span>$56,950</span></div>
+            <div class="stmt-row"><span>Operating expenses</span><span class="neg">&minus;$22,000</span></div>
+            <div class="stmt-row total"><span>Net income</span><span>$34,950</span></div>
+            <div class="stmt-meta">Gross margin ~40% &middot; Net margin ~24%</div>
+          </div>
+          <div class="an-card">
+            <h3>Balance Sheet</h3><div class="ch-sub">Where you stand right now.</div>
+            <div class="stmt-row"><span>Cash on hand</span><span>$28,400</span></div>
+            <div class="stmt-row"><span>Money owed to you</span><span>$29,200</span></div>
+            <div class="stmt-row"><span>Equipment &amp; trucks</span><span>$40,000</span></div>
+            <div class="stmt-row sub"><span>Total assets</span><span>$97,600</span></div>
+            <div class="stmt-row"><span>What you owe</span><span class="neg">&minus;$15,000</span></div>
+            <div class="stmt-row total"><span>Owner's equity</span><span>$82,600</span></div>
+            <div class="stmt-meta">Assets minus what you owe.</div>
+          </div>
+          <div class="an-card">
+            <h3>Cash Flow</h3><div class="ch-sub">Money in and out, year to date.</div>
+            <div class="stmt-row"><span>Cash collected</span><span>$113,450</span></div>
+            <div class="stmt-row"><span>Paid — materials &amp; labor</span><span class="neg">&minus;$71,000</span></div>
+            <div class="stmt-row"><span>Paid — overhead</span><span class="neg">&minus;$18,200</span></div>
+            <div class="stmt-row total"><span>Net cash flow</span><span>$24,250</span></div>
+            <div class="stmt-meta">Positive — you bring in more than you spend.</div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -391,10 +449,30 @@ footer a{color:var(--gold);text-decoration:none}
           </div>
         </div>
         <div id="sheetResult"></div>
-        <div class="notebox" style="margin-top:1.25rem">Until you connect a real source, every page shows realistic sample data so you can see exactly what Finance looks like in use.</div>
+
+        <div class="section-title" style="margin-top:1.9rem">Your Connections</div>
+        <div class="section-sub">Shared with Bedrock Operations — connect once and both tools use it.</div>
+        <div style="background:#fff;border:1px solid var(--border-light);border-radius:8px;overflow:hidden">
+          <div class="conn-row"><span style="font-size:1.2rem">📊</span><div style="flex:1"><div class="cr-name">QuickBooks Online</div><div class="cr-sub">Invoices, estimates, and expenses</div></div><span class="cr-status">● Not connected</span><button class="btn-outline" onclick="setupConnection('QuickBooks')">Set Up</button></div>
+          <div class="conn-row"><span style="font-size:1.2rem">✉️</span><div style="flex:1"><div class="cr-name">Gmail</div><div class="cr-sub">Send reports and statements</div></div><span class="cr-status">● Not connected</span><button class="btn-outline" onclick="setupConnection('Gmail')">Set Up</button></div>
+          <div class="conn-row"><span style="font-size:1.2rem">📅</span><div style="flex:1"><div class="cr-name">Google Calendar</div><div class="cr-sub">Job dates feed the timeline</div></div><span class="cr-status">● Not connected</span><button class="btn-outline" onclick="setupConnection('Calendar')">Set Up</button></div>
+        </div>
+        <div class="notebox" style="margin-top:1.25rem">Until you connect a real source, every page shows realistic sample data so you can see exactly what Finance looks like in use. Bedrock never shows a connection as live until it's actually verified.</div>
       </div>
     </div>
 
+  </div>
+</div>
+
+<div class="modal-overlay" id="gateModal">
+  <div class="gate-card">
+    <svg class="gc-mark" viewBox="0 0 68 68"><use href="#mark-f"/></svg>
+    <h3>Subscribe to Finance</h3>
+    <p>You're in the free preview &mdash; browse the sample dashboard all you like. To connect your real numbers, you'll need a Bedrock Finance subscription.</p>
+    <div class="gate-btns">
+      <a class="btn-gold" href="/portal.html#subs">Get Finance</a>
+      <button class="btn-outline" onclick="closeGate()">Keep looking around</button>
+    </div>
   </div>
 </div>
 
@@ -411,7 +489,7 @@ var BedrockProfile = (function(){
   var COLS = ['business_name','contact_name','phone','trade','city','service_areas'];
   // Profile data syncs to Supabase only — never localStorage. No account = nothing persists.
   function readLS(){ return {}; }
-  function flatten(p){ if(!p) return {}; var o={}; COLS.forEach(function(k){ if(p[k]!=null&&p[k]!=='')o[k]=p[k]; }); var x=p.extra||{}; EXTRA.forEach(function(k){ if(x[k]!=null&&x[k]!=='')o[k]=x[k]; }); return o; }
+  function flatten(p){ if(!p) return {}; var o={}; COLS.forEach(function(k){ if(p[k]!=null&&p[k]!=='')o[k]=p[k]; }); var x=p.extra||{}; EXTRA.forEach(function(k){ if(x[k]!=null&&x[k]!=='')o[k]=x[k]; }); if(p.is_admin===true)o.is_admin=true; return o; }
   return {
     load:function(){
       data = readLS();
@@ -626,14 +704,28 @@ function buildAnalytics(){
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// SUBSCRIPTION GATE — browsing the preview is free; connecting real data isn't
+// ─────────────────────────────────────────────────────────────────────────────
+var IS_SUBSCRIBED = false;
+function requireSub(){ if(IS_SUBSCRIBED) return true; document.getElementById('gateModal').classList.add('show'); return false; }
+function closeGate(){ document.getElementById('gateModal').classList.remove('show'); }
+document.getElementById('gateModal').addEventListener('click', function(e){ if(e.target===this) closeGate(); });
+
+// ─────────────────────────────────────────────────────────────────────────────
 // CONNECT — QBO placeholder + SheetJS spreadsheet upload
 // ─────────────────────────────────────────────────────────────────────────────
 function connectQBO(){
+  if(!requireSub()) return;
   document.getElementById('sheetResult').innerHTML =
     '<div class="notebox" style="border-left-color:var(--gold)"><strong>QuickBooks connection is coming soon.</strong> '
     + 'We\'ll notify you when it\'s ready. In the meantime, upload a spreadsheet to see your real numbers now.</div>';
 }
+function setupConnection(name){
+  if(!requireSub()) return;
+  alert(name + ' setup isn\'t available yet in this preview. Bedrock never shows a connection as live until it\'s actually verified.');
+}
 function handleSheet(e){
+  if(!requireSub()){ e.target.value=''; return; }
   var file = e.target.files[0]; if(!file) return;
   var reader = new FileReader();
   reader.onload = function(ev){
@@ -671,7 +763,10 @@ renderInvoices();
 renderEstimates();
 renderProjects();
 window.addEventListener('resize', resizeCharts);
-BedrockProfile.load().then(renderProfileBanner);
+BedrockProfile.load().then(function(){
+  IS_SUBSCRIBED = !!BedrockProfile.get('is_admin');
+  renderProfileBanner();
+});
 </script>
 </body>
 </html>
