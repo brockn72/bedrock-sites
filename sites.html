@@ -5348,6 +5348,18 @@ function setPreviewMode(mode){
 // per origin, so we set a generous-but-safe size guard and skip the save if
 // we'd blow the quota.
 const BUILDER_SAVE_KEY='bedrock_builder_state_v1';
+// The builder only persists progress for signed-in accounts, and keys the save
+// per-account, so a shared browser never carries one person's build (or a
+// stale anonymous build) into another account. Not signed in → nothing saved.
+function builderSaveKey(){
+  try{
+    var s=JSON.parse(localStorage.getItem('bedrock_portal_session')||'null');
+    if(s&&s.access_token&&s.user&&s.user.id&&(!s.expires_at||Date.now()<s.expires_at)){
+      return BUILDER_SAVE_KEY+'_'+s.user.id;
+    }
+  }catch(e){}
+  return null;
+}
 let saveBuildStateTimer=null;
 function saveBuildState(){
   // Debounce — every keystroke triggers a save; coalesce to once per ~600ms.
@@ -5355,6 +5367,8 @@ function saveBuildState(){
   saveBuildStateTimer=setTimeout(_actuallySaveBuildState,600);
 }
 function _actuallySaveBuildState(){
+  const _saveKey=builderSaveKey();
+  if(!_saveKey)return;  // not signed in — builder progress isn't persisted
   try{
     const payload={
       // Only save what we need to fully reconstruct an editing session
@@ -5379,16 +5393,20 @@ function _actuallySaveBuildState(){
     // Refuse to save if the payload is over ~4MB — leaves room and avoids
     // a thrown QuotaExceededError that would break the editor.
     if(json.length>4*1024*1024)return;
-    localStorage.setItem(BUILDER_SAVE_KEY,json);
+    localStorage.setItem(_saveKey,json);
   }catch(e){/* Storage may be disabled (private mode, full quota). Silent. */}
 }
 function hasSavedBuild(){
-  try{const raw=localStorage.getItem(BUILDER_SAVE_KEY);return !!(raw&&raw.length>20);}
+  const key=builderSaveKey();
+  if(!key)return false;  // signed-out visitors get no resume banner
+  try{const raw=localStorage.getItem(key);return !!(raw&&raw.length>20);}
   catch(e){return false;}
 }
 function getSavedBuildAgeText(){
   try{
-    const raw=localStorage.getItem(BUILDER_SAVE_KEY);
+    const key=builderSaveKey();
+    if(!key)return '';
+    const raw=localStorage.getItem(key);
     if(!raw)return '';
     const obj=JSON.parse(raw);
     if(!obj.savedAt)return '';
@@ -5403,7 +5421,9 @@ function getSavedBuildAgeText(){
 }
 function resumeBuildState(){
   try{
-    const raw=localStorage.getItem(BUILDER_SAVE_KEY);
+    const key=builderSaveKey();
+    if(!key)return false;
+    const raw=localStorage.getItem(key);
     if(!raw)return false;
     const obj=JSON.parse(raw);
     if(!obj||!obj.S)return false;
@@ -5446,7 +5466,8 @@ function resumeBuildState(){
   }catch(e){return false;}
 }
 function clearSavedBuild(){
-  try{localStorage.removeItem(BUILDER_SAVE_KEY);}catch(e){}
+  try{var k=builderSaveKey();if(k)localStorage.removeItem(k);}catch(e){}
+  try{localStorage.removeItem(BUILDER_SAVE_KEY);}catch(e){}  // also clear legacy global key
   const banner=document.getElementById('resumeBuildBanner');
   if(banner)banner.style.display='none';
 }
@@ -5454,6 +5475,7 @@ function clearSavedBuild(){
 // wipe a build. Clears saved state and reloads a fresh builder.
 function refreshStartOver(){
   if(!confirm('Start over? This erases your saved progress and reloads a fresh builder. This cannot be undone.'))return;
+  try{var k=builderSaveKey();if(k)localStorage.removeItem(k);}catch(e){}
   try{localStorage.removeItem(BUILDER_SAVE_KEY);}catch(e){}
   try{window.location.hash='builder';}catch(e){}
   window.location.reload();
