@@ -484,7 +484,7 @@ footer a{color:var(--gold);text-decoration:none}
 // Finance reads labor rate + markup from the shared profile; never re-asks.
 // ═════════════════════════════════════════════════════════════════════════════
 var BedrockProfile = (function(){
-  var LS_KEY = 'bedrock_shared_profile', TOKEN = '', data = {};
+  var LS_KEY = 'bedrock_shared_profile', TOKEN = '', data = {}, subs = [];
   var EXTRA = ['labor_rate','material_markup_pct','travel_fee','cleanup_fee','default_payment_terms','tax_on_labor','tax_on_materials'];
   var COLS = ['business_name','contact_name','phone','trade','city','service_areas'];
   // Profile data syncs to Supabase only — never localStorage. No account = nothing persists.
@@ -497,11 +497,12 @@ var BedrockProfile = (function(){
       if(!TOKEN) return Promise.resolve(data);
       return fetch('/.netlify/functions/get-profile',{headers:{Authorization:'Bearer '+TOKEN}})
         .then(function(r){ return r.ok?r.json():null; })
-        .then(function(d){ if(d&&d.profile){ var l=flatten(d.profile); Object.keys(l).forEach(function(k){data[k]=l[k];}); } return data; })
+        .then(function(d){ if(d){ if(d.profile){ var l=flatten(d.profile); Object.keys(l).forEach(function(k){data[k]=l[k];}); } if(d.subscriptions)subs=d.subscriptions; } return data; })
         .catch(function(){ return data; });
     },
     get:function(k){ return data[k]; },
-    has:function(k){ var v=data[k]; return v!=null&&v!==''; }
+    has:function(k){ var v=data[k]; return v!=null&&v!==''; },
+    subscribedTo:function(tools){ return subs.some(function(s){ return s.status==='active' && tools.indexOf(s.tool)!==-1; }); }
   };
 })();
 
@@ -764,7 +765,7 @@ renderEstimates();
 renderProjects();
 window.addEventListener('resize', resizeCharts);
 BedrockProfile.load().then(function(){
-  IS_SUBSCRIBED = !!BedrockProfile.get('is_admin');
+  IS_SUBSCRIBED = !!BedrockProfile.get('is_admin') || BedrockProfile.subscribedTo(['finance_operations','finance']);
   renderProfileBanner();
 });
 </script>

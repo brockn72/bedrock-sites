@@ -37,11 +37,22 @@ exports.handler = async (event) => {
   }
   const profiles = await profRes.json();
 
+  // The contractor's tool subscriptions (Marketing / Finance & Operations).
+  // Returned alongside the profile so each tool can gate real actions.
+  let subscriptions = [];
+  try {
+    const subRes = await fetch(
+      `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${userId}&select=tool,status`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+    );
+    if (subRes.ok) subscriptions = await subRes.json();
+  } catch (_) { /* subscriptions table may not exist yet — non-fatal */ }
+
   if (profiles.length) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ profile: profiles[0] }),
+      body: JSON.stringify({ profile: profiles[0], subscriptions }),
     };
   }
 
@@ -63,6 +74,7 @@ exports.handler = async (event) => {
     body: JSON.stringify({
       profile: null,
       draft: { email, user_id: userId, ...seed },
+      subscriptions,
     }),
   };
 };

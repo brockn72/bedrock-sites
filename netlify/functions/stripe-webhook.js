@@ -18,6 +18,37 @@ function verifyStripeSignature(rawBody, sigHeader, secret) {
   return timingSafeEqual(expBuf, sigBuf);
 }
 
+// Upsert one `subscriptions` row per tool for a contractor. Used by the tool
+// subscription flow (Marketing / Finance & Operations) — entirely separate from
+// the site-build flow, which keys off metadata.lead_id instead.
+async function upsertToolSubs(supabaseUrl, supabaseKey, userId, tools, status, stripeSubId, stripeCustId) {
+  if (!supabaseUrl || !supabaseKey || !userId || !tools || !tools.length) return;
+  const now = new Date().toISOString();
+  const rows = tools.map((t) => ({
+    user_id: userId,
+    tool:    t === 'cfo' ? 'finance_operations' : t,   // normalize the legacy cart key
+    status:  status,
+    stripe_subscription_id: stripeSubId || null,
+    stripe_customer_id:     stripeCustId || null,
+    updated_at: now,
+  }));
+  try {
+    const r = await fetch(`${supabaseUrl}/rest/v1/subscriptions?on_conflict=user_id,tool`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey:         supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer:        'resolution=merge-duplicates,return=minimal',
+      },
+      body: JSON.stringify(rows),
+    });
+    if (!r.ok) console.error('[stripe-webhook] subscriptions upsert', r.status, await r.text());
+  } catch (e) {
+    console.error('[stripe-webhook] subscriptions upsert failed:', e.message);
+  }
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
@@ -49,8 +80,58 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: 'Invalid JSON' };
   }
 
+  // ── Tool subscription lifecycle (Marketing / Finance & Operations) ──────────
+  // Fired when a Stripe subscription changes state. Site-build subscriptions
+  // carry metadata.lead_id (no tools) so they're skipped here.
+  if (stripeEvent.type === 'customer.subscription.updated' ||
+      stripeEvent.type === 'customer.subscription.deleted') {
+    const sub      = stripeEvent.data.object;
+    const userId   = sub.metadata && sub.metadata.user_id;
+    const toolsStr = sub.metadata && sub.metadata.tools;
+    if (userId && toolsStr) {
+      const tools = toolsStr.split(',').map((s) => s.trim()).filter(Boolean);
+      let status = 'active';
+      if (stripeEvent.type === 'customer.subscription.deleted' || sub.status === 'canceled') status = 'canceled';
+      else if (sub.status === 'past_due' || sub.status === 'unpaid') status = 'past_due';
+      else if (sub.status === 'active' || sub.status === 'trialing') status = 'active';
+      else status = sub.status || 'active';
+      await upsertToolSubs(supabaseUrl, supabaseKey, userId, tools, status, sub.id, sub.customer || '');
+    }
+    return { statusCode: 200, body: JSON.stringify({ received: true }) };
+  }
+
   if (stripeEvent.type === 'checkout.session.completed') {
     const session      = stripeEvent.data.object;
+
+    // ── Tool subscription checkout (Marketing / Finance & Operations) ─────────
+    // Distinguished from a site build by metadata.tools (site builds use
+    // metadata.lead_id). Mark the tools active and stop — none of the
+    // site-build logic below applies.
+    if (session.metadata && session.metadata.tools) {
+      const subUserId = session.metadata.user_id || '';
+      const subTools  = session.metadata.tools.split(',').map((s) => s.trim()).filter(Boolean);
+      await upsertToolSubs(supabaseUrl, supabaseKey, subUserId, subTools, 'active',
+                           session.subscription || '', session.customer || '');
+      if (resendKey) {
+        const fromEmail = process.env.RESEND_FROM  || 'hello@bedrock-sites.com';
+        const toEmail   = process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com';
+        await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from: fromEmail, to: [toEmail],
+            subject: `New tool subscription: ${subTools.join(', ')}`,
+            html: `<div style="font-family:sans-serif"><h2>New tool subscription</h2>
+                   <p>Tools: <strong>${subTools.join(', ')}</strong><br>
+                   Customer: ${session.customer_details?.email || session.customer_email || '—'}<br>
+                   User ID: ${subUserId || '—'}<br>
+                   Stripe subscription: ${session.subscription || '—'}</p></div>`,
+          }),
+        }).catch((e) => console.error('[stripe-webhook] notify email failed:', e.message));
+      }
+      return { statusCode: 200, body: JSON.stringify({ received: true }) };
+    }
+
     const leadId       = session.metadata?.lead_id;
     const businessName = session.metadata?.business_name || 'Unknown Business';
     const customerEmail = session.customer_details?.email || session.customer_email || '';

@@ -499,7 +499,7 @@ footer a{color:var(--gold);text-decoration:none}
 <script>
 // ═══════════════ SHARED PROFILE (Supabase-only; no localStorage) ═══════════════
 var BedrockProfile = (function(){
-  var TOKEN='', data={};
+  var TOKEN='', data={}, subs=[];
   var EXTRA=['labor_rate','material_markup_pct','travel_fee','cleanup_fee','default_payment_terms','tax_on_labor','tax_on_materials'];
   var COLS=['business_name','contact_name','phone','trade','city','service_areas'];
   function flatten(p){ if(!p)return {}; var o={}; COLS.forEach(function(k){if(p[k]!=null&&p[k]!=='')o[k]=p[k];}); var x=p.extra||{}; EXTRA.forEach(function(k){if(x[k]!=null&&x[k]!=='')o[k]=x[k];}); if(p.is_admin===true)o.is_admin=true; if(p.brand_colors)o.brand_colors=p.brand_colors; return o; }
@@ -510,11 +510,12 @@ var BedrockProfile = (function(){
       if(!TOKEN) return Promise.resolve(data);
       return fetch('/.netlify/functions/get-profile',{headers:{Authorization:'Bearer '+TOKEN}})
         .then(function(r){return r.ok?r.json():null;})
-        .then(function(d){ if(d&&d.profile){var l=flatten(d.profile);Object.keys(l).forEach(function(k){data[k]=l[k];});} return data; })
+        .then(function(d){ if(d){ if(d.profile){var l=flatten(d.profile);Object.keys(l).forEach(function(k){data[k]=l[k];});} if(d.subscriptions)subs=d.subscriptions; } return data; })
         .catch(function(){return data;});
     },
     get:function(k){return data[k];},
     has:function(k){var v=data[k];return v!=null&&v!=='';},
+    subscribedTo:function(tools){ return subs.some(function(s){ return s.status==='active' && tools.indexOf(s.tool)!==-1; }); },
     set:function(k,v){
       if(v==null||v==='')return;
       data[k]=v;
@@ -1109,7 +1110,7 @@ function setupConnection(name){
 // ═══════════════ INIT ═══════════════
 renderPanelDefault();
 BedrockProfile.load().then(function(){
-  IS_SUBSCRIBED = !!BedrockProfile.get('is_admin');
+  IS_SUBSCRIBED = !!BedrockProfile.get('is_admin') || BedrockProfile.subscribedTo(['finance_operations','operations']);
   var needOnboarding = buildOnboarding();
   if(needOnboarding) showPage('pageOnboard');
   else enterApp();
