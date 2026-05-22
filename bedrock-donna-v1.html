@@ -1104,6 +1104,15 @@ function renderNotes(){
   body.innerHTML=html;
 }
 function setupConnection(name){
+  if(name==='QuickBooks'){
+    var tok=(new URLSearchParams(location.search).get('token')||'').trim();
+    if(!tok){ alert('Open Operations from your portal while signed in to connect QuickBooks.'); return; }
+    fetch('/.netlify/functions/qbo-auth',{headers:{Authorization:'Bearer '+tok}})
+      .then(function(r){return r.json();})
+      .then(function(d){ if(d&&d.url){ window.location.href=d.url; } else { alert(d&&d.error?d.error:'QuickBooks isn’t available yet.'); } })
+      .catch(function(){ alert('Could not reach QuickBooks. Try again in a moment.'); });
+    return;
+  }
   alert(name+' setup isn\'t available yet in this preview.\n\nDonna will never show a green "connected" light until the connection is actually verified.');
 }
 
@@ -1111,6 +1120,9 @@ function setupConnection(name){
 renderPanelDefault();
 BedrockProfile.load().then(function(){
   IS_SUBSCRIBED = !!BedrockProfile.get('is_admin') || BedrockProfile.subscribedTo(['finance_operations','operations']);
+  var _qbo = new URLSearchParams(location.search).get('qbo');
+  if (_qbo === 'connected') setTimeout(function(){ alert('QuickBooks connected. Donna can now sync your customers, estimates, and invoices.'); }, 500);
+  else if (_qbo === 'error' || _qbo === 'declined') setTimeout(function(){ alert('QuickBooks didn’t connect. You can try again from Setup Connections.'); }, 500);
   var needOnboarding = buildOnboarding();
   if(needOnboarding) showPage('pageOnboard');
   else enterApp();
