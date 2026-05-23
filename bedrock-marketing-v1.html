@@ -380,6 +380,20 @@ footer a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
+<!-- QF1: honor ?preview=1 from portal — force IS_SUBSCRIBED=false + show banner immediately. -->
+<script>
+(function(){
+  try{
+    if (new URLSearchParams(location.search).get('preview') === '1') {
+      window.IS_SUBSCRIBED = false;
+      window._forcedPreview = true;
+      document.addEventListener('DOMContentLoaded', function(){
+        var b = document.getElementById('previewBanner'); if (b) b.classList.add('show');
+      });
+    }
+  }catch(_){}
+})();
+</script>
 
 <!-- Preview-Mode banner (hidden by default; shown via JS for non-subscribers) -->
 <div id="previewBanner" class="preview-banner" role="banner">

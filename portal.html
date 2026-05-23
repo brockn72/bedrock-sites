@@ -656,7 +656,7 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
     <!-- G12a/b: "My Website" -> "Website" + #mark-w added; #mark-m added to Marketing for OFMW consistency. -->
     <!-- G12c: tab onclicks always navigate to the tool URL; the tool itself decides preview vs live from TOOL_SUBSCRIBED + cart (wired in Step 7 / G6). No tab is ever hard-locked. -->
     <div class="nav-tab-group" data-top="website">
-      <button class="nav-tab-btn" onclick="location.href='/bedrock-website-v1.html'" title="Bedrock Website">
+      <button class="nav-tab-btn" onclick="launchWebsite()" title="Bedrock Website">
         <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-w"/></svg>
         Website
         <span class="nav-tab-dot" data-tool-dot="website" aria-hidden="true"></span>
@@ -2497,6 +2497,8 @@ function launchMarketing(view) {
   var qp = [];
   if (email) qp.push('email=' + encodeURIComponent(email));
   if (currentSession && currentSession.access_token && !DEMO) qp.push('token=' + encodeURIComponent(currentSession.access_token));
+  // QF1: append &preview=1 when DB-verified subs say this user doesn't own Marketing.
+  if (window._toolSubsLoaded && TOOL_SUBSCRIBED.marketing !== true) qp.push('preview=1');
   var url = '/bedrock-marketing-v1.html' + (qp.length ? ('?' + qp.join('&')) : '');
   if (view) url += (qp.length ? '&' : '?') + 'view=' + encodeURIComponent(view);
   window.open(url, '_blank', 'noopener');
@@ -2517,13 +2519,33 @@ function toolQuery() {
   return qp.length ? ('?' + qp.join('&')) : '';
 }
 
+// QF1: portal-side preview-mode forcing. If TOOL_SUBSCRIBED has loaded from the DB and the user
+// is NOT subscribed to this tool, append &preview=1 so the tool page shows the amber banner
+// immediately (before its own fetch resolves) and Donna skips Meet-Donna onboarding.
+// If subs aren't loaded yet, return empty — the tool's own logic detects on arrival.
+function previewParam(toolKey) {
+  if (!window._toolSubsLoaded) return '';
+  var key = toolKey === 'operations' ? 'donna' : toolKey;
+  if (TOOL_SUBSCRIBED[key] === true) return '';
+  return '&preview=1';
+}
+function toolQueryWithPreview(toolKey) {
+  var base = toolQuery();
+  var p = previewParam(toolKey);
+  if (!p) return base;
+  return base ? (base + p) : ('?' + p.replace(/^&/, ''));
+}
+
 // Operations + Finance tabs always open — the tool itself prompts for a
 // subscription when the contractor tries a real (non-preview) action.
 function launchDonna() {
-  window.open('/bedrock-donna-v1.html' + toolQuery(), '_blank', 'noopener');
+  window.open('/bedrock-donna-v1.html' + toolQueryWithPreview('operations'), '_blank', 'noopener');
 }
 function launchFinance() {
-  window.open('/bedrock-finance-v1.html' + toolQuery(), '_blank', 'noopener');
+  window.open('/bedrock-finance-v1.html' + toolQueryWithPreview('finance'), '_blank', 'noopener');
+}
+function launchWebsite() {
+  window.open('/bedrock-website-v1.html' + toolQueryWithPreview('website'), '_blank', 'noopener');
 }
 
 // ── TAB / SUBTAB NAV ──────────────────────────────────────────────────────────
@@ -2651,6 +2673,7 @@ function setExtraField(field, val) {
 // Step 8: Populate TOOL_SUBSCRIBED from DB-verified subscription rows.
 // Per spec: never flip a tool to "owned" client-side — always read from DB.
 function applyToolSubsFromDB(subs) {
+  window._toolSubsLoaded = true; // QF1: flag so previewParam knows when it's safe to send ?preview=1
   if (!Array.isArray(subs)) return;
   var hasActiveTool = function(toolKeys) {
     return subs.some(function(s){

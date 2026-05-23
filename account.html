@@ -174,6 +174,48 @@ footer a{color:var(--gold);text-decoration:none}
         <button class="ac-btn dark" type="button" onclick="acChangePass()">Update password</button>
         <div class="ac-msg" id="acPassMsg"></div>
       </div>
+
+      <!-- ── QF2: Two-Factor Authentication (TOTP via Supabase MFA) — opt-in ── -->
+      <style>
+        .ac-2fa-status{display:inline-flex;align-items:center;gap:0.5rem;font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.32rem 0.65rem;border-radius:4px;margin-bottom:0.85rem}
+        .ac-2fa-status.off{background:rgba(13,27,46,0.06);color:var(--slate)}
+        .ac-2fa-status.on{background:var(--green-bg);color:var(--green)}
+        .ac-2fa-status .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+        .ac-2fa-qr-wrap{background:#fff;border:1px solid var(--border-light);border-radius:8px;padding:1.1rem;display:flex;flex-direction:column;align-items:center;gap:0.7rem;margin:0.85rem 0}
+        .ac-2fa-qr{width:200px;height:200px;display:block}
+        .ac-2fa-secret{font-family:'DM Sans',monospace;font-size:0.78rem;color:var(--slate);background:var(--off-white);padding:0.5rem 0.8rem;border-radius:5px;letter-spacing:0.06em;word-break:break-all;text-align:center;max-width:280px;user-select:all}
+        .ac-2fa-hint{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--slate);line-height:1.5;text-align:center;max-width:340px}
+        .ac-2fa-code-row{display:flex;gap:0.5rem;align-items:center;margin-top:0.6rem}
+        .ac-2fa-code-row input{font-family:'DM Sans',monospace;font-size:1.1rem;letter-spacing:0.4em;text-align:center;padding:0.65rem 0.85rem;border:1px solid var(--border-mid);border-radius:6px;width:140px;background:#fff;color:var(--navy-deep)}
+      </style>
+      <div class="ac-card">
+        <h3>Two-Factor Authentication</h3>
+        <div class="ac-card-sub">An extra layer of security &mdash; sign-in asks for a 6-digit code from your authenticator app (Google Authenticator, Authy, 1Password, etc.). Optional, off by default.</div>
+        <div id="ac2faStatus" class="ac-2fa-status off"><span class="dot"></span><span>Loading…</span></div>
+        <div id="ac2faOff">
+          <button class="ac-btn" type="button" id="ac2faEnableBtn" onclick="ac2faEnroll()">Enable 2FA</button>
+        </div>
+        <div id="ac2faEnrolling" style="display:none">
+          <div class="ac-2fa-qr-wrap">
+            <img id="ac2faQr" class="ac-2fa-qr" alt="2FA QR code" />
+            <div class="ac-2fa-hint">Scan this with Google Authenticator, Authy, or 1Password. Or paste the code below into your app manually.</div>
+            <div class="ac-2fa-secret" id="ac2faSecret">—</div>
+          </div>
+          <div class="ac-field" style="max-width:300px">
+            <label for="ac2faCode">Enter the 6-digit code your app shows</label>
+            <div class="ac-2fa-code-row">
+              <input type="text" id="ac2faCode" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="000 000">
+              <button class="ac-btn" type="button" id="ac2faVerifyBtn" onclick="ac2faVerifyEnroll()">Verify &amp; activate</button>
+            </div>
+          </div>
+          <button class="ac-btn outline" type="button" style="margin-top:0.6rem" onclick="ac2faCancelEnroll()">Cancel</button>
+        </div>
+        <div id="ac2faOn" style="display:none">
+          <p style="font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--slate);line-height:1.55;margin-bottom:0.85rem">You'll be asked for a 6-digit code from your authenticator app the next time you sign in. Keep your phone safe &mdash; if you lose access, contact <a href="mailto:support@bedrock-sites.com" style="color:var(--gold);font-weight:600">support</a>.</p>
+          <button class="ac-btn outline" type="button" id="ac2faDisableBtn" onclick="ac2faDisable()">Disable 2FA</button>
+        </div>
+        <div class="ac-msg" id="ac2faMsg"></div>
+      </div>
     </section>
 
     <!-- ── MY PROFILE — D2: embedded portal profile editor via ?embed=profile ── -->
@@ -353,6 +395,7 @@ function acGo(panel){
   if (panel === 'integrations') acPaintConnections();
   if (panel === 'files') acLoadFiles();
   if (panel === 'profile') acLoadProfileFrame();
+  if (panel === 'info') ac2faLoad();
   window.scrollTo(0,0);
 }
 
@@ -481,6 +524,128 @@ function acConnect(which){
   else if(which==='google') window.location.href = '/portal.html#integrations?connect=google';
 }
 
+// ── QF2: Two-Factor Authentication (TOTP via Supabase MFA) ──
+// Uses raw REST against Supabase Auth /factors endpoints. Loads SUPABASE_URL +
+// anon key once via /get-config. The user's portal access_token authorizes calls.
+var SUPA = null; // { url, anon }
+async function acSupa(){
+  if (SUPA) return SUPA;
+  try {
+    var r = await fetch('/.netlify/functions/get-config');
+    if (!r.ok) return null;
+    SUPA = await r.json();
+    return SUPA;
+  } catch(_) { return null; }
+}
+function ac2faSetMsg(kind, text){ var e=document.getElementById('ac2faMsg'); if(!e)return; e.className='ac-msg show '+kind; e.textContent=text; if(kind==='ok') setTimeout(function(){ e.classList.remove('show'); },3500); }
+function ac2faShowState(state){ // 'off' | 'enrolling' | 'on' | 'loading'
+  var s = document.getElementById('ac2faStatus');
+  var off = document.getElementById('ac2faOff');
+  var enr = document.getElementById('ac2faEnrolling');
+  var on  = document.getElementById('ac2faOn');
+  if (off) off.style.display = (state==='off') ? '' : 'none';
+  if (enr) enr.style.display = (state==='enrolling') ? '' : 'none';
+  if (on)  on.style.display  = (state==='on') ? '' : 'none';
+  if (!s) return;
+  s.className = 'ac-2fa-status ' + (state==='on' ? 'on' : 'off');
+  s.innerHTML = '<span class="dot"></span><span>' + (
+    state==='on' ? '2FA is active' :
+    state==='enrolling' ? 'Setting up…' :
+    state==='loading' ? 'Loading…' : '2FA is off'
+  ) + '</span>';
+}
+window._ac2faFactorId = null;
+async function ac2faLoad(){
+  var s = getSession(); if(!s) return;
+  var c = await acSupa(); if(!c) return;
+  ac2faShowState('loading');
+  try {
+    var r = await fetch(c.url + '/auth/v1/factors', {
+      headers:{ apikey:c.anon, Authorization:'Bearer '+s.access_token }
+    });
+    if (!r.ok) { ac2faShowState('off'); return; }
+    var data = await r.json();
+    // Supabase returns either { all:[], totp:[] } shape or a flat list depending on version.
+    var totp = (data.totp || data.all || data.factors || []).filter(function(f){ return f.factor_type==='totp' && f.status==='verified'; });
+    if (totp.length){ window._ac2faFactorId = totp[0].id; ac2faShowState('on'); }
+    else { ac2faShowState('off'); }
+  } catch(_) { ac2faShowState('off'); }
+}
+async function ac2faEnroll(){
+  var s = getSession(); if(!s){ ac2faSetMsg('err','Please sign in again.'); return; }
+  var c = await acSupa(); if(!c){ ac2faSetMsg('err','Auth service not reachable.'); return; }
+  var btn = document.getElementById('ac2faEnableBtn'); if(btn){ btn.disabled=true; btn.textContent='Generating…'; }
+  try {
+    var r = await fetch(c.url + '/auth/v1/factors', {
+      method:'POST',
+      headers:{ apikey:c.anon, Authorization:'Bearer '+s.access_token, 'Content-Type':'application/json' },
+      body: JSON.stringify({ factor_type:'totp', friendly_name:'Bedrock Digital' }),
+    });
+    if(!r.ok){ var t=await r.text(); ac2faSetMsg('err','Could not start 2FA setup. ('+t+')'); if(btn){btn.disabled=false;btn.textContent='Enable 2FA';} return; }
+    var data = await r.json();
+    window._ac2faFactorId = data.id;
+    var totp = data.totp || {};
+    var qr = totp.qr_code || '';
+    var secret = totp.secret || '';
+    var qrImg = document.getElementById('ac2faQr');
+    if (qrImg) qrImg.src = qr.startsWith('data:') ? qr : ('data:image/svg+xml;utf8,' + encodeURIComponent(qr));
+    var sec = document.getElementById('ac2faSecret'); if(sec) sec.textContent = secret || 'Use the QR code';
+    ac2faShowState('enrolling');
+    setTimeout(function(){ var c=document.getElementById('ac2faCode'); if(c)c.focus(); }, 60);
+  } catch(e){ ac2faSetMsg('err','Connection error.'); if(btn){btn.disabled=false;btn.textContent='Enable 2FA';} }
+}
+async function ac2faVerifyEnroll(){
+  var code = (document.getElementById('ac2faCode').value||'').replace(/\s+/g,'');
+  if(!/^\d{6}$/.test(code)){ ac2faSetMsg('err','Enter the 6-digit code from your authenticator app.'); return; }
+  var s = getSession(); if(!s) return;
+  var c = await acSupa(); if(!c) return;
+  var fid = window._ac2faFactorId; if(!fid){ ac2faSetMsg('err','Setup expired — start again.'); ac2faShowState('off'); return; }
+  var btn = document.getElementById('ac2faVerifyBtn'); if(btn){btn.disabled=true;btn.textContent='Verifying…';}
+  try {
+    // Challenge first to get a challenge_id, then verify
+    var chRes = await fetch(c.url + '/auth/v1/factors/'+fid+'/challenge', {
+      method:'POST',
+      headers:{ apikey:c.anon, Authorization:'Bearer '+s.access_token, 'Content-Type':'application/json' },
+      body: JSON.stringify({}),
+    });
+    if(!chRes.ok){ ac2faSetMsg('err','Could not start verification.'); if(btn){btn.disabled=false;btn.textContent='Verify &amp; activate';} return; }
+    var ch = await chRes.json();
+    var vRes = await fetch(c.url + '/auth/v1/factors/'+fid+'/verify', {
+      method:'POST',
+      headers:{ apikey:c.anon, Authorization:'Bearer '+s.access_token, 'Content-Type':'application/json' },
+      body: JSON.stringify({ challenge_id: ch.id, code: code }),
+    });
+    if(!vRes.ok){ ac2faSetMsg('err','That code didn\'t match. Try the latest one from your app.'); if(btn){btn.disabled=false;btn.textContent='Verify &amp; activate';} return; }
+    ac2faSetMsg('ok','2FA activated. Next sign-in will ask for a code.');
+    ac2faShowState('on');
+    document.getElementById('ac2faCode').value='';
+  } catch(_){ ac2faSetMsg('err','Connection error.'); if(btn){btn.disabled=false;btn.textContent='Verify &amp; activate';} }
+}
+function ac2faCancelEnroll(){
+  window._ac2faFactorId = null;
+  document.getElementById('ac2faCode').value='';
+  ac2faShowState('off');
+  var btn = document.getElementById('ac2faEnableBtn'); if(btn){btn.disabled=false;btn.textContent='Enable 2FA';}
+}
+async function ac2faDisable(){
+  var s = getSession(); if(!s) return;
+  var c = await acSupa(); if(!c) return;
+  var fid = window._ac2faFactorId;
+  if(!fid){ ac2faShowState('off'); return; }
+  if(!confirm('Turn off two-factor authentication? Next sign-in will only need your password.')) return;
+  var btn = document.getElementById('ac2faDisableBtn'); if(btn){btn.disabled=true;btn.textContent='Removing…';}
+  try {
+    var r = await fetch(c.url + '/auth/v1/factors/'+fid, {
+      method:'DELETE',
+      headers:{ apikey:c.anon, Authorization:'Bearer '+s.access_token },
+    });
+    if(!r.ok){ ac2faSetMsg('err','Could not disable 2FA.'); if(btn){btn.disabled=false;btn.textContent='Disable 2FA';} return; }
+    window._ac2faFactorId = null;
+    ac2faSetMsg('ok','2FA disabled.');
+    ac2faShowState('off');
+  } catch(_){ ac2faSetMsg('err','Connection error.'); if(btn){btn.disabled=false;btn.textContent='Disable 2FA';} }
+}
+
 // ── G5c: My Files — list assets from Supabase with signed URLs ──
 // D1: full kind→label mapping. Covers the four current upload-asset.js kinds plus the
 // future ones the spec calls out (receipts, estimates, invoices). Unknown kinds fall back
@@ -597,17 +762,20 @@ async function acSendFeedback(ev, type){
     var d = await r.json();
     if(r.ok && d && d.success){
       msgEl.value = '';
-      setMsg(noteId,'ok','Sent — Brock usually replies the same day.');
+      /* QF3: success + error wording per spec */
+      setMsg(noteId,'ok','Your message was sent — Brock will be in touch soon.');
     } else {
-      setMsg(noteId,'err',(d&&d.error)||'Send failed — please email brockniederer@gmail.com directly.');
+      setMsg(noteId,'err','Something went wrong. Email us at support@bedrock-sites.com');
     }
-  }catch(_){ setMsg(noteId,'err','Connection error — please try again.'); }
+  }catch(_){ setMsg(noteId,'err','Something went wrong. Email us at support@bedrock-sites.com'); }
   btn.disabled = false; btn.textContent = origTxt;
 }
 
 // ── Boot: honor ?tab= and #hash deep links, load profile ──
 (function(){
   acLoadProfile();
+  // QF2: kick off 2FA status check immediately so the Info pane shows accurate state on first open
+  setTimeout(ac2faLoad, 300);
   try{
     var h = (location.hash||'').replace('#','');
     if(h && document.getElementById('ac-'+h)) acGo(h);

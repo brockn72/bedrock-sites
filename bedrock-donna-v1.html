@@ -369,9 +369,25 @@ footer a{color:var(--gold);text-decoration:none}
 </head>
 <body>
 
-<!-- Step 7: shared preview-mode helper — cart membership = preview access until purchase verified -->
+<!-- Step 7 + QF1: preview-mode helpers — cart membership OR ?preview=1 from portal = preview access -->
 <script>
+// QF1: if the portal sent ?preview=1, force IS_SUBSCRIBED=false BEFORE any other script runs.
+// This is the authoritative signal — the portal already knows from TOOL_SUBSCRIBED whether
+// the user owns this tool; if it said preview, the tool must honor it.
+(function(){
+  try {
+    if (new URLSearchParams(location.search).get('preview') === '1') {
+      window.IS_SUBSCRIBED = false;
+      window._forcedPreview = true;
+      document.addEventListener('DOMContentLoaded', function(){
+        var b = document.getElementById('previewBanner'); if (b) b.classList.add('show');
+        document.body && document.body.classList.add('preview-mode');
+      });
+    }
+  } catch(_){}
+})();
 window.bedrockInPreviewMode = function(toolKey){
+  if (window._forcedPreview === true) return true;
   if (window.IS_SUBSCRIBED === true) return false; // owned (paid) is not preview
   var sku = ({operations:'cfo',finance:'cfo',marketing:'marketing',website:'website'})[toolKey];
   if (!sku) return false;

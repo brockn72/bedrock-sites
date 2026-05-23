@@ -136,7 +136,20 @@
   <a class="pb-cta" href="/portal.html#subs">Purchase &amp; make this yours →</a>
 </div>
 <script>
+// QF1: portal may send ?preview=1 to force preview mode immediately.
+(function(){
+  try{
+    if (new URLSearchParams(location.search).get('preview') === '1') {
+      window.IS_SUBSCRIBED = false;
+      window._forcedPreview = true;
+      document.addEventListener('DOMContentLoaded', function(){
+        var b = document.getElementById('wsPreviewBanner'); if (b) b.classList.add('show');
+      });
+    }
+  }catch(_){}
+})();
 window.bedrockInPreviewMode = function(toolKey){
+  if (window._forcedPreview === true) return true;
   if (window.IS_SUBSCRIBED === true) return false;
   var sku = ({operations:'cfo',finance:'cfo',marketing:'marketing',website:'website'})[toolKey];
   if (!sku) return false;

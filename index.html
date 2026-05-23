@@ -11911,6 +11911,16 @@ function closeMtbDrawer(){
       <button type="submit" class="bdm-submit" id="bdmSigninBtn">Sign In</button>
       <p class="bdm-foot">New to Bedrock? <a onclick="authModalMode('create')">Create a free account</a></p>
     </form>
+    <!-- QF2: TOTP prompt shown after signin if the user has a verified 2FA factor -->
+    <form class="bdm-form" id="bdmMfaForm" style="display:none" onsubmit="bdmDoMfa(event)">
+      <h3>Enter your 6-digit code.</h3>
+      <p class="bdm-sub">Open your authenticator app (Google Authenticator, Authy, 1Password) and type the current 6-digit code.</p>
+      <div class="bdm-err" id="bdmMfaErr"></div>
+      <label for="bdmMfaCode">Code</label>
+      <input type="text" id="bdmMfaCode" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" required style="font-family:'DM Sans',monospace;letter-spacing:0.4em;font-size:1.05rem;text-align:center">
+      <button type="submit" class="bdm-submit" id="bdmMfaBtn">Verify &amp; sign in</button>
+      <p class="bdm-foot">Lost your phone? <a href="mailto:support@bedrock-sites.com">Email support</a> to recover your account.</p>
+    </form>
     <form class="bdm-form" id="bdmCreateForm" style="display:none" onsubmit="bdmDoCreate(event)">
       <h3>Create your free account.</h3>
       <p class="bdm-sub">Free to set up. No card required.</p>
@@ -11935,12 +11945,18 @@ window.AUTH_MODAL_ONSUCCESS = window.AUTH_MODAL_ONSUCCESS || function(){ window.
 function openAuthModal(mode){ var m=document.getElementById('bdAuthModal'); if(!m)return; m.classList.add('open'); authModalMode(mode||'signin'); }
 function closeAuthModal(){ var m=document.getElementById('bdAuthModal'); if(m)m.classList.remove('open'); }
 function authModalMode(mode){
+  // QF2: 3-state form switcher — 'signin' | 'create' | 'mfa'. MFA hides both tabs.
+  var mfa = mode==='mfa';
   var create = mode==='create';
-  document.getElementById('bdmSigninForm').style.display = create?'none':'';
-  document.getElementById('bdmCreateForm').style.display = create?'':'none';
-  document.getElementById('bdmTabSignin').classList.toggle('active',!create);
+  var signin = !mfa && !create;
+  document.getElementById('bdmSigninForm').style.display = signin ? '' : 'none';
+  document.getElementById('bdmCreateForm').style.display = create ? '' : 'none';
+  var mfaForm = document.getElementById('bdmMfaForm'); if(mfaForm) mfaForm.style.display = mfa ? '' : 'none';
+  document.getElementById('bdmTabSignin').classList.toggle('active',signin);
   document.getElementById('bdmTabCreate').classList.toggle('active',create);
   document.getElementById('bdmSlider').classList.toggle('create',create);
+  // Hide the tab switcher on the MFA step — the user can't bail to "create account" mid-verify.
+  var sw = document.querySelector('#bdAuthModal .bdm-switch'); if(sw) sw.style.display = mfa ? 'none' : '';
 }
 function bdmErr(id,msg){ var e=document.getElementById(id); if(e){ e.textContent=msg; e.classList.add('show'); } }
 function bdmClearErr(){ ['bdmSigninErr','bdmCreateErr'].forEach(function(id){ var e=document.getElementById(id); if(e)e.classList.remove('show'); }); }
@@ -11961,9 +11977,61 @@ function bdmDoSignin(e){
   btn.disabled=true; btn.textContent='Signing in…';
   fetch('/.netlify/functions/portal-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'signin',email:email,password:pass})})
     .then(function(r){return r.json();}).then(function(d){
-      if(d.success){ bdmSaveSession(d); window.AUTH_MODAL_ONSUCCESS(d); }
-      else{ btn.disabled=false; btn.textContent='Sign In'; bdmErr('bdmSigninErr',d.error||'Incorrect email or password.'); }
+      if(d.success){
+        // QF2: stash the session temporarily so we can call the Supabase MFA endpoints,
+        // then check whether the user has a verified TOTP factor. If yes → prompt for code,
+        // upgrade the session to aal2, then fire AUTH_MODAL_ONSUCCESS. If no → proceed.
+        window._bdmPendingSession = d;
+        bdmCheckMfa(d).then(function(needs){
+          if(needs){
+            btn.disabled=false; btn.textContent='Sign In';
+            authModalMode('mfa');
+            setTimeout(function(){ var c=document.getElementById('bdmMfaCode'); if(c)c.focus(); }, 80);
+          } else {
+            bdmSaveSession(d); window.AUTH_MODAL_ONSUCCESS(d);
+          }
+        });
+      } else { btn.disabled=false; btn.textContent='Sign In'; bdmErr('bdmSigninErr',d.error||'Incorrect email or password.'); }
     }).catch(function(){ btn.disabled=false; btn.textContent='Sign In'; bdmErr('bdmSigninErr','Connection error — please try again.'); });
+}
+// QF2: list factors with the freshly-issued access_token; return the verified TOTP factor id if any.
+function bdmCheckMfa(sess){
+  return fetch('/.netlify/functions/get-config').then(function(r){ return r.ok ? r.json() : null; }).then(function(cfg){
+    if(!cfg || !sess || !sess.access_token) return null;
+    window._bdmSupa = cfg;
+    return fetch(cfg.url + '/auth/v1/factors', { headers:{ apikey:cfg.anon, Authorization:'Bearer '+sess.access_token } })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if(!d) return null;
+        var list = (d.totp || d.all || d.factors || []).filter(function(f){ return f.factor_type==='totp' && f.status==='verified'; });
+        if(!list.length) return null;
+        window._bdmMfaFactorId = list[0].id;
+        return true;
+      });
+  }).catch(function(){ return null; });
+}
+function bdmDoMfa(e){
+  e.preventDefault(); bdmClearErr();
+  var code = (document.getElementById('bdmMfaCode').value||'').replace(/\s+/g,'');
+  if(!/^\d{6}$/.test(code)){ bdmErr('bdmMfaErr','Enter the 6-digit code from your authenticator app.'); return; }
+  var sess = window._bdmPendingSession; var cfg = window._bdmSupa; var fid = window._bdmMfaFactorId;
+  if(!sess || !cfg || !fid){ bdmErr('bdmMfaErr','Session expired — sign in again.'); authModalMode('signin'); return; }
+  var btn = document.getElementById('bdmMfaBtn'); btn.disabled = true; btn.textContent='Verifying…';
+  fetch(cfg.url + '/auth/v1/factors/'+fid+'/challenge', { method:'POST', headers:{ apikey:cfg.anon, Authorization:'Bearer '+sess.access_token, 'Content-Type':'application/json' }, body:'{}' })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(ch){
+      if(!ch || !ch.id){ throw new Error('challenge failed'); }
+      return fetch(cfg.url + '/auth/v1/factors/'+fid+'/verify', { method:'POST', headers:{ apikey:cfg.anon, Authorization:'Bearer '+sess.access_token, 'Content-Type':'application/json' }, body: JSON.stringify({ challenge_id: ch.id, code: code }) });
+    })
+    .then(function(r){ return r.json().then(function(d){ return { ok:r.ok, data:d }; }); })
+    .then(function(res){
+      if(!res.ok){ btn.disabled=false; btn.textContent='Verify & sign in'; bdmErr('bdmMfaErr','That code didn\'t match. Try the latest one.'); return; }
+      var d = res.data;
+      var upgraded = { access_token: d.access_token || sess.access_token, refresh_token: d.refresh_token || sess.refresh_token, expires_in: d.expires_in || sess.expires_in, user: d.user || sess.user, success: true };
+      bdmSaveSession(upgraded);
+      window.AUTH_MODAL_ONSUCCESS(upgraded);
+    })
+    .catch(function(){ btn.disabled=false; btn.textContent='Verify & sign in'; bdmErr('bdmMfaErr','Connection error — try again.'); });
 }
 function bdmDoCreate(e){
   e.preventDefault(); bdmClearErr();
