@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bedrock Finance — Understand your business at a glance</title>
-<meta name="description" content="Bedrock Finance turns your QuickBooks and Donna data into plain-language dashboards: revenue, expenses, margins, and which jobs actually made money.">
+<title>Bedrock Finance — Analytics &amp; Insights</title>
+<meta name="description" content="Know what every job really earns and where your money goes, so you price smarter, get paid faster, and keep more of every dollar.">
+<link rel="icon" href="/bedrock-finance.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/bedrock-finance.svg">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://bedrock-sites.com/bedrock-finance-v1.html">
 <meta property="og:type" content="website">
@@ -33,7 +35,15 @@
   --muted-light:rgba(255,255,255,0.45);--muted-dark:rgba(13,27,46,0.35);
   --red:#b91c1c;--red-bg:#fef2f2;--green:#3b6d11;--green-bg:#f0f5ea;
   --amber:#92660e;--amber-bg:#fdf6e3;
+  /* Tool brand tokens — see bedrock-vault/05-SUBBRAND-LOGO-INTEGRATION.md */
+  --brand-gold-light:#F0C46A;--brand-gold-dark:#A8711A;--brand-navy-light:#4A7DB5;--warm-white:#F5E6C8;--tool-accent:#C9922A;
 }
+/* Per-tool brand lockup (Option A: hard-coded per file) */
+.nav-logo.brand-lockup{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.brand-icon svg{display:block;width:34px;height:34px;border-radius:8px}
+.brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.brand-name{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;letter-spacing:-.02em;color:var(--warm-white)}
+.brand-tool{font-size:9px;letter-spacing:.2em;font-weight:500;text-transform:uppercase;margin-top:3px;color:var(--tool-accent)}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy-deep);min-height:100vh;display:flex;flex-direction:column;line-height:1.5}
 /* Preview-Mode banner — sits above the nav for non-subscribers */
@@ -236,8 +246,8 @@ footer a{color:var(--gold);text-decoration:none}
 <!-- Preview-Mode banner (hidden by default; shown via JS for non-subscribers) -->
 <div id="previewBanner" class="preview-banner" role="banner">
   <span>You're in Preview Mode — exploring <strong>Finance · Analytics</strong>. To use this tool with your real data, add it to your plan.</span>
-  <a class="preview-cta" href="/portal.html#subs">Add to My Plan →</a>
-  <button class="preview-x" type="button" onclick="dismissPreviewBanner()" aria-label="Dismiss">×</button>
+  <a class="preview-cta" href="/portal.html#subs">Purchase &amp; make this yours →</a>
+  <!-- Non-dismissible per spec — preview mode persists until purchase. -->
 </div>
 
 <svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -253,10 +263,21 @@ footer a{color:var(--gold);text-decoration:none}
 </svg>
 
 <nav class="top">
-  <a href="/portal.html" class="nav-logo">
-    <div class="nav-strata"><span></span><span></span><span></span><span></span></div>
-    <div class="nav-wm"><span class="wordmark">Bedrock</span><span class="sub">Digital</span></div>
-    <span class="nav-product">Finance · Analytics</span>
+  <a href="/portal.html" class="nav-logo brand-lockup">
+    <span class="brand-icon">
+      <svg viewBox="0 0 68 68" role="img" aria-label="Bedrock Finance">
+        <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+        <g fill="#C9922A">
+          <rect x="7" y="8" width="10" height="52"/>
+          <rect x="7" y="8" width="45" height="10"/>
+          <rect x="7" y="29" width="37" height="10"/>
+        </g>
+      </svg>
+    </span>
+    <span class="brand-wordmark">
+      <span class="brand-name">Bedrock</span>
+      <span class="brand-tool">Finance</span>
+    </span>
   </a>
   <div class="nav-right">
     <a href="/portal.html" class="tnav-link tnav-home" title="My Portal">
@@ -1183,13 +1204,10 @@ renderDataSourceBar();
 // Preview-Mode banner — shown above the nav when no Finance subscription.
 function showPreviewBanner(){
   if(IS_SUBSCRIBED) return;
-  try { if(sessionStorage.getItem('bedrock_preview_dismissed_finance') === '1') return; } catch(e){}
   var b=document.getElementById('previewBanner'); if(b) b.classList.add('show');
 }
-function dismissPreviewBanner(){
-  try { sessionStorage.setItem('bedrock_preview_dismissed_finance','1'); } catch(e){}
-  var b=document.getElementById('previewBanner'); if(b) b.classList.remove('show');
-}
+// Non-dismissible per Step 7 spec — kept as no-op so leftover code paths don't error.
+function dismissPreviewBanner(){ /* non-dismissible */ }
 BedrockProfile.load().then(function(){
   IS_SUBSCRIBED = !!BedrockProfile.get('is_admin') || BedrockProfile.subscribedTo(['finance_operations','finance']);
   showPreviewBanner();

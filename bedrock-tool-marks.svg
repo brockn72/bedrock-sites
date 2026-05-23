@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="mark-f" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g fill="#C9922A"><rect x="7" y="8" width="10" height="52"/><rect x="7" y="8" width="45" height="10"/><rect x="7" y="29" width="37" height="10"/></g>
+  </symbol>
+  <symbol id="mark-m" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <g fill="#F0C46A"><rect x="7" y="9" width="10" height="51"/><rect x="51" y="9" width="10" height="51"/><polygon points="17.00,7.63 34.00,36.22 34.00,55.78 17.00,27.19"/><polygon points="34.00,36.22 51.00,7.63 51.00,27.19 34.00,55.78"/></g>
+  </symbol>
+  <symbol id="mark-o" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <circle cx="34" cy="34" r="21" fill="none" stroke="#2E5A8E" stroke-width="10"/>
+  </symbol>
+  <symbol id="mark-w" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <path d="M8,9 L22,60 L34,32 L46,60 L60,9" fill="none" stroke="#4A7DB5" stroke-width="10" stroke-linejoin="miter" stroke-linecap="butt"/>
+  </symbol>
+</svg>

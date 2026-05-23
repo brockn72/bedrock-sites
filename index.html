@@ -180,7 +180,22 @@
   --accent:#C9922A;--accent-light:#D8A23C;
   --offwhite:#FAF7F2;--light:#EEECE8;
   --text:#0D1B2E;--text-mid:#2F3B4E;--text-muted:#54607A;--border:#E2E4EA;
+  /* Tool brand tokens — see bedrock-vault/05-SUBBRAND-LOGO-INTEGRATION.md */
+  --tool-finance:#C9922A;--tool-marketing:#F0C46A;--tool-marketing-dark:#A8711A;--tool-operations:#2E5A8E;--tool-website:#4A7DB5;
+  --brand-gold-light:#F0C46A;--brand-gold-dark:#A8711A;--brand-navy-mid:#2E5A8E;--brand-navy-light:#4A7DB5;--warm-white:#F5E6C8;
 }
+/* Per-tool brand lockup primitives (used in tool cards + selector) */
+.brand-lockup{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.brand-icon svg{display:block;width:34px;height:34px;border-radius:8px}
+.brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.brand-name{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;letter-spacing:-.02em;color:var(--text)}
+.brand-name.on-dark{color:var(--warm-white)}
+.brand-tool{font-size:9px;letter-spacing:.2em;font-weight:500;text-transform:uppercase;margin-top:3px}
+.brand-tool.t-finance{color:var(--tool-finance)}
+.brand-tool.t-marketing{color:var(--tool-marketing-dark)}
+.brand-tool.t-marketing.on-dark{color:var(--tool-marketing)}
+.brand-tool.t-operations{color:var(--brand-navy-light)}
+.brand-tool.t-website{color:var(--tool-website)}
 html{scroll-behavior:smooth}
 body{font-family:'Montserrat',sans-serif;background:#fff;color:var(--text);overflow-x:hidden}
 
@@ -1633,40 +1648,27 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 </head>
 <body>
 
-<!-- ── SUB-BRAND MARK SYMBOLS (from bedrock-subbrands-v9.html) — Finance (F) + Donna (D) marks ── -->
+<!-- ── SUB-BRAND MARK SYMBOLS (FMOW) — see bedrock-vault/05-SUBBRAND-LOGO-INTEGRATION.md ── -->
 <svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <clipPath id="rightOfStem"><rect x="17" y="0" width="51" height="68"/></clipPath>
   <symbol id="mark-f" viewBox="0 0 68 68">
     <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
-    <g clip-path="url(#rightOfStem)">
-      <rect x="7" y="8"  width="45" height="10" fill="#F0C46A"/>
-      <rect x="7" y="29" width="37" height="10" fill="#2E5A8E"/>
-    </g>
-    <rect x="7" y="8" width="10" height="52" fill="#C9922A"/>
-  </symbol>
-  <symbol id="mark-d" viewBox="0 0 68 68">
-    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
-    <g clip-path="url(#rightOfStem)" fill="none" stroke-width="10" stroke-linecap="butt">
-      <path d="M12,9 A32,25.5 0 0 1 44,34.5" stroke="#F0C46A"/>
-      <path d="M44,34.5 A32,25.5 0 0 1 12,60" stroke="#2E5A8E"/>
-    </g>
-    <rect x="7" y="4.25" width="10" height="60.35" fill="#C9922A"/>
-  </symbol>
-  <symbol id="mark-b" viewBox="0 0 68 68">
-    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
-    <g clip-path="url(#rightOfStem)" fill="none" stroke-width="10" stroke-linecap="butt">
-      <path d="M12,9 A27,12.75 0 0 1 12,34.5" stroke="#F0C46A"/>
-      <path d="M12,34.5 A31,12.75 0 0 1 12,60" stroke="#2E5A8E"/>
-    </g>
-    <rect x="7" y="4.25" width="10" height="60.35" fill="#C9922A"/>
+    <g fill="#C9922A"><rect x="7" y="8" width="10" height="52"/><rect x="7" y="8" width="45" height="10"/><rect x="7" y="29" width="37" height="10"/></g>
   </symbol>
   <symbol id="mark-m" viewBox="0 0 68 68">
     <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
-    <polygon points="17.00,7.63 34.00,36.22 34.00,55.78 17.00,27.19" fill="#F0C46A"/>
-    <polygon points="34.00,36.22 51.00,7.63 51.00,27.19 34.00,55.78" fill="#2E5A8E"/>
-    <rect x="7"  y="9" width="10" height="51" fill="#C9922A"/>
-    <rect x="51" y="9" width="10" height="51" fill="#4A7DB5"/>
+    <g fill="#F0C46A"><rect x="7" y="9" width="10" height="51"/><rect x="51" y="9" width="10" height="51"/><polygon points="17.00,7.63 34.00,36.22 34.00,55.78 17.00,27.19"/><polygon points="34.00,36.22 51.00,7.63 51.00,27.19 34.00,55.78"/></g>
   </symbol>
+  <symbol id="mark-o" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <circle cx="34" cy="34" r="21" fill="none" stroke="#2E5A8E" stroke-width="10"/>
+  </symbol>
+  <symbol id="mark-w" viewBox="0 0 68 68">
+    <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+    <path d="M8,9 L22,60 L34,32 L46,60 L60,9" fill="none" stroke="#4A7DB5" stroke-width="10" stroke-linejoin="miter" stroke-linecap="butt"/>
+  </symbol>
+  <!-- Aliases: legacy refs (#mark-d Donna, #mark-b Builder) redirect to new IDs (#mark-o Operations, #mark-w Website). Safe during the FMOW migration. -->
+  <symbol id="mark-d" viewBox="0 0 68 68"><use href="#mark-o"/></symbol>
+  <symbol id="mark-b" viewBox="0 0 68 68"><use href="#mark-w"/></symbol>
 </svg>
 
 <!-- Embed mode: strip all chrome when loaded as ?embed=optimizer (used by the My Website hub) -->
@@ -1702,8 +1704,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <li><a href="/bedrock-donna-v1.html">Operations</a></li>
         <li><a href="/bedrock-finance-v1.html">Finance</a></li>
         <li><a href="/bedrock-marketing-v1.html">Marketing</a></li>
-        <li><a href="/sites.html">Website</a></li>
-        <li><a href="#optimizer" onclick="showPage('optimizer',event)">SEO/Geo Optimizer</a></li>
+        <li><a href="/bedrock-website-v1.html">Website</a></li>
+        <!-- SEO/Geo Optimizer nav link retired — SEO absorbed into Website. Optimizer page still accessible inside Website tool. -->
+        <li style="display:none"><a href="#optimizer" onclick="showPage('optimizer',event)">SEO/Geo Optimizer</a></li>
       </ul>
     </li>
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
@@ -1895,7 +1898,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
     <div class="wwd-acc" id="wwdAcc1">
       <button type="button" class="wwd-acc-head" onclick="wwdToggle(1)">
-        <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-d"/></svg></span>
+        <span class="wwd-thumb brandmark" aria-hidden="true"><svg viewBox="0 0 68 68"><use href="#mark-o"/></svg></span>
         <span class="wwd-acc-label">Operations<span class="wld"> &mdash; Operations Assistant &amp; Customer Database</span></span>
         <span class="wwd-plus">+</span>
       </button>
@@ -3121,7 +3124,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <div class="sc2-vis">
           <div class="sc2-soon">
             <div style="display:flex;gap:0.85rem">
-              <svg viewBox="0 0 68 68" width="46" height="46" aria-label="Bedrock Donna mark"><use href="#mark-d"/></svg>
+              <svg viewBox="0 0 68 68" width="46" height="46" aria-label="Bedrock Operations mark"><use href="#mark-o"/></svg>
               <svg viewBox="0 0 68 68" width="46" height="46" aria-label="Bedrock Finance mark"><use href="#mark-f"/></svg>
             </div>
             <div class="ss-badge">Coming Soon</div>
@@ -4013,8 +4016,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   <!-- Section divider between "Client Websites / Marketing samples" and the tools preview -->
   <div style="background:#fff;border-top:1px solid rgba(13,27,46,0.08);padding:0;height:0"></div>
 
-  <!-- ════════ OUR WORK — FINANCE + OPERATIONS PREVIEWS ════════ -->
-  <section id="ow-tools">
+  <!-- ════════ OUR WORK — FINANCE + OPERATIONS PREVIEWS (retired May 2026; replaced by expanded "Inside Operations" + "Inside Finance" sections below). Kept, not deleted. ════════ -->
+  <section id="ow-tools" style="display:none">
     <style>
       #ow-tools{background:#0D1B2E;padding:5rem 5%}
       #ow-tools .owt-inner{max-width:1080px;margin:0 auto}
@@ -4054,7 +4057,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       #ow-tools .ms-rank .mr-r{display:flex;justify-content:space-between;font-family:'DM Sans',sans-serif;font-size:0.64rem;color:rgba(255,255,255,0.78);padding:0.16rem 0}
       #ow-tools .ms-rank .mr-r b{color:#fff}
     </style>
-    <div class="owt-inner">
+    <div class="owt-inner" style="display:none">
+      <!-- "Operations & Finance — a look inside" framing retired May 2026 per Our Work cleanup. Single-mockup-per-tool replaced by the expanded "Inside Operations" + "Inside Finance" sections below. Kept, not deleted. -->
       <div class="owt-eyebrow">The Tools In Action</div>
       <h2>Operations &amp; Finance &mdash; a look inside.</h2>
       <p class="owt-sub">Websites and marketing you can already see above. Here's what the rest of the platform looks like once it's in your hands.</p>
@@ -4063,7 +4067,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <div class="owt-card" style="--ac:#C9922A">
           <div class="owt-shot">
             <div class="ms-chat">
-              <div class="ms-head"><svg width="26" height="26" viewBox="0 0 68 68"><use href="#mark-d"/></svg><b>Donna</b></div>
+              <div class="ms-head"><svg width="26" height="26" viewBox="0 0 68 68"><use href="#mark-o"/></svg><b>Donna</b></div>
               <div class="ms-b u">Invoice Joe Smith for the patio job</div>
               <div class="ms-b d">Built it off the approved estimate so the numbers match. Net 30. Nothing sends till you say so.</div>
               <div class="ms-draft">
@@ -4105,6 +4109,251 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ INSIDE OPERATIONS — expanded sample deliverables ════════ -->
+  <section id="ow-ops" style="background:#0D1B2E;padding:5rem 5%;border-top:1px solid rgba(255,255,255,0.06)">
+    <style>
+      #ow-ops .owo-inner{max-width:1080px;margin:0 auto}
+      #ow-ops .owo-head{text-align:center;margin-bottom:2.5rem}
+      #ow-ops .owo-eyebrow{display:inline-flex;align-items:center;gap:0.5rem;font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#4A7DB5;margin-bottom:0.6rem}
+      #ow-ops .owo-eyebrow svg{width:18px;height:18px;display:block}
+      #ow-ops h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:700;color:#F5E6C8;margin-bottom:0.5rem}
+      #ow-ops h2 em{font-style:italic;color:#4A7DB5}
+      #ow-ops .owo-sub{font-family:'DM Sans',sans-serif;font-size:0.92rem;color:rgba(255,255,255,0.65);max-width:620px;margin:0 auto;line-height:1.65}
+      #ow-ops .owo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem}
+      @media(max-width:760px){#ow-ops .owo-grid{grid-template-columns:1fr}}
+      #ow-ops .owo-card{background:#fff;border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+      #ow-ops .owo-card .owc-head{padding:0.85rem 1.15rem 0.55rem;background:#FAF7F2;border-bottom:1px solid rgba(13,27,46,0.06);display:flex;justify-content:space-between;align-items:baseline}
+      #ow-ops .owo-card .owc-label{font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#4A7DB5}
+      #ow-ops .owo-card .owc-num{font-family:'DM Sans',sans-serif;font-size:0.66rem;color:#4A5568;font-variant-numeric:tabular-nums}
+      #ow-ops .owo-card .owc-body{padding:1.15rem 1.15rem 1.3rem;flex:1;display:flex;flex-direction:column;gap:0.55rem}
+      /* sample doc */
+      #ow-ops .owd-title{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.1rem;color:#0D1B2E;line-height:1.2}
+      #ow-ops .owd-meta{font-family:'DM Sans',sans-serif;font-size:0.7rem;color:#4A5568}
+      #ow-ops .owd-line{display:flex;justify-content:space-between;font-family:'DM Sans',sans-serif;font-size:0.74rem;padding:0.35rem 0;border-bottom:1px dashed rgba(13,27,46,0.08);color:#0D1B2E}
+      #ow-ops .owd-line:last-child{border-bottom:none}
+      #ow-ops .owd-line span:last-child{font-variant-numeric:tabular-nums;color:#4A5568}
+      #ow-ops .owd-total{display:flex;justify-content:space-between;font-family:'DM Sans',sans-serif;font-size:0.84rem;font-weight:700;color:#0D1B2E;border-top:1px solid #0D1B2E;padding-top:0.55rem;margin-top:0.3rem}
+      #ow-ops .owd-stamp{display:inline-block;align-self:flex-start;background:rgba(74,125,181,0.12);color:#1B3557;border:1px solid #4A7DB5;font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:0.28rem 0.55rem;border-radius:4px;margin-top:0.4rem}
+      /* receipt categorized */
+      #ow-ops .owr-row{display:flex;align-items:center;gap:0.7rem;padding:0.55rem 0;border-bottom:1px dashed rgba(13,27,46,0.08)}
+      #ow-ops .owr-row:last-child{border-bottom:none}
+      #ow-ops .owr-ic{width:38px;height:38px;border-radius:6px;background:#FAF7F2;display:flex;align-items:center;justify-content:center;font-size:1.05rem;flex-shrink:0}
+      #ow-ops .owr-body{flex:1;min-width:0}
+      #ow-ops .owr-vendor{font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;color:#0D1B2E;line-height:1.2}
+      #ow-ops .owr-meta{font-family:'DM Sans',sans-serif;font-size:0.66rem;color:#4A5568;margin-top:2px}
+      #ow-ops .owr-amt{font-family:'DM Sans',sans-serif;font-size:0.86rem;font-weight:700;color:#0D1B2E;font-variant-numeric:tabular-nums}
+      #ow-ops .owr-tag{display:inline-block;font-family:'DM Sans',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.16rem 0.45rem;border-radius:3px;margin-left:0.5rem}
+      /* schedule */
+      #ow-ops .ows-day{display:grid;grid-template-columns:60px 1fr;gap:0.7rem;align-items:flex-start;padding:0.55rem 0;border-top:1px dashed rgba(13,27,46,0.08)}
+      #ow-ops .ows-day:first-of-type{border-top:none}
+      #ow-ops .ows-date{text-align:center}
+      #ow-ops .ows-date b{display:block;font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;color:#0D1B2E;line-height:1}
+      #ow-ops .ows-date small{font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#4A7DB5}
+      #ow-ops .ows-job{font-family:'DM Sans',sans-serif;font-size:0.76rem;color:#0D1B2E;font-weight:600}
+      #ow-ops .ows-job small{display:block;font-weight:400;color:#4A5568;font-size:0.66rem;margin-top:2px}
+      #ow-ops .owo-foot{text-align:center;margin-top:2rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap}
+    </style>
+    <div class="owo-inner">
+      <div class="owo-head">
+        <div class="owo-eyebrow"><svg viewBox="0 0 68 68"><use href="#mark-o"/></svg>Inside Operations</div>
+        <h2>What Donna <em>draws up for you.</em></h2>
+        <p class="owo-sub">Estimates, invoices, receipts, scheduling &mdash; drafted by Donna, approved by you. Here's what a normal day's outputs actually look like.</p>
+      </div>
+      <div class="owo-grid">
+
+        <!-- ESTIMATE -->
+        <div class="owo-card">
+          <div class="owc-head"><span class="owc-label">Sample Estimate</span><span class="owc-num">EST-2087</span></div>
+          <div class="owc-body">
+            <div class="owd-title">600 sq ft Paver Patio &mdash; Smith Residence</div>
+            <div class="owd-meta">For: Joe Smith &middot; 4421 Oak Ridge Dr, Bend OR &middot; Drafted today</div>
+            <div style="margin-top:0.4rem">
+              <div class="owd-line"><span>Excavation &amp; grade</span><span>$1,180</span></div>
+              <div class="owd-line"><span>Base prep + compaction</span><span>$845</span></div>
+              <div class="owd-line"><span>Pavers (Belgard, charcoal)</span><span>$2,210</span></div>
+              <div class="owd-line"><span>Labor (3 days, 2-person crew)</span><span>$1,440</span></div>
+              <div class="owd-line"><span>Polymeric sand + sealer</span><span>$311</span></div>
+            </div>
+            <div class="owd-total"><span>Estimate total</span><span>$5,986</span></div>
+            <span class="owd-stamp">Awaiting your approval</span>
+          </div>
+        </div>
+
+        <!-- INVOICE -->
+        <div class="owo-card">
+          <div class="owc-head"><span class="owc-label">Sample Invoice</span><span class="owc-num">INV-2087 &middot; Net 30</span></div>
+          <div class="owc-body">
+            <div class="owd-title">Patio Job &mdash; Smith Residence</div>
+            <div class="owd-meta">Billed: Joe Smith &middot; Due Jun 22, 2026 &middot; Sent from your Gmail</div>
+            <div style="margin-top:0.4rem">
+              <div class="owd-line"><span>Approved estimate EST-2087</span><span>$5,986</span></div>
+              <div class="owd-line"><span>Extra: drain tile add-on (approved)</span><span>$320</span></div>
+              <div class="owd-line"><span>Deposit applied</span><span>&minus;$520</span></div>
+            </div>
+            <div class="owd-total"><span>Amount due</span><span>$5,786</span></div>
+            <span class="owd-stamp" style="background:rgba(59,109,17,0.12);border-color:#3b6d11;color:#3b6d11">Sent &middot; QBO synced</span>
+          </div>
+        </div>
+
+        <!-- RECEIPT CATEGORIZED -->
+        <div class="owo-card">
+          <div class="owc-head"><span class="owc-label">Receipts &middot; categorized for you</span><span class="owc-num">Today</span></div>
+          <div class="owc-body" style="gap:0">
+            <div class="owr-row"><div class="owr-ic">🧱</div><div class="owr-body"><div class="owr-vendor">Bend Stone &amp; Supply<span class="owr-tag" style="background:rgba(74,125,181,0.12);color:#1B3557">Materials &middot; Smith job</span></div><div class="owr-meta">Photo &middot; 2:14 PM &middot; Donna matched it to EST-2087</div></div><div class="owr-amt">$2,210</div></div>
+            <div class="owr-row"><div class="owr-ic">⛽</div><div class="owr-body"><div class="owr-vendor">Maverik 7&middot;11<span class="owr-tag" style="background:rgba(201,146,42,0.14);color:#92660e">Fuel &middot; vehicle 1</span></div><div class="owr-meta">Photo &middot; 7:42 AM</div></div><div class="owr-amt">$84.16</div></div>
+            <div class="owr-row"><div class="owr-ic">🔧</div><div class="owr-body"><div class="owr-vendor">Home Depot<span class="owr-tag" style="background:rgba(74,125,181,0.12);color:#1B3557">Tools &middot; jobsite</span></div><div class="owr-meta">Photo &middot; 9:08 AM</div></div><div class="owr-amt">$47.22</div></div>
+            <div class="owr-row"><div class="owr-ic">🥤</div><div class="owr-body"><div class="owr-vendor">Dutch Bros<span class="owr-tag" style="background:rgba(245,230,200,0.7);color:#92660e">Meal &middot; crew</span></div><div class="owr-meta">Photo &middot; 11:50 AM</div></div><div class="owr-amt">$18.40</div></div>
+          </div>
+        </div>
+
+        <!-- SCHEDULE -->
+        <div class="owo-card">
+          <div class="owc-head"><span class="owc-label">This Week &middot; Scheduled Jobs</span><span class="owc-num">5 jobs &middot; 2 estimates pending</span></div>
+          <div class="owc-body" style="gap:0">
+            <div class="ows-day"><div class="ows-date"><b>03</b><small>Tue</small></div><div class="ows-job">Smith patio &mdash; day 2 of 3<small>4421 Oak Ridge Dr &middot; Crew of 2 &middot; 7:00 AM</small></div></div>
+            <div class="ows-day"><div class="ows-date"><b>04</b><small>Wed</small></div><div class="ows-job">Smith patio &mdash; final pour + sand<small>4421 Oak Ridge Dr &middot; Crew of 2</small></div></div>
+            <div class="ows-day"><div class="ows-date"><b>05</b><small>Thu</small></div><div class="ows-job">Garcia driveway &mdash; estimate visit<small>902 Pine St &middot; 30 min &middot; You only</small></div></div>
+            <div class="ows-day"><div class="ows-date"><b>06</b><small>Fri</small></div><div class="ows-job">Walker retaining wall &mdash; start<small>1517 Aspen Way &middot; Crew of 3 &middot; 7:00 AM</small></div></div>
+            <div class="ows-day"><div class="ows-date"><b>07</b><small>Sat</small></div><div class="ows-job">Open &mdash; weather buffer<small>Hold for Garcia callback if estimate signs Thu</small></div></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="owo-foot">
+        <a href="/bedrock-donna-v1.html" class="btn-gold" style="text-decoration:none;display:inline-block;font-family:'DM Sans',sans-serif">Preview Operations &rarr;</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════ INSIDE FINANCE — expanded sample dashboard ════════ -->
+  <section id="ow-fin" style="background:#0D1B2E;padding:5rem 5%;border-top:1px solid rgba(255,255,255,0.06)">
+    <style>
+      #ow-fin .owf-inner{max-width:1080px;margin:0 auto}
+      #ow-fin .owf-head{text-align:center;margin-bottom:2.5rem}
+      #ow-fin .owf-eyebrow{display:inline-flex;align-items:center;gap:0.5rem;font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;margin-bottom:0.6rem}
+      #ow-fin .owf-eyebrow svg{width:18px;height:18px;display:block}
+      #ow-fin h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.4vw,2.6rem);font-weight:700;color:#F5E6C8;margin-bottom:0.5rem}
+      #ow-fin h2 em{font-style:italic;color:#C9922A}
+      #ow-fin .owf-sub{font-family:'DM Sans',sans-serif;font-size:0.92rem;color:rgba(255,255,255,0.65);max-width:620px;margin:0 auto;line-height:1.65}
+      #ow-fin .owf-dash{background:#fff;border-radius:14px;padding:1.4rem;display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:auto;gap:1rem}
+      @media(max-width:820px){#ow-fin .owf-dash{grid-template-columns:repeat(2,1fr)}}
+      #ow-fin .owf-card{background:#FAF7F2;border-radius:10px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:0.5rem}
+      #ow-fin .owf-card.span-2{grid-column:span 2}
+      #ow-fin .owf-card.span-3{grid-column:span 3}
+      #ow-fin .owf-card.span-4{grid-column:span 4}
+      #ow-fin .owf-card.span-6{grid-column:span 6}
+      @media(max-width:820px){#ow-fin .owf-card.span-2,#ow-fin .owf-card.span-3,#ow-fin .owf-card.span-4,#ow-fin .owf-card.span-6{grid-column:span 2}}
+      #ow-fin .owf-lbl{font-family:'DM Sans',sans-serif;font-size:0.54rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#92660e}
+      #ow-fin .owf-big{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:#0D1B2E;line-height:1}
+      #ow-fin .owf-delta{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:600;color:#3b6d11}
+      #ow-fin .owf-delta.neg{color:#b91c1c}
+      /* trend line */
+      #ow-fin .owf-trend{position:relative;height:100px;display:flex;align-items:flex-end;gap:5px;padding-top:0.6rem}
+      #ow-fin .owf-trend i{flex:1;background:linear-gradient(180deg,#C9922A,rgba(201,146,42,0.4));border-radius:3px 3px 0 0}
+      #ow-fin .owf-trend small{position:absolute;bottom:-1.1rem;font-family:'DM Sans',sans-serif;font-size:0.5rem;color:#4A5568}
+      #ow-fin .owf-trend-labels{display:flex;justify-content:space-between;margin-top:1.4rem;font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:600;color:#4A5568;letter-spacing:0.1em;text-transform:uppercase}
+      /* gauge */
+      #ow-fin .owf-gauge{display:flex;align-items:center;gap:0.85rem}
+      #ow-fin .owf-gauge-ring{width:78px;height:78px;border-radius:50%;background:conic-gradient(#3b6d11 0% 47%,#E3E0DA 47% 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+      #ow-fin .owf-gauge-ring::after{content:'';position:absolute;inset:8px;border-radius:50%;background:#FAF7F2}
+      #ow-fin .owf-gauge-pct{position:relative;font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:#0D1B2E}
+      #ow-fin .owf-gauge-meta{display:flex;flex-direction:column;gap:3px}
+      #ow-fin .owf-gauge-meta b{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:#0D1B2E;line-height:1.05}
+      #ow-fin .owf-gauge-meta small{font-family:'DM Sans',sans-serif;font-size:0.6rem;color:#4A5568;line-height:1.4}
+      /* job profitability */
+      #ow-fin .owf-jp{display:flex;flex-direction:column;gap:0.4rem}
+      #ow-fin .owf-jp-r{display:grid;grid-template-columns:1fr 60px 80px;gap:0.6rem;align-items:center;font-family:'DM Sans',sans-serif;font-size:0.7rem;color:#0D1B2E;padding:0.3rem 0;border-bottom:1px dashed rgba(13,27,46,0.08)}
+      #ow-fin .owf-jp-r:last-child{border-bottom:none}
+      #ow-fin .owf-jp-r .bar{position:relative;background:rgba(13,27,46,0.06);height:6px;border-radius:3px;overflow:hidden}
+      #ow-fin .owf-jp-r .bar i{position:absolute;top:0;left:0;bottom:0;background:#3b6d11;border-radius:3px}
+      #ow-fin .owf-jp-r .pct{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+      /* outstanding invoices */
+      #ow-fin .owf-inv{display:flex;flex-direction:column;gap:0.35rem}
+      #ow-fin .owf-inv-r{display:grid;grid-template-columns:1fr auto auto;gap:0.6rem;align-items:center;font-family:'DM Sans',sans-serif;font-size:0.7rem;color:#0D1B2E;padding:0.3rem 0;border-bottom:1px dashed rgba(13,27,46,0.08)}
+      #ow-fin .owf-inv-r:last-child{border-bottom:none}
+      #ow-fin .owf-inv-r .age{font-size:0.54rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.16rem 0.4rem;border-radius:3px}
+      #ow-fin .owf-inv-r .age.ok{background:rgba(59,109,17,0.12);color:#3b6d11}
+      #ow-fin .owf-inv-r .age.warn{background:rgba(201,146,42,0.14);color:#92660e}
+      #ow-fin .owf-inv-r .age.over{background:rgba(185,28,28,0.12);color:#b91c1c}
+      #ow-fin .owf-inv-r .amt{font-variant-numeric:tabular-nums;font-weight:700;text-align:right;min-width:64px}
+      /* service-type breakdown */
+      #ow-fin .owf-svc{display:flex;flex-direction:column;gap:0.5rem}
+      #ow-fin .owf-svc-r{display:grid;grid-template-columns:90px 1fr 60px;gap:0.6rem;align-items:center;font-family:'DM Sans',sans-serif;font-size:0.7rem;color:#0D1B2E}
+      #ow-fin .owf-svc-r .bar2{background:rgba(13,27,46,0.06);height:9px;border-radius:5px;overflow:hidden}
+      #ow-fin .owf-svc-r .bar2 i{display:block;height:100%;border-radius:5px}
+      #ow-fin .owf-svc-r .pct{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+      #ow-fin .owf-foot{text-align:center;margin-top:2rem}
+    </style>
+    <div class="owf-inner">
+      <div class="owf-head">
+        <div class="owf-eyebrow"><svg viewBox="0 0 68 68"><use href="#mark-f"/></svg>Inside Finance</div>
+        <h2>Your numbers, <em>in plain English.</em></h2>
+        <p class="owf-sub">Pulled from your QuickBooks and Donna data &mdash; not raw exports. Revenue, margin, job profitability, what's owed, and where it's all coming from.</p>
+      </div>
+      <div class="owf-dash">
+
+        <!-- REVENUE TREND -->
+        <div class="owf-card span-4">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="owf-lbl">Revenue · last 6 months</span><span class="owf-delta">&uarr; 18.4% vs prior 6mo</span></div>
+          <div class="owf-big">$298,420</div>
+          <div class="owf-trend">
+            <i style="height:38%"></i><i style="height:52%"></i><i style="height:46%"></i><i style="height:67%"></i><i style="height:83%"></i><i style="height:100%"></i>
+          </div>
+          <div class="owf-trend-labels"><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span></div>
+        </div>
+
+        <!-- GROSS MARGIN -->
+        <div class="owf-card span-2">
+          <span class="owf-lbl">Gross margin · YTD</span>
+          <div class="owf-gauge">
+            <div class="owf-gauge-ring"><span class="owf-gauge-pct">47%</span></div>
+            <div class="owf-gauge-meta"><b>$140,257 kept</b><small>Materials + labor took $158,163 of $298,420 in revenue.</small></div>
+          </div>
+        </div>
+
+        <!-- JOB PROFITABILITY -->
+        <div class="owf-card span-3">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="owf-lbl">Job profitability · top 5 this quarter</span><span class="owf-delta">$50,850 revenue</span></div>
+          <div class="owf-jp">
+            <div class="owf-jp-r"><span>Smith &middot; 600 sq ft paver patio</span><span class="bar"><i style="width:54%;background:#3b6d11"></i></span><span class="pct">+54%</span></div>
+            <div class="owf-jp-r"><span>Walker &middot; retaining wall</span><span class="bar"><i style="width:33%;background:#3b6d11"></i></span><span class="pct">+33%</span></div>
+            <div class="owf-jp-r"><span>Lee &middot; driveway repair</span><span class="bar"><i style="width:26%;background:#92660e"></i></span><span class="pct">+26%</span></div>
+            <div class="owf-jp-r"><span>Garcia &middot; drainage correction</span><span class="bar"><i style="width:18%;background:#92660e"></i></span><span class="pct">+18%</span></div>
+            <div class="owf-jp-r"><span>Petersen &middot; concrete demo</span><span class="bar"><i style="width:9%;background:#b91c1c"></i></span><span class="pct">+9%</span></div>
+          </div>
+        </div>
+
+        <!-- OUTSTANDING INVOICES -->
+        <div class="owf-card span-3">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="owf-lbl">Outstanding invoices</span><span class="owf-delta neg">$29,200 owed</span></div>
+          <div class="owf-inv">
+            <div class="owf-inv-r"><span>Smith Residence &middot; INV-2087</span><span class="age ok">Net 30</span><span class="amt">$5,786</span></div>
+            <div class="owf-inv-r"><span>Walker LLC &middot; INV-2081</span><span class="age ok">14d</span><span class="amt">$8,420</span></div>
+            <div class="owf-inv-r"><span>Lee Family &middot; INV-2074</span><span class="age warn">28d</span><span class="amt">$3,180</span></div>
+            <div class="owf-inv-r"><span>Garcia &middot; INV-2068</span><span class="age over">42d</span><span class="amt">$6,490</span></div>
+            <div class="owf-inv-r"><span>Petersen &middot; INV-2062</span><span class="age over">57d</span><span class="amt">$5,324</span></div>
+          </div>
+        </div>
+
+        <!-- SERVICE TYPE BREAKDOWN -->
+        <div class="owf-card span-6">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span class="owf-lbl">Where the money's coming from · service type</span><span class="owf-delta">Last 90 days</span></div>
+          <div class="owf-svc">
+            <div class="owf-svc-r"><span>Paver patios</span><span class="bar2"><i style="width:42%;background:#1F4E79"></i></span><span class="pct">$83K</span></div>
+            <div class="owf-svc-r"><span>Driveways</span><span class="bar2"><i style="width:28%;background:#2E5A8E"></i></span><span class="pct">$56K</span></div>
+            <div class="owf-svc-r"><span>Retaining walls</span><span class="bar2"><i style="width:14%;background:#4A7DB5"></i></span><span class="pct">$28K</span></div>
+            <div class="owf-svc-r"><span>Drainage / grade</span><span class="bar2"><i style="width:9%;background:#C9922A"></i></span><span class="pct">$18K</span></div>
+            <div class="owf-svc-r"><span>Repair / demo</span><span class="bar2"><i style="width:7%;background:#A8711A"></i></span><span class="pct">$14K</span></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="owf-foot">
+        <a href="/bedrock-finance-v1.html" class="btn-gold" style="text-decoration:none;display:inline-block;font-family:'DM Sans',sans-serif">Preview Finance &rarr;</a>
       </div>
     </div>
   </section>
@@ -4539,7 +4788,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="ttb-hint">Swipe for more tools →</div>
     <div class="ttb-scroll" id="ttbScroll">
       <button type="button" class="ttb-tab active" role="tab" data-tool="operations" onclick="selectToolTab('operations',event)">
-        <span class="ttb-mark"><svg viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg></span>
+        <span class="ttb-mark"><svg viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-o"/></svg></span>
         <span class="ttb-meta"><span class="ttb-name">Operations</span><span class="ttb-desc">Admin + Estimates</span></span>
       </button>
       <button type="button" class="ttb-tab" role="tab" data-tool="finance" onclick="selectToolTab('finance',event)">
@@ -4547,14 +4796,15 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="ttb-meta"><span class="ttb-name">Finance</span><span class="ttb-desc">Revenue + Margins</span></span>
       </button>
       <button type="button" class="ttb-tab" role="tab" data-tool="marketing" onclick="selectToolTab('marketing',event)">
-        <span class="ttb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-8v18l-7-3"/><path d="M3 11v6h4l3 4V8z"/></svg></span>
+        <span class="ttb-mark"><svg viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-m"/></svg></span>
         <span class="ttb-meta"><span class="ttb-name">Marketing</span><span class="ttb-desc">Brand Kit + Materials</span></span>
       </button>
       <button type="button" class="ttb-tab" role="tab" data-tool="website" onclick="selectToolTab('website',event)">
-        <span class="ttb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+        <span class="ttb-mark"><svg viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-w"/></svg></span>
         <span class="ttb-meta"><span class="ttb-name">Website</span><span class="ttb-desc">Builder + Editor</span></span>
       </button>
-      <button type="button" class="ttb-tab" role="tab" data-tool="seo" onclick="selectToolTab('seo',event)">
+      <!-- SEO/GEO selector tab retired May 2026 — SEO is absorbed into Website (Builder, Editor & Optimizer). Optimizer page still accessible via #optimizer. Kept, not deleted. -->
+      <button type="button" class="ttb-tab" role="tab" data-tool="seo" onclick="selectToolTab('seo',event)" style="display:none">
         <span class="ttb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
         <span class="ttb-meta"><span class="ttb-name">SEO / GEO</span><span class="ttb-desc">Audit + Optimizer</span></span>
       </button>
@@ -4637,7 +4887,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="tool-pane active" data-tool="operations">
     <div class="tool-card">
       <div class="tool-head">
-        <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg>
+        <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-o"/></svg>
         <div class="th-text">
           <div class="tool-eyebrow">Operations Assistant</div>
           <h2>Operations &middot; Donna</h2>
@@ -4717,7 +4967,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
       <div class="tool-cta-row">
         <a href="/bedrock-donna-v1.html" class="ttry-btn">Try it →</a>
-        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
+        <button type="button" class="tadd-btn" onclick="addToPlanFromCard(this)">Add to My Plan →</button>
       </div>
     </div>
 
@@ -4805,7 +5055,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
       <div class="tool-cta-row">
         <a href="/bedrock-finance-v1.html" class="ttry-btn">Try it →</a>
-        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
+        <button type="button" class="tadd-btn" onclick="addToPlanFromCard(this)">Add to My Plan →</button>
       </div>
     </div>
 
@@ -4828,7 +5078,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
           <ul class="tool-list pos">
             <li>Brand Kit setup once &mdash; every piece comes out on-brand</li>
             <li>8 material types: flyers, social, door hangers, signs, cards</li>
-            <li>AI writes your headline and copy in your voice</li>
+            <li>Our software does that — writes your headline and copy in your voice</li>
             <li>3 layouts, applied to your brand automatically</li>
             <li>Download as PNG, JPG, or PDF &mdash; print or post anywhere</li>
             <li>Pulls your business info from the shared profile</li>
@@ -4846,11 +5096,51 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         </div>
       </div>
       <div class="tool-preview">
-        <div class="tool-pv-cap">What Marketing looks like</div>
+        <div class="tool-pv-cap">What Marketing looks like — your Brand Kit, then materials built from it</div>
         <div class="tool-pv-body">
-          <div class="pv-mkt">
-            <div class="pv-mkt-kit"><span class="pv-sw" style="background:#1F4E79"></span><span class="pv-sw" style="background:#C9922A"></span><span class="pv-sw" style="background:#6B7280"></span></div>
-            <div class="pv-mkt-flyer"><div class="pv-fl-e">Ridgeline Concrete &middot; Bend, OR</div><div class="pv-fl-h">Driveways done before the frost.</div><div class="pv-fl-c">Call Today</div></div>
+          <!-- Brand-kit-template-styled preview (matches bedrock-vault/bedrock-tool-brand-kits-v1.html) -->
+          <style>
+            #tools .pv-bk{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,0.95fr);gap:0.75rem;align-items:stretch}
+            #tools .pv-bk-card{background:#fff;border-radius:10px;overflow:hidden;border:.5px solid rgba(13,27,46,0.16);display:flex;flex-direction:column}
+            #tools .pv-bk-accent{height:5px;background:#1F4E79}
+            #tools .pv-bk-body{padding:0.85rem 0.95rem;flex:1;display:flex;flex-direction:column;gap:0.55rem}
+            #tools .pv-bk-id{display:flex;align-items:center;gap:0.55rem}
+            #tools .pv-bk-mark{width:32px;height:32px;background:#1F4E79;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;color:#fff;font-size:0.95rem;letter-spacing:-0.02em;flex-shrink:0}
+            #tools .pv-bk-name{display:flex;flex-direction:column;line-height:1;min-width:0}
+            #tools .pv-bk-name b{font-family:'Playfair Display',serif;font-weight:700;font-size:0.95rem;color:#0D1B2E;letter-spacing:-0.01em}
+            #tools .pv-bk-name small{font-family:'DM Sans',sans-serif;font-size:0.46rem;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:#1F4E79;margin-top:3px}
+            #tools .pv-bk-tag{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:0.84rem;color:#0D1B2E;line-height:1.3}
+            #tools .pv-bk-tag .bar{color:rgba(13,27,46,0.25);margin:0 3px;font-weight:400}
+            #tools .pv-bk-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto}
+            #tools .pv-bk-chip{display:inline-flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:500;color:#4A5568;border:.5px solid rgba(13,27,46,0.16);border-radius:999px;padding:3px 7px;background:#fff}
+            #tools .pv-bk-chip i{display:inline-block;width:8px;height:8px;border-radius:50%}
+            #tools .pv-bk-flyer{background:#1F4E79;border-radius:10px;color:#fff;padding:0.95rem 0.9rem;display:flex;flex-direction:column;justify-content:space-between;min-height:140px}
+            #tools .pv-bk-flyer .pf-e{font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#F0C46A}
+            #tools .pv-bk-flyer .pf-h{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.15rem;line-height:1.15;color:#fff;margin:0.35rem 0 0.55rem}
+            #tools .pv-bk-flyer .pf-c{display:inline-block;align-self:flex-start;background:#C9922A;color:#0D1B2E;font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:0.4rem 0.7rem;border-radius:4px}
+            @media(max-width:620px){#tools .pv-bk{grid-template-columns:1fr}}
+          </style>
+          <div class="pv-bk">
+            <div class="pv-bk-card">
+              <div class="pv-bk-accent"></div>
+              <div class="pv-bk-body">
+                <div class="pv-bk-id">
+                  <span class="pv-bk-mark">R</span>
+                  <span class="pv-bk-name"><b>Ridgeline Concrete</b><small>Bend, OR · Driveways &amp; Slabs</small></span>
+                </div>
+                <div class="pv-bk-tag">Driveways done <span class="bar">|</span> before the frost.</div>
+                <div class="pv-bk-chips">
+                  <span class="pv-bk-chip"><i style="background:#1F4E79"></i>Primary · #1F4E79</span>
+                  <span class="pv-bk-chip"><i style="background:#C9922A"></i>Accent · #C9922A</span>
+                  <span class="pv-bk-chip"><i style="background:#6B7280"></i>Slate · #6B7280</span>
+                </div>
+              </div>
+            </div>
+            <div class="pv-bk-flyer">
+              <div class="pf-e">Ridgeline Concrete</div>
+              <div class="pf-h">Driveways done before the frost.</div>
+              <div class="pf-c">Call Today →</div>
+            </div>
           </div>
         </div>
       </div>
@@ -4870,14 +5160,14 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
       <div class="tool-faq">
         <div class="tool-faq-title">Common questions</div>
-        <details><summary>Do I need design skills?</summary><p>No. Pick a format, drop in a photo, the layout and typography are already brand-correct. The AI writes the headline and CTA so the copy doesn't sit empty.</p></details>
+        <details><summary>Do I need design skills?</summary><p>No. Pick a format, drop in a photo, the layout and typography are already brand-correct. Our software writes the headline and CTA so the copy doesn't sit empty.</p></details>
         <details><summary>Can I use my own logo and brand colors?</summary><p>Yes — that's what the Brand Kit step is for. Upload your logo, set your colors and tone once, and every material you build uses them.</p></details>
         <details><summary>What if I don't have customer photos yet?</summary><p>Use stock-ish backgrounds from the built-in palette or your existing job photos. The asset library saves every piece you generate so you can come back to it.</p></details>
-        <details><summary>Can I edit the AI-generated copy?</summary><p>Always. The AI writes a starting headline and CTA in your tone — you edit them right in the preview and the design updates live.</p></details>
+        <details><summary>Can I edit the generated copy?</summary><p>Always. Our software writes a starting headline and CTA in your tone — you edit them right in the preview and the design updates live.</p></details>
       </div>
       <div class="tool-cta-row">
         <a href="/bedrock-marketing-v1.html" class="ttry-btn">Try it →</a>
-        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
+        <button type="button" class="tadd-btn" onclick="addToPlanFromCard(this)">Add to My Plan →</button>
       </div>
     </div>
 
@@ -4887,7 +5177,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="tool-pane" data-tool="website">
     <div class="tool-card">
       <div class="tool-head">
-        <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-b"/></svg>
+        <svg class="tool-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-w"/></svg>
         <div class="th-text">
           <div class="tool-eyebrow">Website Builder<span class="tool-soon-tag" style="background:rgba(59,109,17,0.12);color:#3b6d11">Live Now</span></div>
           <h2>Bedrock Website</h2>
@@ -4942,7 +5232,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
       <div class="tool-cta-row">
         <a href="/sites.html?embed=builder" class="ttry-btn">Try it →</a>
-        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
+        <button type="button" class="tadd-btn" onclick="addToPlanFromCard(this)">Add to My Plan →</button>
       </div>
       <div class="tool-faq">
         <div class="tool-faq-title">Common questions</div>
@@ -4955,8 +5245,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
     </div><!-- /tool-pane: website -->
 
-    <!-- SEO/GEO OPTIMIZER -->
-    <div class="tool-pane" data-tool="seo">
+    <!-- SEO/GEO OPTIMIZER tool card retired May 2026 — SEO is absorbed into Website (Builder, Editor & Optimizer). The Optimizer page itself (#optimizer) is still live and is opened from inside Website. Kept, not deleted. -->
+    <div class="tool-pane" data-tool="seo" style="display:none">
     <div class="tool-card optimizer">
       <div class="tool-eyebrow">Completely Free Scan</div>
       <h2>SEO / Geo Optimizer</h2>
@@ -4975,7 +5265,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       </div>
       <div class="tool-cta-row">
         <a href="#optimizer" onclick="showPage('optimizer',event)" class="ttry-btn">Try it →</a>
-        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
+        <button type="button" class="tadd-btn" onclick="addToPlanFromCard(this)">Add to My Plan →</button>
       </div>
     </div>
     </div><!-- /tool-pane: seo -->
@@ -11375,6 +11665,95 @@ function bdmDoCreate(e){
     }).catch(function(){ btn.disabled=false; btn.textContent='Create My Account'; bdmErr('bdmCreateErr','Connection error — please try again.'); });
 }
 document.addEventListener('click',function(e){ if(e.target&&e.target.id==='bdAuthModal') closeAuthModal(); });
+</script>
+
+<!-- ══════ STEP 6 — CART (Add to my plan) ══════
+     - Same shape + storage key as portal.html CART so the two stay in sync.
+     - Tool keys: 4 user-facing tools map to 3 SKUs (operations + finance both → cfo bundle).
+     - Adding to cart never calls Stripe. Preview access is granted purely by cart membership.
+-->
+<style>
+  .bd-plan-fab{position:fixed;bottom:18px;right:18px;z-index:300;background:#0D1B2E;color:#fff;border:1.5px solid #C9922A;border-radius:999px;padding:0.7rem 1.1rem 0.7rem 0.95rem;font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;text-decoration:none;display:none;align-items:center;gap:0.55rem;box-shadow:0 8px 24px rgba(13,27,46,0.28);transition:transform .15s,background .15s}
+  .bd-plan-fab:hover{background:#1B3557;transform:translateY(-1px)}
+  .bd-plan-fab.show{display:inline-flex}
+  .bd-plan-fab .pfn{background:#C9922A;color:#0D1B2E;border-radius:999px;min-width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:0.85rem;padding:0 6px}
+  .bd-plan-fab .pfx{font-size:0.95rem;color:rgba(255,255,255,0.45);margin-left:0.25rem;line-height:1}
+  .bd-plan-fab .pfx:hover{color:#fff}
+  .bd-plan-toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%) translateY(8px);background:#0D1B2E;color:#fff;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;padding:0.7rem 1.1rem;border-radius:8px;border-left:3px solid #3b6d11;box-shadow:0 8px 22px rgba(0,0,0,0.25);z-index:301;opacity:0;transition:opacity .2s,transform .2s;pointer-events:none;max-width:90vw}
+  .bd-plan-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  @media(max-width:600px){.bd-plan-fab{bottom:12px;right:12px;left:12px;justify-content:center}.bd-plan-toast{bottom:74px;left:12px;right:12px;transform:translateY(8px);max-width:none}.bd-plan-toast.show{transform:translateY(0)}}
+</style>
+<a class="bd-plan-fab" id="bdPlanFab" href="/portal.html#subs" aria-label="Review your plan">
+  <span class="pfn" id="bdPlanFabN">0</span>
+  <span class="pfl">Review my plan</span>
+</a>
+<div class="bd-plan-toast" id="bdPlanToast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+  var CART_KEY = 'bedrock_cart_v1';
+  var SESSION_KEY = 'bedrock_portal_session';
+  // 4 user-facing tools → 3 cart SKUs (Operations + Finance share the 'cfo' bundle in current pricing)
+  var TOOL_TO_SKU = { operations:'cfo', finance:'cfo', marketing:'marketing', website:'website' };
+  var TOOL_LABEL  = { operations:'Operations', finance:'Finance', marketing:'Marketing', website:'Website' };
+  function readCart(){ try{var raw=localStorage.getItem(CART_KEY);if(raw)return Object.assign({website:false,marketing:false,cfo:false}, JSON.parse(raw));}catch(_){}return {website:false,marketing:false,cfo:false}; }
+  function writeCart(c){ try{localStorage.setItem(CART_KEY, JSON.stringify(c));}catch(_){} }
+  function isSignedIn(){ try{var raw=localStorage.getItem(SESSION_KEY);if(!raw)return false;var s=JSON.parse(raw);return !!(s&&s.access_token&&(!s.expires_at||s.expires_at>Date.now()));}catch(_){return false;} }
+  function cartCount(c){ c=c||readCart(); return ['website','marketing','cfo'].filter(function(k){return !!c[k];}).length; }
+  function paintFab(){
+    var fab=document.getElementById('bdPlanFab'); if(!fab) return;
+    var n=cartCount();
+    var lbl=document.getElementById('bdPlanFabN'); if(lbl) lbl.textContent=String(n);
+    fab.classList.toggle('show', n>0);
+  }
+  function toast(msg){
+    var t=document.getElementById('bdPlanToast'); if(!t)return;
+    t.textContent=msg; t.classList.add('show');
+    clearTimeout(t._tmr); t._tmr=setTimeout(function(){t.classList.remove('show');}, 2600);
+  }
+  function toolKeyFromCard(btn){
+    var card=btn.closest('.tool-card,.owt-card'); if(!card) return null;
+    var use=card.querySelector('svg use, .tool-mark use'); if(!use) return null;
+    var href=use.getAttribute('href')||use.getAttribute('xlink:href')||'';
+    if(href.indexOf('mark-o')>-1) return 'operations';
+    if(href.indexOf('mark-f')>-1) return 'finance';
+    if(href.indexOf('mark-m')>-1) return 'marketing';
+    if(href.indexOf('mark-w')>-1) return 'website';
+    return null;
+  }
+  window.addToPlan = function(toolKey){
+    var sku=TOOL_TO_SKU[toolKey]; if(!sku){ return; }
+    if(!isSignedIn()){
+      // Stash intent, prompt free signup, add after success
+      window._pendingPlanAdd = toolKey;
+      var prior = window.AUTH_MODAL_ONSUCCESS;
+      window.AUTH_MODAL_ONSUCCESS = function(d){
+        try{ if(prior && prior!==window.AUTH_MODAL_ONSUCCESS) prior(d); }catch(_){}
+        // Now add for real — don't redirect to portal, stay on page so user sees the toast
+        var k = window._pendingPlanAdd; window._pendingPlanAdd = null;
+        if(k) window.addToPlan(k);
+        window.AUTH_MODAL_ONSUCCESS = function(){ window.location.href='/portal.html'; };
+        if(typeof closeAuthModal==='function') closeAuthModal();
+      };
+      if(typeof openAuthModal==='function') openAuthModal('create');
+      return;
+    }
+    var c=readCart();
+    if(c[sku]){ toast(TOOL_LABEL[toolKey]+' is already in your plan.'); paintFab(); return; }
+    c[sku]=true; writeCart(c); paintFab();
+    var bundleNote = (toolKey==='operations'||toolKey==='finance') ? ' (Operations + Finance bundle)' : '';
+    toast('Added '+TOOL_LABEL[toolKey]+' to your plan'+bundleNote+'. Preview unlocked — no charge yet.');
+  };
+  window.addToPlanFromCard = function(btn){
+    var k = toolKeyFromCard(btn) || btn.getAttribute('data-tool');
+    if(!k){ window.location.href='/portal.html#subs'; return; }
+    window.addToPlan(k);
+  };
+  // Refresh fab on page load + when localStorage changes in another tab
+  document.addEventListener('DOMContentLoaded', paintFab);
+  window.addEventListener('storage', function(e){ if(e.key===CART_KEY) paintFab(); });
+  setTimeout(paintFab, 200);
+})();
 </script>
 </body>
 </html>

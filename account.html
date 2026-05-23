@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Account — Bedrock Digital</title>
+<meta name="description" content="Manage your Bedrock account: profile, subscriptions, billing, integrations, and support.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D1B2E'/%3E%3Crect x='12' y='16' width='28' height='6' rx='2' fill='%23C9922A'/%3E%3Crect x='12' y='26' width='22' height='6' rx='2' fill='%23A8711A'/%3E%3Crect x='12' y='36' width='32' height='6' rx='2' fill='%232E5A8E'/%3E%3Crect x='12' y='46' width='24' height='6' rx='2' fill='%234A7DB5'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy-deep:#0D1B2E;--navy:#1B3557;--navy-mid:#2E5A8E;
+  --gold:#C9922A;--gold-light:#D4A843;
+  --off-white:#FAF7F2;--white:#FFFFFF;--slate:#4A5568;--cream:#F5E6C8;
+  --border-light:rgba(13,27,46,0.1);--border-mid:rgba(13,27,46,0.16);--border-dark:rgba(255,255,255,0.12);
+  --muted-light:rgba(255,255,255,0.45);--muted-dark:rgba(13,27,46,0.35);
+  --red:#b91c1c;--red-bg:#fef2f2;--green:#3b6d11;--green-bg:#f0f5ea;--amber:#92660e;--amber-bg:#fdf6e3;
+  --brand-gold-light:#F0C46A;--brand-gold-dark:#A8711A;--brand-navy-light:#4A7DB5;--warm-white:#F5E6C8;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy-deep);min-height:100vh;display:flex;flex-direction:column;line-height:1.5}
+
+/* ── HEADER — portal-aware: back, refresh, logo all return to portal ── */
+.ac-header{background:var(--navy-deep);padding:0.85rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--gold);flex-shrink:0;gap:1rem;flex-wrap:wrap}
+.ac-left{display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.ac-back{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);background:transparent;border:1px solid rgba(201,146,42,0.55);padding:0.5rem 0.85rem;border-radius:5px;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;cursor:pointer}
+.ac-back:hover{background:rgba(201,146,42,0.14)}
+.ac-logo{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.ac-logo .strata{display:flex;flex-direction:column;gap:3px}
+.ac-logo .strata span{height:5px;border-radius:1px;display:block}
+.ac-logo .strata span:nth-child(1){width:26px;background:var(--gold)}
+.ac-logo .strata span:nth-child(2){width:20px;background:#A8711A}
+.ac-logo .strata span:nth-child(3){width:30px;background:#2E5A8E}
+.ac-logo .strata span:nth-child(4){width:22px;background:#4A7DB5}
+.ac-logo .wm{display:flex;flex-direction:column;line-height:1}
+.ac-logo .wm b{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;letter-spacing:-0.02em;color:var(--cream)}
+.ac-logo .wm small{font-size:0.52rem;font-weight:500;letter-spacing:0.22em;color:var(--gold);text-transform:uppercase;margin-top:3px}
+.ac-page-label{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.55);border-left:1px solid rgba(255,255,255,0.15);padding-left:0.85rem;margin-left:0.5rem}
+.ac-right{display:flex;align-items:center;gap:0.4rem}
+.ac-user{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.7)}
+.ac-signout{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.7);background:transparent;border:none;padding:0.45rem 0.7rem;cursor:pointer;text-decoration:none}
+.ac-signout:hover{color:#fff}
+
+/* ── LAYOUT ── */
+.ac-shell{flex:1;display:grid;grid-template-columns:240px 1fr;min-height:0}
+@media(max-width:820px){.ac-shell{grid-template-columns:1fr}}
+.ac-sidebar{background:var(--white);border-right:1px solid var(--border-light);padding:1.5rem 0.85rem}
+@media(max-width:820px){.ac-sidebar{display:flex;overflow-x:auto;padding:0.6rem;gap:6px;scrollbar-width:none;border-right:none;border-bottom:1px solid var(--border-light)}.ac-sidebar::-webkit-scrollbar{display:none}}
+.ac-side-label{font-size:0.56rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(13,27,46,0.5);padding:0 0.85rem;margin-bottom:0.7rem}
+@media(max-width:820px){.ac-side-label{display:none}}
+.ac-navitem{display:block;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.84rem;font-weight:600;color:var(--slate);padding:0.7rem 0.9rem;border-radius:6px;margin-bottom:2px;transition:all .15s}
+.ac-navitem:hover{background:var(--off-white);color:var(--navy-deep)}
+.ac-navitem.active{background:rgba(201,146,42,0.12);color:var(--gold);border-left:3px solid var(--gold);padding-left:calc(0.9rem - 3px)}
+@media(max-width:820px){.ac-navitem{white-space:nowrap;width:auto;flex-shrink:0;font-size:0.74rem;padding:0.55rem 0.85rem;margin-bottom:0}.ac-navitem.active{border-left:none;border-bottom:3px solid var(--gold);padding-left:0.85rem}}
+
+.ac-main{padding:2rem 2.25rem;overflow-y:auto;background:var(--off-white)}
+@media(max-width:760px){.ac-main{padding:1.25rem 1rem}}
+.ac-pane{display:none}
+.ac-pane.active{display:block;animation:acFade .25s ease}
+@keyframes acFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.ac-eyebrow{font-size:0.6rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem}
+.ac-h1{font-family:'Cormorant Garamond',serif;font-size:1.85rem;font-weight:700;line-height:1.15;color:var(--navy-deep);margin-bottom:0.35rem}
+.ac-sub{font-size:0.88rem;color:var(--slate);line-height:1.6;margin-bottom:1.5rem;max-width:620px}
+
+.ac-card{background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:1.5rem;margin-bottom:1.25rem}
+.ac-card h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--navy-deep);margin-bottom:0.4rem}
+.ac-card .ac-card-sub{font-size:0.78rem;color:var(--slate);margin-bottom:1rem;line-height:1.55}
+
+.ac-field{display:flex;flex-direction:column;gap:0.35rem;margin-bottom:0.85rem}
+.ac-field label{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--slate)}
+.ac-field input,.ac-field textarea,.ac-field select{font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:0.7rem 0.9rem;border:1px solid var(--border-mid);border-radius:6px;color:var(--navy-deep);background:#fff;outline:none;transition:border-color .15s}
+.ac-field input:focus,.ac-field textarea:focus{border-color:var(--gold)}
+.ac-field textarea{min-height:120px;font-family:inherit;line-height:1.55;resize:vertical}
+.ac-field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.85rem}
+@media(max-width:540px){.ac-field-row{grid-template-columns:1fr}}
+
+.ac-btn{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:0.78rem 1.4rem;border-radius:5px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;transition:background .15s}
+.ac-btn:hover{background:var(--gold-light)}
+.ac-btn.outline{background:transparent;border:1.5px solid var(--gold);color:var(--gold)}
+.ac-btn.outline:hover{background:rgba(201,146,42,0.12)}
+.ac-btn.dark{background:var(--navy-deep);color:#fff}
+.ac-btn.dark:hover{background:var(--navy)}
+.ac-btn[disabled]{opacity:0.55;cursor:wait}
+
+.ac-msg{font-size:0.78rem;padding:0.65rem 0.9rem;border-radius:5px;margin-top:0.85rem;display:none}
+.ac-msg.show{display:block}
+.ac-msg.ok{background:var(--green-bg);color:var(--green);border-left:3px solid var(--green)}
+.ac-msg.err{background:var(--red-bg);color:var(--red);border-left:3px solid var(--red)}
+
+/* Subscriptions */
+.ac-sub-row{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:0.85rem 0;border-bottom:1px dashed var(--border-light)}
+.ac-sub-row:last-child{border-bottom:none}
+.ac-sub-meta{font-size:0.76rem;color:var(--slate);font-variant-numeric:tabular-nums}
+.ac-sub-status{font-size:0.54rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:0.22rem 0.55rem;border-radius:3px}
+.ac-sub-status.ok{background:var(--green-bg);color:var(--green)}
+.ac-sub-status.warn{background:var(--amber-bg);color:var(--amber)}
+.ac-sub-status.off{background:rgba(13,27,46,0.06);color:var(--slate)}
+.ac-empty{padding:1.5rem;text-align:center;color:var(--slate);font-style:italic;font-size:0.84rem;line-height:1.6;background:var(--off-white);border-radius:8px}
+
+/* Integrations */
+.ac-conn{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1rem;background:var(--off-white);border-radius:8px;margin-bottom:0.75rem;flex-wrap:wrap}
+.ac-conn-meta{flex:1;min-width:220px}
+.ac-conn-meta h4{font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:600;color:var(--navy-deep);margin-bottom:0.2rem}
+.ac-conn-meta p{font-size:0.74rem;color:var(--slate);line-height:1.55}
+.ac-conn-status{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.7rem;color:var(--slate);margin-top:0.45rem}
+.ac-conn-dot{width:8px;height:8px;border-radius:50%;background:#bbb;flex-shrink:0}
+.ac-conn-dot.live{background:var(--green);box-shadow:0 0 0 2px rgba(59,109,17,0.18)}
+
+footer{background:var(--navy-deep);color:rgba(255,255,255,0.55);padding:1rem;text-align:center;font-size:0.7rem;flex-shrink:0;border-top:1px solid rgba(255,255,255,0.06)}
+footer a{color:var(--gold);text-decoration:none}
+</style>
+</head>
+<body>
+
+<header class="ac-header">
+  <div class="ac-left">
+    <a class="ac-back" href="/portal.html" title="Back to portal">← Portal</a>
+    <a class="ac-logo" href="/portal.html" title="Back to portal">
+      <span class="strata"><span></span><span></span><span></span><span></span></span>
+      <span class="wm"><b>Bedrock</b><small>Digital</small></span>
+    </a>
+    <span class="ac-page-label">My Account</span>
+  </div>
+  <div class="ac-right">
+    <span class="ac-user" id="acUserEmail"></span>
+    <button type="button" class="ac-signout" onclick="acSignOut()">Sign Out</button>
+  </div>
+</header>
+
+<div class="ac-shell">
+  <aside class="ac-sidebar" role="navigation" aria-label="My Account sections">
+    <div class="ac-side-label">My Account</div>
+    <button type="button" class="ac-navitem active" data-p="info"        onclick="acGo('info')">Account Information</button>
+    <button type="button" class="ac-navitem"        data-p="profile"     onclick="acGo('profile')">My Profile</button>
+    <button type="button" class="ac-navitem"        data-p="subs"        onclick="acGo('subs')">Subscriptions</button>
+    <button type="button" class="ac-navitem"        data-p="billing"     onclick="acGo('billing')">Billing History</button>
+    <button type="button" class="ac-navitem"        data-p="integrations" onclick="acGo('integrations')">Integrations</button>
+    <button type="button" class="ac-navitem"        data-p="google"      onclick="acGo('google')">Google Presence</button>
+    <button type="button" class="ac-navitem"        data-p="review"      onclick="acGo('review')">Leave a Review</button>
+    <button type="button" class="ac-navitem"        data-p="support"     onclick="acGo('support')">Need Help / Support</button>
+  </aside>
+
+  <main class="ac-main">
+
+    <!-- ── ACCOUNT INFORMATION ── -->
+    <section class="ac-pane active" id="ac-info">
+      <div class="ac-eyebrow">Account Information</div>
+      <h1 class="ac-h1">Who Bedrock knows you as.</h1>
+      <p class="ac-sub">Your sign-in details and the basics every tool uses to address you. Edit anything here and every tool picks up the change.</p>
+      <div class="ac-card">
+        <h3>Basics</h3>
+        <div class="ac-card-sub">Used in every tool — Donna's invoices, your Brand Kit, billing receipts.</div>
+        <div class="ac-field-row">
+          <div class="ac-field"><label for="acName">Your name</label><input type="text" id="acName" autocomplete="name"></div>
+          <div class="ac-field"><label for="acBiz">Business name</label><input type="text" id="acBiz" autocomplete="organization"></div>
+        </div>
+        <div class="ac-field"><label for="acEmail">Email</label><input type="email" id="acEmail" autocomplete="email" disabled title="Email change isn't supported yet — contact support to update."></div>
+        <button class="ac-btn" type="button" onclick="acSaveBasics()">Save changes</button>
+        <div class="ac-msg" id="acBasicsMsg"></div>
+      </div>
+      <div class="ac-card">
+        <h3>Password</h3>
+        <div class="ac-card-sub">Update your sign-in password. We never email new passwords — set one here.</div>
+        <div class="ac-field-row">
+          <div class="ac-field"><label for="acPass1">New password</label><input type="password" id="acPass1" autocomplete="new-password" minlength="6"></div>
+          <div class="ac-field"><label for="acPass2">Confirm</label><input type="password" id="acPass2" autocomplete="new-password" minlength="6"></div>
+        </div>
+        <button class="ac-btn dark" type="button" onclick="acChangePass()">Update password</button>
+        <div class="ac-msg" id="acPassMsg"></div>
+      </div>
+    </section>
+
+    <!-- ── MY PROFILE — link into portal's 5-stage enrichment ── -->
+    <section class="ac-pane" id="ac-profile">
+      <div class="ac-eyebrow">My Profile</div>
+      <h1 class="ac-h1">Your business brain.</h1>
+      <p class="ac-sub">A complete profile means every Bedrock tool knows your trade, services, voice, and rates — without you typing them again. The full 5-stage profile lives in the portal.</p>
+      <div class="ac-card">
+        <h3>Open the full profile editor</h3>
+        <div class="ac-card-sub">The shared profile lives in your portal so changes flow through to every tool instantly. We'll bring it back here when the editor is portable.</div>
+        <a class="ac-btn" href="/portal.html#profile">Open My Profile in Portal →</a>
+      </div>
+    </section>
+
+    <!-- ── SUBSCRIPTIONS ── -->
+    <section class="ac-pane" id="ac-subs">
+      <div class="ac-eyebrow">Subscriptions</div>
+      <h1 class="ac-h1">Your current plan.</h1>
+      <p class="ac-sub">Verified against your real Stripe subscription rows — never guessed. To add or remove tools, head to the cart.</p>
+      <div class="ac-card">
+        <h3>Active subscriptions</h3>
+        <div id="acSubsList"><div class="ac-empty">Loading…</div></div>
+        <div style="margin-top:1.1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+          <a class="ac-btn" href="/portal.html#subs">Manage my plan →</a>
+          <a class="ac-btn outline" href="#" onclick="acOpenBillingPortal(event)">Manage card in Stripe →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BILLING HISTORY ── -->
+    <section class="ac-pane" id="ac-billing">
+      <div class="ac-eyebrow">Billing History</div>
+      <h1 class="ac-h1">Real charges only.</h1>
+      <p class="ac-sub">Every charge that hit your card, pulled from Stripe. We never show fake or placeholder charges.</p>
+      <div class="ac-card">
+        <h3>Past charges</h3>
+        <div id="acBillingList"><div class="ac-empty">Stripe billing history will appear here once your first charge clears. Until then this is empty — and that's the truth.</div></div>
+      </div>
+    </section>
+
+    <!-- ── INTEGRATIONS ── -->
+    <section class="ac-pane" id="ac-integrations">
+      <div class="ac-eyebrow">Integrations</div>
+      <h1 class="ac-h1">Connect once. Use everywhere.</h1>
+      <p class="ac-sub">QuickBooks and Google power your books, calendar, and Gmail-sent invoices. Status is read straight from your account — never client-side guessed.</p>
+      <div class="ac-card">
+        <div class="ac-conn">
+          <div class="ac-conn-meta">
+            <h4>QuickBooks Online</h4>
+            <p>Donna's estimates, invoices, and expenses sync into your books automatically.</p>
+            <div class="ac-conn-status"><span class="ac-conn-dot" id="acDotQbo"></span><span id="acStatQbo">Not connected</span></div>
+          </div>
+          <button class="ac-btn" type="button" onclick="acConnect('qbo')">Connect QuickBooks</button>
+        </div>
+        <div class="ac-conn">
+          <div class="ac-conn-meta">
+            <h4>Google (Gmail + Calendar)</h4>
+            <p>Donna sends invoices and estimates from your Gmail. Calendar holds the jobs she schedules.</p>
+            <div class="ac-conn-status"><span class="ac-conn-dot" id="acDotGoogle"></span><span id="acStatGoogle">Not connected</span></div>
+          </div>
+          <button class="ac-btn" type="button" onclick="acConnect('google')">Connect Google</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── GOOGLE PRESENCE ── -->
+    <section class="ac-pane" id="ac-google">
+      <div class="ac-eyebrow">Google Presence</div>
+      <h1 class="ac-h1">How you show up.</h1>
+      <p class="ac-sub">Your Google Business Profile snapshot — reviews, ratings, photos, and what Google says about you when a customer searches.</p>
+      <div class="ac-card">
+        <h3>Open the Google Presence card</h3>
+        <div class="ac-card-sub">The full snapshot lives on your portal dashboard so it sits beside your other at-a-glance numbers.</div>
+        <a class="ac-btn" href="/portal.html#dashboard">Open in Portal →</a>
+      </div>
+    </section>
+
+    <!-- ── LEAVE A REVIEW ── -->
+    <section class="ac-pane" id="ac-review">
+      <div class="ac-eyebrow">Leave a Review</div>
+      <h1 class="ac-h1">Tell Brock what works.</h1>
+      <p class="ac-sub">Honest feedback — good or rough — goes straight to Brock's inbox. Used to make Bedrock better for contractors like you.</p>
+      <form class="ac-card" id="acReviewForm" onsubmit="acSendFeedback(event,'review')">
+        <h3>Your review</h3>
+        <div class="ac-card-sub">Anything you'd want a future contractor to know. Specifics help most.</div>
+        <div class="ac-field"><label for="acReviewMsg">Your review</label><textarea id="acReviewMsg" required placeholder="What's working? What would you change? Would you recommend Bedrock to another contractor?"></textarea></div>
+        <button class="ac-btn" type="submit" id="acReviewBtn">Send to Brock →</button>
+        <div class="ac-msg" id="acReviewMsg2"></div>
+      </form>
+    </section>
+
+    <!-- ── NEED HELP / SUPPORT ── -->
+    <section class="ac-pane" id="ac-support">
+      <div class="ac-eyebrow">Need Help / Support</div>
+      <h1 class="ac-h1">Tell us anything.</h1>
+      <p class="ac-sub">Stuck, confused, hit a bug, want a feature, billing question — all of it. Goes straight to Brock and usually gets a same-day reply.</p>
+      <form class="ac-card" id="acSupportForm" onsubmit="acSendFeedback(event,'support')">
+        <h3>Your message</h3>
+        <div class="ac-card-sub">The more specific, the faster we can help. Screenshots welcome — just describe what you saw.</div>
+        <div class="ac-field"><label for="acSupportMsg">What's going on?</label><textarea id="acSupportMsg" required placeholder="Example: I tried to download a flyer in Marketing and the button doesn't respond — Chrome on Windows."></textarea></div>
+        <button class="ac-btn dark" type="submit" id="acSupportBtn">Send to Brock →</button>
+        <div class="ac-msg" id="acSupportMsg2"></div>
+      </form>
+    </section>
+
+  </main>
+</div>
+
+<footer>© Bedrock Digital · Spend more time on the job. <a href="/portal.html">Back to Portal</a></footer>
+
+<script>
+var SESSION_KEY = 'bedrock_portal_session';
+function getSession(){ try{var raw=localStorage.getItem(SESSION_KEY);if(!raw)return null;var s=JSON.parse(raw);if(s&&s.expires_at&&s.expires_at<Date.now())return null;return s;}catch(_){return null;} }
+function setMsg(id,kind,text){ var e=document.getElementById(id); if(!e)return; e.className='ac-msg show '+kind; e.textContent=text; if(kind==='ok')setTimeout(function(){e.classList.remove('show');},3500); }
+
+function acGo(panel){
+  document.querySelectorAll('.ac-navitem').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-p')===panel); });
+  document.querySelectorAll('.ac-pane').forEach(function(p){ p.classList.remove('active'); });
+  var el = document.getElementById('ac-'+panel); if(el) el.classList.add('active');
+  try{ history.replaceState(null,'','#'+panel); }catch(_){}
+  if (panel === 'subs') acLoadSubs();
+  if (panel === 'integrations') acPaintConnections();
+  window.scrollTo(0,0);
+}
+
+function acSignOut(){
+  try{ localStorage.removeItem(SESSION_KEY); }catch(_){}
+  window.location.href = '/';
+}
+
+// ── Load profile/session into Account Info on page load ──
+async function acLoadProfile(){
+  var s = getSession();
+  if(!s){ window.location.href = '/portal.html'; return; }
+  document.getElementById('acUserEmail').textContent = (s.user && s.user.email) || '';
+  document.getElementById('acEmail').value = (s.user && s.user.email) || '';
+  try{
+    var r = await fetch('/.netlify/functions/get-profile', { headers: { Authorization: 'Bearer ' + s.access_token } });
+    if(!r.ok) return;
+    var d = await r.json();
+    var p = d && d.profile;
+    if(p){
+      document.getElementById('acName').value = p.contact_name || '';
+      document.getElementById('acBiz').value  = p.business_name || '';
+    }
+    window._acProfile = p; window._acSubs = d.subscriptions || [];
+    acPaintConnections(p);
+  }catch(_){}
+}
+
+async function acSaveBasics(){
+  var s = getSession(); if(!s){ setMsg('acBasicsMsg','err','Please sign in again.'); return; }
+  var payload = {
+    contact_name: document.getElementById('acName').value.trim(),
+    business_name: document.getElementById('acBiz').value.trim(),
+  };
+  if(!payload.business_name){ setMsg('acBasicsMsg','err','Business name is required.'); return; }
+  setMsg('acBasicsMsg','ok','Saving…');
+  try{
+    var r = await fetch('/.netlify/functions/save-profile', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', Authorization:'Bearer '+s.access_token},
+      body: JSON.stringify(payload),
+    });
+    if(r.ok){ setMsg('acBasicsMsg','ok','Saved. Every tool will pick this up next load.'); }
+    else { setMsg('acBasicsMsg','err','Save failed — try again or contact support.'); }
+  }catch(_){ setMsg('acBasicsMsg','err','Connection error.'); }
+}
+
+async function acChangePass(){
+  var p1 = document.getElementById('acPass1').value;
+  var p2 = document.getElementById('acPass2').value;
+  if(p1.length < 6){ setMsg('acPassMsg','err','Password must be at least 6 characters.'); return; }
+  if(p1 !== p2){ setMsg('acPassMsg','err','Passwords don\'t match.'); return; }
+  var s = getSession(); if(!s){ setMsg('acPassMsg','err','Please sign in again.'); return; }
+  setMsg('acPassMsg','ok','Updating…');
+  try{
+    var r = await fetch('/.netlify/functions/portal-auth', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action:'update-password', access_token:s.access_token, new_password:p1 }),
+    });
+    var d = await r.json();
+    if(d && d.success){ document.getElementById('acPass1').value=''; document.getElementById('acPass2').value=''; setMsg('acPassMsg','ok','Password updated.'); }
+    else { setMsg('acPassMsg','err', (d&&d.error) || 'Update failed — try signing out and back in.'); }
+  }catch(_){ setMsg('acPassMsg','err','Connection error.'); }
+}
+
+// ── Subscriptions: render from DB-verified rows only ──
+function acRenderSubs(subs){
+  var list = document.getElementById('acSubsList');
+  if(!list) return;
+  var active = (subs||[]).filter(function(s){ return s.status==='active' || s.status==='past_due'; });
+  if(!active.length){
+    list.innerHTML = '<div class="ac-empty">No active subscriptions yet. Add a tool to your plan to get started.</div>';
+    return;
+  }
+  var TOOL_LABEL = { website:'Website', marketing:'Marketing', finance_operations:'Operations + Finance (bundle)', operations:'Operations', finance:'Finance' };
+  var TOOL_PRICE = { website:20, marketing:30, finance_operations:70, operations:50, finance:50 };
+  list.innerHTML = active.map(function(s){
+    var label = TOOL_LABEL[s.tool] || s.tool;
+    var price = TOOL_PRICE[s.tool] || '—';
+    var statusClass = s.status==='active' ? 'ok' : 'warn';
+    var statusTxt = s.status==='active' ? 'Active' : 'Past due';
+    return '<div class="ac-sub-row"><div><div style="font-family:\'Cormorant Garamond\',serif;font-size:1.05rem;font-weight:700;color:var(--navy-deep)">'+label+'</div><div class="ac-sub-meta">$'+price+'/mo</div></div><span class="ac-sub-status '+statusClass+'">'+statusTxt+'</span></div>';
+  }).join('');
+}
+async function acLoadSubs(){
+  if(window._acSubs){ acRenderSubs(window._acSubs); return; }
+  var s = getSession(); if(!s) return;
+  try{
+    var r = await fetch('/.netlify/functions/get-profile', { headers: { Authorization: 'Bearer ' + s.access_token } });
+    if(!r.ok) return;
+    var d = await r.json(); window._acSubs = d.subscriptions||[];
+    acRenderSubs(window._acSubs);
+  }catch(_){}
+}
+async function acOpenBillingPortal(e){
+  if(e) e.preventDefault();
+  var s = getSession(); if(!s) return;
+  var btn = e && e.currentTarget; if(btn) btn.textContent='Opening…';
+  try{
+    var r = await fetch('/.netlify/functions/create-billing-portal', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ access_token:s.access_token, return_url:location.href }),
+    });
+    var d = await r.json();
+    if(d && d.url) window.location.href = d.url;
+    else { if(btn) btn.textContent='Manage card in Stripe →'; alert('Could not open Stripe billing — please try again or contact support.'); }
+  }catch(_){ if(btn) btn.textContent='Manage card in Stripe →'; }
+}
+
+// ── Integrations status — DB-verified, never client-side ──
+function acPaintConnections(profile){
+  var p = profile || window._acProfile || {};
+  var conns = (p.extra && p.extra.connections) || p.connections || {};
+  function paint(id,statId,connected,name){
+    var dot=document.getElementById(id); var stat=document.getElementById(statId);
+    if(dot){ dot.classList.toggle('live', !!connected); }
+    if(stat){ stat.textContent = connected ? (name+' connected') : 'Not connected'; }
+  }
+  paint('acDotQbo','acStatQbo', !!conns.qbo, 'QuickBooks');
+  paint('acDotGoogle','acStatGoogle', !!conns.google || !!conns.gmail, 'Google');
+}
+function acConnect(which){
+  // Route through portal's existing connection flow so OAuth callbacks land in one place.
+  if(which==='qbo') window.location.href = '/portal.html#integrations?connect=qbo';
+  else if(which==='google') window.location.href = '/portal.html#integrations?connect=google';
+}
+
+// ── Leave a Review / Need Help — POST to send-feedback ──
+async function acSendFeedback(ev, type){
+  ev.preventDefault();
+  var msgEl = document.getElementById(type==='review' ? 'acReviewMsg' : 'acSupportMsg');
+  var noteId = type==='review' ? 'acReviewMsg2' : 'acSupportMsg2';
+  var btn = document.getElementById(type==='review' ? 'acReviewBtn' : 'acSupportBtn');
+  var message = (msgEl.value||'').trim();
+  if(!message){ setMsg(noteId,'err','Please write something before sending.'); return; }
+  btn.disabled = true; var origTxt = btn.textContent; btn.textContent = 'Sending…';
+  var s = getSession();
+  // Uses the existing submit-feedback function. kind='review' for testimonials,
+  // 'feedback' for support/help requests (per submit-feedback.js field names).
+  var payload = {
+    kind: type === 'review' ? 'review' : 'feedback',
+    message: message,
+    feedback_type: type === 'support' ? 'support' : '',
+    stars: '',
+    name: (window._acProfile && window._acProfile.contact_name) || '',
+    business: (window._acProfile && window._acProfile.business_name) || '',
+    email: (s && s.user && s.user.email) || '',
+  };
+  try{
+    var r = await fetch('/.netlify/functions/submit-feedback', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+    });
+    var d = await r.json();
+    if(r.ok && d && d.success){
+      msgEl.value = '';
+      setMsg(noteId,'ok','Sent — Brock usually replies the same day.');
+    } else {
+      setMsg(noteId,'err',(d&&d.error)||'Send failed — please email brockniederer@gmail.com directly.');
+    }
+  }catch(_){ setMsg(noteId,'err','Connection error — please try again.'); }
+  btn.disabled = false; btn.textContent = origTxt;
+}
+
+// ── Boot: honor ?tab= and #hash deep links, load profile ──
+(function(){
+  acLoadProfile();
+  try{
+    var h = (location.hash||'').replace('#','');
+    if(h && document.getElementById('ac-'+h)) acGo(h);
+  }catch(_){}
+})();
+</script>
+</body>
+</html>

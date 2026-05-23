@@ -53,6 +53,40 @@ exports.handler = async (event) => {
     };
   }
 
+  if (action === 'update-password') {
+    const accessToken = body.access_token;
+    const newPassword = body.new_password;
+    if (!accessToken || !newPassword) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'access_token and new_password required' }) };
+    }
+    if (newPassword.length < 6) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'Password must be at least 6 characters' }) };
+    }
+    // Supabase: PUT /auth/v1/user with Bearer token updates the authed user's password.
+    const res = await fetch(`${supabaseUrl}/auth/v1/user`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: supabaseAnon,
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ password: newPassword }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return {
+        statusCode: res.status === 401 ? 401 : 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: data.msg || data.error_description || 'Password update failed — try signing out and back in.' }),
+      };
+    }
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ success: true }),
+    };
+  }
+
   if (action === 'refresh') {
     const refresh_token = body.refresh_token;
     if (!refresh_token) {

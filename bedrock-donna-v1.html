@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bedrock Operations — Donna handles the paperwork</title>
-<meta name="description" content="Donna drafts estimates and invoices, files receipts, schedules jobs, and keeps customer records — every action waits for your approval before it sends.">
+<title>Bedrock Operations — Admin &amp; Busywork, Handled</title>
+<meta name="description" content="Snap a photo of a receipt, create a bid, an invoice, or a new customer — Donna, your personal software secretary, learns from past jobs and handles the busywork.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://bedrock-sites.com/bedrock-donna-v1.html">
 <meta property="og:type" content="website">
@@ -17,7 +17,8 @@
 <meta name="twitter:description" content="Donna handles the paperwork. You approve everything.">
 <meta property="og:image" content="https://bedrock-sites.com/og-image.svg">
 <meta name="twitter:image" content="https://bedrock-sites.com/og-image.svg">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 68 68'%3E%3Crect width='68' height='68' rx='14' fill='%230D1B2E'/%3E%3Cpath d='M12,9 A32,25.5 0 0 1 44,34.5' fill='none' stroke='%23F0C46A' stroke-width='10'/%3E%3Cpath d='M44,34.5 A32,25.5 0 0 1 12,60' fill='none' stroke='%232E5A8E' stroke-width='10'/%3E%3Crect x='7' y='4.25' width='10' height='60.35' fill='%23C9922A'/%3E%3C/svg%3E">
+<link rel="icon" href="/bedrock-operations.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/bedrock-operations.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
@@ -31,7 +32,15 @@
   --border-light:rgba(13,27,46,0.1);--border-dark:rgba(255,255,255,0.12);
   --muted-light:rgba(255,255,255,0.45);--muted-dark:rgba(13,27,46,0.35);
   --red:#b91c1c;--red-bg:#fef2f2;--green:#3b6d11;--green-bg:#f0f5ea;
+  /* Tool brand tokens — see bedrock-vault/05-SUBBRAND-LOGO-INTEGRATION.md */
+  --brand-gold-light:#F0C46A;--brand-gold-dark:#A8711A;--brand-navy-light:#4A7DB5;--warm-white:#F5E6C8;--tool-accent:#2E5A8E;
 }
+/* Per-tool brand lockup (Option A: hard-coded per file) */
+.nav-logo.brand-lockup{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.brand-icon svg{display:block;width:34px;height:34px;border-radius:8px}
+.brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.brand-name{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;letter-spacing:-.02em;color:var(--warm-white)}
+.brand-tool{font-size:9px;letter-spacing:.2em;font-weight:500;text-transform:uppercase;margin-top:3px;color:#4A7DB5}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy-deep);min-height:100vh;display:flex;flex-direction:column;line-height:1.5}
 
@@ -50,7 +59,7 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .nav-right{display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
 .tnav-link{font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;padding:0.5rem 0.75rem;border-radius:6px;display:inline-flex;align-items:center;gap:0.4rem;transition:color .15s,background .15s;cursor:pointer}
 .tnav-link:hover{color:#fff;background:rgba(255,255,255,0.07)}
-.tnav-link.tnav-active{color:var(--gold)}
+.tnav-link.tnav-active{color:#4A7DB5}/* navy-light for Operations contrast — see integration guide note */
 .tnav-link.tnav-home{color:var(--gold);border:1px solid rgba(201,146,42,0.55)}
 
 .page{display:none}
@@ -360,11 +369,26 @@ footer a{color:var(--gold);text-decoration:none}
 </head>
 <body>
 
+<!-- Step 7: shared preview-mode helper — cart membership = preview access until purchase verified -->
+<script>
+window.bedrockInPreviewMode = function(toolKey){
+  if (window.IS_SUBSCRIBED === true) return false; // owned (paid) is not preview
+  var sku = ({operations:'cfo',finance:'cfo',marketing:'marketing',website:'website'})[toolKey];
+  if (!sku) return false;
+  try {
+    var raw = localStorage.getItem('bedrock_cart_v1');
+    if (!raw) return false;
+    var cart = JSON.parse(raw) || {};
+    return !!cart[sku];
+  } catch(_) { return false; }
+};
+</script>
+
 <!-- Preview-Mode banner (hidden by default; shown via JS for non-subscribers) -->
 <div id="previewBanner" class="preview-banner" role="banner">
   <span>You're in Preview Mode — exploring <strong>Operations · Donna</strong>. To use this tool with your real data, add it to your plan.</span>
-  <a class="preview-cta" href="/portal.html#subs">Add to My Plan →</a>
-  <button class="preview-x" type="button" onclick="dismissPreviewBanner()" aria-label="Dismiss">×</button>
+  <a class="preview-cta" href="/portal.html#subs">Purchase &amp; make this yours →</a>
+  <!-- Non-dismissible per spec — preview mode persists until purchase. -->
 </div>
 
 <svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -380,10 +404,17 @@ footer a{color:var(--gold);text-decoration:none}
 </svg>
 
 <nav class="top">
-  <a href="/portal.html" class="nav-logo">
-    <div class="nav-strata"><span></span><span></span><span></span><span></span></div>
-    <div class="nav-wm"><span class="wordmark">Bedrock</span><span class="sub">Digital</span></div>
-    <span class="nav-product">Operations · Donna</span>
+  <a href="/portal.html" class="nav-logo brand-lockup">
+    <span class="brand-icon">
+      <svg viewBox="0 0 68 68" role="img" aria-label="Bedrock Operations">
+        <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+        <circle cx="34" cy="34" r="21" fill="none" stroke="#2E5A8E" stroke-width="10"/>
+      </svg>
+    </span>
+    <span class="brand-wordmark">
+      <span class="brand-name">Bedrock</span>
+      <span class="brand-tool">Operations</span>
+    </span>
   </a>
   <div class="nav-right">
     <a href="/portal.html" class="tnav-link tnav-home" title="My Portal">
@@ -1785,18 +1816,15 @@ function applyConnDots(){
 }
 
 // ═══════════════ PREVIEW MODE BANNER ═══════════════
-// Persistent gold banner above the nav when the viewer doesn't have an
-// Operations subscription. Dismissed for the session; reappears next visit.
+// Persistent amber banner — non-dismissible per spec. Shown when the viewer
+// doesn't have an Operations subscription (cart membership = preview access).
 function showPreviewBanner(){
   if(IS_SUBSCRIBED) return;
-  try { if(sessionStorage.getItem('bedrock_preview_dismissed_donna') === '1') return; } catch(e){}
   document.body.classList.add('preview-mode');
   var b = document.getElementById('previewBanner'); if(b) b.classList.add('show');
 }
-function dismissPreviewBanner(){
-  try { sessionStorage.setItem('bedrock_preview_dismissed_donna','1'); } catch(e){}
-  var b = document.getElementById('previewBanner'); if(b) b.classList.remove('show');
-}
+// dismissPreviewBanner kept as a no-op so any leftover code paths don't error.
+function dismissPreviewBanner(){ /* non-dismissible per Step 7 spec */ }
 
 // Inline "profile under 50%" nudge — non-blocking, dismissable via the link.
 // Injects above the chat thread so contractors see it without a popup.
@@ -1829,9 +1857,15 @@ BedrockProfile.load().then(function(){
   // Load this contractor's saved customers/projects/jobs/notes from Supabase
   // (replaces the in-memory sample data once a session is present).
   DonnaData.load().then(function(){ refreshView(); });
-  var needOnboarding = buildOnboarding();
-  if(needOnboarding) showPage('pageOnboard');
-  else enterApp();
+  // Step 7: in preview mode (cart has 'cfo' SKU, no subscription yet) skip the "Meet Donna"
+  // onboarding entirely so previewers see the sandbox instead of a setup gate.
+  if (window.bedrockInPreviewMode && window.bedrockInPreviewMode('operations')) {
+    enterApp();
+  } else {
+    var needOnboarding = buildOnboarding();
+    if(needOnboarding) showPage('pageOnboard');
+    else enterApp();
+  }
 });
 </script>
 </body>

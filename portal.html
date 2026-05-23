@@ -18,7 +18,24 @@
   --offwhite:#FAF7F2;--light:#F5E6C8;
   --text:#0D1B2E;--text-mid:#2E5A8E;--text-muted:#4A5568;--border:rgba(13,27,46,0.12);
   --green:#3b6d11;--green-bg:#f0f5ea;--red:#b91c1c;--red-bg:#fef2f2;
+  /* Tool brand tokens — see bedrock-vault/05-SUBBRAND-LOGO-INTEGRATION.md */
+  --tool-finance:#C9922A;--tool-marketing:#F0C46A;--tool-marketing-dark:#A8711A;--tool-operations:#2E5A8E;--tool-website:#4A7DB5;
+  --brand-gold-light:#F0C46A;--brand-gold-dark:#A8711A;--brand-navy-mid:#2E5A8E;--brand-navy-light:#4A7DB5;--warm-white:#F5E6C8;
+  /* Status-dot tokens (Step 9): green=owned/live (DB-verified), amber=preview/available */
+  --status-green:#3b6d11;--status-amber:#C9922A;
 }
+/* Per-tool brand lockup primitives (used in tool cards + future references) */
+.brand-lockup{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.brand-icon svg{display:block;width:34px;height:34px;border-radius:8px}
+.brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.brand-name{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;letter-spacing:-.02em;color:var(--text)}
+.brand-name.on-dark{color:var(--warm-white)}
+.brand-tool{font-size:9px;letter-spacing:.2em;font-weight:500;text-transform:uppercase;margin-top:3px}
+.brand-tool.t-finance{color:var(--tool-finance)}
+.brand-tool.t-marketing{color:var(--tool-marketing-dark)}
+.brand-tool.t-marketing.on-dark{color:var(--tool-marketing)}
+.brand-tool.t-operations{color:var(--brand-navy-light)} /* navy-light for in-app contrast */
+.brand-tool.t-website{color:var(--tool-website)}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
 /* Toast — same pattern as donnaToast in the Donna tool */
@@ -341,6 +358,11 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .nav-tab-group:hover .nav-tab-caret{opacity:1}
 /* sub-product mark icon inside a tool tab */
 .nav-tab-mark{width:15px;height:15px;flex-shrink:0;border-radius:3px;vertical-align:middle}
+/* Step 9: per-tool status dot. green=owned (DB-verified subscription), amber=preview/available. No red. */
+.nav-tab-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:transparent;margin-left:5px;flex-shrink:0;transition:background .15s,box-shadow .15s}
+.nav-tab-dot.owned{background:var(--status-green);box-shadow:0 0 0 2px rgba(59,109,17,0.18)}
+.nav-tab-dot.preview{background:var(--status-amber);box-shadow:0 0 0 2px rgba(201,146,42,0.22)}
+.nav-tab-dot[title]{cursor:help}
 /* locked tool tab — contractor hasn't subscribed yet */
 .nav-tab-btn .nav-tab-lock{width:11px;height:11px;opacity:0.7;margin-left:2px;stroke-width:2.5}
 .nav-tab-group.locked>.nav-tab-btn{border-color:rgba(255,255,255,0.18);color:rgba(255,255,255,0.6)}
@@ -519,21 +541,29 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 </style>
 </head>
 <body>
-
-<!-- ── SUB-BRAND MARK SYMBOLS (from bedrock-subbrands-v9.html) — used on Donna + Finance tabs ── -->
+<!-- Tool marks sprite — Bedrock Digital sub-brand marks (FMOW). See 05-SUBBRAND-LOGO-INTEGRATION.md -->
 <svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-  <clipPath id="rightOfStem"><rect x="17" y="0" width="51" height="68"/></clipPath>
-  <symbol id="mark-f" viewBox="0 0 68 68">
+  <symbol id="mark-f" viewBox="0 0 68 68"><rect width="68" height="68" rx="14" fill="#0D1B2E"/><g fill="#C9922A"><rect x="7" y="8" width="10" height="52"/><rect x="7" y="8" width="45" height="10"/><rect x="7" y="29" width="37" height="10"/></g></symbol>
+  <symbol id="mark-m" viewBox="0 0 68 68"><rect width="68" height="68" rx="14" fill="#0D1B2E"/><g fill="#F0C46A"><rect x="7" y="9" width="10" height="51"/><rect x="51" y="9" width="10" height="51"/><polygon points="17.00,7.63 34.00,36.22 34.00,55.78 17.00,27.19"/><polygon points="34.00,36.22 51.00,7.63 51.00,27.19 34.00,55.78"/></g></symbol>
+  <symbol id="mark-o" viewBox="0 0 68 68"><rect width="68" height="68" rx="14" fill="#0D1B2E"/><circle cx="34" cy="34" r="21" fill="none" stroke="#2E5A8E" stroke-width="10"/></symbol>
+  <symbol id="mark-w" viewBox="0 0 68 68"><rect width="68" height="68" rx="14" fill="#0D1B2E"/><path d="M8,9 L22,60 L34,32 L46,60 L60,9" fill="none" stroke="#4A7DB5" stroke-width="10" stroke-linejoin="miter" stroke-linecap="butt"/></symbol>
+</svg>
+
+<!-- ── LEGACY SUB-BRAND MARK SYMBOLS (BMFD system, from bedrock-subbrands-v9.html) — superseded by FMOW sprite above. ── -->
+<!-- IDs renamed with "legacy-" prefix to avoid duplicate-ID conflicts with the new sprite. Kept, not deleted, per the no-delete rule. -->
+<svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <clipPath id="legacy-rightOfStem"><rect x="17" y="0" width="51" height="68"/></clipPath>
+  <symbol id="legacy-mark-f" viewBox="0 0 68 68">
     <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
-    <g clip-path="url(#rightOfStem)">
+    <g clip-path="url(#legacy-rightOfStem)">
       <rect x="7" y="8"  width="45" height="10" fill="#F0C46A"/>
       <rect x="7" y="29" width="37" height="10" fill="#2E5A8E"/>
     </g>
     <rect x="7" y="8" width="10" height="52" fill="#C9922A"/>
   </symbol>
-  <symbol id="mark-d" viewBox="0 0 68 68">
+  <symbol id="legacy-mark-d" viewBox="0 0 68 68">
     <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
-    <g clip-path="url(#rightOfStem)" fill="none" stroke-width="10" stroke-linecap="butt">
+    <g clip-path="url(#legacy-rightOfStem)" fill="none" stroke-width="10" stroke-linecap="butt">
       <path d="M12,9 A32,25.5 0 0 1 44,34.5" stroke="#F0C46A"/>
       <path d="M44,34.5 A32,25.5 0 0 1 12,60" stroke="#2E5A8E"/>
     </g>
@@ -565,8 +595,9 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     <!-- Operations (Donna) — May 2026: the old CFO tab, now its own product, moved up next to Dashboard. -->
     <div class="nav-tab-group" data-top="operations">
       <button class="nav-tab-btn" onclick="launchDonna()" title="Bedrock Operations · Donna">
-        <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg>
+        <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-o"/></svg>
         Operations
+        <span class="nav-tab-dot" data-tool-dot="operations" aria-hidden="true"></span>
       </button>
     </div>
     <!-- My Profile — May 2026: folded into the My Account dropdown. Standalone tab hidden, not deleted. -->
@@ -574,7 +605,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
     </div>
     <div class="nav-tab-group" data-top="website">
-      <button class="nav-tab-btn" onclick="location.href='/bedrock-website-v1.html'">My Website <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="location.href='/bedrock-website-v1.html'">My Website <span class="nav-tab-dot" data-tool-dot="website" aria-hidden="true"></span><span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
         <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=start'"><span class="tsl-eyebrow">Manage</span>My Site</button>
         <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=optimizer'"><span class="tsl-eyebrow">SEO/GEO</span>SEO / GEO Optimizer</button>
@@ -582,7 +613,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       </div>
     </div>
     <div class="nav-tab-group" data-top="marketing">
-      <button class="nav-tab-btn" onclick="launchMarketing('wizard')">Marketing <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="launchMarketing('wizard')">Marketing <span class="nav-tab-dot" data-tool-dot="marketing" aria-hidden="true"></span><span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
@@ -595,6 +626,7 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <button class="nav-tab-btn" onclick="launchFinance()" title="Bedrock Finance · Analytics">
         <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg>
         Finance
+        <span class="nav-tab-dot" data-tool-dot="finance" aria-hidden="true"></span>
       </button>
     </div>
     <!-- CFO — May 2026: replaced by Donna + Finance above. Old tab hidden, not deleted. -->
@@ -782,6 +814,217 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
       <!-- ════════════ DASHBOARD HUB ════════════ -->
       <div class="portal-pane active" id="pane-dashboard-default">
 
+        <!-- ════ STEP 10 — DASHBOARD 2026 (next-best-action + tool cards + profile + time saved + recent activity) ════ -->
+        <style>
+          .dh-nba{background:linear-gradient(135deg,rgba(201,146,42,0.14),rgba(13,27,46,0.04));border:1px solid var(--accent);border-left:4px solid var(--accent);border-radius:10px;padding:1rem 1.25rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
+          .dh-nba-eye{font-family:'DM Sans',sans-serif;font-size:0.54rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.25rem}
+          .dh-nba-txt{flex:1;min-width:240px;font-family:'DM Sans',sans-serif;font-size:0.92rem;color:var(--navy);line-height:1.5;font-weight:500}
+          .dh-nba-cta{font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0.65rem 1.1rem;border-radius:5px;cursor:pointer;text-decoration:none}
+          .dh-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-bottom:1.25rem}
+          @media(max-width:760px){.dh-grid{grid-template-columns:1fr}}
+          .dh-tool{background:#fff;border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:10px;padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:0.6rem;position:relative;min-height:140px}
+          .dh-tool[data-state="upsell"]{border-top-color:var(--accent);background:linear-gradient(180deg,rgba(201,146,42,0.06),#fff)}
+          .dh-tool[data-state="preview"]{border-top-color:var(--status-amber)}
+          .dh-tool[data-state="owned"]{border-top-color:var(--status-green)}
+          .dh-tool .dt-row{display:flex;align-items:center;gap:0.6rem}
+          .dh-tool .dt-mark{width:32px;height:32px;flex-shrink:0;border-radius:7px}
+          .dh-tool .dt-name{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--navy)}
+          .dh-tool .dt-status{margin-left:auto;font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;padding:0.22rem 0.5rem;border-radius:3px;background:var(--offwhite);color:var(--text-muted)}
+          .dh-tool[data-state="owned"] .dt-status{background:rgba(59,109,17,0.12);color:var(--status-green)}
+          .dh-tool[data-state="preview"] .dt-status{background:rgba(201,146,42,0.18);color:var(--status-amber)}
+          .dh-tool[data-state="upsell"] .dt-status{background:rgba(201,146,42,0.12);color:var(--accent)}
+          .dh-tool .dt-stat{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;color:var(--navy);line-height:1}
+          .dh-tool .dt-stat small{display:block;font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:500;color:var(--text-muted);margin-top:4px;text-transform:none;letter-spacing:0}
+          .dh-tool .dt-empty{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--text-muted);line-height:1.5}
+          .dh-tool .dt-cta-row{display:flex;gap:0.4rem;margin-top:auto;flex-wrap:wrap}
+          .dh-tool .dt-cta{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0.55rem 0.9rem;border-radius:5px;cursor:pointer;text-decoration:none}
+          .dh-tool .dt-cta.outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent)}
+          .dh-secondary{display:grid;grid-template-columns:1.1fr 0.9fr 0.9fr;gap:1rem;margin-bottom:1.25rem}
+          @media(max-width:860px){.dh-secondary{grid-template-columns:1fr}}
+          .dh-mini{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem;display:flex;flex-direction:column;gap:0.5rem}
+          .dh-mini h4{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin:0}
+          .dh-mini .mb-big{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:var(--navy);line-height:1}
+          .dh-mini .mb-big small{display:block;font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;color:var(--text-muted);margin-top:3px;text-transform:none;letter-spacing:0}
+          .dh-meter{height:7px;background:rgba(13,27,46,0.08);border-radius:4px;overflow:hidden;margin-top:4px}
+          .dh-meter i{display:block;height:100%;background:var(--accent);border-radius:4px;transition:width .3s}
+          .dh-mini .dh-cta{align-self:flex-start;font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);text-decoration:none;margin-top:0.4rem;border:none;background:none;padding:0;cursor:pointer}
+          .dh-feed{font-family:'DM Sans',sans-serif;font-size:0.76rem;color:var(--text-muted);line-height:1.55}
+          .dh-feed .dhf-row{padding:0.45rem 0;border-bottom:1px dashed rgba(13,27,46,0.08)}
+          .dh-feed .dhf-row:last-child{border-bottom:none}
+          .dh-feed .dhf-row b{color:var(--navy);font-weight:600}
+          .dh-feed .dhf-empty{color:var(--text-muted);font-style:italic;padding:0.4rem 0}
+        </style>
+
+        <!-- Next-best-action banner — populated by renderNextBestAction() -->
+        <div class="dh-nba" id="dhNba" style="display:none">
+          <div style="flex:1;min-width:240px">
+            <div class="dh-nba-eye">Next, do this</div>
+            <div class="dh-nba-txt" id="dhNbaTxt">—</div>
+          </div>
+          <a class="dh-nba-cta" id="dhNbaCta" href="#">—</a>
+        </div>
+
+        <!-- Per-tool cards: owned (real metric + CTA), preview (sample data CTA), or upsell (amber) -->
+        <div class="dh-grid" id="dhToolGrid">
+          <div class="dh-tool" data-tool="website" data-state="upsell">
+            <div class="dt-row">
+              <svg class="dt-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-w"/></svg>
+              <span class="dt-name">Website</span>
+              <span class="dt-status" data-status>Available</span>
+            </div>
+            <div class="dt-stat" data-metric>—<small data-metric-sub>See what Website shows you</small></div>
+            <div class="dt-cta-row">
+              <a class="dt-cta" data-primary href="/bedrock-website-v1.html">Try the Preview →</a>
+              <a class="dt-cta outline" data-secondary href="#" onclick="event.preventDefault();if(window.addToPlan){addToPlan('website');}else{goTab('subs','cart');}">Add to my plan</a>
+            </div>
+          </div>
+          <div class="dh-tool" data-tool="marketing" data-state="upsell">
+            <div class="dt-row">
+              <svg class="dt-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-m"/></svg>
+              <span class="dt-name">Marketing</span>
+              <span class="dt-status" data-status>Available</span>
+            </div>
+            <div class="dt-stat" data-metric>—<small data-metric-sub>See what Marketing shows you</small></div>
+            <div class="dt-cta-row">
+              <a class="dt-cta" data-primary href="/bedrock-marketing-v1.html">Try the Preview →</a>
+              <a class="dt-cta outline" data-secondary href="#" onclick="event.preventDefault();if(window.addToPlan){addToPlan('marketing');}else{goTab('subs','cart');}">Add to my plan</a>
+            </div>
+          </div>
+          <div class="dh-tool" data-tool="operations" data-state="upsell">
+            <div class="dt-row">
+              <svg class="dt-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-o"/></svg>
+              <span class="dt-name">Operations</span>
+              <span class="dt-status" data-status>Available</span>
+            </div>
+            <div class="dt-stat" data-metric>—<small data-metric-sub>See what Donna drafts for you</small></div>
+            <div class="dt-cta-row">
+              <a class="dt-cta" data-primary href="/bedrock-donna-v1.html">Try the Preview →</a>
+              <a class="dt-cta outline" data-secondary href="#" onclick="event.preventDefault();if(window.addToPlan){addToPlan('operations');}else{goTab('subs','cart');}">Add to my plan</a>
+            </div>
+          </div>
+          <div class="dh-tool" data-tool="finance" data-state="upsell">
+            <div class="dt-row">
+              <svg class="dt-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg>
+              <span class="dt-name">Finance</span>
+              <span class="dt-status" data-status>Available</span>
+            </div>
+            <div class="dt-stat" data-metric>—<small data-metric-sub>See your numbers in plain English</small></div>
+            <div class="dt-cta-row">
+              <a class="dt-cta" data-primary href="/bedrock-finance-v1.html">Try the Preview →</a>
+              <a class="dt-cta outline" data-secondary href="#" onclick="event.preventDefault();if(window.addToPlan){addToPlan('finance');}else{goTab('subs','cart');}">Add to my plan</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Secondary row: profile completeness, time saved, recent activity -->
+        <div class="dh-secondary">
+          <div class="dh-mini">
+            <h4>Your business profile</h4>
+            <div class="mb-big" id="dhProfilePct">0%<small>complete · finish so every tool gets smarter</small></div>
+            <div class="dh-meter"><i id="dhProfileMeter" style="width:0%"></i></div>
+            <button type="button" class="dh-cta" onclick="goTab('profile','default')">Finish my profile →</button>
+          </div>
+          <div class="dh-mini">
+            <h4>Time saved with Bedrock</h4>
+            <div class="mb-big"><span id="dhTimeSaved">0</span><small>minutes · climbs as Donna, Marketing, and Finance do real work for you</small></div>
+            <div class="dh-cta" style="color:var(--text-muted);cursor:default">Counts estimates, invoices, and assets you actually produce.</div>
+          </div>
+          <div class="dh-mini">
+            <h4>Recent activity</h4>
+            <div class="dh-feed" id="dhFeed">
+              <div class="dhf-empty">No activity yet. Build a brand kit, draft an estimate, or run your first audit — it shows up here.</div>
+            </div>
+          </div>
+        </div>
+
+        <script>
+        (function(){
+          // Renders Step 10 dashboard cards from current state.
+          // Owned (DB) → green, real metric. In cart (preview) → amber, preview CTA. Else → upsell.
+          var TOOL_CART_KEY = { website:'website', marketing:'marketing', operations:'cfo', finance:'cfo' };
+          var TOOL_OWNED_KEY = { website:'website', marketing:'marketing', operations:'donna', finance:'finance' };
+          var TOOL_LAUNCH = { website:'/bedrock-website-v1.html', marketing:'/bedrock-marketing-v1.html', operations:'/bedrock-donna-v1.html', finance:'/bedrock-finance-v1.html' };
+          function readCart(){ try{var raw=localStorage.getItem(CART_KEY);if(raw)return JSON.parse(raw)||{};}catch(_){}return {}; }
+          function profilePct(){
+            // Use existing brandKitPct/profile completion if available; else 0.
+            try{ if(typeof getProfileCompletion==='function')return getProfileCompletion()|0; }catch(_){}
+            try{ if(window.PROFILE){ var fields=['business_name','contact_name','email','phone','trade','city','tagline']; var have=fields.filter(function(f){return !!PROFILE[f];}).length; return Math.round(have/fields.length*100); } }catch(_){}
+            return 0;
+          }
+          function renderToolCards(){
+            var cart = readCart();
+            document.querySelectorAll('#dhToolGrid .dh-tool').forEach(function(card){
+              var tool = card.getAttribute('data-tool');
+              var owned = !!(window.TOOL_SUBSCRIBED && TOOL_SUBSCRIBED[TOOL_OWNED_KEY[tool]]);
+              var inCart = !!cart[TOOL_CART_KEY[tool]];
+              var state = owned ? 'owned' : (inCart ? 'preview' : 'upsell');
+              card.setAttribute('data-state', state);
+              var statusEl = card.querySelector('[data-status]');
+              var metricEl = card.querySelector('[data-metric]');
+              var subEl    = card.querySelector('[data-metric-sub]');
+              var primary  = card.querySelector('[data-primary]');
+              var secondary= card.querySelector('[data-secondary]');
+              if (state === 'owned') {
+                statusEl.textContent = 'Owned';
+                metricEl.firstChild.textContent = '—';
+                subEl.textContent = 'Live for your business · open the tool to see this week.';
+                primary.textContent = 'Open ' + (card.querySelector('.dt-name').textContent) + ' →';
+                primary.setAttribute('href', TOOL_LAUNCH[tool]);
+                if (secondary) secondary.style.display = 'none';
+              } else if (state === 'preview') {
+                statusEl.textContent = 'In Preview';
+                metricEl.firstChild.textContent = 'Sample';
+                subEl.textContent = "You're exploring — purchase to use with real data.";
+                primary.textContent = 'Open Preview →';
+                primary.setAttribute('href', TOOL_LAUNCH[tool]);
+                if (secondary) { secondary.style.display = ''; secondary.textContent = 'Purchase →'; secondary.setAttribute('onclick', "location.href='/portal.html#subs'; return false;"); }
+              } else {
+                statusEl.textContent = 'Available';
+                if (secondary) secondary.style.display = '';
+              }
+            });
+          }
+          function renderProfileCard(){
+            var pct = profilePct();
+            var el = document.getElementById('dhProfilePct'); if(el){ el.firstChild.textContent = pct + '%'; }
+            var m = document.getElementById('dhProfileMeter'); if(m){ m.style.width = pct + '%'; }
+          }
+          function renderTimeSaved(){
+            // Real countable actions only — starts at 0. Brock didn't want fabricated numbers.
+            // Sources to wire later: Donna estimates_drafted * 20m, marketing assets_built * 30m, invoices_sent * 15m.
+            var saved = 0;
+            try { saved = +(localStorage.getItem('bedrock_time_saved_min') || 0); } catch(_){}
+            var el = document.getElementById('dhTimeSaved'); if(el) el.textContent = String(saved|0);
+          }
+          function renderNextBestAction(){
+            var nba = document.getElementById('dhNba');
+            var txt = document.getElementById('dhNbaTxt');
+            var cta = document.getElementById('dhNbaCta');
+            if(!nba||!txt||!cta) return;
+            var owned = (window.TOOL_SUBSCRIBED) || {};
+            var cart = readCart();
+            // Priority: complete profile (<50%) → set up brand kit if subscribed Marketing → add a tool to plan → finish onboarding step.
+            var pct = profilePct();
+            var msg = '', href = '', label = '';
+            if (pct < 50) { msg = "Finish your business profile — every tool reads from it, so every minute here saves time later."; href = "javascript:goTab('profile','default')"; label = "Complete profile"; }
+            else if (owned.marketing && !cart.marketing) { msg = "Your Marketing is live — build your Brand Kit once and every flyer pulls from it."; href = '/bedrock-marketing-v1.html?view=brand'; label = "Open Brand Kit"; }
+            else if (!cart.website && !cart.marketing && !cart.cfo) { msg = "Nothing in your plan yet. Add a tool — preview is instant and you only pay when you make it yours."; href = "javascript:goTab('subs','cart')"; label = "See plans"; }
+            else { nba.style.display='none'; return; }
+            txt.textContent = msg; cta.textContent = label; cta.setAttribute('href', href); nba.style.display='flex';
+          }
+          window.renderStep10Dashboard = function(){
+            renderToolCards();
+            renderProfileCard();
+            renderTimeSaved();
+            renderNextBestAction();
+          };
+          document.addEventListener('DOMContentLoaded', window.renderStep10Dashboard);
+          window.addEventListener('storage', function(e){ if(e.key===CART_KEY) window.renderStep10Dashboard(); });
+          // Re-render when loadProfile finishes (Step 8 wires applyToolSubsFromDB which we depend on).
+          setTimeout(window.renderStep10Dashboard, 500);
+        })();
+        </script>
+
         <!-- GOLD PROFILE-NUDGE BANNER — only shown when profile completion < 80% (rendered by renderProfileNudge()) -->
         <div class="profile-nudge-banner" id="profileNudgeBanner" style="display:none">
           <div style="flex:1;min-width:240px">
@@ -799,24 +1042,31 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <div class="onboard-prog" id="onboardProg">0 of 4 done</div>
           </div>
           <div id="onboardList">
+            <!-- Step 12: refocused on account actions — tool launches live in the top tab bar. -->
             <button type="button" class="onboard-item" data-step="profile" onclick="onboardGo('profile')">
               <span class="onboard-check">&#10003;</span>
               <span class="onboard-item-txt"><span class="onboard-item-name">Complete my profile</span><span class="onboard-item-sub">Tell Bedrock about your business so every tool is pre-filled</span></span>
               <span class="onboard-arrow">&rarr;</span>
             </button>
-            <button type="button" class="onboard-item" data-step="website" onclick="onboardGo('website')">
+            <button type="button" class="onboard-item" data-step="subscription" onclick="onboardGo('subscription')">
+              <span class="onboard-check">&#10003;</span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Pick your subscriptions</span><span class="onboard-item-sub">Choose the tools you want and review your plan</span></span>
+              <span class="onboard-arrow">&rarr;</span>
+            </button>
+            <button type="button" class="onboard-item" data-step="integrations" onclick="goTab('subs','integrations')">
+              <span class="onboard-check">&#10003;</span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Connect QuickBooks &amp; Google</span><span class="onboard-item-sub">One connection powers Donna's invoices, scheduling, and Finance sync</span></span>
+              <span class="onboard-arrow">&rarr;</span>
+            </button>
+            <!-- Tool launch items retired May 2026 — moved to top tab bar (kept, not deleted) -->
+            <button type="button" class="onboard-item" data-step="website" onclick="onboardGo('website')" style="display:none">
               <span class="onboard-check">&#10003;</span>
               <span class="onboard-item-txt"><span class="onboard-item-name">Build my website</span><span class="onboard-item-sub">Get a professional site live for your trade</span></span>
               <span class="onboard-arrow">&rarr;</span>
             </button>
-            <button type="button" class="onboard-item" data-step="marketing" onclick="onboardGo('marketing')">
+            <button type="button" class="onboard-item" data-step="marketing" onclick="onboardGo('marketing')" style="display:none">
               <span class="onboard-check">&#10003;</span>
               <span class="onboard-item-txt"><span class="onboard-item-name">Set up marketing</span><span class="onboard-item-sub">Build your Brand Kit and start making materials</span></span>
-              <span class="onboard-arrow">&rarr;</span>
-            </button>
-            <button type="button" class="onboard-item" data-step="subscription" onclick="onboardGo('subscription')">
-              <span class="onboard-check">&#10003;</span>
-              <span class="onboard-item-txt"><span class="onboard-item-name">Manage my subscription</span><span class="onboard-item-sub">Pick the tools you want and review your plan</span></span>
               <span class="onboard-arrow">&rarr;</span>
             </button>
           </div>
@@ -824,28 +1074,16 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           <button type="button" class="onboard-getstarted" id="onboardGetStarted" onclick="goTab('profile','default')">Get Started with Bedrock →</button>
         </div>
 
-        <!-- LAUNCHPAD — horizontal pills, the contractor's home-base navigation -->
+        <!-- LAUNCHPAD — Step 12: refocused on account actions. Tool launches live in the top tab bar + dashboard cards above. -->
         <div class="launchpad-hint">Swipe →</div>
-        <div class="dash-launchpad" id="dashLaunchpad" role="navigation" aria-label="Quick links">
-          <button type="button" class="launch-pill" onclick="goTab('profile','default')" title="My Profile">
+        <div class="dash-launchpad" id="dashLaunchpad" role="navigation" aria-label="Account quick links">
+          <a class="launch-pill" href="/account.html#info" title="My Account">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            My Account
+          </a>
+          <button type="button" class="launch-pill" onclick="goTab('profile','default')" title="My Profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v10M4.22 4.22l4.24 4.24m6.36 6.36l4.24 4.24M1 12h6m6 0h10M4.22 19.78l4.24-4.24m6.36-6.36l4.24-4.24"/></svg>
             My Profile
-          </button>
-          <button type="button" class="launch-pill" onclick="location.href='/bedrock-website-v1.html'" title="My Website">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            My Website
-          </button>
-          <button type="button" class="launch-pill" onclick="launchMarketing('wizard')" title="Marketing">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>
-            Marketing
-          </button>
-          <button type="button" class="launch-pill" onclick="launchDonna()" title="Operations · Donna">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Operations
-          </button>
-          <button type="button" class="launch-pill" onclick="launchFinance()" title="Finance · Analytics">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-            Finance
           </button>
           <button type="button" class="launch-pill" onclick="goTab('subs','integrations')" title="My Integrations">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -855,6 +1093,22 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
             Subscriptions
           </button>
+          <a class="launch-pill" href="/account.html#support" title="Need Help / Support">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Need Help
+          </a>
+          <a class="launch-pill" href="/account.html#review" title="Leave a Review">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Leave a Review
+          </a>
+          <!-- Tool launches retired here (top tab bar covers them). Kept, not deleted. -->
+          <button type="button" class="launch-pill" onclick="location.href='/bedrock-website-v1.html'" title="My Website" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            My Website
+          </button>
+          <button type="button" class="launch-pill" onclick="launchMarketing('wizard')" title="Marketing" style="display:none">Marketing</button>
+          <button type="button" class="launch-pill" onclick="launchDonna()" title="Operations · Donna" style="display:none">Operations</button>
+          <button type="button" class="launch-pill" onclick="launchFinance()" title="Finance · Analytics" style="display:none">Finance</button>
         </div>
 
         <div class="banner-grid" style="display:grid;grid-template-columns:1.2fr 1fr;gap:1rem;margin-bottom:1rem">
@@ -2314,6 +2568,56 @@ function setExtraField(field, val) {
   else el.value = (val == null ? '' : val);
 }
 
+// Step 8: Populate TOOL_SUBSCRIBED from DB-verified subscription rows.
+// Per spec: never flip a tool to "owned" client-side — always read from DB.
+function applyToolSubsFromDB(subs) {
+  if (!Array.isArray(subs)) return;
+  var hasActiveTool = function(toolKeys) {
+    return subs.some(function(s){
+      return (s.status === 'active' || s.status === 'past_due')
+          && toolKeys.indexOf(s.tool) !== -1;
+    });
+  };
+  try {
+    // 'finance_operations' is the current bundled SKU — unlocks both surfaces.
+    // 'operations' / 'finance' kept as accepted tool keys for the future split.
+    TOOL_SUBSCRIBED.donna   = hasActiveTool(['finance_operations','operations']);
+    TOOL_SUBSCRIBED.finance = hasActiveTool(['finance_operations','finance']);
+    TOOL_SUBSCRIBED.marketing = hasActiveTool(['marketing']);
+    TOOL_SUBSCRIBED.website   = hasActiveTool(['website']);
+  } catch(_) {}
+}
+
+// Step 9: Paint per-tool status dots on top tab bar.
+// Green = owned (verified subscription row). Amber = preview (account exists, in cart). No red.
+window.paintToolDots = function() {
+  var cart = {};
+  try { cart = JSON.parse(localStorage.getItem(CART_KEY) || '{}') || {}; } catch(_) {}
+  // Tool key (UI) → owned bool, → cart key for preview check.
+  var TOOL = {
+    operations: { owned: !!TOOL_SUBSCRIBED.donna,     cartKey: 'cfo' },
+    finance:    { owned: !!TOOL_SUBSCRIBED.finance,   cartKey: 'cfo' },
+    marketing:  { owned: !!TOOL_SUBSCRIBED.marketing, cartKey: 'marketing' },
+    website:    { owned: !!TOOL_SUBSCRIBED.website,   cartKey: 'website' },
+  };
+  document.querySelectorAll('[data-tool-dot]').forEach(function(dot){
+    var key = dot.getAttribute('data-tool-dot');
+    var t = TOOL[key]; if (!t) return;
+    dot.classList.remove('owned','preview');
+    if (t.owned) {
+      dot.classList.add('owned');
+      dot.setAttribute('title', 'Owned · live for your business');
+    } else if (cart[t.cartKey]) {
+      dot.classList.add('preview');
+      dot.setAttribute('title', 'In preview · purchase to make it yours');
+    } else {
+      dot.removeAttribute('title');
+    }
+  });
+};
+document.addEventListener('DOMContentLoaded', function(){ if (window.paintToolDots) window.paintToolDots(); });
+window.addEventListener('storage', function(e){ if (e.key === CART_KEY && window.paintToolDots) window.paintToolDots(); });
+
 function loadProfile() {
   if (!currentSession) return;
   if (DEMO) {
@@ -2331,6 +2635,9 @@ function loadProfile() {
       if (!data) return;
       PROFILE = data.profile || null; PROFILE_DRAFT = data.draft || null;
       if (isAdminProfile(PROFILE)) applyAdminUnlock();
+      applyToolSubsFromDB(data.subscriptions || []);
+      if (typeof window.paintToolDots === 'function') window.paintToolDots();
+      if (typeof window.renderStep10Dashboard === 'function') window.renderStep10Dashboard();
       var source = PROFILE || PROFILE_DRAFT || {};
       Object.keys(STAGE_TOP_FIELDS).forEach(function(stage){ STAGE_TOP_FIELDS[stage].forEach(function(f){ setTopField(f, source[f]); }); });
       var extra = (source.extra || {}) || {};

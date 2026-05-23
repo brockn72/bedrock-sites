@@ -104,6 +104,34 @@ exports.handler = async (event) => {
     }
     // If account creation fails (e.g. email already exists), we continue anyway
     // so the claim and payment still go through. Brock can manually link accounts if needed.
+
+    // Seed the shared business profile at signup so every tool reads/writes the same row.
+    // Upserts on user_id — safe if a profile already exists from a prior visit.
+    if (userId) {
+      const profilePayload = {
+        user_id:        userId,
+        email,
+        business_name:  businessName,
+        contact_name:   contactName || null,
+      };
+      if (phone)         profilePayload.phone = phone;
+      if (trade)         profilePayload.trade = trade;
+      if (city)          profilePayload.city  = city;
+      if (Array.isArray(serviceAreas) && serviceAreas.length) profilePayload.service_areas = serviceAreas;
+      const profRes = await fetch(`${supabaseUrl}/rest/v1/profiles?on_conflict=user_id`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          apikey: supabaseKey,
+          Authorization: `Bearer ${supabaseKey}`,
+          Prefer: 'resolution=merge-duplicates,return=minimal',
+        },
+        body: JSON.stringify(profilePayload),
+      });
+      if (!profRes.ok) {
+        console.error(`[capture-lead] Profile upsert failed: ${profRes.status} — ${await profRes.text()}`);
+      }
+    }
   }
 
   // Save to Supabase

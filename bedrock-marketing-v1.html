@@ -3,21 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bedrock Marketing — Make marketing materials in minutes</title>
-<meta name="description" content="Bedrock Marketing — flyers, social posts, business cards, and yard signs for contractors. Build with your Brand Kit, download in seconds.">
+<title>Bedrock Marketing — Brand &amp; Marketing Materials</title>
+<meta name="description" content="Turn out flyers, posts, and signs that look agency-made in minutes — building a brand customers remember, without the agency bill.">
 <meta name="robots" content="noindex, nofollow">
 <link rel="canonical" href="https://bedrock-sites.com/bedrock-marketing-v1.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Bedrock Digital">
-<meta property="og:title" content="Bedrock Marketing — Make marketing materials in minutes">
-<meta property="og:description" content="Flyers, posts, signs, and cards built from your Brand Kit. Download and share in seconds.">
+<meta property="og:title" content="Bedrock Marketing — Brand &amp; Marketing Materials">
+<meta property="og:description" content="Flyers, posts, and signs that look agency-made in minutes. Built from your Brand Kit.">
 <meta property="og:url" content="https://bedrock-sites.com/bedrock-marketing-v1.html">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Bedrock Marketing">
-<meta name="twitter:description" content="Marketing materials for contractors — built from your Brand Kit.">
+<meta name="twitter:description" content="Flyers, posts, and signs that look agency-made — built from your Brand Kit.">
 <meta property="og:image" content="https://bedrock-sites.com/og-image.svg">
 <meta name="twitter:image" content="https://bedrock-sites.com/og-image.svg">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='8' fill='%230D1B2E'/%3E%3Crect x='12' y='16' width='28' height='6' rx='2' fill='%23C9922A'/%3E%3Crect x='12' y='26' width='22' height='6' rx='2' fill='%23A8711A'/%3E%3Crect x='12' y='36' width='32' height='6' rx='2' fill='%232E5A8E'/%3E%3Crect x='12' y='46' width='24' height='6' rx='2' fill='%234A7DB5'/%3E%3C/svg%3E">
+<link rel="icon" href="/bedrock-marketing.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/bedrock-marketing.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&family=Bebas+Neue&family=Oswald:wght@600;700&family=Roboto+Slab:wght@600;700&display=swap" rel="stylesheet">
@@ -32,7 +33,15 @@
   --border-light:rgba(13,27,46,0.1);--border-dark:rgba(255,255,255,0.12);
   --muted-light:rgba(255,255,255,0.45);--muted-dark:rgba(13,27,46,0.35);
   --red:#b91c1c;--red-bg:#fef2f2;--green:#3b6d11;--green-bg:#f0f5ea;
+  /* Tool brand tokens — see bedrock-vault/05-SUBBRAND-LOGO-INTEGRATION.md */
+  --brand-gold-light:#F0C46A;--brand-gold-dark:#A8711A;--brand-navy-light:#4A7DB5;--warm-white:#F5E6C8;--tool-accent:#F0C46A;
 }
+/* Per-tool brand lockup (Option A: hard-coded per file) */
+.nav-logo.brand-lockup{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+.brand-icon svg{display:block;width:34px;height:34px;border-radius:8px}
+.brand-wordmark{display:flex;flex-direction:column;line-height:1}
+.brand-name{font-family:'Playfair Display',serif;font-weight:700;font-size:18px;letter-spacing:-.02em;color:var(--warm-white)}
+.brand-tool{font-size:9px;letter-spacing:.2em;font-weight:500;text-transform:uppercase;margin-top:3px;color:var(--tool-accent)}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--navy-deep);min-height:100vh;display:flex;flex-direction:column;line-height:1.5}
 /* Preview-Mode banner — sits above the nav for non-subscribers */
@@ -367,24 +376,33 @@ footer a:hover{text-decoration:underline}
 <!-- Preview-Mode banner (hidden by default; shown via JS for non-subscribers) -->
 <div id="previewBanner" class="preview-banner" role="banner">
   <span>You're in Preview Mode — exploring <strong>Bedrock Marketing</strong>. To use this tool with your real data, add it to your plan.</span>
-  <a class="preview-cta" href="/portal.html#subs">Add to My Plan →</a>
-  <button class="preview-x" type="button" onclick="dismissPreviewBanner()" aria-label="Dismiss">×</button>
+  <a class="preview-cta" href="/portal.html#subs">Purchase &amp; make this yours →</a>
+  <!-- Non-dismissible per spec — preview mode persists until purchase. -->
 </div>
 
 <nav class="top">
-  <a href="/portal.html" class="nav-logo">
-    <div class="nav-strata"><span></span><span></span><span></span><span></span></div>
-    <div class="nav-wm">
-      <span class="wordmark">Bedrock</span>
-      <span class="sub">Digital</span>
-    </div>
-    <span class="nav-product">Marketing</span>
+  <a href="/portal.html" class="nav-logo brand-lockup">
+    <span class="brand-icon">
+      <svg viewBox="0 0 68 68" role="img" aria-label="Bedrock Marketing">
+        <rect width="68" height="68" rx="14" fill="#0D1B2E"/>
+        <g fill="#F0C46A">
+          <rect x="7" y="9" width="10" height="51"/>
+          <rect x="51" y="9" width="10" height="51"/>
+          <polygon points="17.00,7.63 34.00,36.22 34.00,55.78 17.00,27.19"/>
+          <polygon points="34.00,36.22 51.00,7.63 51.00,27.19 34.00,55.78"/>
+        </g>
+      </svg>
+    </span>
+    <span class="brand-wordmark">
+      <span class="brand-name">Bedrock</span>
+      <span class="brand-tool">Marketing</span>
+    </span>
   </a>
   <div class="nav-right">
     <style>
       .tnav-link{font-family:'DM Sans',sans-serif;font-size:0.68rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;padding:0.5rem 0.75rem;border-radius:6px;display:inline-flex;align-items:center;gap:0.4rem;transition:color .15s,background .15s;cursor:pointer}
       .tnav-link:hover{color:#fff;background:rgba(255,255,255,0.07)}
-      .tnav-link.tnav-active{color:#C9922A}
+      .tnav-link.tnav-active{color:var(--tool-accent)}
       .tnav-link.tnav-home{color:#C9922A;border:1px solid rgba(201,146,42,0.55)}
       .tnav-link.tnav-home:hover{background:rgba(201,146,42,0.12);color:#C9922A}
       .tnav-link.tnav-soon{color:rgba(255,255,255,0.4)}
@@ -458,17 +476,17 @@ footer a:hover{text-decoration:underline}
     <aside class="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-label">Make</div>
-        <button class="sidebar-link active" id="nav-wizard" onclick="navTo('wizard')">
-          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l3-3 4 4 5-5 6 6"/><path d="M14 4h7v7"/></svg>
-          <span>Start here</span>
-        </button>
-        <button class="sidebar-link" id="nav-brand" onclick="navTo('brand')">
+        <button class="sidebar-link active" id="nav-brand" onclick="navTo('brand')">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-          <span>Brand Kit</span>
+          <span>Step 1 · Brand Kit</span>
         </button>
         <button class="sidebar-link" id="nav-build" onclick="navTo('build')">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          <span>Build Materials</span>
+          <span>Step 2 · Build Materials</span>
+        </button>
+        <button class="sidebar-link" id="nav-wizard" onclick="navTo('wizard')">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l3-3 4 4 5-5 6 6"/><path d="M14 4h7v7"/></svg>
+          <span>Guided Start</span>
         </button>
       </div>
 
@@ -509,9 +527,9 @@ footer a:hover{text-decoration:underline}
       <!-- ────────────────────────────────────────────────────── -->
       <div class="view" id="view-wizard">
         <div class="section-head">
-          <div class="eyebrow light">Start here</div>
+          <div class="eyebrow light">Guided start &mdash; optional shortcut</div>
           <h1 class="section-h">What are we <em>making today?</em></h1>
-          <p class="section-sub">Pick a goal &mdash; we'll walk you through the rest. You can also jump straight to the Brand Kit or Build Materials from the sidebar anytime.</p>
+          <p class="section-sub">Skip ahead by picking a goal &mdash; we'll walk you through it. If you haven't built your Brand Kit yet, do that first &mdash; every piece pulls from it. Sidebar: <strong>Step 1 · Brand Kit</strong> → <strong>Step 2 · Build Materials</strong>.</p>
         </div>
         <div class="section-content">
           <div class="wiz-wrap">
@@ -553,6 +571,96 @@ footer a:hover{text-decoration:underline}
           <p class="section-sub">Fill this out once. Every flyer, post, sign, business card, and email you make from here on will pull from this. Editable any time.</p>
         </div>
         <div class="section-content">
+
+          <!-- Brand-kit live preview — matches bedrock-vault/bedrock-tool-brand-kits-v1.html template -->
+          <style>
+            .bkp-wrap{margin-bottom:1.5rem}
+            .bkp-cap{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem}
+            .bkp-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,0.95fr);gap:1rem;align-items:stretch}
+            @media(max-width:720px){.bkp-grid{grid-template-columns:1fr}}
+            .bkp-card{background:#fff;border-radius:14px;overflow:hidden;border:.5px solid var(--border-mid,rgba(13,27,46,0.16));display:flex;flex-direction:column;box-shadow:0 1px 0 rgba(13,27,46,0.04)}
+            .bkp-accent{height:5px}
+            .bkp-body{padding:1.25rem 1.4rem;flex:1;display:flex;flex-direction:column;gap:0.85rem}
+            .bkp-id{display:flex;align-items:center;gap:0.85rem}
+            .bkp-mark{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-weight:700;color:#fff;font-size:1.4rem;letter-spacing:-0.02em;flex-shrink:0;overflow:hidden;background-size:cover;background-position:center}
+            .bkp-name{display:flex;flex-direction:column;line-height:1;min-width:0}
+            .bkp-name b{font-family:'Playfair Display',serif;font-weight:700;font-size:1.15rem;color:var(--navy-deep);letter-spacing:-0.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+            .bkp-name small{font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;margin-top:5px}
+            .bkp-tag{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:1.05rem;color:var(--navy-deep);line-height:1.35}
+            .bkp-tag .bar{color:rgba(13,27,46,0.25);margin:0 4px;font-weight:400}
+            .bkp-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+            .bkp-chip{display:inline-flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;color:var(--slate);border:.5px solid var(--border-mid,rgba(13,27,46,0.16));border-radius:999px;padding:5px 9px;background:#fff}
+            .bkp-chip i{display:inline-block;width:10px;height:10px;border-radius:50%}
+            .bkp-flyer{border-radius:14px;color:#fff;padding:1.4rem;display:flex;flex-direction:column;justify-content:space-between;min-height:180px}
+            .bkp-flyer .pf-e{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase}
+            .bkp-flyer .pf-h{font-weight:700;font-size:1.5rem;line-height:1.15;color:#fff;margin:0.5rem 0 0.85rem}
+            .bkp-flyer .pf-c{display:inline-block;align-self:flex-start;font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:0.5rem 0.85rem;border-radius:4px}
+          </style>
+          <div class="bkp-wrap">
+            <div class="bkp-cap">Live preview &mdash; how your Brand Kit shows up everywhere</div>
+            <div class="bkp-grid">
+              <div class="bkp-card">
+                <div class="bkp-accent" id="bkpAccent"></div>
+                <div class="bkp-body">
+                  <div class="bkp-id">
+                    <span class="bkp-mark" id="bkpMark">Aa</span>
+                    <span class="bkp-name"><b id="bkpName">Your Business</b><small id="bkpSub">Add your trade &amp; city</small></span>
+                  </div>
+                  <div class="bkp-tag" id="bkpTag">Your tagline shows up here.</div>
+                  <div class="bkp-chips" id="bkpChips"></div>
+                </div>
+              </div>
+              <div class="bkp-flyer" id="bkpFlyer">
+                <div class="pf-e" id="bkpFlyerE">Your Business</div>
+                <div class="pf-h" id="bkpFlyerH">Your tagline shows up here.</div>
+                <div class="pf-c" id="bkpFlyerC">Call Today →</div>
+              </div>
+            </div>
+          </div>
+          <script>
+          (function(){
+            function txt(id){var el=document.getElementById(id);return el?(el.value||el.textContent||'').trim():''}
+            function setText(id,v){var el=document.getElementById(id);if(el)el.textContent=v}
+            function fontFamilyForStyle(s){return ({modern:'\'DM Sans\',sans-serif',classic:'\'Cormorant Garamond\',serif',bold:'\'Bebas Neue\',sans-serif',rugged:'\'Oswald\',sans-serif'})[s]||'\'Cormorant Garamond\',serif'}
+            window.renderBkPreview=function(){
+              try{
+                var name=txt('bk_business_name')||'Your Business';
+                var tagline=txt('bk_tagline')||'Your tagline shows up here.';
+                var trade=txt('bk_trade');
+                var city=txt('bk_city');
+                var primary=txt('bk_color_primary')||'#1B3557';
+                var accent=txt('bk_color_accent')||'#C9922A';
+                var secondary=txt('bk_color_secondary')||'#FFFFFF';
+                var fontStyle=(window.STATE&&STATE.brandKit&&STATE.brandKit.font_style)||'classic';
+                var ff=fontFamilyForStyle(fontStyle);
+                setText('bkpName',name);
+                setText('bkpSub',(trade||'Add your trade')+(city?' · '+city:''));
+                setText('bkpTag',tagline);
+                var accentEl=document.getElementById('bkpAccent');if(accentEl)accentEl.style.background=primary;
+                var markEl=document.getElementById('bkpMark');
+                if(markEl){
+                  var logo=(window.STATE&&STATE.brandKit&&(STATE.brandKit.logo_base64||STATE.brandKit.logo_url))||'';
+                  if(logo){markEl.style.backgroundImage='url('+JSON.stringify(logo)+')';markEl.textContent=''}
+                  else{markEl.style.backgroundImage='';markEl.style.background=primary;markEl.textContent=(name[0]||'A').toUpperCase()}
+                }
+                var subEl=document.getElementById('bkpSub');if(subEl)subEl.style.color=primary;
+                var tagEl=document.getElementById('bkpTag');if(tagEl)tagEl.style.fontFamily=ff;
+                var chips=document.getElementById('bkpChips');
+                if(chips){chips.innerHTML='<span class="bkp-chip"><i style="background:'+primary+'"></i>Primary &middot; '+primary+'</span>'
+                  +'<span class="bkp-chip"><i style="background:'+accent+'"></i>Accent &middot; '+accent+'</span>'
+                  +'<span class="bkp-chip"><i style="background:'+secondary+';border:.5px solid rgba(13,27,46,0.2)"></i>Secondary &middot; '+secondary+'</span>'}
+                var flyer=document.getElementById('bkpFlyer');if(flyer)flyer.style.background=primary;
+                setText('bkpFlyerE',name.toUpperCase());
+                setText('bkpFlyerH',tagline);
+                var flyerE=document.getElementById('bkpFlyerE');if(flyerE)flyerE.style.color=accent;
+                var flyerH=document.getElementById('bkpFlyerH');if(flyerH)flyerH.style.fontFamily=ff;
+                var flyerC=document.getElementById('bkpFlyerC');if(flyerC){flyerC.style.background=accent;flyerC.style.color=primary}
+              }catch(_){/* preview is non-critical — never throw */}
+            };
+            document.addEventListener('input',function(e){if(e.target&&typeof e.target.id==='string'&&e.target.id.indexOf('bk_')===0)window.renderBkPreview()});
+            setTimeout(window.renderBkPreview,150);
+          })();
+          </script>
 
           <div id="kitStatus"></div>
 
@@ -1020,7 +1128,7 @@ async function startWithEmail(e) {
   updateBrandSummary();
   paintMatGrid();
   // Default landing: if brand kit exists, take them to wizard; if not, take them to brand kit
-  navTo(STATE.brandKitComplete ? 'wizard' : 'brand');
+  navTo(STATE.brandKitComplete ? 'build' : 'brand');
 }
 
 function renderKitStatus(msg, kind) {
@@ -1143,6 +1251,7 @@ function updateBrandSummary() {
   var n = document.getElementById('ssName');   if (n) n.textContent  = STATE.brandKit.business_name || (STATE.email || 'Your Business');
   var f = document.getElementById('ssMeterFill'); if (f) f.style.width = pct + '%';
   var p = document.getElementById('ssPct');    if (p) p.textContent = pct + '%';
+  if (typeof window.renderBkPreview === 'function') window.renderBkPreview();
 }
 
 async function saveBrandKit() {
@@ -1635,16 +1744,12 @@ function filenameFor(ext) {
 // PREVIEW MODE BANNER — shown above the nav when no Marketing subscription.
 // Marketing-specific because it doesn't load BedrockProfile like Donna/Finance.
 // ─────────────────────────────────────────────────────────────────────────────
-function dismissPreviewBanner(){
-  try { sessionStorage.setItem('bedrock_preview_dismissed_marketing','1'); } catch(e){}
-  var b=document.getElementById('previewBanner'); if(b) b.classList.remove('show');
-}
+// Non-dismissible per Step 7 spec — kept as no-op so leftover code paths don't error.
+function dismissPreviewBanner(){ /* non-dismissible */ }
 function checkPreviewBanner(){
-  var dismissed = false;
-  try { dismissed = sessionStorage.getItem('bedrock_preview_dismissed_marketing') === '1'; } catch(e){}
   if(!STATE.authToken){
     // Not signed in via portal — definitely in preview mode.
-    if(!dismissed){ var b1=document.getElementById('previewBanner'); if(b1) b1.classList.add('show'); }
+    var b1=document.getElementById('previewBanner'); if(b1) b1.classList.add('show');
     return;
   }
   // Signed in — quick subscription check, and pick up profile completion for the < 50% nudge.
@@ -1656,6 +1761,9 @@ function checkPreviewBanner(){
         if(d.profile && d.profile.is_admin) subbed = true;
         var subs = (d.subscriptions||[]);
         if(subs.some(function(s){ return (s.status==='active'||s.status==='past_due') && s.tool==='marketing'; })) subbed = true;
+        // Step 8: populate IS_SUBSCRIBED globally so other code paths (TOOL_SUBSCRIBED checks)
+        // can read DB-verified ownership instead of the always-false default.
+        window.IS_SUBSCRIBED = subbed;
         if(typeof d.completion_pct === 'number') showProfileNudge(d.completion_pct);
       }
       if(!subbed && !dismissed){
@@ -1770,7 +1878,7 @@ window.AUTH_MODAL_ONSUCCESS = function(d){
       selectTone(STATE.brandKit.tone, true);
       updateBrandSummary();
       paintMatGrid();
-      navTo(STATE.brandKitComplete ? 'wizard' : 'brand');
+      navTo(STATE.brandKitComplete ? 'build' : 'brand');
     });
 };
 </script>
