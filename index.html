@@ -3420,7 +3420,108 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   </div>
 </section>
 
+<!-- A4: Simple, flexible pricing — homepage version (cream band per alternating pattern) with CTA. -->
+<section id="bd-pricing" aria-labelledby="bd-pricing-h">
+  <style>
+    /* A5: bd-pricing uses dark navy so it alternates cleanly with bd-showcase2 (light) before it. */
+    #bd-pricing{background:#0D1B2E;padding:5rem 5% 4.5rem;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06)}
+    #bd-pricing .bdp-inner{max-width:1020px;margin:0 auto}
+    #bd-pricing .bdp-head{text-align:center;max-width:640px;margin:0 auto 2.5rem}
+    #bd-pricing .bdp-eye{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:#C9922A;margin-bottom:0.85rem}
+    #bd-pricing h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,4vw,2.85rem);font-weight:700;color:#F5E6C8;line-height:1.15;margin-bottom:0.7rem;letter-spacing:-0.01em}
+    #bd-pricing h2 em{font-style:italic;color:#C9922A}
+    #bd-pricing .bdp-sub{font-family:'DM Sans',sans-serif;font-size:1rem;color:rgba(255,255,255,0.72);line-height:1.7}
+    #bd-pricing .bdp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.9rem;margin-bottom:1rem}
+    @media(max-width:880px){#bd-pricing .bdp-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:520px){#bd-pricing .bdp-grid{grid-template-columns:1fr}}
+    #bd-pricing .bdp-card{background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.12);border-top:3px solid var(--accent);border-radius:10px;padding:1.4rem 1.25rem;display:flex;flex-direction:column;gap:0.5rem;transition:transform .15s,box-shadow .15s}
+    #bd-pricing .bdp-card:hover{transform:translateY(-2px);box-shadow:0 8px 22px rgba(0,0,0,0.4)}
+    #bd-pricing .bdp-card .bdp-name{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#C9922A}
+    #bd-pricing .bdp-card .bdp-price{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:#fff;line-height:1}
+    #bd-pricing .bdp-card .bdp-price span{font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:400;color:rgba(255,255,255,0.55);margin-left:2px}
+    #bd-pricing .bdp-card .bdp-note{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.7);line-height:1.55}
+    #bd-pricing .bdp-bundle{display:grid;grid-template-columns:1fr 1.2fr;gap:0.9rem;margin-bottom:1.25rem}
+    @media(max-width:760px){#bd-pricing .bdp-bundle{grid-template-columns:1fr}}
+    #bd-pricing .bdp-bundle .bdp-card.featured{border-top-color:#C9922A;background:linear-gradient(180deg,rgba(201,146,42,0.18),rgba(255,255,255,0.02))}
+    #bd-pricing .bdp-bundle .bdp-card.featured .bdp-savings{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#9be08a;background:rgba(59,109,17,0.25);padding:0.25rem 0.5rem;border-radius:4px;align-self:flex-start;margin-top:0.3rem}
+    #bd-pricing .bdp-fine{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.55);text-align:center;margin:1rem auto 1.5rem;max-width:560px;line-height:1.6}
+    #bd-pricing .bdp-fine strong{color:#C9922A;font-weight:600}
+    #bd-pricing .bdp-cta-row{text-align:center;display:flex;gap:0.65rem;justify-content:center;flex-wrap:wrap}
+    #bd-pricing .bdp-cta{font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;background:#C9922A;color:#fff;border:none;padding:0.95rem 1.85rem;border-radius:5px;cursor:pointer;text-decoration:none;display:inline-block;min-width:240px;text-align:center}
+    #bd-pricing .bdp-cta:hover{background:#b8831f}
+    #bd-pricing .bdp-cta.outline{background:transparent;border:1.5px solid rgba(255,255,255,0.35);color:#fff;min-width:200px}
+    #bd-pricing .bdp-cta.outline:hover{background:rgba(255,255,255,0.08);border-color:#C9922A}
+  </style>
+  <div class="bdp-inner">
+    <div class="bdp-head">
+      <div class="bdp-eye">Simple, flexible pricing</div>
+      <h2 id="bd-pricing-h">Pick what you want. <em>Bundle and save.</em></h2>
+      <p class="bdp-sub">It's a subscription &mdash; pick the tools you want, add more anytime. No long contracts, cancel whenever. You only pay when you're ready to launch.</p>
+    </div>
+    <div class="bdp-grid">
+      <div class="bdp-card">
+        <span class="bdp-name">Website</span>
+        <div class="bdp-price">$20<span>/mo</span></div>
+        <div class="bdp-note">Professional site for your trade. One-time $200 build, then $20/mo for hosting, edits, SEO/GEO Optimizer.</div>
+      </div>
+      <div class="bdp-card">
+        <span class="bdp-name">Marketing</span>
+        <div class="bdp-price">$30<span>/mo</span></div>
+        <div class="bdp-note">Brand Kit + unlimited flyers, social posts, signs, business cards &mdash; all on-brand.</div>
+      </div>
+      <div class="bdp-card">
+        <span class="bdp-name">Operations</span>
+        <div class="bdp-price">$35<span>/mo</span></div>
+        <div class="bdp-note">Donna drafts your estimates, invoices, receipts, and schedule. QuickBooks sync.</div>
+      </div>
+      <div class="bdp-card">
+        <span class="bdp-name">Finance</span>
+        <div class="bdp-price">$35<span>/mo</span></div>
+        <div class="bdp-note">Plain-English dashboards: revenue, margin, job profitability, outstanding invoices.</div>
+      </div>
+    </div>
+    <div class="bdp-bundle">
+      <div class="bdp-card">
+        <span class="bdp-name">Sites + Marketing Bundle</span>
+        <div class="bdp-price">$40<span>/mo</span></div>
+        <div class="bdp-note">Website and Marketing together &mdash; save versus buying each on its own.</div>
+      </div>
+      <div class="bdp-card featured">
+        <span class="bdp-name">Full Ecosystem &middot; Best Value</span>
+        <div class="bdp-price">$100<span>/mo</span></div>
+        <div class="bdp-note">Every Bedrock tool &mdash; Sites, Marketing, Operations, and Finance. The $200 site build fee is waived.</div>
+        <span class="bdp-savings">Save $20/mo vs. separate</span>
+      </div>
+    </div>
+    <p class="bdp-fine">Pricing is confirmed in your portal before any charge. <strong>You only pay when you're ready.</strong></p>
+    <div class="bdp-cta-row">
+      <a class="bdp-cta" href="#" onclick="event.preventDefault();openAuthModal('create')">Create an Account &mdash; See Full Plan Details &rarr;</a>
+      <a class="bdp-cta outline" href="#tools" onclick="showPage('tools',event)">Compare all tools</a>
+    </div>
+  </div>
+</section>
+
 <!-- FOOTER moved out of #home — now a global footer after </main> so it shows on every page -->
+
+<!-- A1: homepage section order — runs after all sections are parsed but before first paint.
+     Uses appendChild to physically reorder #home children in the desired sequence:
+     Hero -> Welcome -> Mobile-link -> Power of Connected Tools -> Here's What We Do ->
+     Why Bedrock (bd-products) -> Our Work (bd-showcase2) -> Pricing (bd-pricing) ->
+     Get Started (bd-cta) -> Proof (bd-proof). Hidden sections are unaffected. -->
+<script>
+(function(){
+  var home = document.getElementById('home'); if(!home) return;
+  var ORDER = [
+    'bd-hero','bd-welcome','bd-mobile-link','bd-stats',
+    'bd-connected','bd-whatwedo','bd-products',
+    'bd-showcase2','bd-pricing',
+    'bd-cta','bd-proof',
+    // hidden / legacy — keep them at the end so they don't clutter the visible flow
+    'bd-truck','bd-what','bd-showcase','bd-optimizer','bd-faq'
+  ];
+  ORDER.forEach(function(id){ var el = document.getElementById(id); if(el && el.parentNode === home) home.appendChild(el); });
+})();
+</script>
 
 </div><!-- end #home -->
 
@@ -4063,10 +4164,15 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         </div>
       </article>
     </div>
+    <!-- A3: "Ready to see yourself" CTA merged into this showcase. Single prominent button below the live client. -->
+    <div style="text-align:center;margin-top:2.5rem;padding:1.75rem 1.5rem 0.5rem;border-top:1px solid rgba(13,27,46,0.06)">
+      <p style="font-family:'DM Sans',sans-serif;font-size:0.86rem;color:var(--text-muted);max-width:520px;margin:0 auto 1.1rem;line-height:1.65">Want to see what your site would look like? Build the full preview around your business in 10&ndash;15 minutes &mdash; no payment, no commitment.</p>
+      <a href="/sites.html?embed=builder" class="btn-gold" style="text-decoration:none;display:inline-block;min-width:240px;text-align:center" role="button">Build My Free Preview &rarr;</a>
+    </div>
   </section>
 
-  <!-- READY TO SEE YOURS — moved up under Live Clients, navy treatment -->
-  <section class="section" style="background:#0D1B2E;text-align:center;padding:3.5rem 5%">
+  <!-- A3: standalone "Ready to see yours?" section retired May 2026 — CTA merged into the website showcase above. Kept, not deleted. -->
+  <section class="section" style="display:none;background:#0D1B2E;text-align:center;padding:3.5rem 5%">
     <p class="tag" style="color:#C9922A">Ready to see yours?</p>
     <h2 style="font-family:'Playfair Display',serif;font-size:clamp(1.7rem,3vw,2.4rem);font-weight:700;color:#fff;margin:0.5rem 0 0">Build your free preview in 10&ndash;15 minutes.</h2>
     <p style="font-family:'DM Sans',sans-serif;font-size:0.84rem;font-weight:300;color:rgba(255,255,255,0.72);margin:1rem auto 1.75rem;max-width:540px;line-height:1.7">No payment, no commitment. We build the full site around your business so you can see what it looks like before you spend a dime.</p>
@@ -6317,13 +6423,16 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 </main>
 
 <!-- GLOBAL FOOTER — outside all .page divs so it shows on the bottom of every page -->
+<!-- A2: footer rebuilt as a horizontal 3-column rectangle per spec.
+     Left: logo + tagline + contact. Middle: Products (Sites/Marketing/Ops/Finance/SEO).
+     Right: Company (How It Works/About/Our Work/Pricing/Sign In). Divider above + copyright below. -->
 <footer id="bd-footer">
   <div class="bd-footer-inner">
     <div class="bd-footer-top">
       <div class="bd-footer-brand">
         <div class="f-logo">Bedrock Digital</div>
         <div class="f-tagline">Spend more time on the job. Less time on everything else.</div>
-        <p>Websites, SEO, business tools &mdash; built for contractors, plumbers, electricians, and trade businesses. Fair pricing. No agency runaround.</p>
+        <p>Built for the people who build everything else &mdash; contractors, plumbers, electricians, landscapers, and every trade in between.</p>
         <div style="margin-top:0.9rem;display:flex;flex-direction:column;gap:0.3rem">
           <a href="tel:+16124757477" style="font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.6);text-decoration:none">(612) 475-7477</a>
           <a href="mailto:support@bedrock-sites.com" style="font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.6);text-decoration:none">support@bedrock-sites.com</a>
@@ -6333,11 +6442,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       <div class="bd-footer-links">
         <div class="f-col-title">Products</div>
         <ul>
-          <li><a href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
-          <li><a href="#optimizer" onclick="showPage('optimizer',event)">Bedrock Optimizer</a></li>
-          <li><a href="mailto:support@bedrock-sites.com?subject=SEO%20Waitlist">Bedrock SEO</a></li>
-          <li><a href="mailto:support@bedrock-sites.com?subject=Operations%20Waitlist">Bedrock Operations</a></li>
-          <li><a href="mailto:support@bedrock-sites.com?subject=Finance%20Waitlist">Bedrock Finance</a></li>
+          <li><a href="/bedrock-website-v1.html">Bedrock Sites</a></li>
+          <li><a href="/bedrock-marketing-v1.html">Bedrock Marketing</a></li>
+          <li><a href="/bedrock-donna-v1.html">Bedrock Operations</a></li>
+          <li><a href="/bedrock-finance-v1.html">Bedrock Finance</a></li>
+          <li><a href="#optimizer" onclick="showPage('optimizer',event)">Bedrock SEO</a></li>
         </ul>
       </div>
       <div class="bd-footer-links">
@@ -6346,8 +6455,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
           <li><a href="#howitworks" onclick="showPage('howitworks',event)">How It Works</a></li>
           <li><a href="#about" onclick="showPage('about',event)">About Us</a></li>
           <li><a href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
+          <li><a href="#bd-pricing" onclick="event.preventDefault();var p=document.getElementById('bd-pricing');if(p)p.scrollIntoView({behavior:'smooth'});">Pricing</a></li>
           <li><a href="#" onclick="event.preventDefault();openAuthModal('signin')">Sign In</a></li>
-          <li><a href="mailto:support@bedrock-sites.com">Contact</a></li>
         </ul>
       </div>
     </div>
