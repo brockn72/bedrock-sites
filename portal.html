@@ -384,6 +384,48 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
   .nav-tabs{order:99;width:100%;border-top:1px solid rgba(255,255,255,0.08);padding:0.35rem 0;margin-top:0.5rem;justify-content:flex-start;overflow-x:auto}
   .nav-tab-btn{padding:0.5rem 0.65rem;font-size:0.56rem}
 }
+/* M3: at mobile widths, all 5 tool/account tabs must fit on a 375px screen with no horizontal scroll.
+   Shrink chrome, hide carets, keep sub-brand marks (smaller). Dashboard stays so the user can get home. */
+@media(max-width:760px){
+  .nav-tabs{justify-content:space-between;flex-wrap:nowrap;overflow-x:visible;padding:0.35rem 4px;gap:1px}
+  .nav-tab-btn{padding:0.45rem 0.5rem;font-size:0.54rem;gap:3px;letter-spacing:0.06em}
+  .nav-tab-caret{display:none}
+  .nav-tab-mark{width:13px;height:13px}
+  .nav-tab-dot{width:6px;height:6px;margin-left:3px}
+  .nav-tab-group[data-top="website"]>.nav-tab-btn,
+  .nav-tab-group[data-top="marketing"]>.nav-tab-btn,
+  .nav-tab-group[data-top="operations"]>.nav-tab-btn,
+  .nav-tab-group[data-top="finance"]>.nav-tab-btn{margin:0 1px;padding:0.4rem 0.45rem}
+}
+@media(max-width:480px){
+  .nav-tab-btn{padding:0.4rem 0.4rem;font-size:0.5rem;letter-spacing:0.04em;gap:2px}
+  .nav-tab-mark{width:11px;height:11px}
+  .nav-tab-group[data-top="website"]>.nav-tab-btn,
+  .nav-tab-group[data-top="marketing"]>.nav-tab-btn,
+  .nav-tab-group[data-top="operations"]>.nav-tab-btn,
+  .nav-tab-group[data-top="finance"]>.nav-tab-btn{margin:0;padding:0.38rem 0.4rem}
+  /* Abbreviate tab labels via overlay text — keeps full HTML label for screen readers but shows short form visually. */
+  .nav-tab-group[data-top="operations"] .nav-tab-btn{font-size:0;gap:0;padding-left:0.3rem;padding-right:0.3rem}
+  .nav-tab-group[data-top="operations"] .nav-tab-btn::after{content:'Ops';font-size:0.5rem;font-weight:800;letter-spacing:0.04em;color:inherit;margin-left:3px}
+  .nav-tab-group[data-top="marketing"] .nav-tab-btn{font-size:0;gap:0;padding-left:0.3rem;padding-right:0.3rem}
+  .nav-tab-group[data-top="marketing"] .nav-tab-btn::after{content:'Mktg';font-size:0.5rem;font-weight:800;letter-spacing:0.04em;color:inherit;margin-left:3px}
+  .nav-tab-group[data-top="website"] .nav-tab-btn{font-size:0;gap:0;padding-left:0.3rem;padding-right:0.3rem}
+  .nav-tab-group[data-top="website"] .nav-tab-btn::after{content:'Sites';font-size:0.5rem;font-weight:800;letter-spacing:0.04em;color:inherit;margin-left:3px}
+  /* Marks + dots still need to render — keep them visible by using inline-block sizing the CSS already gives */
+  .nav-tab-group[data-top="operations"] .nav-tab-btn .nav-tab-mark,
+  .nav-tab-group[data-top="marketing"] .nav-tab-btn .nav-tab-mark,
+  .nav-tab-group[data-top="website"] .nav-tab-btn .nav-tab-mark,
+  .nav-tab-group[data-top="operations"] .nav-tab-btn .nav-tab-dot,
+  .nav-tab-group[data-top="marketing"] .nav-tab-btn .nav-tab-dot,
+  .nav-tab-group[data-top="website"] .nav-tab-btn .nav-tab-dot,
+  .nav-tab-group[data-top="finance"] .nav-tab-btn .nav-tab-dot{font-size:0.5rem}
+  /* My Account tab abbreviated */
+  .nav-tab-group[data-top="subs"]>.nav-tab-btn{font-size:0;gap:0;padding-left:0.4rem;padding-right:0.4rem}
+  .nav-tab-group[data-top="subs"]>.nav-tab-btn::after{content:'Account';font-size:0.5rem;font-weight:800;letter-spacing:0.04em;color:inherit}
+  /* Dashboard tab: home icon only — saves a chunk of horizontal space */
+  .nav-tab-group[data-top="dashboard"]>.nav-tab-btn{font-size:0;padding-left:0.45rem;padding-right:0.45rem;min-width:28px}
+  .nav-tab-group[data-top="dashboard"]>.nav-tab-btn::before{content:'⌂';font-size:0.95rem;line-height:1;color:inherit}
+}
 
 /* ── SERVICES CHIPS (services-by-trade picker) ── */
 .svc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
@@ -876,6 +918,33 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
 
       <!-- ════════════ DASHBOARD HUB ════════════ -->
       <div class="portal-pane active" id="pane-dashboard-default">
+
+        <!-- M2: "Welcome to Bedrock / Here's how Bedrock works" — was only visible on first portal load
+             via a one-time modal (localStorage gated), so desktop users who'd dismissed it never saw it
+             again. Now lives in-page on the dashboard, always visible to all users. The modal still fires
+             once for the very first portal visit; this card is the permanent home for the content. -->
+        <style>
+          .wm-inline{background:#fff;border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:10px;padding:1.5rem 1.75rem;margin-bottom:1.25rem}
+          .wm-inline .wmi-eye{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:0.5rem}
+          .wm-inline h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--dark);margin-bottom:0.5rem;line-height:1.2}
+          .wm-inline .wmi-sub{font-family:'DM Sans',sans-serif;font-size:0.86rem;color:var(--text-muted);line-height:1.6;margin-bottom:1.1rem;max-width:640px}
+          .wm-inline .wmi-list{list-style:none;padding:0;margin:0 0 1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:0.55rem}
+          .wm-inline .wmi-list li{display:flex;gap:0.65rem;padding:0.5rem 0.7rem;background:var(--offwhite);border-left:3px solid var(--accent);border-radius:0 5px 5px 0;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--dark);line-height:1.5;align-items:flex-start}
+          .wm-inline .wmi-list li strong{font-weight:600}
+          .wm-inline .wmi-note{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--text-muted);background:var(--offwhite);border-left:3px solid var(--accent);padding:0.6rem 0.85rem;border-radius:0 4px 4px 0;line-height:1.55}
+        </style>
+        <div class="wm-inline">
+          <div class="wmi-eye">Welcome to Bedrock</div>
+          <h2>Here's how Bedrock works.</h2>
+          <div class="wmi-sub">Bedrock Digital is one connected system for your whole business. Four tools that share one profile, so you never enter the same info twice.</div>
+          <ul class="wmi-list">
+            <li><span>👤</span><span><strong>Operations</strong> &mdash; Donna drafts your estimates, invoices, and receipts.</span></li>
+            <li><span>📊</span><span><strong>Finance</strong> &mdash; plain-English dashboards of revenue, margin, and what's owed.</span></li>
+            <li><span>🎨</span><span><strong>Marketing</strong> &mdash; your Brand Kit + flyers, posts, and signs in minutes.</span></li>
+            <li><span>🌐</span><span><strong>Website</strong> &mdash; a high-performance site with SEO/GEO built in.</span></li>
+          </ul>
+          <div class="wmi-note">Click any tab at the top to dive in. Each tool opens in <strong>preview mode</strong> until you purchase &mdash; explore freely, then make it yours when you're ready.</div>
+        </div>
 
         <!-- ════ STEP 10 — DASHBOARD 2026 (next-best-action + tool cards + profile + time saved + recent activity) ════ -->
         <style>

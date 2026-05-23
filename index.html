@@ -1606,6 +1606,27 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   #hp-nav .nav-links{display:none}
   .hp-mobile-toggle{display:flex;flex-direction:column;gap:5px}
   #hp-nav .nav-links.open{display:flex;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:#0D1B2E;padding:1rem 5%;border-bottom:2px solid #C9922A;gap:1rem;z-index:999}
+  /* M1: solid bg on mobile so the fixed nav doesn't bleed into the dark hero behind it.
+     Reduce nav height + logo type so the bar takes minimal space; padding-top on body so
+     the fixed nav stops overlapping the hero content. */
+  #hp-nav{background:#0D1B2E !important;border-bottom-color:#C9922A;padding:0.55rem 4%;box-shadow:0 2px 12px rgba(0,0,0,0.35)}
+  #hp-nav .nav-logo{gap:8px}
+  #hp-nav .nav-logo .wordmark{font-size:1.05rem}
+  #hp-nav .nav-logo .sub{font-size:0.46rem;letter-spacing:0.18em}
+  #hp-nav .nav-logo .logo-strata .s1{width:18px;height:3px}
+  #hp-nav .nav-logo .logo-strata .s2{width:14px;height:3px}
+  #hp-nav .nav-logo .logo-strata .s3{width:22px;height:3px}
+  #hp-nav .nav-logo .logo-strata .s4{width:16px;height:3px}
+  .hp-mobile-toggle{padding:6px;min-width:36px;min-height:36px;display:flex;align-items:center;justify-content:center}
+  .hp-mobile-toggle span{width:22px;height:2px;margin:3px 0}
+  /* Push the hero down so the fixed nav (~52px tall on mobile) doesn't sit on top of the headline. */
+  main{padding-top:54px}
+}
+@media(max-width:380px){
+  #hp-nav .nav-logo .wordmark{font-size:0.95rem}
+  #hp-nav{padding:0.5rem 3.5%}
+  main{padding-top:50px}
+}
   .bd-hero-inner{padding:0 1rem}
   .bd-what-pillars{grid-template-columns:1fr;gap:1.5rem}
   .bd-product-grid{grid-template-columns:1fr}
