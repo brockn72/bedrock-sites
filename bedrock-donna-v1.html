@@ -493,13 +493,17 @@ window.bedrockInPreviewMode = function(toolKey){
         <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span>My Customers</span>
       </button>
+      <button class="d-nav" data-view="current-jobs" onclick="navView('current-jobs')">
+        <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        <span>Current Jobs</span>
+      </button>
+      <button class="d-nav" data-view="jobs" onclick="navView('jobs')">
+        <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        <span>Previous Jobs</span>
+      </button>
       <button class="d-nav" data-view="projects" onclick="navView('projects')">
         <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3"/></svg>
         <span>My Projects</span>
-      </button>
-      <button class="d-nav" data-view="jobs" onclick="navView('jobs')">
-        <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
-        <span>Previous Jobs</span>
       </button>
       <button class="d-nav" data-view="notes" onclick="navView('notes')">
         <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
@@ -557,21 +561,32 @@ window.bedrockInPreviewMode = function(toolKey){
         </div>
         <div class="view-body"><div id="customersBody"></div></div>
       </div>
-      <!-- PROJECTS -->
-      <div class="d-view" id="view-projects">
+      <!-- CURRENT JOBS (B5a — split out active work) -->
+      <div class="d-view" id="view-current-jobs">
         <div class="view-head">
-          <div><h2>My Projects</h2><p>Every project, with its customer, jobs, and status.</p></div>
-          <button class="btn-add" onclick="openForm('project',null)">+ Add Project</button>
+          <div><h2>Current Jobs</h2><p>Active work &mdash; what's on the calendar this week and what's in progress.</p></div>
+          <button class="btn-add" onclick="openForm('job',null)">+ Add Job</button>
         </div>
-        <div class="view-body"><div id="projectsBody"></div></div>
+        <div class="view-body"><div id="currentJobsBody"></div></div>
       </div>
-      <!-- JOBS -->
+      <!-- PREVIOUS JOBS -->
       <div class="d-view" id="view-jobs">
         <div class="view-head">
           <div><h2>Previous Jobs</h2><p>Job history &mdash; what you did and what it brought in.</p></div>
           <button class="btn-add" onclick="openForm('job',null)">+ Add Job</button>
         </div>
         <div class="view-body"><div id="jobsBody"></div></div>
+      </div>
+      <!-- PROJECTS -->
+      <div class="d-view" id="view-projects">
+        <div class="view-head">
+          <div>
+            <h2>My Projects</h2>
+            <p>Multi-job builds &mdash; group several jobs under one project. <a href="#" onclick="openProjJobModal();return false" style="color:var(--accent);font-weight:600;text-decoration:none">What's the difference? &rarr;</a></p>
+          </div>
+          <button class="btn-add" onclick="openForm('project',null)">+ Add Project</button>
+        </div>
+        <div class="view-body"><div id="projectsBody"></div></div>
       </div>
       <!-- NOTES -->
       <div class="d-view" id="view-notes">
@@ -585,19 +600,24 @@ window.bedrockInPreviewMode = function(toolKey){
       <div class="d-view" id="view-connections">
         <div class="view-head"><div><h2>Setup Connections</h2><p>Connect the tools you already use. One connection works for Operations and Finance both.</p></div></div>
         <div class="view-body">
-          <div class="conn-big"><div class="cb-ic">📊</div><div><h4>QuickBooks Online</h4><p>So Donna's estimates, invoices, and expenses land in your books automatically.</p><div class="cb-status" id="connStatusQbo"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('QuickBooks')">Set Up</button></div>
+          <div class="conn-big"><div class="cb-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div><div><h4>QuickBooks Online</h4><p>So Donna's estimates, invoices, and expenses land in your books automatically.</p><div class="cb-status" id="connStatusQbo"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('QuickBooks')">Set Up</button></div>
           <div class="conn-big"><div class="cb-ic">✉️</div><div><h4>Gmail</h4><p>So Donna can send estimates and invoices from your own email address.</p><div class="cb-status" id="connStatusGmail"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('Google')">Set Up</button></div>
           <div class="conn-big"><div class="cb-ic">📅</div><div><h4>Google Calendar</h4><p>So scheduled jobs show up on your calendar and customers get reminders.</p><div class="cb-status" id="connStatusCalendar"><span class="d-conn-dot"></span> Not connected</div></div><button class="conn-setup-btn" onclick="setupConnection('Google')">Set Up</button></div>
           <div class="notebox" style="margin-top:0.5rem">Connections are shared with Bedrock Finance — connect once and both tools use it. Donna shows a connection as live only when it's actually verified against your account &mdash; she'll never fake a green light.</div>
         </div>
       </div>
-      <!-- HELP -->
+      <!-- HELP (B5f — expanded FAQ + plain-language answers) -->
       <div class="d-view" id="view-help">
-        <div class="view-head"><div><h2>How to use Donna</h2><p>The short version &mdash; you'll get the hang of it fast.</p></div></div>
+        <div class="view-head"><div><h2>How to use Donna</h2><p>Plain-English answers. Find what you're stuck on, then get back to work.</p></div></div>
         <div class="view-body">
-          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">Just talk to her</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Type or speak what you need in plain words &mdash; or tap the <strong>+</strong> button under the chat to start a workflow. Donna asks who it's for, then drafts it.</p></div>
-          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">You approve everything</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Donna only drafts. Every estimate, invoice, email, and calendar event waits in the right-hand panel for your <strong>Approve</strong>.</p></div>
-          <div class="detail-card"><div class="detail-name" style="font-size:1.2rem">Everything's linked</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Customers, projects, jobs, and notes all connect. Add a job and it rolls up under a customer and a project automatically.</p></div>
+          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">How do I create an estimate?</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Type "estimate for [customer name]" into the chat, or tap <strong>+</strong> &rarr; New Estimate. Donna pulls your labor rate, markup, and tax settings from your profile automatically. Review the draft on the right, then approve to send.</p></div>
+          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">How do I send an invoice?</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Same as estimates &mdash; type "invoice [customer]" or tap <strong>+</strong> &rarr; New Invoice. Donna pulls the job, calculates totals, and drafts the email. If QuickBooks is connected, it syncs there too.</p></div>
+          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">What's the difference between a Project and a Job?</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem"><strong>Job</strong> = a single visit / a single ticket. One day of work for one customer.<br><strong>Project</strong> = a bigger build that has multiple jobs under it. Example: "Smith Kitchen Remodel" is a project; "Demo day," "Cabinet install," and "Final paint" are jobs inside it.<br>Most simple service work is just jobs &mdash; you only need Projects when one customer's work spans multiple visits.</p></div>
+          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">How do I add a customer?</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Three ways: tell Donna in chat ("add customer Jane Smith, 555-1212"), tap <strong>+</strong> &rarr; New Customer, or go to My Customers and tap <strong>+ Add Customer</strong>. Anything Donna drafts for a new customer name auto-creates the record.</p></div>
+          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">How do I connect QuickBooks?</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Bottom-left sidebar &rarr; <strong>Setup Connections</strong> &rarr; <strong>QuickBooks Online</strong>. You'll sign in to Intuit once and Donna will sync estimates, invoices, and receipts after that. One connection covers both Operations and Finance.</p></div>
+          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">Does anything send without me seeing it?</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">No. Donna drafts &mdash; you approve. Every estimate, invoice, email, and calendar event waits in the right-hand panel until you tap <strong>Approve</strong>. Receipt uploads and customer adds happen instantly because they're not communications.</p></div>
+          <div class="detail-card" style="margin-bottom:0.9rem"><div class="detail-name" style="font-size:1.2rem">Why is the connection dot red?</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Donna only shows green when she's actually verified the connection against your account. Red means either you haven't set it up yet or the token expired &mdash; tap Setup Connections to reconnect. She'll never fake a green light.</p></div>
+          <div class="detail-card"><div class="detail-name" style="font-size:1.2rem">Something broke. What now?</div><p style="font-size:0.82rem;color:var(--slate);line-height:1.65;margin-top:0.5rem">Email <a href="mailto:support@bedrock-digital.com" style="color:var(--accent);font-weight:600;text-decoration:none">support@bedrock-digital.com</a> with what you were doing when it broke. Brock reads everything that comes through &mdash; usually same-day fix.</p></div>
         </div>
       </div>
     </div>
@@ -620,13 +640,13 @@ window.bedrockInPreviewMode = function(toolKey){
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         Customers
       </button>
-      <button data-view="projects" onclick="navView('projects')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3"/></svg>
-        Projects
+      <button data-view="current-jobs" onclick="navView('current-jobs')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        Active
       </button>
       <button data-view="jobs" onclick="navView('jobs')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>
-        Jobs
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        History
       </button>
       <button data-view="notes" onclick="navView('notes')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -650,7 +670,16 @@ window.bedrockInPreviewMode = function(toolKey){
   </div>
 </div>
 
-<footer>Bedrock Operations · Donna &mdash; part of <a href="/">Bedrock Digital</a>. <a href="/portal.html">Back to Portal</a></footer>
+<!-- B8a: standardized tool footer with Back to Dashboard + My Account quick links. -->
+<style>
+  .bd-tool-foot{background:#0D1B2E;padding:0.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.08);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.5);flex-shrink:0;gap:1rem;flex-wrap:wrap}
+  .bd-tool-foot a{color:rgba(255,255,255,0.65);text-decoration:none;font-weight:500;letter-spacing:0.04em;transition:color .15s}
+  .bd-tool-foot a:hover{color:#C9922A}
+</style>
+<footer class="bd-tool-foot">
+  <a href="/portal.html">&larr; Back to Dashboard</a>
+  <a href="/account.html">My Account</a>
+</footer>
 
 <script>
 // ═══════════════ SHARED PROFILE (Supabase-only; no localStorage) ═══════════════
@@ -967,6 +996,7 @@ function refreshView(){
   if(v==='customers') renderCustomers();
   else if(v==='projects') renderProjects();
   else if(v==='jobs') renderJobs();
+  else if(v==='current-jobs') renderCurrentJobs();
   else if(v==='notes') renderNotes();
 }
 
@@ -985,6 +1015,7 @@ function navView(view){
   if(view==='customers') renderCustomers();
   if(view==='projects') renderProjects();
   if(view==='jobs') renderJobs();
+  if(view==='current-jobs') renderCurrentJobs();
   if(view==='notes') renderNotes();
 }
 function enterApp(){ showPage('pageApp'); if(!STATE.greeted){ greet(); STATE.greeted=true; } }
@@ -1773,17 +1804,44 @@ function renderProjects(){
   body.innerHTML=html;
 }
 function renderJobs(){
+  // Previous Jobs = completed/closed only. B5a split: active = Current Jobs, done = Previous Jobs.
   var body=document.getElementById('jobsBody');
-  if(!STORE.jobs.length){ body.innerHTML=emptyView('No jobs yet. Tap <strong>+ Add Job</strong> to create one.'); return; }
+  var done = (STORE.jobs||[]).filter(function(j){ return j.status==='done' || j.status==='closed' || j.status==='complete'; });
+  if(!done.length){ body.innerHTML=emptyView('No completed jobs yet. Once you mark a job done, it shows up here.'); return; }
   var html='<div class="list-card">';
-  STORE.jobs.forEach(function(j){
+  done.forEach(function(j){
     html+='<div class="list-row"><div class="lr-main" onclick="openForm(\'job\',\''+j.id+'\')">'
-      +'<span class="list-avatar" style="background:'+(j.status==='done'?'var(--green)':'var(--navy)')+'">'+initials(j.name)+'</span>'
-      +'<span><span class="lr-name">'+esc(j.name)+'</span><br><span class="lr-sub">'+esc(custName(j.customerId))+' · '+money(j.amount||0)+' · <span class="status-pill st-'+(j.status||'active')+'">'+(j.status||'active')+'</span></span></span></div>'
+      +'<span class="list-avatar" style="background:var(--green)">'+initials(j.name)+'</span>'
+      +'<span><span class="lr-name">'+esc(j.name)+'</span><br><span class="lr-sub">'+esc(custName(j.customerId))+' &middot; '+money(j.amount||0)+' &middot; <span class="status-pill st-done">done</span></span></span></div>'
       +rowActions('job',j.id)+'</div>';
   });
   html+='</div>';
   body.innerHTML=html;
+}
+function renderCurrentJobs(){
+  // B5a — Current Jobs view: not-yet-completed jobs only, sorted with scheduled-this-week first.
+  var body=document.getElementById('currentJobsBody'); if(!body) return;
+  var active = (STORE.jobs||[]).filter(function(j){ var s=j.status||'active'; return s!=='done' && s!=='closed' && s!=='complete'; });
+  if(!active.length){ body.innerHTML=emptyView('No active jobs. Tap <strong>+ Add Job</strong> when you have one on the calendar.'); return; }
+  var html='<div class="list-card">';
+  active.forEach(function(j){
+    html+='<div class="list-row"><div class="lr-main" onclick="openForm(\'job\',\''+j.id+'\')">'
+      +'<span class="list-avatar" style="background:var(--navy)">'+initials(j.name)+'</span>'
+      +'<span><span class="lr-name">'+esc(j.name)+'</span><br><span class="lr-sub">'+esc(custName(j.customerId))+' &middot; '+money(j.amount||0)+' &middot; <span class="status-pill st-'+(j.status||'active')+'">'+(j.status||'active')+'</span></span></span></div>'
+      +rowActions('job',j.id)+'</div>';
+  });
+  html+='</div>';
+  body.innerHTML=html;
+}
+// B5c — Project vs Job explainer modal, called from the My Projects header link.
+function openProjJobModal(){
+  if (typeof openModalRaw === 'function') {
+    openModalRaw('Bedrock Operations', 'Project vs Job', '<div style="font-family:\'DM Sans\',sans-serif;font-size:0.86rem;color:#2D3748;line-height:1.7">'
+      + '<p><strong>A Job</strong> is one visit, one ticket, one day of work. Most of what you do is jobs. Example: <em>"Mow the Smith front lawn,"</em> <em>"Replace the gutter at 412 Oak St."</em></p>'
+      + '<p style="margin-top:0.8rem"><strong>A Project</strong> bundles multiple jobs under one bigger build. You only need projects when one customer has work that spans multiple visits and you want to see total hours/cost rolled up. Example: <em>"Smith Kitchen Remodel"</em> = a project containing the jobs <em>"Demo,"</em> <em>"Cabinet install,"</em> <em>"Final paint."</em></p>'
+      + '<p style="margin-top:0.8rem;color:#718096;font-style:italic">Rule of thumb: if you bill for each visit separately, use Jobs. If you bill the whole build at the end, use a Project with Jobs inside.</p>'
+      + '</div>');
+  }
 }
 function renderNotes(){
   var body=document.getElementById('notesBody');

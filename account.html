@@ -140,10 +140,10 @@ footer a{color:var(--gold);text-decoration:none}
     <button type="button" class="ac-navitem"        data-p="billing"     onclick="acGo('billing')">Billing History</button>
     <button type="button" class="ac-navitem"        data-p="integrations" onclick="acGo('integrations')">Integrations</button>
     <button type="button" class="ac-navitem"        data-p="google"      onclick="acGo('google')">Google Presence</button>
-    <!-- G13a: My Files moved above Review + Support so primary actions sit at the top, support at the bottom. -->
+    <!-- B9e: support before reviews per spec — final order: ... → Files → Need Help → Leave a Review. -->
     <button type="button" class="ac-navitem"        data-p="files"       onclick="acGo('files')">My Files</button>
-    <button type="button" class="ac-navitem"        data-p="review"      onclick="acGo('review')">Leave a Review</button>
     <button type="button" class="ac-navitem"        data-p="support"     onclick="acGo('support')">Need Help / Support</button>
+    <button type="button" class="ac-navitem"        data-p="review"      onclick="acGo('review')">Leave a Review</button>
   </aside>
 
   <main class="ac-main">
@@ -216,6 +216,11 @@ footer a{color:var(--gold);text-decoration:none}
         </div>
         <div class="ac-msg" id="ac2faMsg"></div>
       </div>
+
+      <!-- B9b: utility link at the bottom of Account Info pointing to the profile editor. -->
+      <p style="margin-top:1.5rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--slate);text-align:left">
+        <a href="#" onclick="event.preventDefault();acGo('profile');" style="color:var(--gold);font-weight:600;text-decoration:none">&rarr; Finish setting up your business profile</a>
+      </p>
     </section>
 
     <!-- ── MY PROFILE — D2: embedded portal profile editor via ?embed=profile ── -->
@@ -229,10 +234,64 @@ footer a{color:var(--gold);text-decoration:none}
         .ac-profile-frame-foot{display:flex;justify-content:space-between;align-items:center;gap:0.6rem;padding:0.7rem 1rem;background:var(--off-white);border-top:1px solid var(--border-light);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate);flex-wrap:wrap}
         .ac-profile-frame-foot a{color:var(--gold);font-weight:700;text-decoration:none;font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase}
       </style>
+
+      <!-- B9a: 7 quick-fill fields that feed AI personalization (Donna estimates, Marketing copy, Website services).
+           Saves into profiles.extra so they ride along with the existing profile data. -->
+      <div class="ac-card" style="margin-bottom:1rem">
+        <h3>Quick business details</h3>
+        <div class="ac-card-sub">Seven fast fields that make every AI-generated estimate, flyer, and website copy more accurate. Optional, save anytime.</div>
+        <div class="ac-field-row">
+          <div class="ac-field">
+            <label for="acProfTrade">Primary Trade</label>
+            <select id="acProfTrade">
+              <option value="">— Pick one —</option>
+              <option>Plumbing</option><option>Electrical</option><option>HVAC</option>
+              <option>Roofing</option><option>Landscaping</option><option>General Contractor</option>
+              <option>Painting</option><option>Other</option>
+            </select>
+          </div>
+          <div class="ac-field">
+            <label for="acProfJobValue">Average Job Value ($)</label>
+            <input type="number" id="acProfJobValue" min="0" placeholder="3500" inputmode="numeric">
+          </div>
+        </div>
+        <div class="ac-field-row">
+          <div class="ac-field">
+            <label for="acProfRadius">Service Area Radius (miles)</label>
+            <input type="number" id="acProfRadius" min="0" placeholder="25" inputmode="numeric">
+          </div>
+          <div class="ac-field">
+            <label for="acProfCrew">Team Size</label>
+            <select id="acProfCrew">
+              <option value="">— Pick one —</option>
+              <option>Just me</option><option>2-5</option><option>6-10</option><option>10+</option>
+            </select>
+          </div>
+        </div>
+        <div class="ac-field-row">
+          <div class="ac-field">
+            <label for="acProfYears">Years in Business</label>
+            <input type="number" id="acProfYears" min="0" placeholder="8" inputmode="numeric">
+          </div>
+          <div class="ac-field">
+            <label for="acProfLicensed" style="display:flex;align-items:center;gap:0.6rem;cursor:pointer;font-weight:500;text-transform:none;letter-spacing:0;font-size:0.86rem;color:var(--navy-deep)">
+              <input type="checkbox" id="acProfLicensed" onchange="document.getElementById('acProfLicenseWrap').style.display=this.checked?'':'none'" style="width:auto;margin:0;accent-color:var(--gold)">
+              Licensed &amp; Insured
+            </label>
+          </div>
+        </div>
+        <div class="ac-field" id="acProfLicenseWrap" style="display:none">
+          <label for="acProfLicense">License Number</label>
+          <input type="text" id="acProfLicense" placeholder="e.g. LIC-12345">
+        </div>
+        <button class="ac-btn" type="button" onclick="acSaveProfQuick()">Save quick details</button>
+        <div class="ac-msg" id="acProfQuickMsg"></div>
+      </div>
+
       <div class="ac-profile-frame-wrap">
         <iframe id="acProfileFrame" class="ac-profile-frame" src="about:blank" title="My Profile editor" loading="lazy"></iframe>
         <div class="ac-profile-frame-foot">
-          <span>Embedded from your portal &mdash; changes save the same way.</span>
+          <span>Below: the full 5-stage profile editor embedded from your portal.</span>
           <a href="/portal.html#profile" target="_blank" rel="noopener">Open in full portal &rarr;</a>
         </div>
       </div>
@@ -253,21 +312,133 @@ footer a{color:var(--gold);text-decoration:none}
         </div>
       </div>
 
-      <!-- Full purchase UI — iframed from portal.html#subs/cart with chrome stripped -->
+      <!-- B9f: native subscription cards — no iframe. Same Stripe checkout endpoint as portal.html. -->
       <style>
-        .ac-subs-frame-wrap{background:#fff;border:1px solid var(--border-light);border-radius:10px;overflow:hidden;position:relative}
-        .ac-subs-frame{width:100%;border:none;display:block;min-height:1200px;background:#fff}
-        .ac-subs-frame-foot{display:flex;justify-content:space-between;align-items:center;gap:0.6rem;padding:0.7rem 1rem;background:var(--off-white);border-top:1px solid var(--border-light);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate);flex-wrap:wrap}
-        .ac-subs-frame-foot a{color:var(--gold);font-weight:700;text-decoration:none;font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase}
+        .ac-subs-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:0.9rem;margin-top:0.4rem}
+        .ac-subs-card{background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:1.1rem;display:flex;flex-direction:column;gap:0.55rem;transition:border-color .14s, box-shadow .14s;position:relative}
+        .ac-subs-card.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(201,146,42,0.15)}
+        .ac-subs-card.active{border-color:var(--green,#3F8A4C);background:linear-gradient(180deg,#F7FBF6 0%,#fff 50%)}
+        .ac-subs-card .scc-head{display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem}
+        .ac-subs-card .scc-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--ink);letter-spacing:-0.01em}
+        .ac-subs-card .scc-price{font-family:'DM Sans',sans-serif;font-size:0.86rem;font-weight:700;color:var(--gold);white-space:nowrap}
+        .ac-subs-card .scc-sub{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate);line-height:1.5}
+        .ac-subs-card ul.scc-feats{list-style:none;margin:0.3rem 0 0;padding:0;display:flex;flex-direction:column;gap:0.3rem}
+        .ac-subs-card ul.scc-feats li{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--ink);display:flex;gap:0.5rem;align-items:flex-start;line-height:1.45}
+        .ac-subs-card ul.scc-feats li:before{content:'\2713';color:var(--gold);font-weight:700;flex-shrink:0;margin-top:1px}
+        .ac-subs-card .scc-act{margin-top:auto;padding-top:0.6rem}
+        .ac-subs-card .scc-toggle{display:flex;align-items:center;gap:0.5rem;font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:600;color:var(--ink);cursor:pointer;user-select:none}
+        .ac-subs-card .scc-toggle input{accent-color:var(--gold);width:16px;height:16px;cursor:pointer}
+        .ac-subs-card .scc-active-tag{position:absolute;top:0.55rem;right:0.55rem;background:var(--green,#3F8A4C);color:#fff;font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:0.18rem 0.5rem;border-radius:999px}
+        .ac-subs-cart{margin-top:1rem;background:var(--off-white,#FAF8F2);border:1px solid var(--border-light);border-radius:10px;padding:1rem 1.2rem;display:flex;justify-content:space-between;align-items:center;gap:0.9rem;flex-wrap:wrap}
+        .ac-subs-cart .acsc-total{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--ink)}
+        .ac-subs-cart .acsc-total small{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:500;color:var(--slate);display:block;margin-top:0.15rem}
+        .ac-subs-msg{margin-top:0.5rem;font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--slate);font-style:italic}
       </style>
-      <div class="ac-subs-frame-wrap">
-        <iframe id="acSubsFrame" class="ac-subs-frame" src="about:blank" title="Subscription cart" loading="lazy"></iframe>
-        <div class="ac-subs-frame-foot">
-          <span>Subscription cards embedded from your portal &mdash; checkout goes through the same Stripe flow.</span>
-          <a href="/portal.html#subs" target="_blank" rel="noopener">Open in full portal &rarr;</a>
+      <div class="ac-card">
+        <h3>Add or change your subscription</h3>
+        <p style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--slate);margin:0.3rem 0 0.9rem">Check the tools you want, then update your subscription. Already-active tools are marked &mdash; toggling those off opens the Stripe billing portal to cancel.</p>
+        <div class="ac-subs-grid" id="acSubsGrid">
+          <!-- Cards rendered by acRenderSubsCards() -->
         </div>
+        <div class="ac-subs-cart" id="acSubsCart" style="display:none">
+          <div class="acsc-total"><span id="acSubsTotal">$0/mo</span><small id="acSubsTotalSub">Estimated monthly cost</small></div>
+          <button class="ac-btn" id="acSubsCheckoutBtn" onclick="acSubsCheckout()">Update my subscription &rarr;</button>
+        </div>
+        <div class="ac-subs-msg" id="acSubsMsg"></div>
       </div>
     </section>
+    <script>
+    // B9f: native subscription card logic. Reuses /create-subscription-checkout (same as portal.html#subs).
+    // Active state pulled from BedrockProfile (already loaded by ac-info). Cart state lives in localStorage 'bedrock_cart_v1'
+    // so changes in the portal and in account stay in sync.
+    (function(){
+      var CART_KEY = 'bedrock_cart_v1';
+      var SKU_DEFS = [
+        { key:'website',   name:'Website',  price:20,  subscribed:function(s){ return !!s.website; },
+          features:['Live conversion-tuned site','SSL, hosting, analytics','Free Google Business setup','Edit anytime, no dev needed'],
+          sub:'$20/mo &middot; $200 one-time build fee' },
+        { key:'marketing', name:'Marketing', price:39,  subscribed:function(s){ return !!s.marketing; },
+          features:['Brand Kit + lockup','Asset Library (logos, photos, palettes)','Print-ready flyers, door-hangers, ads','Goal-driven campaign templates'],
+          sub:'$39/mo' },
+        { key:'cfo',       name:'Finance + Operations', price:79, subscribed:function(s){ return !!s.donna || !!s.finance; },
+          features:['Donna AI for estimates, invoices, scheduling','Read-only Finance dashboard','QuickBooks + Gmail + Calendar sync','Job-level profitability tracking'],
+          sub:'$79/mo &mdash; bundled' },
+      ];
+      function getCart(){ try { return JSON.parse(localStorage.getItem(CART_KEY) || '{}') || {}; } catch(_) { return {}; } }
+      function setCart(c){ try { localStorage.setItem(CART_KEY, JSON.stringify(c)); } catch(_){} }
+      function getSubs(){
+        // Mirror the same source acRenderSubs uses (window._acSubs is hydrated by acLoadSubs()).
+        var out = {};
+        var arr = (typeof window !== 'undefined' && window._acSubs) ? window._acSubs : [];
+        arr.forEach(function(s){
+          if (s.status !== 'active' && s.status !== 'past_due') return;
+          if (s.tool === 'website') out.website = true;
+          if (s.tool === 'marketing') out.marketing = true;
+          if (s.tool === 'finance_operations') { out.donna = true; out.finance = true; }
+          if (s.tool === 'operations') out.donna = true;
+          if (s.tool === 'finance') out.finance = true;
+        });
+        return out;
+      }
+      window.acRenderSubsCards = function(){
+        var grid = document.getElementById('acSubsGrid'); if (!grid) return;
+        var subs = getSubs(), cart = getCart();
+        grid.innerHTML = '';
+        SKU_DEFS.forEach(function(sku){
+          var active = sku.subscribed(subs);
+          var selected = !!cart[sku.key];
+          var card = document.createElement('div');
+          card.className = 'ac-subs-card' + (active ? ' active' : '') + (selected ? ' selected' : '');
+          card.innerHTML =
+            (active ? '<span class="scc-active-tag">Active</span>' : '') +
+            '<div class="scc-head">' +
+              '<div class="scc-name">' + sku.name + '</div>' +
+              '<div class="scc-price">' + sku.sub + '</div>' +
+            '</div>' +
+            '<ul class="scc-feats">' + sku.features.map(function(f){ return '<li>' + f + '</li>'; }).join('') + '</ul>' +
+            '<div class="scc-act"><label class="scc-toggle"><input type="checkbox" data-sku="' + sku.key + '"' + (selected ? ' checked' : '') + '> ' + (active ? 'Keep / change plan' : 'Add to subscription') + '</label></div>';
+          grid.appendChild(card);
+        });
+        grid.querySelectorAll('input[type=checkbox][data-sku]').forEach(function(cb){
+          cb.addEventListener('change', function(){
+            var c = getCart(); c[this.getAttribute('data-sku')] = this.checked; setCart(c); acRenderSubsCards();
+          });
+        });
+        // Cart bar
+        var total = 0; var any = false;
+        SKU_DEFS.forEach(function(sku){ if (cart[sku.key]) { total += sku.price; any = true; } });
+        var bar = document.getElementById('acSubsCart');
+        var tot = document.getElementById('acSubsTotal');
+        var sub = document.getElementById('acSubsTotalSub');
+        if (bar) bar.style.display = any ? 'flex' : 'none';
+        if (tot) tot.textContent = '$' + total + '/mo';
+        if (sub) sub.textContent = 'Estimated monthly cost &mdash; final amount confirmed at Stripe checkout.';
+      };
+      window.acSubsCheckout = function(){
+        var cart = getCart();
+        var selected = ['website','marketing','cfo'].filter(function(k){ return cart[k]; });
+        var msg = document.getElementById('acSubsMsg');
+        if (!selected.length) { if (msg) msg.textContent = 'Pick at least one tool first.'; return; }
+        var btn = document.getElementById('acSubsCheckoutBtn');
+        if (btn) { btn.disabled = true; btn.textContent = 'Starting checkout…'; }
+        var bp = window.BedrockProfile, lead = bp && bp.lead ? bp.lead() : {}, email = (lead && lead.email) || '', userId = (lead && lead.id) || '';
+        fetch('/.netlify/functions/create-subscription-checkout', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ tools: selected, email: email, userId: userId })
+        }).then(function(r){ return r.json(); }).then(function(d){
+          if (d && d.url) { window.location.href = d.url; return; }
+          if (msg) msg.textContent = (d && d.error) || 'Could not start checkout. Try again in a moment.';
+          if (btn) { btn.disabled = false; btn.textContent = 'Update my subscription →'; }
+        }).catch(function(){
+          if (msg) msg.textContent = 'Network error. Check your connection and try again.';
+          if (btn) { btn.disabled = false; btn.textContent = 'Update my subscription →'; }
+        });
+      };
+      // Render on first paint + whenever subscriptions reload
+      document.addEventListener('DOMContentLoaded', function(){ setTimeout(window.acRenderSubsCards, 300); });
+      window.addEventListener('storage', function(e){ if (e.key === CART_KEY) window.acRenderSubsCards(); });
+    })();
+    </script>
 
     <!-- ── BILLING HISTORY ── -->
     <section class="ac-pane" id="ac-billing">
@@ -309,11 +480,17 @@ footer a{color:var(--gold);text-decoration:none}
     <section class="ac-pane" id="ac-google">
       <div class="ac-eyebrow">Google Presence</div>
       <h1 class="ac-h1">How you show up.</h1>
-      <p class="ac-sub">Your Google Business Profile snapshot — reviews, ratings, photos, and what Google says about you when a customer searches.</p>
-      <div class="ac-card">
+      <p class="ac-sub">Your Google Business Profile snapshot &mdash; reviews, ratings, photos, and what Google says about you when a customer searches.</p>
+      <!-- B9c: empty state shown when Google isn't connected; auto-swapped by acPaintGoogleStatus(). -->
+      <div class="ac-card" id="acGoogleEmpty">
+        <h3>Connect Google to see your stats here</h3>
+        <div class="ac-card-sub">Once connected, this tab shows your Google Business Profile stats &mdash; star rating, recent reviews, photo views, and how customers found you.</div>
+        <a class="ac-btn" href="#" onclick="event.preventDefault();acGo('integrations');">Connect Google &rarr;</a>
+      </div>
+      <div class="ac-card" id="acGoogleConnected" style="display:none">
         <h3>Open the Google Presence card</h3>
         <div class="ac-card-sub">The full snapshot lives on your portal dashboard so it sits beside your other at-a-glance numbers.</div>
-        <a class="ac-btn" href="/portal.html#dashboard">Open in Portal →</a>
+        <a class="ac-btn" href="/portal.html#dashboard">Open in Portal &rarr;</a>
       </div>
     </section>
 
@@ -336,6 +513,23 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="ac-eyebrow">My Files</div>
       <h1 class="ac-h1">Everything tied to your account.</h1>
       <p class="ac-sub">Photos, logos, scanned receipts, generated marketing materials, PDFs &mdash; in one place. Pulled straight from your Bedrock workspace.</p>
+      <!-- B9d: upload bar at top — accepts JPG/PNG/PDF, saves to assets with source='manual_upload'. -->
+      <style>
+        .acf-upload{display:flex;justify-content:space-between;align-items:center;background:var(--off-white);border:1px dashed var(--border-light);border-radius:8px;padding:1rem 1.2rem;margin-bottom:1.1rem;gap:1rem;flex-wrap:wrap}
+        .acf-upload .acu-txt{font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--slate);line-height:1.5;flex:1;min-width:220px}
+        .acf-upload .acu-btn{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:0.7rem 1.1rem;border-radius:5px;cursor:pointer}
+        .acf-upload .acu-btn:hover{background:var(--gold-dark,#A8711A)}
+        .acf-upload .acu-btn[disabled]{opacity:0.6;cursor:wait}
+        .acf-upload-msg{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--slate);margin:-0.4rem 0 0.7rem}
+        .acf-upload-msg.ok{color:var(--green)}
+        .acf-upload-msg.err{color:var(--red)}
+      </style>
+      <div class="acf-upload">
+        <div class="acu-txt"><strong>Upload a file.</strong> JPG, PNG, or PDF up to 10MB &mdash; job photos, logos, receipts, anything you want kept with your account.</div>
+        <input type="file" id="acfUploadInput" accept="image/png,image/jpeg,image/gif,image/webp,application/pdf" style="display:none" onchange="acfUploadFile(event)">
+        <button type="button" class="acu-btn" id="acfUploadBtn" onclick="document.getElementById('acfUploadInput').click()">Upload a file</button>
+      </div>
+      <div class="acf-upload-msg" id="acfUploadMsg"></div>
       <div class="ac-card">
         <h3>Your library</h3>
         <div class="ac-card-sub">Files load with a secure signed link &mdash; only you can see them.</div>
@@ -394,7 +588,7 @@ function acGo(panel){
   if (panel === 'subs') { acLoadSubs(); acLoadSubsFrame(); }
   if (panel === 'integrations') acPaintConnections();
   if (panel === 'files') acLoadFiles();
-  if (panel === 'profile') acLoadProfileFrame();
+  if (panel === 'profile') { acLoadProfileFrame(); acHydrateProfQuick(); }
   if (panel === 'info') ac2faLoad();
   window.scrollTo(0,0);
 }
@@ -422,6 +616,37 @@ async function acLoadProfile(){
     window._acProfile = p; window._acSubs = d.subscriptions || [];
     acPaintConnections(p);
   }catch(_){}
+}
+
+// B9a: hydrate the 7 quick-fill fields from profiles.extra, save back via save-profile.
+function acHydrateProfQuick(){
+  var p = window._acProfile || {}; var ex = p.extra || {};
+  var fields = { acProfTrade:'trade_type', acProfJobValue:'avg_job_value', acProfRadius:'service_radius', acProfCrew:'crew_size', acProfYears:'years_in_business', acProfLicense:'license_number' };
+  Object.keys(fields).forEach(function(id){ var el=document.getElementById(id); if(el && ex[fields[id]] != null) el.value = ex[fields[id]]; });
+  var lic = document.getElementById('acProfLicensed'); if (lic) { lic.checked = !!ex.licensed_insured; var lw = document.getElementById('acProfLicenseWrap'); if (lw) lw.style.display = ex.licensed_insured ? '' : 'none'; }
+}
+async function acSaveProfQuick(){
+  var s = getSession(); if(!s) return;
+  var num = function(id){ var v = parseInt((document.getElementById(id).value||'').trim(),10); return isFinite(v) ? v : null; };
+  var extra = {
+    trade_type:       (document.getElementById('acProfTrade').value||'').trim() || null,
+    avg_job_value:    num('acProfJobValue'),
+    service_radius:   num('acProfRadius'),
+    crew_size:        (document.getElementById('acProfCrew').value||'').trim() || null,
+    years_in_business:num('acProfYears'),
+    licensed_insured: !!document.getElementById('acProfLicensed').checked,
+    license_number:   (document.getElementById('acProfLicense').value||'').trim() || null,
+  };
+  setMsg('acProfQuickMsg','ok','Saving…');
+  try {
+    var r = await fetch('/.netlify/functions/save-profile', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', Authorization:'Bearer '+s.access_token},
+      body: JSON.stringify({ extra: extra }),
+    });
+    if(r.ok){ setMsg('acProfQuickMsg','ok','Saved — every tool picks these up on next load.'); window._acProfile = window._acProfile || {}; window._acProfile.extra = Object.assign({}, window._acProfile.extra || {}, extra); }
+    else { setMsg('acProfQuickMsg','err','Save failed — try again.'); }
+  } catch(_){ setMsg('acProfQuickMsg','err','Connection error.'); }
 }
 
 async function acSaveBasics(){
@@ -480,6 +705,8 @@ function acRenderSubs(subs){
     var statusTxt = s.status==='active' ? 'Active' : 'Past due';
     return '<div class="ac-sub-row"><div><div style="font-family:\'Cormorant Garamond\',serif;font-size:1.05rem;font-weight:700;color:var(--navy-deep)">'+label+'</div><div class="ac-sub-meta">$'+price+'/mo</div></div><span class="ac-sub-status '+statusClass+'">'+statusTxt+'</span></div>';
   }).join('');
+  // B9f: refresh native sub cards now that real subs data is in window._acSubs
+  if (typeof window.acRenderSubsCards === 'function') window.acRenderSubsCards();
 }
 async function acLoadSubs(){
   if(window._acSubs){ acRenderSubs(window._acSubs); return; }
@@ -517,6 +744,12 @@ function acPaintConnections(profile){
   }
   paint('acDotQbo','acStatQbo', !!conns.qbo, 'QuickBooks');
   paint('acDotGoogle','acStatGoogle', !!conns.google || !!conns.gmail, 'Google');
+  // B9c: swap Google Presence empty/connected card based on connection state.
+  var googleConnected = !!conns.google || !!conns.gmail;
+  var emptyEl = document.getElementById('acGoogleEmpty');
+  var connEl  = document.getElementById('acGoogleConnected');
+  if (emptyEl) emptyEl.style.display = googleConnected ? 'none' : '';
+  if (connEl)  connEl.style.display  = googleConnected ? '' : 'none';
 }
 function acConnect(which){
   // Route through portal's existing connection flow so OAuth callbacks land in one place.
@@ -699,14 +932,9 @@ function acRenderFiles(assets){
   }).join('') + '</div>';
   grid.innerHTML = html;
 }
-// G13b: lazy-load the subscription cart iframe only when the Subscriptions tab is opened.
+// B9f: native sub cards replaced the iframe. Re-render on tab open so subs/cart state is fresh.
 function acLoadSubsFrame(){
-  if(window._acSubsFrameLoaded) return;
-  var f = document.getElementById('acSubsFrame'); if(!f) return;
-  window._acSubsFrameLoaded = true;
-  console.time('subs-frame-load');
-  f.addEventListener('load', function once(){ console.timeEnd('subs-frame-load'); f.removeEventListener('load', once); }, { once:true });
-  f.src = '/portal.html?embed=subs';
+  if (typeof window.acRenderSubsCards === 'function') window.acRenderSubsCards();
 }
 
 // D2: lazy-load the profile editor iframe only when the My Profile tab is opened.
@@ -718,6 +946,44 @@ function acLoadProfileFrame(){
   console.time('profile-frame-load');
   f.addEventListener('load', function once(){ console.timeEnd('profile-frame-load'); f.removeEventListener('load', once); }, { once:true });
   f.src = '/portal.html?embed=profile';
+}
+
+// B9d: My Files upload — same pattern as Marketing Asset Library.
+function acfFileToBase64(file){
+  return new Promise(function(resolve, reject){
+    var r = new FileReader();
+    r.onload = function(){ resolve(r.result); };
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+async function acfUploadFile(ev){
+  var input = ev.target;
+  var file = input.files && input.files[0]; if(!file) return;
+  var msg = document.getElementById('acfUploadMsg');
+  var btn = document.getElementById('acfUploadBtn');
+  function setUM(kind, text){ if(msg){ msg.className = 'acf-upload-msg ' + kind; msg.textContent = text; } }
+  if (file.size > 10 * 1024 * 1024) { setUM('err','File too big — max 10MB.'); input.value=''; return; }
+  var s = getSession(); if (!s) { setUM('err','Please sign in again.'); input.value=''; return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Uploading…'; }
+  setUM('','');
+  try {
+    var b64 = await acfFileToBase64(file);
+    var r = await fetch('/.netlify/functions/upload-asset', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', Authorization:'Bearer ' + s.access_token },
+      body: JSON.stringify({ image_base64: b64, filename: file.name, kind: 'upload' }),
+    });
+    if (!r.ok) setUM('err','Upload failed — try again.');
+    else {
+      setUM('ok','Uploaded.');
+      window._acFilesLoaded = false;
+      await acLoadFiles();
+      setTimeout(function(){ if(msg) msg.textContent=''; }, 2500);
+    }
+  } catch(e) { setUM('err','Upload failed.'); }
+  input.value='';
+  if (btn) { btn.disabled = false; btn.textContent = 'Upload a file'; }
 }
 
 async function acLoadFiles(){

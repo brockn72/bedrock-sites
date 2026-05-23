@@ -317,6 +317,9 @@ footer a{color:var(--gold);text-decoration:none}
   <button data-view="statements" onclick="navView('statements')">Statements</button>
   <button data-view="projects" onclick="navView('projects')">Projects</button>
   <button data-view="analytics" onclick="navView('analytics')">Analytics</button>
+  <button data-view="est-statements" onclick="navView('est-statements')">Est. Statements</button>
+  <button data-view="import" onclick="navView('import')">Import</button>
+  <button data-view="integrations" onclick="navView('integrations')">Integrations</button>
   <button data-view="connect" onclick="navView('connect')">Connect</button>
 </nav>
 
@@ -345,8 +348,20 @@ footer a{color:var(--gold);text-decoration:none}
       <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21H3V3"/><path d="M7 14l4-4 3 3 5-6"/></svg>
       <span>Analytics</span>
     </button>
+    <button class="fin-nav" data-view="est-statements" onclick="navView('est-statements')">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 0 0-2 2v7h6V11z"/><path d="M15 7h-4a2 2 0 0 0-2 2v11h8V9a2 2 0 0 0-2-2z"/><path d="M21 3h-4a2 2 0 0 0-2 2v15h6V5a2 2 0 0 0-2-2z"/></svg>
+      <span>Est. Statements</span>
+    </button>
     <div class="fin-side-spacer"></div>
     <div class="fin-side-label">Data</div>
+    <button class="fin-nav" data-view="import" onclick="navView('import')">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      <span>Data Import</span>
+    </button>
+    <button class="fin-nav" data-view="integrations" onclick="navView('integrations')">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      <span>Integrations</span>
+    </button>
     <button class="fin-nav" data-view="connect" onclick="navView('connect')">
       <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0l3-3m-3 3L9 5"/><rect x="3" y="12" width="18" height="9" rx="2"/></svg>
       <span>Connect Your Numbers</span>
@@ -651,7 +666,7 @@ footer a{color:var(--gold);text-decoration:none}
       <div class="view-wrap">
         <div class="connect-grid">
           <div class="connect-card">
-            <div class="cc-ic">📊</div>
+            <div class="cc-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>
             <h3>Connect QuickBooks</h3>
             <p>Pull your invoices, estimates, and expenses straight from QuickBooks Online. One connection works for Finance and Donna both.</p>
             <button class="btn-gold" onclick="connectQBO()">Connect QuickBooks</button>
@@ -672,11 +687,103 @@ footer a{color:var(--gold);text-decoration:none}
         <div class="section-title" style="margin-top:1.9rem">Your Connections</div>
         <div class="section-sub">Shared with Bedrock Operations — connect once and both tools use it.</div>
         <div style="background:#fff;border:1px solid var(--border-light);border-radius:8px;overflow:hidden">
-          <div class="conn-row"><span style="font-size:1.2rem">📊</span><div style="flex:1"><div class="cr-name">QuickBooks Online</div><div class="cr-sub">Invoices, estimates, and expenses</div></div><span class="cr-status" id="crStatusQbo">● Not connected</span><button class="btn-outline" onclick="setupConnection('QuickBooks')">Set Up</button></div>
+          <div class="conn-row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg><div style="flex:1"><div class="cr-name">QuickBooks Online</div><div class="cr-sub">Invoices, estimates, and expenses</div></div><span class="cr-status" id="crStatusQbo">● Not connected</span><button class="btn-outline" onclick="setupConnection('QuickBooks')">Set Up</button></div>
           <div class="conn-row"><span style="font-size:1.2rem">✉️</span><div style="flex:1"><div class="cr-name">Gmail</div><div class="cr-sub">Send reports and statements</div></div><span class="cr-status" id="crStatusGmail">● Not connected</span><button class="btn-outline" onclick="setupConnection('Google')">Set Up</button></div>
           <div class="conn-row"><span style="font-size:1.2rem">📅</span><div style="flex:1"><div class="cr-name">Google Calendar</div><div class="cr-sub">Job dates feed the timeline</div></div><span class="cr-status" id="crStatusCalendar">● Not connected</span><button class="btn-outline" onclick="setupConnection('Google')">Set Up</button></div>
         </div>
         <div class="notebox" style="margin-top:1.25rem">Until you connect a real source, every page shows realistic sample data so you can see exactly what Finance looks like in use. Bedrock never shows a connection as live until it's actually verified.</div>
+      </div>
+    </div>
+
+    <!-- ╭── EST. STATEMENTS (B7b — dedicated tab pulled out of Analytics) ──╮ -->
+    <div class="fin-view" id="view-est-statements">
+      <div class="view-head">
+        <div class="vh-eyebrow">Bedrock Finance &middot; Analytics</div>
+        <h1>Estimated Financial Statements</h1>
+        <p>A big-picture read on your year &mdash; rebuilt from your invoices, jobs, and expenses.</p>
+      </div>
+      <div class="view-wrap">
+        <div class="disclaimer"><strong>Estimates only &mdash; not official statements.</strong> These are rough, big-picture numbers from available data. Not accounting-grade, not tax advice, and not legal advice. For filing and official books, work with your accountant.</div>
+        <div class="an-grid" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="an-card">
+            <h3>Income Statement</h3><div class="ch-sub">Year to date &mdash; earned vs. what it cost.</div>
+            <div class="stmt-row"><span>Revenue</span><span>$142,650</span></div>
+            <div class="stmt-row"><span>Materials &amp; labor</span><span class="neg">&minus;$85,700</span></div>
+            <div class="stmt-row sub"><span>Gross profit</span><span>$56,950</span></div>
+            <div class="stmt-row"><span>Operating expenses</span><span class="neg">&minus;$22,000</span></div>
+            <div class="stmt-row total"><span>Net income</span><span>$34,950</span></div>
+            <div class="stmt-meta">Gross margin ~40% &middot; Net margin ~24%</div>
+          </div>
+          <div class="an-card">
+            <h3>Balance Sheet</h3><div class="ch-sub">Where you stand right now.</div>
+            <div class="stmt-row"><span>Cash on hand</span><span>$28,400</span></div>
+            <div class="stmt-row"><span>Money owed to you</span><span>$29,200</span></div>
+            <div class="stmt-row"><span>Equipment &amp; trucks</span><span>$40,000</span></div>
+            <div class="stmt-row sub"><span>Total assets</span><span>$97,600</span></div>
+            <div class="stmt-row"><span>What you owe</span><span class="neg">&minus;$15,000</span></div>
+            <div class="stmt-row total"><span>Owner's equity</span><span>$82,600</span></div>
+            <div class="stmt-meta">Assets minus what you owe.</div>
+          </div>
+          <div class="an-card">
+            <h3>Cash Flow</h3><div class="ch-sub">Money in and out, year to date.</div>
+            <div class="stmt-row"><span>Cash collected</span><span>$113,450</span></div>
+            <div class="stmt-row"><span>Paid &mdash; materials &amp; labor</span><span class="neg">&minus;$71,000</span></div>
+            <div class="stmt-row"><span>Paid &mdash; overhead</span><span class="neg">&minus;$18,200</span></div>
+            <div class="stmt-row total"><span>Net cash flow</span><span>$24,250</span></div>
+            <div class="stmt-meta">Positive &mdash; you bring in more than you spend.</div>
+          </div>
+        </div>
+        <div class="notebox" style="margin-top:1.25rem">These statements update automatically as your invoices, jobs, and expenses come in from QuickBooks or your uploads. For tax filing, hand the official numbers from your CPA &mdash; not these.</div>
+      </div>
+    </div>
+
+    <!-- ╭── DATA IMPORT (B7c — manual entry / spreadsheet import; AI parsing deferred) ──╮ -->
+    <div class="fin-view" id="view-import">
+      <div class="view-head">
+        <div class="vh-eyebrow">Bedrock Finance &middot; Data</div>
+        <h1>Data Import</h1>
+        <p>Got data in a spreadsheet? Drop it in &mdash; Finance reads invoices, jobs, and expenses right in your browser.</p>
+      </div>
+      <div class="view-wrap">
+        <div class="connect-card" style="max-width:540px">
+          <div class="cc-ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <h3>Upload a Spreadsheet</h3>
+          <p>Use Excel instead of QuickBooks? Drop in an .xlsx or .csv and Finance reads it right in your browser. Nothing leaves your computer.</p>
+          <label class="upload-zone" for="sheetFileImport">
+            <div class="uz-t">Click to choose a file</div>
+            <div class="uz-s">.xlsx or .csv &mdash; invoices, jobs, or expenses</div>
+          </label>
+          <input id="sheetFileImport" type="file" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleSheet(event)">
+        </div>
+        <div id="sheetResultImport"></div>
+        <div class="section-title" style="margin-top:1.9rem">Manual entry</div>
+        <div class="section-sub">Quick-add an invoice or expense without opening QuickBooks.</div>
+        <div class="connect-card" style="max-width:540px;background:#FAFAF8">
+          <p style="color:var(--slate);font-size:0.85rem;margin-bottom:0.6rem">Coming up next. For now, use the spreadsheet upload above or sync from QuickBooks under Integrations.</p>
+          <button class="btn-outline" disabled style="opacity:0.6;cursor:not-allowed">+ Add invoice manually (soon)</button>
+        </div>
+        <div class="notebox" style="margin-top:1.25rem">Smart receipt and bank statement parsing is on the roadmap. Today, this tab handles structured uploads (Excel/CSV) &mdash; perfect if you keep books in a sheet or have an export from your bank.</div>
+      </div>
+    </div>
+
+    <!-- ╭── INTEGRATIONS (B7e — dedicated tab; pulls the same connection rows the Connect tab shows) ──╮ -->
+    <div class="fin-view" id="view-integrations">
+      <div class="view-head">
+        <div class="vh-eyebrow">Bedrock Finance &middot; Data</div>
+        <h1>Integrations</h1>
+        <p>Connect the tools you already use. One connection works for Finance and Operations both.</p>
+      </div>
+      <div class="view-wrap">
+        <div class="section-title">Your Connections</div>
+        <div class="section-sub">Shared with Bedrock Operations &mdash; connect once and both tools use it.</div>
+        <div style="background:#fff;border:1px solid var(--border-light);border-radius:8px;overflow:hidden">
+          <div class="conn-row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg><div style="flex:1"><div class="cr-name">QuickBooks Online</div><div class="cr-sub">Invoices, estimates, and expenses</div></div><span class="cr-status" id="crStatusQboInt">&bull; Not connected</span><button class="btn-outline" onclick="setupConnection('QuickBooks')">Set Up</button></div>
+          <div class="conn-row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><div style="flex:1"><div class="cr-name">Gmail</div><div class="cr-sub">Send reports and statements</div></div><span class="cr-status" id="crStatusGmailInt">&bull; Not connected</span><button class="btn-outline" onclick="setupConnection('Google')">Set Up</button></div>
+          <div class="conn-row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div style="flex:1"><div class="cr-name">Google Calendar</div><div class="cr-sub">Job dates feed the timeline</div></div><span class="cr-status" id="crStatusCalendarInt">&bull; Not connected</span><button class="btn-outline" onclick="setupConnection('Google')">Set Up</button></div>
+          <div class="conn-row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><div style="flex:1"><div class="cr-name">Bank feed</div><div class="cr-sub">Auto-import expenses from your bank or card</div></div><span class="cr-status" style="color:#999">&bull; Coming soon</span><button class="btn-outline" disabled style="opacity:0.5;cursor:not-allowed">Notify me</button></div>
+          <div class="conn-row"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg><div style="flex:1"><div class="cr-name">Stripe</div><div class="cr-sub">Pull payment history if you take card payments</div></div><span class="cr-status" style="color:#999">&bull; Coming soon</span><button class="btn-outline" disabled style="opacity:0.5;cursor:not-allowed">Notify me</button></div>
+        </div>
+        <div class="notebox" style="margin-top:1.25rem">Bedrock shows a connection as live only when it's actually verified against your account &mdash; never a fake green light. Disconnect any time from this screen.</div>
       </div>
     </div>
 
@@ -695,7 +802,16 @@ footer a{color:var(--gold);text-decoration:none}
   </div>
 </div>
 
-<footer>Bedrock Finance · Analytics &mdash; part of <a href="/">Bedrock Digital</a>. <a href="/portal.html">Back to Portal</a></footer>
+<!-- B7a/B8a: standardized tool footer with Back to Dashboard + My Account quick links. -->
+<style>
+  .bd-tool-foot{background:#0D1B2E;padding:0.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.08);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.5);flex-shrink:0;gap:1rem;flex-wrap:wrap}
+  .bd-tool-foot a{color:rgba(255,255,255,0.65);text-decoration:none;font-weight:500;letter-spacing:0.04em;transition:color .15s}
+  .bd-tool-foot a:hover{color:#C9922A}
+</style>
+<footer class="bd-tool-foot">
+  <a href="/portal.html">&larr; Back to Dashboard</a>
+  <a href="/account.html">My Account</a>
+</footer>
 
 <script>
 // ═════════════════════════════════════════════════════════════════════════════
@@ -1024,7 +1140,7 @@ function renderDataSourceBar(state){
       +(DATA_SOURCE==='qbo'?'<button class="btn-gold" onclick="refreshFinance()">Refresh</button>':'')+'</div>';
     return;
   }
-  el.innerHTML='<div class="profile-banner missing"><span style="font-size:1.1rem">📊</span>'
+  el.innerHTML='<div class="profile-banner missing"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>'
     +'<div class="pb-txt"><strong>Sample data shown.</strong> Connect a data source to see your real numbers — link QuickBooks, or start creating estimates and invoices in Operations (Donna).</div>'
     +'<button class="btn-gold" onclick="navView(\'connect\')">Connect QuickBooks</button></div>';
 }

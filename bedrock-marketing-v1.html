@@ -220,10 +220,12 @@ p.hero-sub{font-family:'DM Sans',sans-serif;font-size:clamp(0.95rem,1.4vw,1.05re
 .goal-card{background:var(--off-white);border:1px solid var(--border-light);padding:1.1rem 1.2rem;cursor:pointer;text-align:left;border-radius:6px;transition:all .15s;display:flex;align-items:flex-start;gap:0.85rem;font:inherit;width:100%}
 .goal-card:hover{border-color:var(--gold);transform:translateY(-2px);background:#fff}
 .goal-card.active{border-color:var(--gold);background:#fff;box-shadow:0 4px 14px rgba(13,27,46,0.06)}
-.goal-card .goal-icon{font-size:1.5rem;flex-shrink:0;color:var(--gold);line-height:1}
+/* B6e: cleaner Pick a Goal styling — SVG icon (24px), tighter type, better vertical alignment. */
+.goal-card .goal-icon{width:28px;height:28px;flex-shrink:0;color:var(--gold);line-height:0;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.goal-card .goal-icon svg{width:24px;height:24px;display:block}
 .goal-card .goal-text{flex:1}
-.goal-card .goal-title{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--navy-deep);margin-bottom:0.2rem}
-.goal-card .goal-sub{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--slate);line-height:1.5}
+.goal-card .goal-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--navy-deep);margin-bottom:0.35rem;line-height:1.2}
+.goal-card .goal-sub{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--slate);line-height:1.55}
 
 /* material picker */
 .mat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem}
@@ -522,7 +524,7 @@ footer a:hover{text-decoration:underline}
         <button class="sidebar-link" id="nav-library" onclick="navTo('library')">
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
           <span>Asset Library</span>
-          <span class="badge">Soon</span>
+          <!-- B6c: Soon badge removed — Library is live with uploads + auto-saved exports. -->
         </button>
       </div>
 
@@ -560,10 +562,11 @@ footer a:hover{text-decoration:underline}
               <h3><span class="wiz-step-num">01</span> Pick a goal</h3>
               <div class="wiz-step-sub">This tells us what kind of copy and material to suggest. You can change it later.</div>
               <div class="goal-grid">
-                <button class="goal-card" data-goal="leads"     onclick="pickGoal('leads')"><span class="goal-icon">📞</span><span class="goal-text"><span class="goal-title">Get more calls</span><span class="goal-sub">General lead generation. Best for door hangers, yard signs, social.</span></span></button>
-                <button class="goal-card" data-goal="promo"     onclick="pickGoal('promo')"><span class="goal-icon">🏷️</span><span class="goal-text"><span class="goal-title">Promote a special</span><span class="goal-sub">$X off, limited-time, or a seasonal offer. Best for flyers, postcards.</span></span></button>
-                <button class="goal-card" data-goal="service"   onclick="pickGoal('service')"><span class="goal-icon">🔧</span><span class="goal-text"><span class="goal-title">Highlight a service</span><span class="goal-sub">Show off one specific service you offer. Best for flyers, social.</span></span></button>
-                <button class="goal-card" data-goal="brand"     onclick="pickGoal('brand')"><span class="goal-icon">🏗️</span><span class="goal-text"><span class="goal-title">Build awareness</span><span class="goal-sub">Just look professional everywhere you show up. Best for business cards, signs.</span></span></button>
+                <!-- B4b/B6e: emoji icons replaced with inline SVGs for professional B2B look. -->
+                <button class="goal-card" data-goal="leads"     onclick="pickGoal('leads')"><span class="goal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg></span><span class="goal-text"><span class="goal-title">Get more calls</span><span class="goal-sub">General lead generation. Best for door hangers, yard signs, social.</span></span></button>
+                <button class="goal-card" data-goal="promo"     onclick="pickGoal('promo')"><span class="goal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></span><span class="goal-text"><span class="goal-title">Promote a special</span><span class="goal-sub">$X off, limited-time, or a seasonal offer. Best for flyers, postcards.</span></span></button>
+                <button class="goal-card" data-goal="service"   onclick="pickGoal('service')"><span class="goal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></span><span class="goal-text"><span class="goal-title">Highlight a service</span><span class="goal-sub">Show off one specific service you offer. Best for flyers, social.</span></span></button>
+                <button class="goal-card" data-goal="brand"     onclick="pickGoal('brand')"><span class="goal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span><span class="goal-text"><span class="goal-title">Build awareness</span><span class="goal-sub">Just look professional everywhere you show up. Best for business cards, signs.</span></span></button>
               </div>
             </div>
 
@@ -908,12 +911,13 @@ footer a:hover{text-decoration:underline}
       <!-- ────────────────────────────────────────────────────── -->
       <div class="view" id="view-campaigns" style="display:none">
         <div class="section-head">
-          <div class="eyebrow light">Past work, organized</div>
+          <div class="eyebrow light">Coming soon</div>
           <h1 class="section-h">My <em>Campaigns.</em></h1>
-          <p class="section-sub">Anything you save with a Campaign / Goal label in Build Materials lands here, grouped by name. Pull up a season or promotion to find every piece together.</p>
+          <!-- B6d: improved placeholder copy per spec — describes what's coming, not a generic loading state. -->
+          <p class="section-sub">Campaigns are coming &mdash; you'll be able to schedule email and direct mail campaigns to your past clients and local neighborhoods. In the meantime, use <a href="#" onclick="event.preventDefault();navTo('build');return false" style="color:var(--gold);font-weight:600">Build Materials</a> to create one-off pieces.</p>
         </div>
         <div class="section-content">
-          <div id="campaignsBody"><div class="lib-empty">Loading your campaigns…</div></div>
+          <div id="campaignsBody" style="display:none"><div class="lib-empty">Loading your campaigns…</div></div>
         </div>
       </div>
 
@@ -924,9 +928,26 @@ footer a:hover{text-decoration:underline}
         <div class="section-head">
           <div class="eyebrow light">Everything you've made</div>
           <h1 class="section-h">Asset <em>Library.</em></h1>
-          <p class="section-sub">Every flyer, post, and card you've downloaded. Click any to preview or re-download.</p>
+          <p class="section-sub">Job photos, your logo, exported flyers + posts &mdash; all in one place. Upload anything you want to use in marketing materials, or just browse what you've already made.</p>
         </div>
         <div class="section-content">
+          <!-- B6c: real upload via upload-asset.js. JPG/PNG/PDF up to 10MB. -->
+          <style>
+            .lib-upload-bar{display:flex;justify-content:space-between;align-items:center;background:var(--off-white);border:1px dashed var(--border-light);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.1rem;gap:1rem;flex-wrap:wrap}
+            .lib-upload-bar .lub-txt{font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--slate);line-height:1.5}
+            .lib-upload-bar .lub-btn{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--gold);color:#fff;border:none;padding:0.7rem 1.1rem;border-radius:5px;cursor:pointer}
+            .lib-upload-bar .lub-btn:hover{background:var(--gold-dark,#A8711A)}
+            .lib-upload-bar .lub-btn[disabled]{opacity:0.6;cursor:wait}
+            .lib-upload-msg{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--slate);margin-top:0.5rem}
+            .lib-upload-msg.ok{color:var(--green,#3b6d11)}
+            .lib-upload-msg.err{color:#b91c1c}
+          </style>
+          <div class="lib-upload-bar">
+            <div class="lub-txt"><strong>Upload</strong> a job photo, your logo, a PDF, or any image you want to use in marketing materials. JPG / PNG / PDF, max 10MB each.</div>
+            <input type="file" id="libUploadInput" accept="image/png,image/jpeg,image/gif,image/webp,application/pdf" style="display:none" onchange="libUploadFile(event)">
+            <button type="button" class="lub-btn" id="libUploadBtn" onclick="document.getElementById('libUploadInput').click()">Upload a file</button>
+          </div>
+          <div class="lib-upload-msg" id="libUploadMsg"></div>
           <div class="lib-filters" id="libFilters"></div>
           <div id="libraryBody"><div class="lib-empty">Loading your assets…</div></div>
         </div>
@@ -1025,6 +1046,8 @@ function showPage(id) {
 }
 
 function navTo(view) {
+  // B6b: lock Build Materials behind a complete Brand Kit — show modal + redirect to brand step.
+  if (view === 'build' && !isBrandKitMinimallyComplete()) { showBrandKitLockModal(); return; }
   STATE.view = view;
   document.querySelectorAll('.sidebar-link').forEach(function(l){ l.classList.remove('active'); });
   var btn = document.getElementById('nav-'+view); if (btn) btn.classList.add('active');
@@ -1038,6 +1061,43 @@ function navTo(view) {
   if (view === 'library' || view === 'campaigns') loadMarketingAssets();
   try { window.scrollTo({ top:0, behavior:'instant' }); } catch(e){}
 }
+// B6b: completeness check per spec — must have (logo OR colors) AND at least one font selected.
+function isBrandKitMinimallyComplete(){
+  if (!STATE || !STATE.brandKit) return false;
+  var k = STATE.brandKit;
+  var hasLogo = !!(k.logo_url || k.logo_base64);
+  var DEFAULT_PRIMARY = '#1B3557', DEFAULT_SECONDARY = '#FFFFFF', DEFAULT_ACCENT = '#C9922A';
+  var hasColors = (k.color_primary && k.color_primary.toUpperCase() !== DEFAULT_PRIMARY)
+               || (k.color_secondary && k.color_secondary.toUpperCase() !== DEFAULT_SECONDARY)
+               || (k.color_accent && k.color_accent.toUpperCase() !== DEFAULT_ACCENT);
+  var hasFont = !!k.font_style;
+  return (hasLogo || hasColors) && hasFont;
+}
+function showBrandKitLockModal(){
+  var m = document.getElementById('bkLockModal'); if (m) { m.classList.add('show'); return; }
+  m = document.createElement('div');
+  m.id = 'bkLockModal';
+  m.className = 'bk-lock-overlay show';
+  m.innerHTML = '<div class="bk-lock-card">'
+    + '<div class="bk-lock-eye">Brand Kit required</div>'
+    + '<h3>Build your Brand Kit first</h3>'
+    + '<p>You only do this once. Every flyer, post, sign, and business card you make will automatically use your colors, logo, and fonts.</p>'
+    + '<div class="bk-lock-actions"><button type="button" class="btn-outline" onclick="document.getElementById(\'bkLockModal\').classList.remove(\'show\')">Not yet</button>'
+    + '<button type="button" class="btn-gold" onclick="document.getElementById(\'bkLockModal\').classList.remove(\'show\');navTo(\'brand\')">Go to Brand Kit &rarr;</button></div>'
+    + '</div>';
+  document.body.appendChild(m);
+  if (!document.getElementById('bkLockModalStyle')) {
+    var s = document.createElement('style'); s.id='bkLockModalStyle';
+    s.textContent = '.bk-lock-overlay{position:fixed;inset:0;background:rgba(13,27,46,0.78);z-index:9500;display:none;align-items:center;justify-content:center;padding:1.25rem}'
+      + '.bk-lock-overlay.show{display:flex}'
+      + '.bk-lock-card{background:#fff;max-width:440px;width:100%;border-top:4px solid var(--gold);padding:2rem 1.85rem 1.6rem;box-shadow:0 24px 60px rgba(0,0,0,0.5);border-radius:6px}'
+      + '.bk-lock-card .bk-lock-eye{font-family:\'DM Sans\',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--gold);margin-bottom:0.6rem}'
+      + '.bk-lock-card h3{font-family:\'Cormorant Garamond\',serif;font-size:1.55rem;font-weight:600;color:var(--navy-deep);margin-bottom:0.5rem;line-height:1.2}'
+      + '.bk-lock-card p{font-family:\'DM Sans\',sans-serif;font-size:0.86rem;color:var(--slate);line-height:1.65;margin-bottom:1.25rem}'
+      + '.bk-lock-card .bk-lock-actions{display:flex;gap:0.55rem;justify-content:flex-end;flex-wrap:wrap}';
+    document.head.appendChild(s);
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ASSET LIBRARY + CAMPAIGNS (browse — saves auto-happen on download)
@@ -1045,6 +1105,41 @@ function navTo(view) {
 var MKT_ASSETS = null;
 var LIB_FILTER = 'all';
 function escMkt(s){ return String(s==null?'':s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+// B6c: handle uploads in the Asset Library. Validates size, base64-encodes via fileToBase64
+// (protected — never break), POSTs to upload-asset.js, then refreshes the library.
+async function libUploadFile(ev){
+  var input = ev.target;
+  var file = input.files && input.files[0]; if(!file) return;
+  var msg = document.getElementById('libUploadMsg');
+  var btn = document.getElementById('libUploadBtn');
+  function setMsg(kind, text){ if(msg){ msg.className = 'lib-upload-msg ' + kind; msg.textContent = text; } }
+  if (file.size > 10 * 1024 * 1024) { setMsg('err','File too big — max 10MB.'); input.value=''; return; }
+  if (!STATE.authToken) { setMsg('err','Sign in to upload — open Marketing from your portal.'); input.value=''; return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Uploading…'; }
+  setMsg('','');
+  try {
+    var b64 = await fileToBase64(file);
+    var r = await fetch('/.netlify/functions/upload-asset', {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', Authorization:'Bearer ' + STATE.authToken },
+      body: JSON.stringify({
+        image_base64: b64,
+        filename: file.name,
+        kind: file.type === 'application/pdf' ? 'reference' : 'reference',
+      }),
+    });
+    if (!r.ok) { var t = await r.text(); setMsg('err','Upload failed — try again. ('+t.slice(0,80)+')'); }
+    else {
+      setMsg('ok','Uploaded — refreshing library…');
+      MKT_ASSETS = null; // force a refetch
+      await loadMarketingAssets(true);
+      setTimeout(function(){ if(msg) msg.textContent=''; }, 2500);
+    }
+  } catch(e) { setMsg('err','Upload failed — '+(e && e.message || 'unknown error')); }
+  input.value='';
+  if (btn) { btn.disabled = false; btn.textContent = 'Upload a file'; }
+}
+
 async function loadMarketingAssets(force){
   var libBody=document.getElementById('libraryBody'), campBody=document.getElementById('campaignsBody');
   if(!STATE.authToken){
@@ -1157,7 +1252,8 @@ async function startWithEmail(e) {
   updateBrandSummary();
   paintMatGrid();
   // Default landing: if brand kit exists, take them to wizard; if not, take them to brand kit
-  navTo(STATE.brandKitComplete ? 'build' : 'brand');
+  /* B6a: always land on Brand Kit step (Step 1) when Marketing opens — never Guided Start. */
+  navTo('brand');
 }
 
 function renderKitStatus(msg, kind) {
@@ -1918,7 +2014,8 @@ window.AUTH_MODAL_ONSUCCESS = function(d){
       selectTone(STATE.brandKit.tone, true);
       updateBrandSummary();
       paintMatGrid();
-      navTo(STATE.brandKitComplete ? 'build' : 'brand');
+      /* B6a: always land on Brand Kit step (Step 1) when Marketing opens — never Guided Start. */
+  navTo('brand');
     });
 };
 </script>
@@ -2046,5 +2143,16 @@ function bdmDoCreate(e){
 }
 document.addEventListener('click',function(e){ if(e.target&&e.target.id==='bdAuthModal') closeAuthModal(); });
 </script>
+
+<!-- B6f/B8a: standardized tool footer with Back to Dashboard + My Account quick links. -->
+<style>
+  .bd-tool-foot{background:#0D1B2E;padding:0.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.08);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.5);flex-shrink:0;gap:1rem;flex-wrap:wrap}
+  .bd-tool-foot a{color:rgba(255,255,255,0.65);text-decoration:none;font-weight:500;letter-spacing:0.04em;transition:color .15s}
+  .bd-tool-foot a:hover{color:#C9922A}
+</style>
+<footer class="bd-tool-foot">
+  <a href="/portal.html">&larr; Back to Dashboard</a>
+  <a href="/account.html">My Account</a>
+</footer>
 </body>
 </html>

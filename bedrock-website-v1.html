@@ -14,7 +14,8 @@
   :root{
     --navy:#0D1B2E;--slate:#1F4E79;--gold:#C9922A;--gold-lt:#D4A843;--cream:#FAF7F2;--ink:#0D1B2E;--muted:#4A5568;--border:#E3E0DA;--green:#3a7d2c;
     /* Tool brand tokens (see bedrock-vault/05-SUBBRAND-LOGO-INTEGRATION.md) */
-    --navy-deep:#0D1B2E;--navy-mid:#2E5A8E;--navy-light:#4A7DB5;--gold-dark:#A8711A;--gold-light:#F0C46A;--warm-white:#F5E6C8;--tool-accent:#4A7DB5;
+    /* B4a: --tool-accent unified to gold/amber across all 4 tools — was navy-light (Website-only blue). */
+    --navy-deep:#0D1B2E;--navy-mid:#2E5A8E;--navy-light:#4A7DB5;--gold-dark:#A8711A;--gold-light:#F0C46A;--warm-white:#F5E6C8;--tool-accent:#C9922A;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
@@ -271,5 +272,16 @@ function wsBuild(){ window.location.href='/sites.html?embed=builder'; }
   }catch(_){}
 })();
 </script>
+
+<!-- B8a: standardized tool footer with Back to Dashboard + My Account quick links. -->
+<style>
+  .bd-tool-foot{background:#0D1B2E;padding:0.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.08);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.5);flex-shrink:0;gap:1rem;flex-wrap:wrap}
+  .bd-tool-foot a{color:rgba(255,255,255,0.65);text-decoration:none;font-weight:500;letter-spacing:0.04em;transition:color .15s}
+  .bd-tool-foot a:hover{color:#C9922A}
+</style>
+<footer class="bd-tool-foot">
+  <a href="/portal.html">&larr; Back to Dashboard</a>
+  <a href="/account.html">My Account</a>
+</footer>
 </body>
 </html>

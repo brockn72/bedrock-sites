@@ -345,16 +345,9 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .nav-tab-btn:hover:not(.active){color:rgba(255,255,255,0.85)}
 .nav-tab-caret{font-size:0.6rem;opacity:0.6}
 /* Tool tabs (My Website / Marketing / Donna / Finance) open a separate tool — gold-outlined box to distinguish them from in-portal tabs */
-.nav-tab-group[data-top="website"]>.nav-tab-btn,
-.nav-tab-group[data-top="marketing"]>.nav-tab-btn,
-.nav-tab-group[data-top="operations"]>.nav-tab-btn,
-.nav-tab-group[data-top="finance"]>.nav-tab-btn,
-.nav-tab-group[data-top="cfo"]>.nav-tab-btn{border:1px solid rgba(201,146,42,0.55);border-radius:6px;margin:0 3px}
-.nav-tab-group[data-top="website"]>.nav-tab-btn:hover,
-.nav-tab-group[data-top="marketing"]>.nav-tab-btn:hover,
-.nav-tab-group[data-top="operations"]>.nav-tab-btn:hover,
-.nav-tab-group[data-top="finance"]>.nav-tab-btn:hover,
-.nav-tab-group[data-top="cfo"]>.nav-tab-btn:hover{background:rgba(201,146,42,0.14);color:#fff}
+/* B1a: gold-bordered box treatment applied to ALL tab groups (was just tool tabs) so Dashboard + My Account match. */
+.nav-tab-group[data-top]>.nav-tab-btn{border:1px solid rgba(201,146,42,0.55);border-radius:6px;margin:0 3px}
+.nav-tab-group[data-top]>.nav-tab-btn:hover{background:rgba(201,146,42,0.14);color:#fff}
 .nav-tab-group:hover .nav-tab-caret{opacity:1}
 /* sub-product mark icon inside a tool tab */
 .nav-tab-mark{width:15px;height:15px;flex-shrink:0;border-radius:3px;vertical-align:middle}
@@ -367,14 +360,15 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .nav-tab-btn .nav-tab-lock{width:11px;height:11px;opacity:0.7;margin-left:2px;stroke-width:2.5}
 .nav-tab-group.locked>.nav-tab-btn{border-color:rgba(255,255,255,0.18);color:rgba(255,255,255,0.6)}
 .nav-tab-group.locked>.nav-tab-btn:hover{background:rgba(255,255,255,0.05)}
-.nav-tab-submenu{position:absolute;top:100%;left:0;background:#fff;border:1px solid var(--border);border-top:2px solid var(--accent);min-width:230px;box-shadow:0 10px 28px rgba(0,0,0,0.4);display:none;z-index:200;flex-direction:column;margin-top:0}
+/* B1b: dropdown restyled to white-on-navy to match the homepage nav dropdown */
+.nav-tab-submenu{position:absolute;top:100%;left:0;background:#0D1B2E;border:1px solid rgba(201,146,42,0.25);border-top:2px solid var(--accent);min-width:220px;box-shadow:0 12px 32px rgba(0,0,0,0.5);display:none;z-index:200;flex-direction:column;margin-top:0;border-radius:0 0 6px 6px}
 /* transparent bridge so the cursor never crosses a dead zone between tab and menu */
 .nav-tab-submenu::before{content:'';position:absolute;top:-10px;left:0;right:0;height:10px}
 .nav-tab-group:hover .nav-tab-submenu,.nav-tab-group.open .nav-tab-submenu{display:flex}
-.nav-tab-submenu-link{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--text);text-decoration:none;padding:0.7rem 1rem;border-bottom:1px solid var(--border);transition:background .15s;background:transparent;border-left:none;border-right:none;cursor:pointer;text-align:left;width:100%}
+.nav-tab-submenu-link{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:rgba(255,255,255,0.82);text-decoration:none;padding:0.7rem 1rem;border-bottom:1px solid rgba(255,255,255,0.06);transition:background .15s,color .15s;background:transparent;border-left:none;border-right:none;border-top:none;cursor:pointer;text-align:left;width:100%}
 .nav-tab-submenu-link:last-child{border-bottom:none}
-.nav-tab-submenu-link:hover{background:var(--offwhite);color:var(--accent)}
-.nav-tab-submenu-link.active{background:rgba(201,146,42,0.08);color:var(--accent);font-weight:600}
+.nav-tab-submenu-link:hover{background:rgba(201,146,42,0.12);color:var(--accent)}
+.nav-tab-submenu-link.active{background:rgba(201,146,42,0.16);color:var(--accent);font-weight:600}
 .nav-tab-submenu-link .tsl-eyebrow{font-size:0.5rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);display:block;margin-bottom:2px}
 /* Hide the old in-body tab-bar — replaced by nav-tabs */
 .tab-bar{display:none!important}
@@ -680,16 +674,31 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
   </div>
   <!-- PORTAL TABS — in nav, left of the bell. Each tab goes straight to its destination. -->
   <div class="nav-tabs" id="navTabs" style="display:none">
+    <!-- B1b: every tab now has a caret + dropdown with quick-link menu items per spec. -->
     <div class="nav-tab-group" data-top="dashboard">
-      <button class="nav-tab-btn" onclick="goTab('dashboard','default')">Dashboard</button>
+      <button class="nav-tab-btn" onclick="goTab('dashboard','default')">Dashboard <span class="nav-tab-caret">▾</span></button>
+      <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#profile'"><span class="tsl-eyebrow">Brain</span>My Profile</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('dashboard','default');setTimeout(function(){var e=document.getElementById('onboardCard');if(e)e.scrollIntoView({behavior:'smooth'});},80);"><span class="tsl-eyebrow">Setup</span>Get Started</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#files'"><span class="tsl-eyebrow">Library</span>My Files</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="goTab('dashboard','default');setTimeout(function(){var e=document.getElementById('dhTimeSaved');if(e)e.scrollIntoView({behavior:'smooth',block:'center'});},80);"><span class="tsl-eyebrow">Stat</span>Time Saved</button>
+      </div>
     </div>
-    <!-- Operations (Donna) — May 2026: the old CFO tab, now its own product, moved up next to Dashboard. -->
+    <!-- Operations (Donna) -->
     <div class="nav-tab-group" data-top="operations">
       <button class="nav-tab-btn" onclick="launchDonna()" title="Bedrock Operations · Donna">
         <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-o"/></svg>
         Operations
         <span class="nav-tab-dot" data-tool-dot="operations" aria-hidden="true"></span>
+        <span class="nav-tab-caret">▾</span>
       </button>
+      <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="launchDonna()"><span class="tsl-eyebrow">Draft</span>New Estimate</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchDonna()"><span class="tsl-eyebrow">Send</span>New Invoice</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchDonna()"><span class="tsl-eyebrow">Add</span>New Customer</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchDonna()"><span class="tsl-eyebrow">View</span>My Jobs</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchDonna()"><span class="tsl-eyebrow">Notes</span>My Notes</button>
+      </div>
     </div>
     <!-- My Profile — May 2026: folded into the My Account dropdown. Standalone tab hidden, not deleted. -->
     <div class="nav-tab-group" data-top="profile" style="display:none">
@@ -705,13 +714,13 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
         <span class="nav-tab-caret">▾</span>
       </button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=start'"><span class="tsl-eyebrow">Manage</span>My Site</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=optimizer'"><span class="tsl-eyebrow">SEO/GEO</span>SEO / GEO Optimizer</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=analytics'"><span class="tsl-eyebrow">Stats</span>Analytics</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=start'"><span class="tsl-eyebrow">Edit</span>Edit My Site</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=start'"><span class="tsl-eyebrow">View</span>View Live Site</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=optimizer'"><span class="tsl-eyebrow">SEO/GEO</span>SEO Score</button>
       </div>
     </div>
     <div class="nav-tab-group" data-top="marketing">
-      <button class="nav-tab-btn" onclick="launchMarketing('wizard')" title="Bedrock Marketing">
+      <button class="nav-tab-btn" onclick="launchMarketing('brand')" title="Bedrock Marketing">
         <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-m"/></svg>
         Marketing
         <span class="nav-tab-dot" data-tool-dot="marketing" aria-hidden="true"></span>
@@ -721,7 +730,6 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('library')"><span class="tsl-eyebrow">Saved</span>Asset Library</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('wizard')"><span class="tsl-eyebrow">Soon</span>Integrations</button>
       </div>
     </div>
     <!-- Finance — May 2026: its own product tab. Operations (Donna) tab now lives next to Dashboard. -->
@@ -730,21 +738,28 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
         <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg>
         Finance
         <span class="nav-tab-dot" data-tool-dot="finance" aria-hidden="true"></span>
+        <span class="nav-tab-caret">▾</span>
       </button>
+      <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="launchFinance()"><span class="tsl-eyebrow">Overview</span>Dashboard</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchFinance()"><span class="tsl-eyebrow">Reports</span>Statements</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchFinance()"><span class="tsl-eyebrow">Per-Job</span>Projects</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="launchFinance()"><span class="tsl-eyebrow">Connect</span>Integrations</button>
+      </div>
     </div>
     <!-- CFO — May 2026: replaced by Donna + Finance above. Old tab hidden, not deleted. -->
     <div class="nav-tab-group" data-top="cfo" style="display:none">
       <button class="nav-tab-btn" onclick="goTab('cfo','default')">Operations</button>
     </div>
-    <!-- G3d/G3e: My Account tab + submenu now navigate to /account.html (dedicated page), not embedded portal panels. -->
-    <!-- G16a/b: navigation only (no in-portal panel open) — most freeze sources removed; console.time marker on the click helps diagnose any remaining latency. -->
+    <!-- B1b: My Account dropdown — spec items (Account Info, My Profile, Subscriptions, Integrations, Need Help). -->
     <div class="nav-tab-group" data-top="subs">
       <button class="nav-tab-btn" onclick="console.time('account-open');location.href='/account.html#info';console.timeEnd('account-open');">My Account <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#info'"><span class="tsl-eyebrow">Basics</span>Account Info</button>
         <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#profile'"><span class="tsl-eyebrow">Brain</span>My Profile</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#integrations'"><span class="tsl-eyebrow">Connect</span>My Integrations</button>
         <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#subs'"><span class="tsl-eyebrow">Plan</span>Subscriptions</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#billing'"><span class="tsl-eyebrow">History</span>Billing History</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#integrations'"><span class="tsl-eyebrow">Connect</span>Integrations</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#support'"><span class="tsl-eyebrow">Help</span>Need Help</button>
       </div>
     </div>
   </div>
@@ -933,15 +948,22 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           .wm-inline .wmi-list li strong{font-weight:600}
           .wm-inline .wmi-note{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--text-muted);background:var(--offwhite);border-left:3px solid var(--accent);padding:0.6rem 0.85rem;border-radius:0 4px 4px 0;line-height:1.55}
         </style>
-        <div class="wm-inline">
-          <div class="wmi-eye">Welcome to Bedrock</div>
-          <h2>Here's how Bedrock works.</h2>
+        <!-- B2: Welcome card with permanent dismiss button — saves to localStorage 'bedrock_welcome_dismissed'. -->
+        <div class="wm-inline" id="wmInline">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap">
+            <div style="flex:1;min-width:240px">
+              <div class="wmi-eye">Welcome to Bedrock</div>
+              <h2>Here's how Bedrock works.</h2>
+            </div>
+            <button type="button" onclick="wmInlineDismiss()" style="font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--green-bg);color:var(--green);border:1px solid rgba(59,109,17,0.25);padding:0.55rem 0.95rem;border-radius:5px;cursor:pointer;flex-shrink:0">Got it &check;</button>
+          </div>
           <div class="wmi-sub">Bedrock Digital is one connected system for your whole business. Four tools that share one profile, so you never enter the same info twice.</div>
           <ul class="wmi-list">
-            <li><span>👤</span><span><strong>Operations</strong> &mdash; Donna drafts your estimates, invoices, and receipts.</span></li>
-            <li><span>📊</span><span><strong>Finance</strong> &mdash; plain-English dashboards of revenue, margin, and what's owed.</span></li>
-            <li><span>🎨</span><span><strong>Marketing</strong> &mdash; your Brand Kit + flyers, posts, and signs in minutes.</span></li>
-            <li><span>🌐</span><span><strong>Website</strong> &mdash; a high-performance site with SEO/GEO built in.</span></li>
+            <!-- B4b: emojis replaced with real sub-brand marks via the existing SVG sprite. -->
+            <li><svg width="20" height="20" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-o"/></svg><span><strong>Operations</strong> &mdash; Donna drafts your estimates, invoices, and receipts.</span></li>
+            <li><svg width="20" height="20" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg><span><strong>Finance</strong> &mdash; plain-English dashboards of revenue, margin, and what's owed.</span></li>
+            <li><svg width="20" height="20" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-m"/></svg><span><strong>Marketing</strong> &mdash; your Brand Kit + flyers, posts, and signs in minutes.</span></li>
+            <li><svg width="20" height="20" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-w"/></svg><span><strong>Website</strong> &mdash; a high-performance site with SEO/GEO built in.</span></li>
           </ul>
           <div class="wmi-note">Click any tab at the top to dive in. Each tool opens in <strong>preview mode</strong> until you purchase &mdash; explore freely, then make it yours when you're ready.</div>
         </div>
@@ -1049,26 +1071,129 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           </div>
         </div>
 
-        <!-- Secondary row: profile completeness, time saved, recent activity -->
+        <!-- B3a/b: 3 stat cards row — Profile %, Time Saved (real log), Money Saved (vs agency comparison). -->
+        <style>
+          .dh-mini .dh-clickable{cursor:pointer;transition:background .15s,border-color .15s}
+          .dh-mini.dh-clickable:hover{border-color:var(--accent)}
+          .dh-mini .dh-breakdown{display:none;margin-top:0.85rem;padding-top:0.7rem;border-top:1px dashed rgba(13,27,46,0.08);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--text-muted);line-height:1.55}
+          .dh-mini.expanded .dh-breakdown{display:block}
+          .dh-mini .dh-breakdown .br-row{display:flex;justify-content:space-between;padding:0.25rem 0;border-bottom:1px dashed rgba(13,27,46,0.06);color:var(--text)}
+          .dh-mini .dh-breakdown .br-row:last-child{border-bottom:none}
+          .dh-mini .dh-breakdown small{display:block;margin-top:0.4rem;font-style:italic;color:var(--text-muted)}
+        </style>
         <div class="dh-secondary">
           <div class="dh-mini">
             <h4>Your business profile</h4>
             <div class="mb-big" id="dhProfilePct">0%<small>complete · finish so every tool gets smarter</small></div>
             <div class="dh-meter"><i id="dhProfileMeter" style="width:0%"></i></div>
-            <button type="button" class="dh-cta" onclick="location.href='/account.html#profile'">Finish my profile →</button>
+            <button type="button" class="dh-cta" onclick="location.href='/account.html#profile'">Finish my profile &rarr;</button>
           </div>
-          <div class="dh-mini">
+          <div class="dh-mini dh-clickable" id="dhTimeCard" onclick="this.classList.toggle('expanded')">
             <h4>Time saved with Bedrock</h4>
-            <div class="mb-big"><span id="dhTimeSaved">0</span><small>minutes · climbs as Donna, Marketing, and Finance do real work for you</small></div>
-            <div class="dh-cta" style="color:var(--text-muted);cursor:default">Counts estimates, invoices, and assets you actually produce.</div>
+            <div class="mb-big"><span id="dhTimeSaved">0</span><small id="dhTimeSavedSub">minutes &mdash; start using your tools to track time saved.</small></div>
+            <div class="dh-cta" style="color:var(--accent)">Click to see breakdown &darr;</div>
+            <div class="dh-breakdown" id="dhTimeBreakdown">
+              <div style="color:var(--text-muted);font-style:italic">No logged events yet. Each estimate, invoice, receipt, or asset you produce gets logged here with the minutes it would have taken without Bedrock.</div>
+            </div>
           </div>
-          <div class="dh-mini">
-            <h4>Recent activity</h4>
-            <div class="dh-feed" id="dhFeed">
-              <div class="dhf-empty">No activity yet. Build a brand kit, draft an estimate, or run your first audit — it shows up here.</div>
+          <div class="dh-mini dh-clickable" id="dhMoneyCard" onclick="this.classList.toggle('expanded')">
+            <h4>Money saved vs hiring out</h4>
+            <div class="mb-big">$<span id="dhMoneySaved">0</span><small>/mo &mdash; estimate vs hiring agencies + bookkeeper for the same work.</small></div>
+            <div class="dh-cta" style="color:var(--accent)">Click to see breakdown &darr;</div>
+            <div class="dh-breakdown" id="dhMoneyBreakdown">
+              <div style="color:var(--text-muted);font-style:italic">Subscribe to a tool to start seeing your monthly savings vs hiring out the same work.</div>
             </div>
           </div>
         </div>
+        <script>
+        (function(){
+          // B3a: Time Saved — pull events from bedrock_time_log via /list-time-events (Supabase REST). MVP: count of minutes only.
+          // Falls back to localStorage 'bedrock_time_log_local' so even pre-DB the card has signal. Brock can deploy the table when ready.
+          var TIME_CREDITS = {
+            website_built:        180,
+            brand_kit_completed:   90,
+            estimate_created:      20,
+            invoice_created:       15,
+            receipt_scanned:        8,
+            customer_added:         5,
+            job_created:            5,
+            marketing_exported:    25,
+          };
+          var TIME_LABELS = {
+            website_built:        'Website built and launched',
+            brand_kit_completed:  'Brand Kit completed',
+            estimate_created:     'Estimate created via Donna',
+            invoice_created:      'Invoice created via Donna',
+            receipt_scanned:      'Receipt scanned/uploaded',
+            customer_added:       'Customer added',
+            job_created:          'Job created',
+            marketing_exported:   'Marketing material exported',
+          };
+          // Public helper: log a time event (extensible — Donna/Marketing/Finance call this on real actions).
+          window.bedrockLogTime = function(actionType){
+            var minutes = TIME_CREDITS[actionType]; if(!minutes) return;
+            var ev = { action_type: actionType, minutes_credited: minutes, created_at: new Date().toISOString() };
+            try {
+              var raw = localStorage.getItem('bedrock_time_log_local');
+              var arr = raw ? JSON.parse(raw) : [];
+              arr.push(ev);
+              localStorage.setItem('bedrock_time_log_local', JSON.stringify(arr));
+            } catch(_){}
+            // Fire-and-forget server insert if /log-time-event exists. No-op if it 404s.
+            try {
+              if (window.currentSession && currentSession.access_token) {
+                fetch('/.netlify/functions/log-time-event', { method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer '+currentSession.access_token}, body: JSON.stringify(ev) }).catch(function(){});
+              }
+            } catch(_){}
+            renderTimeSaved();
+          };
+          function renderTimeSaved(){
+            var events = [];
+            try { events = JSON.parse(localStorage.getItem('bedrock_time_log_local') || '[]'); } catch(_){}
+            var total = events.reduce(function(s,e){ return s + (e.minutes_credited || 0); }, 0);
+            var n = document.getElementById('dhTimeSaved'); if(n) n.textContent = String(total|0);
+            var sub = document.getElementById('dhTimeSavedSub');
+            if (sub) sub.textContent = total > 0 ? 'minutes saved across ' + events.length + ' logged action' + (events.length === 1 ? '' : 's') + '.' : 'minutes — start using your tools to track time saved.';
+            var br = document.getElementById('dhTimeBreakdown');
+            if (br && events.length) {
+              // Group by action_type for breakdown
+              var byType = {};
+              events.forEach(function(e){ byType[e.action_type] = (byType[e.action_type] || 0) + (e.minutes_credited || 0); });
+              br.innerHTML = Object.keys(byType).map(function(t){
+                return '<div class="br-row"><span>'+(TIME_LABELS[t] || t)+'</span><span style="font-weight:600">'+byType[t]+' min</span></div>';
+              }).join('') + '<small>Pulled from your logged Bedrock actions. Every minute traces back to a real estimate, invoice, receipt, or asset you produced.</small>';
+            }
+          }
+          // B3b: Money Saved — calculated from TOOL_SUBSCRIBED against agency comparison baselines.
+          var MONEY_SAVINGS = {
+            marketing: { monthly: 720, label: 'Marketing', baseline: 'Agency social/print: ~$750/mo' },
+            website:   { monthly: 180, label: 'Website',   baseline: 'Agency build amortized + hosting: ~$200/mo' },
+            finops:    { monthly: 330, label: 'Operations + Finance', baseline: 'Bookkeeper hours + estimating software: ~$400/mo' },
+          };
+          function renderMoneySaved(){
+            var ts = window.TOOL_SUBSCRIBED || {};
+            var rows = [], total = 0;
+            if (ts.marketing) { rows.push(MONEY_SAVINGS.marketing); total += MONEY_SAVINGS.marketing.monthly; }
+            if (ts.donna || ts.finance) { rows.push(MONEY_SAVINGS.finops); total += MONEY_SAVINGS.finops.monthly; }
+            if (ts.website) { rows.push(MONEY_SAVINGS.website); total += MONEY_SAVINGS.website.monthly; }
+            var n = document.getElementById('dhMoneySaved'); if(n) n.textContent = String(total);
+            var br = document.getElementById('dhMoneyBreakdown');
+            if (br) {
+              if (!rows.length) {
+                br.innerHTML = '<div style="color:var(--text-muted);font-style:italic">Subscribe to a tool to start seeing your monthly savings vs hiring out the same work.</div>';
+              } else {
+                br.innerHTML = rows.map(function(r){
+                  return '<div class="br-row"><span><strong>'+r.label+'</strong><br><span style="font-size:0.62rem;color:var(--text-muted)">'+r.baseline+'</span></span><span style="font-weight:600;color:var(--green)">~$'+r.monthly+'/mo</span></div>';
+                }).join('') + '<small>Based on average contractor agency rates. Your actual savings may vary.</small>';
+              }
+            }
+          }
+          // Re-render whenever subs update + on first load
+          window.renderStatsCards = function(){ renderTimeSaved(); renderMoneySaved(); };
+          document.addEventListener('DOMContentLoaded', window.renderStatsCards);
+          setTimeout(window.renderStatsCards, 600);
+        })();
+        </script>
 
         <script>
         (function(){
@@ -1172,34 +1297,38 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
         <div class="onboard" id="onboardCard">
           <div class="onboard-head">
             <div class="onboard-title">Get started with Bedrock<span class="help-tip">?<span class="help-bubble">Your Dashboard is home base — account info, quick links, and this checklist to get your business set up.</span></span></div>
-            <div class="onboard-prog" id="onboardProg">0 of 4 done</div>
+            <div class="onboard-prog" id="onboardProg">0 of 6 done</div>
           </div>
+          <!-- B2a: 6-item checklist per spec. -->
           <div id="onboardList">
-            <!-- Step 12: refocused on account actions — tool launches live in the top tab bar. -->
-            <button type="button" class="onboard-item" data-step="profile" onclick="onboardGo('profile')">
+            <button type="button" class="onboard-item" data-step="profile" onclick="location.href='/account.html#profile'">
               <span class="onboard-check">&#10003;</span>
-              <span class="onboard-item-txt"><span class="onboard-item-name">Complete my profile</span><span class="onboard-item-sub">Tell Bedrock about your business so every tool is pre-filled</span></span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Complete your profile</span><span class="onboard-item-sub">Tell Bedrock about your business so every tool is pre-filled</span></span>
               <span class="onboard-arrow">&rarr;</span>
             </button>
-            <button type="button" class="onboard-item" data-step="subscription" onclick="onboardGo('subscription')">
+            <button type="button" class="onboard-item" data-step="subscription" onclick="location.href='/account.html#subs'">
               <span class="onboard-check">&#10003;</span>
-              <span class="onboard-item-txt"><span class="onboard-item-name">Pick your subscriptions</span><span class="onboard-item-sub">Choose the tools you want and review your plan</span></span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Pick your first subscription</span><span class="onboard-item-sub">Choose a tool and review your plan</span></span>
               <span class="onboard-arrow">&rarr;</span>
             </button>
-            <button type="button" class="onboard-item" data-step="integrations" onclick="goTab('subs','integrations')">
+            <button type="button" class="onboard-item" data-step="qbo" onclick="location.href='/account.html#integrations'">
               <span class="onboard-check">&#10003;</span>
-              <span class="onboard-item-txt"><span class="onboard-item-name">Connect QuickBooks &amp; Google</span><span class="onboard-item-sub">One connection powers Donna's invoices, scheduling, and Finance sync</span></span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Connect QuickBooks</span><span class="onboard-item-sub">So Donna's estimates, invoices, and expenses sync to your books</span></span>
               <span class="onboard-arrow">&rarr;</span>
             </button>
-            <!-- Tool launch items retired May 2026 — moved to top tab bar (kept, not deleted) -->
-            <button type="button" class="onboard-item" data-step="website" onclick="onboardGo('website')" style="display:none">
+            <button type="button" class="onboard-item" data-step="google" onclick="location.href='/account.html#integrations'">
               <span class="onboard-check">&#10003;</span>
-              <span class="onboard-item-txt"><span class="onboard-item-name">Build my website</span><span class="onboard-item-sub">Get a professional site live for your trade</span></span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Connect Google</span><span class="onboard-item-sub">Send invoices from your Gmail and put jobs on your Calendar</span></span>
               <span class="onboard-arrow">&rarr;</span>
             </button>
-            <button type="button" class="onboard-item" data-step="marketing" onclick="onboardGo('marketing')" style="display:none">
+            <button type="button" class="onboard-item" data-step="brandkit" onclick="launchMarketing('brand')">
               <span class="onboard-check">&#10003;</span>
-              <span class="onboard-item-txt"><span class="onboard-item-name">Set up marketing</span><span class="onboard-item-sub">Build your Brand Kit and start making materials</span></span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Build your Brand Kit</span><span class="onboard-item-sub">Marketing &mdash; logo, colors, voice. Set up once, used everywhere.</span></span>
+              <span class="onboard-arrow">&rarr;</span>
+            </button>
+            <button type="button" class="onboard-item" data-step="firstestimate" onclick="launchDonna()">
+              <span class="onboard-check">&#10003;</span>
+              <span class="onboard-item-txt"><span class="onboard-item-name">Create your first estimate</span><span class="onboard-item-sub">Open Donna and dictate a job &mdash; she drafts it, you approve.</span></span>
               <span class="onboard-arrow">&rarr;</span>
             </button>
           </div>
@@ -1357,6 +1486,46 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           </div>
           <div id="feedbackMsg" style="font-size:0.7rem;color:var(--text-muted);margin-top:6px"></div>
         </div>
+
+        <!-- B2: dashboard reorder + dismissable sections.
+             Order: Get Started -> Welcome -> Profile prompt -> Quick links -> Tool cards -> 3 stats -> rest.
+             Each dismissable section auto-hides when its task is done. -->
+        <script>
+        (function(){
+          var pane = document.getElementById('pane-dashboard-default'); if(!pane) return;
+          var WELCOME_DISMISS_KEY = 'bedrock_welcome_dismissed';
+          // Welcome card dismiss (B2)
+          window.wmInlineDismiss = function(){
+            var card = document.getElementById('wmInline'); if(card) card.style.display = 'none';
+            try { localStorage.setItem(WELCOME_DISMISS_KEY, '1'); } catch(_){}
+          };
+          // Hide welcome on load if previously dismissed
+          try { if (localStorage.getItem(WELCOME_DISMISS_KEY) === '1') { var c=document.getElementById('wmInline'); if(c) c.style.display='none'; } } catch(_){}
+          // Reorder dashboard children into spec order. Sections not in the list stay below.
+          var ORDER = ['onboardCard','wmInline','profileNudgeBanner','dashLaunchpad','dhToolGrid'];
+          // dh-secondary is the 3-card stats row; find it via its first child anchor
+          ORDER.forEach(function(id){ var el = document.getElementById(id); if(el && el.parentNode === pane) pane.appendChild(el); });
+          // dh-secondary doesn't have an ID — find by class and re-append
+          var secondary = pane.querySelector('.dh-secondary'); if (secondary) pane.appendChild(secondary);
+          // Auto-hide observer: when all onboard items are .done, hide the whole onboardCard. When profile pct = 100, hide profile nudge.
+          window.maybeAutoHideDashSections = function(){
+            try {
+              var card = document.getElementById('onboardCard');
+              if (card) {
+                var items = card.querySelectorAll('.onboard-item:not([style*="display:none"])');
+                var done = card.querySelectorAll('.onboard-item.done');
+                if (items.length > 0 && done.length === items.length) { card.style.display = 'none'; }
+              }
+              var nudge = document.getElementById('profileNudgeBanner');
+              if (nudge) {
+                var pct = (typeof getProfileCompletion === 'function') ? getProfileCompletion() : 0;
+                if (pct >= 100) nudge.style.display = 'none';
+              }
+            } catch(_){}
+          };
+          setTimeout(window.maybeAutoHideDashSections, 800);
+        })();
+        </script>
       </div>
 
       <!-- ════════════ MY WEBSITE HUB OVERVIEW ════════════ -->
@@ -1958,7 +2127,7 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
               <div style="font-size:0.76rem;color:var(--text-muted);margin-top:3px">Connect the tools your Bedrock products use. One connection works for Operations and Finance both &mdash; Bedrock never shows a connection as live until it's actually verified.</div>
             </div>
             <div style="padding:0.6rem 1.5rem 1.4rem">
-              <div class="conn-line"><span style="font-size:1.15rem">📊</span><div style="flex:1;min-width:160px"><div class="cl-name">QuickBooks Online</div><div class="cl-sub">Invoices, estimates &amp; expenses</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('QuickBooks')">Connect</button></div>
+              <div class="conn-line"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg><div style="flex:1;min-width:160px"><div class="cl-name">QuickBooks Online</div><div class="cl-sub">Invoices, estimates &amp; expenses</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('QuickBooks')">Connect</button></div>
               <div class="conn-line"><span style="font-size:1.15rem">✉️</span><div style="flex:1;min-width:160px"><div class="cl-name">Gmail</div><div class="cl-sub">Send estimates &amp; invoices from your address</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('Gmail')">Connect</button></div>
               <div class="conn-line"><span style="font-size:1.15rem">📅</span><div style="flex:1;min-width:160px"><div class="cl-name">Google Calendar</div><div class="cl-sub">Scheduled jobs &amp; customer reminders</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('Calendar')">Connect</button></div>
             </div>
@@ -3483,7 +3652,7 @@ function renderIntegrationCards(c) {
   box.innerHTML =
     '<div class="banner-card" style="margin-bottom:1rem">'
       + '<div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">'
-        + '<div style="font-size:1.9rem;line-height:1">📊</div>'
+        + '<div style="line-height:1"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg></div>'
         + '<div style="flex:1;min-width:210px">'
           + '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.2rem;font-weight:600;color:var(--dark)">QuickBooks Online</div>'
           + '<div style="font-size:0.78rem;color:var(--text-muted);line-height:1.55;margin-top:3px">Donna syncs your approved estimates, invoices, and expenses here. Finance reads your real numbers from it.</div>'
