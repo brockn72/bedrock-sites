@@ -137,8 +137,14 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem}
 @media(max-width:880px){.kpi-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:460px){.kpi-grid{grid-template-columns:1fr}}
-.kpi-card{background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--navy-deep);border-radius:6px;padding:1.1rem 1.2rem}
-.kpi-card.accent{border-top-color:var(--gold)}
+/* G9a: Finance dashboard restyled to match the Inside Finance gold-standard aesthetic.
+   Cream bg, top accent strip, larger Cormorant value, plain-English sub text. */
+.kpi-card{background:var(--off-white);border:1px solid var(--border-light);border-top:3px solid var(--gold);border-radius:10px;padding:1.15rem 1.3rem;display:flex;flex-direction:column;gap:0.45rem}
+.kpi-card .kpi-label{font-family:'DM Sans',sans-serif;font-size:0.54rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber)}
+.kpi-card .kpi-value{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:700;color:var(--navy-deep);line-height:1;font-variant-numeric:tabular-nums}
+.kpi-card .kpi-sub{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:var(--slate);line-height:1.5}
+.kpi-card.accent{border-top-color:var(--navy-mid)}
+.kpi-card.accent .kpi-label{color:var(--navy-mid)}
 .kpi-label{font-size:0.58rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--slate);margin-bottom:0.5rem}
 .kpi-value{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--navy-deep);line-height:1}
 .kpi-sub{font-size:0.68rem;color:var(--slate);margin-top:0.4rem}
@@ -362,11 +368,136 @@ footer a{color:var(--gold);text-decoration:none}
           <button class="filter-btn" data-period="custom" onclick="setPeriod('custom',this)">Custom</button>
         </div>
         <div class="kpi-grid">
-          <div class="kpi-card"><div class="kpi-label">Total Revenue</div><div class="kpi-value" id="kpiRevenue">$0</div><div class="kpi-sub">Billed in the selected period</div></div>
-          <div class="kpi-card"><div class="kpi-label">Gross Margin %</div><div class="kpi-value" id="kpiMargin">0%</div><div class="kpi-sub">Estimated, across all jobs</div></div>
-          <div class="kpi-card"><div class="kpi-label">Total Expenses</div><div class="kpi-value" id="kpiExpenses">$0</div><div class="kpi-sub">Materials, equipment &amp; job costs</div></div>
-          <div class="kpi-card accent"><div class="kpi-label">Outstanding Invoices</div><div class="kpi-value" id="kpiOutstanding">$0</div><div class="kpi-sub">Money you're owed — always current</div></div>
+          <!-- G9a: each number has a one-line plain-English interpretation under it -->
+          <div class="kpi-card"><div class="kpi-label">Revenue · this period</div><div class="kpi-value" id="kpiRevenue">$0</div><div class="kpi-sub">What you billed customers in the selected window.</div></div>
+          <div class="kpi-card"><div class="kpi-label">Gross margin</div><div class="kpi-value" id="kpiMargin">0%</div><div class="kpi-sub">Of every dollar you billed, this is what's left after materials and labor.</div></div>
+          <div class="kpi-card"><div class="kpi-label">Job costs</div><div class="kpi-value" id="kpiExpenses">$0</div><div class="kpi-sub">Materials, equipment, and crew costs spent to do the work.</div></div>
+          <div class="kpi-card accent"><div class="kpi-label">Outstanding</div><div class="kpi-value" id="kpiOutstanding">$0</div><div class="kpi-sub">Money customers still owe you &mdash; the higher this is, the more cash is stuck out there.</div></div>
         </div>
+        <!-- D3: Inside Finance snapshot — matches the homepage "Inside Finance — Your Numbers in Plain English" gold standard.
+             Gauges + ranked tables sit above the Chart.js cards so the contractor sees the take-home story first,
+             then can dig into trends below. -->
+        <style>
+          .fin-snap{display:grid;grid-template-columns:1.1fr 0.9fr;gap:1rem;margin:0 0 1.25rem}
+          @media(max-width:820px){.fin-snap{grid-template-columns:1fr}}
+          .fin-snap .fsc{background:#fff;border:1px solid var(--border-light);border-radius:10px;padding:1.1rem 1.25rem;display:flex;flex-direction:column;gap:0.6rem}
+          .fin-snap .fsc-lbl{font-family:'DM Sans',sans-serif;font-size:0.54rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--amber)}
+          .fin-snap .fsc-head{display:flex;justify-content:space-between;align-items:baseline;gap:0.5rem;flex-wrap:wrap}
+          .fin-snap .fsc-delta{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:600;color:var(--green)}
+          .fin-snap .fsc-delta.neg{color:var(--red)}
+          /* Gauge — conic-gradient ring matching the homepage Inside Finance card */
+          .fin-gauge{display:flex;align-items:center;gap:1rem}
+          .fin-gauge-ring{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;background:conic-gradient(var(--green) 0% 47%,#E3E0DA 47% 100%)}
+          .fin-gauge-ring::after{content:'';position:absolute;inset:10px;border-radius:50%;background:#fff}
+          .fin-gauge-pct{position:relative;font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--navy-deep);font-variant-numeric:tabular-nums}
+          .fin-gauge-meta b{display:block;font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--navy-deep);line-height:1.1}
+          .fin-gauge-meta small{display:block;font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate);margin-top:4px;line-height:1.55}
+          /* Ranked job profitability */
+          .fin-jp{display:flex;flex-direction:column;gap:0.35rem}
+          .fin-jp-r{display:grid;grid-template-columns:1fr 90px 60px;gap:0.6rem;align-items:center;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--navy-deep);padding:0.35rem 0;border-bottom:1px dashed var(--border-light)}
+          .fin-jp-r:last-child{border-bottom:none}
+          .fin-jp-r .bar{position:relative;background:rgba(13,27,46,0.06);height:7px;border-radius:4px;overflow:hidden}
+          .fin-jp-r .bar i{position:absolute;top:0;left:0;bottom:0;border-radius:4px}
+          .fin-jp-r .pct{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+          /* Outstanding invoices aging */
+          .fin-inv{display:flex;flex-direction:column;gap:0.3rem}
+          .fin-inv-r{display:grid;grid-template-columns:1fr auto auto;gap:0.6rem;align-items:center;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--navy-deep);padding:0.35rem 0;border-bottom:1px dashed var(--border-light)}
+          .fin-inv-r:last-child{border-bottom:none}
+          .fin-inv-r .age{font-size:0.54rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.2rem 0.45rem;border-radius:3px}
+          .fin-inv-r .age.ok{background:var(--green-bg);color:var(--green)}
+          .fin-inv-r .age.warn{background:var(--amber-bg);color:var(--amber)}
+          .fin-inv-r .age.over{background:var(--red-bg);color:var(--red)}
+          .fin-inv-r .amt{font-variant-numeric:tabular-nums;font-weight:700;text-align:right;min-width:72px}
+          /* Service-type breakdown bars */
+          .fin-svc{display:flex;flex-direction:column;gap:0.55rem}
+          .fin-svc-r{display:grid;grid-template-columns:110px 1fr 60px;gap:0.6rem;align-items:center;font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--navy-deep)}
+          .fin-svc-r .bar2{background:rgba(13,27,46,0.06);height:10px;border-radius:5px;overflow:hidden}
+          .fin-svc-r .bar2 i{display:block;height:100%;border-radius:5px}
+          .fin-svc-r .pct{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+          /* Plain-English summary line under each card */
+          .fin-snap .fsc-summary{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate);font-style:italic;line-height:1.5;padding-top:0.6rem;border-top:1px solid var(--border-light);margin-top:auto}
+          .fin-snap .fsc-summary strong{color:var(--navy-deep);font-style:normal;font-weight:600}
+          /* Sample-data tag for when there's no real data yet */
+          .fin-snap .fsc-sample{display:inline-block;font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);background:var(--amber-bg);padding:0.18rem 0.4rem;border-radius:3px;margin-left:0.4rem;vertical-align:middle}
+        </style>
+        <div class="fin-snap" id="finSnap">
+          <!-- Gross margin gauge -->
+          <div class="fsc">
+            <div class="fsc-head"><span class="fsc-lbl">Gross margin · this period <span class="fsc-sample" id="finSnapSample" style="display:none">Sample</span></span><span class="fsc-delta" id="finGaugeDelta">&uarr; vs. last period</span></div>
+            <div class="fin-gauge">
+              <div class="fin-gauge-ring" id="finGaugeRing" style="background:conic-gradient(var(--green) 0% 47%,#E3E0DA 47% 100%)"><span class="fin-gauge-pct" id="finGaugePct">47%</span></div>
+              <div class="fin-gauge-meta">
+                <b id="finGaugeKept">$140,257 kept</b>
+                <small id="finGaugeNote">Materials, labor, and crew costs took the rest. Each percentage point is worth roughly $2,985 a year at your current revenue.</small>
+              </div>
+            </div>
+            <div class="fsc-summary"><strong>What this means:</strong> half of every dollar you bill stays in the business after job costs. If this drops below ~35%, raise pricing or trim materials waste.</div>
+          </div>
+          <!-- Job profitability — top 5 -->
+          <div class="fsc">
+            <div class="fsc-head"><span class="fsc-lbl">Most profitable jobs · this quarter</span><span class="fsc-delta">5 of <span id="finJpTotal">12</span> shown</span></div>
+            <div class="fin-jp" id="finJp">
+              <div class="fin-jp-r"><span>Smith &middot; 600 sq ft paver patio</span><span class="bar"><i style="width:90%;background:var(--green)"></i></span><span class="pct">+54%</span></div>
+              <div class="fin-jp-r"><span>Walker &middot; retaining wall</span><span class="bar"><i style="width:62%;background:var(--green)"></i></span><span class="pct">+33%</span></div>
+              <div class="fin-jp-r"><span>Lee &middot; driveway repair</span><span class="bar"><i style="width:50%;background:var(--amber)"></i></span><span class="pct">+26%</span></div>
+              <div class="fin-jp-r"><span>Garcia &middot; drainage</span><span class="bar"><i style="width:35%;background:var(--amber)"></i></span><span class="pct">+18%</span></div>
+              <div class="fin-jp-r"><span>Petersen &middot; concrete demo</span><span class="bar"><i style="width:18%;background:var(--red)"></i></span><span class="pct">+9%</span></div>
+            </div>
+            <div class="fsc-summary"><strong>What this means:</strong> bid more paver patios &mdash; they're your highest margin work. Demo jobs barely cover costs.</div>
+          </div>
+          <!-- Outstanding invoices aging -->
+          <div class="fsc">
+            <div class="fsc-head"><span class="fsc-lbl">Outstanding invoices</span><span class="fsc-delta neg" id="finInvTotal">$29,200 owed</span></div>
+            <div class="fin-inv" id="finInv">
+              <div class="fin-inv-r"><span>Smith Residence &middot; INV-2087</span><span class="age ok">Net 30</span><span class="amt">$5,786</span></div>
+              <div class="fin-inv-r"><span>Walker LLC &middot; INV-2081</span><span class="age ok">14d</span><span class="amt">$8,420</span></div>
+              <div class="fin-inv-r"><span>Lee Family &middot; INV-2074</span><span class="age warn">28d</span><span class="amt">$3,180</span></div>
+              <div class="fin-inv-r"><span>Garcia &middot; INV-2068</span><span class="age over">42d</span><span class="amt">$6,490</span></div>
+              <div class="fin-inv-r"><span>Petersen &middot; INV-2062</span><span class="age over">57d</span><span class="amt">$5,324</span></div>
+            </div>
+            <div class="fsc-summary"><strong>What this means:</strong> $11,800 is more than 40 days late &mdash; Donna can chase those automatically from the Statements tab.</div>
+          </div>
+          <!-- Service-type breakdown -->
+          <div class="fsc">
+            <div class="fsc-head"><span class="fsc-lbl">Where the money's coming from · service type</span><span class="fsc-delta">Last 90 days</span></div>
+            <div class="fin-svc" id="finSvc">
+              <div class="fin-svc-r"><span>Paver patios</span><span class="bar2"><i style="width:42%;background:#1F4E79"></i></span><span class="pct">$83K</span></div>
+              <div class="fin-svc-r"><span>Driveways</span><span class="bar2"><i style="width:28%;background:#2E5A8E"></i></span><span class="pct">$56K</span></div>
+              <div class="fin-svc-r"><span>Retaining walls</span><span class="bar2"><i style="width:14%;background:#4A7DB5"></i></span><span class="pct">$28K</span></div>
+              <div class="fin-svc-r"><span>Drainage / grade</span><span class="bar2"><i style="width:9%;background:#C9922A"></i></span><span class="pct">$18K</span></div>
+              <div class="fin-svc-r"><span>Repair / demo</span><span class="bar2"><i style="width:7%;background:#A8711A"></i></span><span class="pct">$14K</span></div>
+            </div>
+            <div class="fsc-summary"><strong>What this means:</strong> paver patios are 28% of revenue and your best margin. Lean into them when marketing.</div>
+          </div>
+        </div>
+        <script>
+        // D3: paint the Inside Finance snapshot from the same numbers driving the KPI cards above,
+        // when real data is loaded. Falls back to the realistic sample data already in the HTML.
+        (function(){
+          window.paintFinSnapshot = function(data){
+            if(!data || typeof data !== 'object') return;
+            var sample = document.getElementById('finSnapSample'); if(sample) sample.style.display = data.fromSample ? 'inline-block' : 'none';
+            // Gauge — gross margin
+            if(typeof data.marginPct === 'number'){
+              var pct = Math.max(0, Math.min(100, data.marginPct));
+              var ring = document.getElementById('finGaugeRing'); if(ring) ring.style.background = 'conic-gradient(var(--green) 0% '+pct+'%,#E3E0DA '+pct+'% 100%)';
+              var pctEl = document.getElementById('finGaugePct'); if(pctEl) pctEl.textContent = Math.round(pct)+'%';
+              if(typeof data.revenue === 'number' && typeof data.expenses === 'number'){
+                var kept = data.revenue - data.expenses;
+                var k = document.getElementById('finGaugeKept'); if(k) k.textContent = '$'+kept.toLocaleString()+' kept';
+              }
+            }
+            if(typeof data.marginDelta === 'string'){
+              var d = document.getElementById('finGaugeDelta'); if(d){ d.textContent = data.marginDelta; d.classList.toggle('neg', /^[-−]|down/i.test(data.marginDelta)); }
+            }
+            // Outstanding total
+            if(typeof data.outstanding === 'number'){
+              var t = document.getElementById('finInvTotal'); if(t) t.textContent = '$'+data.outstanding.toLocaleString()+' owed';
+            }
+          };
+        })();
+        </script>
+
         <div class="chart-grid">
           <div class="chart-card wide"><h3>Revenue over time</h3><div class="ch-sub">What you've billed and collected across the period.</div><div class="chart-box tall"><canvas id="chartRevenue"></canvas></div></div>
           <div class="chart-card"><h3>Estimated margin over time</h3><div class="ch-sub">Revenue minus estimated job cost, as a percent.</div><div class="chart-box"><canvas id="chartMargin"></canvas></div></div>

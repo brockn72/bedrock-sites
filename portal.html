@@ -491,8 +491,13 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .profile-brain-cta .pbc-chips{display:flex;gap:0.45rem;flex-wrap:wrap}
 .profile-brain-cta .pbc-chip{display:inline-flex;align-items:center;gap:6px;font-size:0.66rem;font-weight:600;background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.55);padding:0.4rem 0.7rem;border-radius:99px;border:1px solid rgba(255,255,255,0.08)}
 .profile-brain-cta .pbc-chip.on{background:rgba(59,109,17,0.16);color:#9be08a;border-color:rgba(155,224,138,0.25)}
+/* G3b: amber in-progress state for partially-filled stages */
+.profile-brain-cta .pbc-chip.in-progress{background:rgba(201,146,42,0.18);color:#F0C46A;border-color:rgba(240,196,106,0.3)}
 .profile-brain-cta .pbc-chip .pbc-dot{width:7px;height:7px;border-radius:50%;background:#5a6677}
 .profile-brain-cta .pbc-chip.on .pbc-dot{background:#9be08a}
+.profile-brain-cta .pbc-chip.in-progress .pbc-dot{background:#F0C46A}
+.profile-brain-cta .pbc-hint{display:none;margin-top:0.85rem;font-size:0.72rem;color:rgba(255,255,255,0.62);font-style:italic;line-height:1.5}
+.profile-brain-cta .pbc-hint.show{display:block}
 .onboard-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
 .onboard-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--dark)}
 .onboard-prog{font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent)}
@@ -538,9 +543,43 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .welcome-modal .wm-actions{display:flex;gap:0.6rem;justify-content:flex-end;flex-wrap:wrap}
 .wm-skip{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:0.7rem 1.1rem;cursor:pointer;border-radius:4px}
 .wm-skip:hover{border-color:var(--dark);color:var(--dark)}
+
+/* ── D2: ?embed=profile mode — strips portal chrome so account.html can iframe just the My Profile editor ── */
+body.bd-embed{background:transparent !important}
+body.bd-embed-profile > nav,
+body.bd-embed-profile .tab-bar,
+body.bd-embed-profile #subStrip,
+body.bd-embed-profile .nav-tabs,
+body.bd-embed-profile #billingBanner,
+body.bd-embed-profile .welcome-overlay,
+body.bd-embed-profile .pt-toast,
+body.bd-embed-profile .profile-brain-cta,
+body.bd-embed-profile button[onclick*="goTab('dashboard'"]{display:none !important}
+/* Hide every portal-pane except the profile editor. */
+body.bd-embed-profile .portal-pane{display:none !important}
+body.bd-embed-profile #pane-profile-default{display:block !important}
+body.bd-embed-profile .dash-wrap{max-width:100%;padding:0}
+body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
+@media(max-width:760px){body.bd-embed-profile #pageDash{padding:0.85rem 1rem !important}}
 </style>
 </head>
 <body>
+<!-- D2: detect ?embed=profile early so the embed CSS hits before first paint (no chrome flash) -->
+<script>
+(function(){
+  try{
+    var p = new URLSearchParams(location.search);
+    var emb = p.get('embed');
+    if(!emb) return;
+    document.body.classList.add('bd-embed','bd-embed-'+emb);
+    if(emb === 'profile'){
+      // Force the profile pane active once the portal's bootstrap finishes so loadProfile() fires.
+      var fire = function(){ if(typeof goTab === 'function') goTab('profile','default'); else setTimeout(fire, 80); };
+      document.addEventListener('DOMContentLoaded', function(){ setTimeout(fire, 50); });
+    }
+  }catch(_){}
+})();
+</script>
 <!-- Tool marks sprite — Bedrock Digital sub-brand marks (FMOW). See 05-SUBBRAND-LOGO-INTEGRATION.md -->
 <svg style="position:absolute;width:0;height:0;overflow:hidden" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <symbol id="mark-f" viewBox="0 0 68 68"><rect width="68" height="68" rx="14" fill="#0D1B2E"/><g fill="#C9922A"><rect x="7" y="8" width="10" height="52"/><rect x="7" y="8" width="45" height="10"/><rect x="7" y="29" width="37" height="10"/></g></symbol>
@@ -633,13 +672,14 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
     <div class="nav-tab-group" data-top="cfo" style="display:none">
       <button class="nav-tab-btn" onclick="goTab('cfo','default')">Operations</button>
     </div>
+    <!-- G3d/G3e: My Account tab + submenu now navigate to /account.html (dedicated page), not embedded portal panels. -->
     <div class="nav-tab-group" data-top="subs">
-      <button class="nav-tab-btn" onclick="goTab('profile','default')">My Account <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="location.href='/account.html#info'">My Account <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('profile','default')"><span class="tsl-eyebrow">Brain</span>My Profile</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','integrations')"><span class="tsl-eyebrow">Connect</span>My Integrations</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','cart')"><span class="tsl-eyebrow">Plan</span>Subscriptions</button>
-        <button type="button" class="nav-tab-submenu-link" onclick="goTab('subs','active')"><span class="tsl-eyebrow">History</span>Billing History</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#profile'"><span class="tsl-eyebrow">Brain</span>My Profile</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#integrations'"><span class="tsl-eyebrow">Connect</span>My Integrations</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#subs'"><span class="tsl-eyebrow">Plan</span>Subscriptions</button>
+        <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#billing'"><span class="tsl-eyebrow">History</span>Billing History</button>
       </div>
     </div>
   </div>
@@ -816,7 +856,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 
         <!-- ════ STEP 10 — DASHBOARD 2026 (next-best-action + tool cards + profile + time saved + recent activity) ════ -->
         <style>
-          .dh-nba{background:linear-gradient(135deg,rgba(201,146,42,0.14),rgba(13,27,46,0.04));border:1px solid var(--accent);border-left:4px solid var(--accent);border-radius:10px;padding:1rem 1.25rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem}
+          /* G3a: solid bg so navy body doesn't bleed through transparent gradient (was navy-on-navy unreadable) */
+          .dh-nba{background:#FAF7F2;border:1px solid var(--accent);border-left:4px solid var(--accent);border-radius:10px;padding:1rem 1.25rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1.25rem;box-shadow:0 1px 0 rgba(13,27,46,0.04)}
           .dh-nba-eye{font-family:'DM Sans',sans-serif;font-size:0.54rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.25rem}
           .dh-nba-txt{flex:1;min-width:240px;font-family:'DM Sans',sans-serif;font-size:0.92rem;color:var(--navy);line-height:1.5;font-weight:500}
           .dh-nba-cta{font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0.65rem 1.1rem;border-radius:5px;cursor:pointer;text-decoration:none}
@@ -1081,18 +1122,18 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             My Account
           </a>
-          <button type="button" class="launch-pill" onclick="goTab('profile','default')" title="My Profile">
+          <a class="launch-pill" href="/account.html#profile" title="My Profile">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v10M4.22 4.22l4.24 4.24m6.36 6.36l4.24 4.24M1 12h6m6 0h10M4.22 19.78l4.24-4.24m6.36-6.36l4.24-4.24"/></svg>
             My Profile
-          </button>
-          <button type="button" class="launch-pill" onclick="goTab('subs','integrations')" title="My Integrations">
+          </a>
+          <a class="launch-pill" href="/account.html#integrations" title="My Integrations">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
             Integrations
-          </button>
-          <button type="button" class="launch-pill" onclick="goTab('subs','cart')" title="My Subscriptions">
+          </a>
+          <a class="launch-pill" href="/account.html#subs" title="My Subscriptions">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
             Subscriptions
-          </button>
+          </a>
           <a class="launch-pill" href="/account.html#support" title="Need Help / Support">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
             Need Help
@@ -1177,7 +1218,8 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           </div>
         </div>
 
-        <div class="banner-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <!-- G3c: "Need Help" and "Spread the Word" dashboard cards retired May 2026. The "Tell us anything" feedback card below covers both, and account.html#review + #support host the dedicated forms. Kept, not deleted. -->
+        <div class="banner-grid" style="display:none;grid-template-columns:1fr 1fr;gap:1rem">
           <!-- Get Help -->
           <div class="banner-card support-card">
             <div class="bc-label">Need Help?</div>
@@ -1548,11 +1590,14 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
           <h3>Set this up once. Every tool gets smarter.</h3>
           <p>Every answer you give here flows automatically into your website copy, marketing materials, Donna's estimates, and Finance's reports. You never enter the same info twice — and any change here updates every tool the next time it loads.</p>
           <div class="pbc-chips" aria-label="Tools currently using your profile">
+            <span class="pbc-chip" data-tool="identity"><span class="pbc-dot"></span>Business Identity</span>
             <span class="pbc-chip" data-tool="website"><span class="pbc-dot"></span>Website</span>
             <span class="pbc-chip" data-tool="marketing"><span class="pbc-dot"></span>Marketing</span>
             <span class="pbc-chip" data-tool="operations"><span class="pbc-dot"></span>Operations · Donna</span>
             <span class="pbc-chip" data-tool="finance"><span class="pbc-dot"></span>Finance</span>
           </div>
+          <!-- G3b: amber-state hint, shown by JS when any chip is in-progress -->
+          <div class="pbc-hint" id="pbcHint">Fill in more info to get smarter insights &mdash; each field you add sharpens what every tool can do for you.</div>
         </div>
 
         <div class="profile-head">
@@ -2253,7 +2298,7 @@ function loadDashboard(session) {
       var hash = (window.location.hash || '').replace('#','').toLowerCase();
       if (hash.indexOf('integrations') !== -1) goTab('subs','integrations');
       else if (hash.indexOf('profile') !== -1) goTab('profile','default');
-      else if (hash.indexOf('subs') !== -1) goTab('subs','hub');
+      else if (hash.indexOf('subs') !== -1) goTab('subs','cart'); /* G3f: skip the billing hub, jump straight to cart */
       else if (hash.indexOf('marketing') !== -1) goTab('marketing','hub');
       else if (hash.indexOf('website') !== -1) goTab('website','hub');
       else goTab('dashboard','default');
@@ -2455,7 +2500,7 @@ var TAB_DEFS = {
   marketing: { label:'Marketing',       subs:{ hub:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', library:'Asset Library', integrations:'Integrations' } },
   cfo:       { label:'Operations',      subs:{ default:'Operations' } },
   profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
-  subs:      { label:'My Account',      subs:{ hub:'Billing Hub', cart:'Subscriptions', integrations:'My Integrations', active:'Billing History' } },
+  subs:      { label:'My Account',      subs:{ cart:'Subscriptions', integrations:'My Integrations', active:'Billing History', hub:'Billing Hub' } },
 };
 
 function goTab(top, sub) {
@@ -2719,30 +2764,48 @@ function renderProfileNudge(pct) {
     }
   }
 
-  // Per-tool sync chips — turn green once the relevant fields are filled
-  // Website: identity (stage 1). Marketing: brand (stage 3). Operations + Finance: ops (stage 5).
-  function stageFilled(stage){
+  // Per-tool sync chips — green when stage is complete, amber when partial, default when empty.
+  // identity (1). Website (1). Marketing (3). Operations + Finance (5).
+  function stageCounts(stage){
     var top = STAGE_TOP_FIELDS[stage] || [], ex = STAGE_EXTRA_FIELDS[stage] || [];
-    return top.some(function(f){ return isFilled(readField(f)); })
-        || ex.some(function(f){ return isFilled(readExtraField(f)); });
+    var total = top.length + ex.length;
+    var filled = top.filter(function(f){ return isFilled(readField(f)); }).length
+               + ex.filter(function(f){ return isFilled(readExtraField(f)); }).length;
+    return { total: total, filled: filled };
   }
-  var toolStages = { website:1, marketing:3, operations:5, finance:5 };
+  function stageStatus(stage){
+    var c = stageCounts(stage);
+    if (c.total === 0 || c.filled === 0) return 'empty';
+    if (c.filled === c.total) return 'complete';
+    return 'partial';
+  }
+  function stageFilled(stage){ return stageStatus(stage) !== 'empty'; }
+  function applyChipStatus(chip, status){
+    chip.classList.remove('on'); chip.classList.remove('in-progress');
+    if (status === 'complete') chip.classList.add('on');
+    else if (status === 'partial') chip.classList.add('in-progress');
+  }
+  var toolStages = { identity:1, website:1, marketing:3, operations:5, finance:5 };
   var row = document.getElementById('dashProfileSyncRow');
   if (row) {
     row.querySelectorAll('.pc-sync-chip').forEach(function(chip){
       var tool = chip.getAttribute('data-tool');
       var st = toolStages[tool];
-      if (st && stageFilled(st)) chip.classList.add('on'); else chip.classList.remove('on');
+      applyChipStatus(chip, st ? stageStatus(st) : 'empty');
     });
   }
 
-  // Mirror onto the My Profile brain CTA chips
+  // Mirror onto the My Profile brain CTA chips + toggle the "fill in more" hint when any chip is partial
   var bChips = document.querySelectorAll('.profile-brain-cta .pbc-chip');
+  var anyPartial = false;
   bChips.forEach(function(chip){
     var tool = chip.getAttribute('data-tool');
     var st = toolStages[tool];
-    if (st && stageFilled(st)) chip.classList.add('on'); else chip.classList.remove('on');
+    var s = st ? stageStatus(st) : 'empty';
+    if (s === 'partial') anyPartial = true;
+    applyChipStatus(chip, s);
   });
+  var hint = document.getElementById('pbcHint'); if (hint) hint.classList.toggle('show', anyPartial);
 }
 
 function toggleStage(n) {
@@ -2841,8 +2904,8 @@ function paintCart() {
   ['website','marketing','cfo'].forEach(function(p){
     var card = document.querySelector('.sub-card[data-prod="'+p+'"]'); if (!card) return;
     var toggle = card.querySelector('.sub-toggle');
-    if (CART[p]) { card.classList.add('active'); toggle.textContent = '✓ In Plan'; }
-    else { card.classList.remove('active'); toggle.textContent = '+ Add to Plan'; }
+    if (CART[p]) { card.classList.add('active'); toggle.textContent = '✓ In Cart'; }
+    else { card.classList.remove('active'); toggle.textContent = '+ Add to Cart'; }
   });
   renderCart();
 }
@@ -2866,7 +2929,7 @@ function applyPromo() {
   } else {
     ACTIVE_PROMO = null;
     msg.style.color = 'var(--red)';
-    msg.textContent = 'That code isn\'t valid. Try BETA, SAVE10, or FOUNDER.';
+    msg.textContent = 'Invalid promo code.'; /* G4c: no hints — don't leak valid codes */
   }
   renderCart();
 }
@@ -2899,7 +2962,17 @@ function renderCart() {
     return '<div class="cart-line"><span class="cl-name">' + names[p] + '</span><span class="cl-price">$' + PRICES[p] + '<span style="font-size:0.65rem;color:var(--text-muted);font-weight:400;margin-left:3px">/mo</span></span></div>';
   });
   if (isFullEco) {
-    lines.unshift('<div class="cart-line" style="background:#0D1B2E;border-radius:6px;padding:0.7rem 0.85rem;margin-bottom:0.35rem"><span class="cl-name" style="color:#C9922A;font-weight:700">★ Full Ecosystem &mdash; all three tools</span><span class="cl-price" style="color:#fff">$100<span style="font-size:0.65rem;color:rgba(255,255,255,0.55);font-weight:400;margin-left:3px">/mo</span></span></div>');
+    /* G4b: explicit savings — strikethrough $120 → $100 + "Save $20/mo vs. buying separately" */
+    lines.unshift('<div class="cart-line" style="background:#0D1B2E;border-radius:6px;padding:0.75rem 0.85rem 0.65rem;margin-bottom:0.35rem;display:flex;flex-direction:column;align-items:stretch;gap:0.35rem">'
+      + '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:0.6rem;flex-wrap:wrap">'
+        + '<span class="cl-name" style="color:#C9922A;font-weight:700">★ Full Ecosystem &mdash; all three tools</span>'
+        + '<span style="display:inline-flex;align-items:baseline;gap:0.5rem">'
+          + '<span style="color:rgba(255,255,255,0.45);text-decoration:line-through;font-size:0.85rem;font-weight:500">$' + monthlyRetail + '</span>'
+          + '<span class="cl-price" style="color:#fff;font-weight:700">$100<span style="font-size:0.65rem;color:rgba(255,255,255,0.55);font-weight:400;margin-left:3px">/mo</span></span>'
+        + '</span>'
+      + '</div>'
+      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3b6d11;background:rgba(155,224,138,0.18);padding:0.32rem 0.6rem;border-radius:4px;align-self:flex-start">Save $' + savings + '/mo vs. buying separately</div>'
+    + '</div>');
   }
   if (setupTotal > 0) {
     lines.push('<div class="cart-line"><span class="cl-name">One-time setup' + (CART.website ? ' (Sites)' : '') + '</span><span class="cl-price">$' + setupTotal + '</span></div>');
@@ -3017,16 +3090,16 @@ function openBillingPortal(btn) {
 }
 function pickFullBundle() { CART = { website:true, marketing:true, cfo:true }; paintCart(); persistCart(); document.getElementById('cartSummary').scrollIntoView({behavior:'smooth',block:'center'}); }
 function checkout() {
-  if (DEMO) { alert('Demo mode — checkout is disabled.'); return; }
+  /* G4d: removed browser-native alert/confirm popups. Pre-checkout goes straight to Stripe;
+     errors use the existing showToast() pattern instead of alert(). */
+  if (DEMO) { if (typeof showToast === 'function') showToast('Demo mode — checkout is disabled.', 'err'); return; }
   var selected = ['website','marketing','cfo'].filter(function(p){ return CART[p]; });
-  if (!selected.length) { alert('Pick at least one tool to add to your plan.'); return; }
-  // Website carries a one-time $200 build fee and is purchased through the site
-  // builder — it can't be bought as a pure subscription from this cart.
-  if (selected.indexOf('website') !== -1) {
-    alert('Bedrock Website is purchased through the site builder (it includes a one-time $200 build). Start it from the "My Website" tab. Marketing and Finance & Operations check out below.');
-  }
-  var recurring = selected.filter(function(p){ return p === 'marketing' || p === 'cfo'; });
-  if (!recurring.length) return;
+  if (!selected.length) { if (typeof showToast === 'function') showToast('Pick at least one tool to add to your plan.', 'err'); return; }
+  /* Website carries a one-time $200 build fee and is purchased through the site builder.
+     If only Website is in the cart, route them to the builder; otherwise pass all selected
+     tools through (create-subscription-checkout filters and prices appropriately). */
+  var recurring = selected.filter(function(p){ return p === 'marketing' || p === 'cfo' || p === 'website'; });
+  if (!recurring.length) { window.location.href = '/sites.html?embed=builder'; return; }
   var email  = (currentSession && currentSession.user && currentSession.user.email) ||
                (currentLead && currentLead.email) || '';
   var userId = (currentSession && currentSession.user && currentSession.user.id) || '';
@@ -3039,11 +3112,11 @@ function checkout() {
     .then(function(r){ return r.json(); })
     .then(function(d){
       if (d && d.url) { window.location.href = d.url; return; }
-      alert(d && d.error ? d.error : 'Could not start checkout. Please try again in a moment.');
+      if (typeof showToast === 'function') showToast(d && d.error ? d.error : 'Could not start checkout. Please try again in a moment.', 'err');
       if (btn) { btn.disabled = false; btn.textContent = 'Update My Subscription →'; }
     })
     .catch(function(){
-      alert('Could not reach checkout. Check your connection and try again.');
+      if (typeof showToast === 'function') showToast('Could not reach checkout. Check your connection and try again.', 'err');
       if (btn) { btn.disabled = false; btn.textContent = 'Update My Subscription →'; }
     });
 }

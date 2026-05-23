@@ -1857,9 +1857,10 @@ BedrockProfile.load().then(function(){
   // Load this contractor's saved customers/projects/jobs/notes from Supabase
   // (replaces the in-memory sample data once a session is present).
   DonnaData.load().then(function(){ refreshView(); });
-  // Step 7: in preview mode (cart has 'cfo' SKU, no subscription yet) skip the "Meet Donna"
-  // onboarding entirely so previewers see the sandbox instead of a setup gate.
-  if (window.bedrockInPreviewMode && window.bedrockInPreviewMode('operations')) {
+  // G6a: skip "Meet Donna" onboarding for any non-subscriber. Anyone without a verified
+  // paid subscription is effectively in preview — they should see the sandbox immediately,
+  // not a setup gate. Onboarding only fires after purchase is confirmed in the DB.
+  if (window.IS_SUBSCRIBED !== true) {
     enterApp();
   } else {
     var needOnboarding = buildOnboarding();

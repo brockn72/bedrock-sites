@@ -169,6 +169,14 @@ p.hero-sub{font-family:'DM Sans',sans-serif;font-size:clamp(0.95rem,1.4vw,1.05re
 .color-pick input[type="color"]{width:48px;height:48px;border:1px solid var(--border-light);border-radius:8px;cursor:pointer;padding:2px;background:#fff}
 .color-pick input[type="text"]{flex:1}
 .palette-suggest{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+/* G8a: collapsible preset palettes — hidden by default behind a dropdown, hidden entirely if user already set custom colors */
+.palette-presets-wrap{margin-top:0.85rem}
+.palette-presets-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;background:transparent;border:1px dashed var(--border-light);color:var(--slate);font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:500;padding:0.55rem 0.85rem;border-radius:6px;cursor:pointer;transition:border-color .15s,color .15s}
+.palette-presets-toggle:hover{border-color:var(--gold);color:var(--navy-deep)}
+.palette-presets-toggle .ppt-caret{transition:transform .15s;color:var(--gold);font-size:0.85rem}
+.palette-presets-wrap.open .palette-presets-toggle .ppt-caret{transform:rotate(180deg)}
+.palette-presets-wrap.open .palette-suggest{display:flex !important;margin-top:0.55rem}
+.palette-presets-wrap.hide-presets{display:none}
 .palette-chip{display:flex;gap:4px;padding:4px 7px;background:#fff;border:1px solid var(--border-light);border-radius:6px;cursor:pointer;align-items:center;transition:border-color .15s}
 .palette-chip:hover{border-color:var(--navy)}
 .palette-swatch{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,0.1)}
@@ -719,7 +727,14 @@ footer a:hover{text-decoration:underline}
                   <div class="color-pick-row"><input id="bk_color_accent_picker" type="color" value="#C9922A" oninput="syncColor('accent')"><input id="bk_color_accent" type="text" value="#C9922A" oninput="syncColorHex('accent')"></div>
                 </div>
               </div>
-              <div class="palette-suggest" id="paletteSuggest"></div>
+              <!-- G8a: presets collapsed behind a dropdown by default -->
+              <div class="palette-presets-wrap" id="palettePresetsWrap">
+                <button type="button" class="palette-presets-toggle" id="palettePresetsToggle" onclick="togglePresetPalettes()">
+                  <span>Pick a starting palette</span>
+                  <span class="ppt-caret">▾</span>
+                </button>
+                <div class="palette-suggest" id="paletteSuggest"></div>
+              </div>
             </div>
 
             <div class="bk-card">
@@ -1331,6 +1346,17 @@ function paintPalettes() {
     var sw = p.c.map(function(c){return '<span class="palette-swatch" style="background:'+c+'"></span>';}).join('');
     return '<button type="button" class="palette-chip" onclick="applyPalette(\''+p.c.join(',')+'\')">'+sw+'<span class="palette-label">'+p.label+'</span></button>';
   }).join('');
+  // G8a: if user has already set custom (non-default) colors, hide the presets wrapper entirely.
+  var presetsWrap = document.getElementById('palettePresetsWrap'); if (!presetsWrap) return;
+  var DEFAULT_PRIMARY = '#1B3557', DEFAULT_SECONDARY = '#FFFFFF', DEFAULT_ACCENT = '#C9922A';
+  var p = (STATE.brandKit.color_primary   || '').toUpperCase();
+  var s = (STATE.brandKit.color_secondary || '').toUpperCase();
+  var a = (STATE.brandKit.color_accent    || '').toUpperCase();
+  var customSet = (p && p !== DEFAULT_PRIMARY) || (s && s !== DEFAULT_SECONDARY) || (a && a !== DEFAULT_ACCENT);
+  presetsWrap.classList.toggle('hide-presets', !!customSet);
+}
+function togglePresetPalettes(){
+  var w = document.getElementById('palettePresetsWrap'); if (w) w.classList.toggle('open');
 }
 function applyPalette(csv) {
   var parts = csv.split(',');

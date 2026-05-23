@@ -1630,6 +1630,48 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 
 </head>
 <body>
+<!-- G7a: builder preview-mode banner — amber, non-dismissible, same pattern as other tools.
+     Only shown when the visitor doesn't have a verified Website subscription. Hidden in embed mode
+     (the parent page is already chromed for embedding). -->
+<style>
+  .bld-preview-banner{background:#4A7DB5;color:#0D1B2E;font-size:0.84rem;font-weight:600;padding:0.6rem 1.4rem;display:none;align-items:center;gap:0.85rem;justify-content:center;flex-wrap:wrap;border-bottom:2px solid #0D1B2E;line-height:1.4;font-family:'DM Sans',sans-serif}
+  .bld-preview-banner.show{display:flex}
+  body.bd-embed .bld-preview-banner{display:none !important}
+  .bld-preview-banner .pb-cta{display:inline-flex;align-items:center;border:1.5px solid #0D1B2E;color:#0D1B2E;text-decoration:none;font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.4rem 0.9rem;border-radius:5px;transition:all .15s;background:transparent;font-family:inherit}
+  .bld-preview-banner .pb-cta:hover{background:#0D1B2E;color:#4A7DB5}
+  @media(max-width:720px){.bld-preview-banner{font-size:0.74rem;padding:0.5rem 0.75rem;gap:0.45rem}.bld-preview-banner .pb-cta{font-size:0.58rem;padding:0.34rem 0.6rem}}
+</style>
+<div id="bldPreviewBanner" class="bld-preview-banner" role="banner">
+  <span>You're in preview mode &mdash; build your site and see how it looks. Pay when you're ready to go live.</span>
+  <a class="pb-cta" href="/portal.html#subs">Purchase &amp; go live &rarr;</a>
+</div>
+<script>
+(function(){
+  // Show the banner unless the visitor has a verified Website subscription.
+  function readCart(){ try{return JSON.parse(localStorage.getItem('bedrock_cart_v1')||'{}')||{};}catch(_){return {};} }
+  function isSignedIn(){ try{var raw=localStorage.getItem('bedrock_portal_session');if(!raw)return false;var s=JSON.parse(raw);return !!(s&&s.access_token&&(!s.expires_at||s.expires_at>Date.now()));}catch(_){return false;} }
+  async function paint(){
+    var b = document.getElementById('bldPreviewBanner'); if(!b) return;
+    // Default: show in preview unless we confirm a paid Website subscription.
+    var inPreview = true;
+    if(isSignedIn()){
+      try{
+        var s = JSON.parse(localStorage.getItem('bedrock_portal_session')||'{}');
+        var r = await fetch('/.netlify/functions/get-profile', { headers:{ Authorization:'Bearer '+s.access_token } });
+        if(r.ok){
+          var d = await r.json();
+          var subs = (d && d.subscriptions) || [];
+          var owned = subs.some(function(x){ return (x.status==='active'||x.status==='past_due') && x.tool==='website'; });
+          if(owned) inPreview = false;
+        }
+      }catch(_){}
+    }
+    b.classList.toggle('show', inPreview);
+  }
+  document.addEventListener('DOMContentLoaded', paint);
+  setTimeout(paint, 250);
+})();
+</script>
 <!-- Embed mode: strip all chrome when loaded as ?embed=builder (set early to avoid a flash) -->
 <script>if(/[?&]embed=builder/.test(location.search)){document.body.className+=' bd-embed bd-embed-builder';}</script>
 <style>

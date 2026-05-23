@@ -141,6 +141,7 @@ footer a{color:var(--gold);text-decoration:none}
     <button type="button" class="ac-navitem"        data-p="integrations" onclick="acGo('integrations')">Integrations</button>
     <button type="button" class="ac-navitem"        data-p="google"      onclick="acGo('google')">Google Presence</button>
     <button type="button" class="ac-navitem"        data-p="review"      onclick="acGo('review')">Leave a Review</button>
+    <button type="button" class="ac-navitem"        data-p="files"       onclick="acGo('files')">My Files</button>
     <button type="button" class="ac-navitem"        data-p="support"     onclick="acGo('support')">Need Help / Support</button>
   </aside>
 
@@ -174,15 +175,23 @@ footer a{color:var(--gold);text-decoration:none}
       </div>
     </section>
 
-    <!-- ── MY PROFILE — link into portal's 5-stage enrichment ── -->
+    <!-- ── MY PROFILE — D2: embedded portal profile editor via ?embed=profile ── -->
     <section class="ac-pane" id="ac-profile">
       <div class="ac-eyebrow">My Profile</div>
       <h1 class="ac-h1">Your business brain.</h1>
-      <p class="ac-sub">A complete profile means every Bedrock tool knows your trade, services, voice, and rates — without you typing them again. The full 5-stage profile lives in the portal.</p>
-      <div class="ac-card">
-        <h3>Open the full profile editor</h3>
-        <div class="ac-card-sub">The shared profile lives in your portal so changes flow through to every tool instantly. We'll bring it back here when the editor is portable.</div>
-        <a class="ac-btn" href="/portal.html#profile">Open My Profile in Portal →</a>
+      <p class="ac-sub">A complete profile means every Bedrock tool knows your trade, services, voice, and rates &mdash; without you typing them again. Edit the full 5-stage profile right here; changes save instantly and every tool picks them up next load.</p>
+      <style>
+        .ac-profile-frame-wrap{background:#fff;border:1px solid var(--border-light);border-radius:10px;overflow:hidden;position:relative}
+        .ac-profile-frame{width:100%;border:none;display:block;min-height:1100px;background:#fff}
+        .ac-profile-frame-foot{display:flex;justify-content:space-between;align-items:center;gap:0.6rem;padding:0.7rem 1rem;background:var(--off-white);border-top:1px solid var(--border-light);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate);flex-wrap:wrap}
+        .ac-profile-frame-foot a{color:var(--gold);font-weight:700;text-decoration:none;font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase}
+      </style>
+      <div class="ac-profile-frame-wrap">
+        <iframe id="acProfileFrame" class="ac-profile-frame" src="about:blank" title="My Profile editor" loading="lazy"></iframe>
+        <div class="ac-profile-frame-foot">
+          <span>Embedded from your portal &mdash; changes save the same way.</span>
+          <a href="/portal.html#profile" target="_blank" rel="noopener">Open in full portal &rarr;</a>
+        </div>
       </div>
     </section>
 
@@ -263,6 +272,35 @@ footer a{color:var(--gold);text-decoration:none}
       </form>
     </section>
 
+    <!-- ── MY FILES (assets library) ── -->
+    <section class="ac-pane" id="ac-files">
+      <div class="ac-eyebrow">My Files</div>
+      <h1 class="ac-h1">Everything tied to your account.</h1>
+      <p class="ac-sub">Photos, logos, scanned receipts, generated marketing materials, PDFs &mdash; in one place. Pulled straight from your Bedrock workspace.</p>
+      <div class="ac-card">
+        <h3>Your library</h3>
+        <div class="ac-card-sub">Files load with a secure signed link &mdash; only you can see them.</div>
+        <div id="acFilesGrid" style="margin-top:1rem"><div class="ac-empty">Loading…</div></div>
+      </div>
+      <style>
+        .acf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+        @media(max-width:540px){.acf-grid{grid-template-columns:1fr 1fr}}
+        .acf-card{background:#fff;border:1px solid var(--border-light);border-radius:8px;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .12s}
+        .acf-card:hover{border-color:var(--gold);transform:translateY(-1px)}
+        .acf-thumb{aspect-ratio:4/3;background:var(--off-white) center/cover no-repeat;display:flex;align-items:center;justify-content:center;color:var(--slate);font-family:'DM Sans',sans-serif;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;font-weight:600;position:relative}
+        .acf-thumb.has-img{background-color:#0D1B2E}
+        .acf-thumb .acf-fallback{color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700}
+        .acf-meta{padding:0.7rem 0.85rem;display:flex;flex-direction:column;gap:0.2rem;flex:1}
+        .acf-meta .acf-name{font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;color:var(--navy-deep);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+        .acf-meta .acf-sub{font-family:'DM Sans',sans-serif;font-size:0.66rem;color:var(--slate);display:flex;justify-content:space-between;align-items:center;gap:0.4rem}
+        .acf-meta .acf-tag{font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);background:rgba(201,146,42,0.12);padding:0.18rem 0.4rem;border-radius:3px}
+        .acf-foot{padding:0.45rem 0.85rem 0.7rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border-light)}
+        .acf-foot a{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);text-decoration:none}
+        .acf-foot a:hover{text-decoration:underline}
+        .acf-date{font-family:'DM Sans',sans-serif;font-size:0.62rem;color:var(--slate)}
+      </style>
+    </section>
+
     <!-- ── NEED HELP / SUPPORT ── -->
     <section class="ac-pane" id="ac-support">
       <div class="ac-eyebrow">Need Help / Support</div>
@@ -274,6 +312,8 @@ footer a{color:var(--gold);text-decoration:none}
         <div class="ac-field"><label for="acSupportMsg">What's going on?</label><textarea id="acSupportMsg" required placeholder="Example: I tried to download a flyer in Marketing and the button doesn't respond — Chrome on Windows."></textarea></div>
         <button class="ac-btn dark" type="submit" id="acSupportBtn">Send to Brock →</button>
         <div class="ac-msg" id="acSupportMsg2"></div>
+        <!-- G5b: email-only, no phone -->
+        <p style="margin-top:1rem;font-size:0.78rem;color:var(--slate);line-height:1.55">Prefer email? Reach us directly at <a href="mailto:support@bedrock-sites.com" style="color:var(--gold);font-weight:600;text-decoration:none">support@bedrock-sites.com</a>.</p>
       </form>
     </section>
 
@@ -294,6 +334,8 @@ function acGo(panel){
   try{ history.replaceState(null,'','#'+panel); }catch(_){}
   if (panel === 'subs') acLoadSubs();
   if (panel === 'integrations') acPaintConnections();
+  if (panel === 'files') acLoadFiles();
+  if (panel === 'profile') acLoadProfileFrame();
   window.scrollTo(0,0);
 }
 
@@ -420,6 +462,81 @@ function acConnect(which){
   // Route through portal's existing connection flow so OAuth callbacks land in one place.
   if(which==='qbo') window.location.href = '/portal.html#integrations?connect=qbo';
   else if(which==='google') window.location.href = '/portal.html#integrations?connect=google';
+}
+
+// ── G5c: My Files — list assets from Supabase with signed URLs ──
+// D1: full kind→label mapping. Covers the four current upload-asset.js kinds plus the
+// future ones the spec calls out (receipts, estimates, invoices). Unknown kinds fall back
+// to the raw kind value with a neutral slate color, so adding a new kind never breaks the grid.
+var KIND_LABELS = {
+  marketing_asset: { label: 'Marketing',     color: '#A8711A' },
+  logo:            { label: 'Logo',          color: '#1F4E79' },
+  reference:       { label: 'Reference',     color: '#4A5568' },
+  photo:           { label: 'Site Photo',    color: '#2E5A8E' },
+  site_photo:      { label: 'Site Photo',    color: '#2E5A8E' },
+  brand_asset:     { label: 'Brand Asset',   color: '#A8711A' },
+  brand_kit:       { label: 'Brand Kit',     color: '#A8711A' },
+  flyer:           { label: 'Flyer',         color: '#A8711A' },
+  social_post:     { label: 'Social Post',   color: '#A8711A' },
+  door_hanger:     { label: 'Door Hanger',   color: '#A8711A' },
+  yard_sign:       { label: 'Yard Sign',     color: '#A8711A' },
+  business_card:   { label: 'Business Card', color: '#A8711A' },
+  receipt:         { label: 'Receipt',       color: '#92660e' },
+  estimate:        { label: 'Estimate',      color: '#3b6d11' },
+  invoice:         { label: 'Invoice',       color: '#3b6d11' },
+  pdf:             { label: 'PDF',           color: '#4A5568' },
+  upload:          { label: 'Upload',        color: '#4A5568' },
+};
+function acRenderFiles(assets){
+  var grid = document.getElementById('acFilesGrid'); if(!grid) return;
+  if(!assets || !assets.length){
+    grid.innerHTML = '<div class="ac-empty">Your files will appear here as you use Bedrock\'s tools &mdash; photos uploaded for your website, logos in Marketing, receipts Donna scans, generated PDFs, and exported marketing materials.</div>';
+    return;
+  }
+  var imgish = /(jpe?g|png|gif|webp|svg)/i;
+  var html = '<div class="acf-grid">' + assets.map(function(a){
+    var kind = KIND_LABELS[a.kind] || { label: a.kind || 'File', color: '#4A5568' };
+    var name = a.filename || a.path.split('/').pop();
+    var dateStr = '';
+    try { dateStr = new Date(a.created_at).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); } catch(_){}
+    var isImg = imgish.test(name) || (a.media_type || '').indexOf('image/') === 0;
+    var thumb = (isImg && a.signed_url)
+      ? '<div class="acf-thumb has-img" style="background-image:url(' + JSON.stringify(a.signed_url) + ')"></div>'
+      : '<div class="acf-thumb"><span class="acf-fallback">' + ((a.format || (name.split('.').pop()||'F')).toUpperCase().slice(0,3)) + '</span></div>';
+    var dlBtn = a.signed_url
+      ? '<a href="' + a.signed_url + '" target="_blank" rel="noopener" download="' + (name.replace(/"/g,'')) + '">Download &rarr;</a>'
+      : '<span style="font-size:0.6rem;color:var(--slate)">No link</span>';
+    return '<div class="acf-card">'
+        + thumb
+        + '<div class="acf-meta">'
+          + '<div class="acf-name" title="' + (name.replace(/"/g,'&quot;')) + '">' + name + '</div>'
+          + '<div class="acf-sub"><span class="acf-tag" style="color:' + kind.color + ';background:' + kind.color + '22">' + kind.label + '</span></div>'
+        + '</div>'
+        + '<div class="acf-foot"><span class="acf-date">' + dateStr + '</span>' + dlBtn + '</div>'
+      + '</div>';
+  }).join('') + '</div>';
+  grid.innerHTML = html;
+}
+// D2: lazy-load the profile editor iframe only when the My Profile tab is opened.
+// localStorage is shared across same-origin iframes, so the portal session token flows through automatically.
+function acLoadProfileFrame(){
+  if(window._acProfileFrameLoaded) return;
+  var f = document.getElementById('acProfileFrame'); if(!f) return;
+  window._acProfileFrameLoaded = true;
+  f.src = '/portal.html?embed=profile';
+}
+
+async function acLoadFiles(){
+  if(window._acFilesLoaded) return; window._acFilesLoaded = true;
+  var s = getSession(); if(!s) return;
+  try{
+    var r = await fetch('/.netlify/functions/list-assets?limit=200', {
+      headers: { Authorization: 'Bearer ' + s.access_token },
+    });
+    if(!r.ok){ acRenderFiles([]); return; }
+    var d = await r.json();
+    acRenderFiles(d && d.assets ? d.assets : []);
+  }catch(_){ acRenderFiles([]); }
 }
 
 // ── Leave a Review / Need Help — POST to send-feedback ──

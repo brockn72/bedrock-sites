@@ -1,22 +1,27 @@
 // Creates a Stripe Checkout Session (subscription mode) for Bedrock's recurring
-// tools — Marketing and Finance & Operations.
-//
-// The website build has its own flow with a one-time $200 setup fee
-// (create-checkout.js); this function handles the purely-recurring tool
-// subscriptions, so a contractor can buy Operations + Finance from the portal.
+// tools — Website, Marketing, and Finance & Operations (and the Full Ecosystem
+// bundle that combines all three).
 //
 // ── Required Netlify env vars ──────────────────────────────────────────────
-//   STRIPE_SECRET_KEY          — already set (LIVE)
-//   SITE_URL                   — already set (https://bedrock-sites.com)
-//   STRIPE_MARKETING_PRICE_ID  — Bedrock Marketing recurring price (~$30/mo)
-//   STRIPE_FINOPS_PRICE_ID     — Finance & Operations recurring price (~$70/mo)
-// Create those two products in the Stripe dashboard (LIVE mode), copy each
-// recurring price ID (price_...), and add them as Netlify env vars.
+//   STRIPE_SECRET_KEY            — already set (LIVE)
+//   SITE_URL                     — already set (https://bedrock-sites.com)
+//   STRIPE_WEBSITE_PRICE_ID      — Bedrock Website recurring price ($20/mo)        ← G4e: add this
+//   STRIPE_MARKETING_PRICE_ID    — Bedrock Marketing recurring price ($30/mo)
+//   STRIPE_FINOPS_PRICE_ID       — Finance & Operations recurring price ($70/mo)
+//   STRIPE_BUNDLE_ALL_PRICE_ID   — Full Ecosystem bundle ($100/mo, optional)       ← single-line-item bundle
+// Create those products in the Stripe dashboard (LIVE mode), copy each recurring
+// price ID (price_...), and add them as Netlify env vars.
 //
-// Request body: { tools: ['marketing','finance_operations'], email, userId }
+// Request body: { tools: ['website','marketing','cfo'], email, userId }
 // Response:     { url: 'https://checkout.stripe.com/...' }
+//
+// G4e fix: previously the Full Ecosystem checkout only billed Marketing + FinOps
+// because PRICE_ENV had no entry for "website". Now Website is included as its
+// own recurring price; if STRIPE_BUNDLE_ALL_PRICE_ID is set and the request
+// contains the full set, we use the single bundle price instead.
 
 const PRICE_ENV = {
+  website:            'STRIPE_WEBSITE_PRICE_ID',
   marketing:          'STRIPE_MARKETING_PRICE_ID',
   finance_operations: 'STRIPE_FINOPS_PRICE_ID',
   // portal cart uses the legacy key "cfo" for the Finance & Operations bundle
@@ -45,16 +50,29 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'No tools selected' }) };
   }
 
+  // G4e: If the request contains all three SKUs (Full Ecosystem) and a bundle price
+  // is configured in Stripe, use that single line item ($100/mo) instead of summing
+  // three individual prices. Stripe checkout shows one line; the webhook marks all
+  // four user-facing tools active via the metadata.tools list below.
+  const hasAllThree = ['website','marketing','cfo'].every(function(t){ return tools.indexOf(t) !== -1; })
+                   || ['website','marketing','finance_operations'].every(function(t){ return tools.indexOf(t) !== -1; });
+  const bundlePid = process.env.STRIPE_BUNDLE_ALL_PRICE_ID;
+
   // Resolve each requested tool to its configured Stripe price ID.
   const priceIds = [];
   const missing  = [];
   const billed   = [];
-  for (const t of tools) {
-    const envName = PRICE_ENV[t];
-    if (!envName) continue;                       // unknown / non-recurring (e.g. website) — skip
-    const pid = process.env[envName];
-    if (pid) { priceIds.push(pid); billed.push(t); }
-    else     { missing.push(envName); }
+  if (hasAllThree && bundlePid) {
+    priceIds.push(bundlePid);
+    billed.push('website', 'marketing', 'finance_operations');
+  } else {
+    for (const t of tools) {
+      const envName = PRICE_ENV[t];
+      if (!envName) continue;                       // unknown SKU — skip
+      const pid = process.env[envName];
+      if (pid) { priceIds.push(pid); billed.push(t); }
+      else     { missing.push(envName); }
+    }
   }
   if (missing.length) {
     return {
