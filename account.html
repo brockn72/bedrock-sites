@@ -140,8 +140,9 @@ footer a{color:var(--gold);text-decoration:none}
     <button type="button" class="ac-navitem"        data-p="billing"     onclick="acGo('billing')">Billing History</button>
     <button type="button" class="ac-navitem"        data-p="integrations" onclick="acGo('integrations')">Integrations</button>
     <button type="button" class="ac-navitem"        data-p="google"      onclick="acGo('google')">Google Presence</button>
-    <button type="button" class="ac-navitem"        data-p="review"      onclick="acGo('review')">Leave a Review</button>
+    <!-- G13a: My Files moved above Review + Support so primary actions sit at the top, support at the bottom. -->
     <button type="button" class="ac-navitem"        data-p="files"       onclick="acGo('files')">My Files</button>
+    <button type="button" class="ac-navitem"        data-p="review"      onclick="acGo('review')">Leave a Review</button>
     <button type="button" class="ac-navitem"        data-p="support"     onclick="acGo('support')">Need Help / Support</button>
   </aside>
 
@@ -195,17 +196,33 @@ footer a{color:var(--gold);text-decoration:none}
       </div>
     </section>
 
-    <!-- ── SUBSCRIPTIONS ── -->
+    <!-- ── SUBSCRIPTIONS — G13b: full purchase UI embedded via portal.html?embed=subs ── -->
     <section class="ac-pane" id="ac-subs">
       <div class="ac-eyebrow">Subscriptions</div>
-      <h1 class="ac-h1">Your current plan.</h1>
-      <p class="ac-sub">Verified against your real Stripe subscription rows — never guessed. To add or remove tools, head to the cart.</p>
-      <div class="ac-card">
-        <h3>Active subscriptions</h3>
+      <h1 class="ac-h1">Your plan, your bill, in one place.</h1>
+      <p class="ac-sub">Add a tool, drop one, apply a promo, or check out &mdash; all without leaving this page. Verified against your real Stripe subscriptions.</p>
+
+      <!-- Active subs summary, still verified from get-profile -->
+      <div class="ac-card" style="margin-bottom:1rem">
+        <h3>Currently active</h3>
         <div id="acSubsList"><div class="ac-empty">Loading…</div></div>
         <div style="margin-top:1.1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
-          <a class="ac-btn" href="/portal.html#subs">Manage my plan →</a>
-          <a class="ac-btn outline" href="#" onclick="acOpenBillingPortal(event)">Manage card in Stripe →</a>
+          <a class="ac-btn outline" href="#" onclick="acOpenBillingPortal(event)">Manage card in Stripe &rarr;</a>
+        </div>
+      </div>
+
+      <!-- Full purchase UI — iframed from portal.html#subs/cart with chrome stripped -->
+      <style>
+        .ac-subs-frame-wrap{background:#fff;border:1px solid var(--border-light);border-radius:10px;overflow:hidden;position:relative}
+        .ac-subs-frame{width:100%;border:none;display:block;min-height:1200px;background:#fff}
+        .ac-subs-frame-foot{display:flex;justify-content:space-between;align-items:center;gap:0.6rem;padding:0.7rem 1rem;background:var(--off-white);border-top:1px solid var(--border-light);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate);flex-wrap:wrap}
+        .ac-subs-frame-foot a{color:var(--gold);font-weight:700;text-decoration:none;font-size:0.66rem;letter-spacing:0.1em;text-transform:uppercase}
+      </style>
+      <div class="ac-subs-frame-wrap">
+        <iframe id="acSubsFrame" class="ac-subs-frame" src="about:blank" title="Subscription cart" loading="lazy"></iframe>
+        <div class="ac-subs-frame-foot">
+          <span>Subscription cards embedded from your portal &mdash; checkout goes through the same Stripe flow.</span>
+          <a href="/portal.html#subs" target="_blank" rel="noopener">Open in full portal &rarr;</a>
         </div>
       </div>
     </section>
@@ -332,7 +349,7 @@ function acGo(panel){
   document.querySelectorAll('.ac-pane').forEach(function(p){ p.classList.remove('active'); });
   var el = document.getElementById('ac-'+panel); if(el) el.classList.add('active');
   try{ history.replaceState(null,'','#'+panel); }catch(_){}
-  if (panel === 'subs') acLoadSubs();
+  if (panel === 'subs') { acLoadSubs(); acLoadSubsFrame(); }
   if (panel === 'integrations') acPaintConnections();
   if (panel === 'files') acLoadFiles();
   if (panel === 'profile') acLoadProfileFrame();
@@ -517,12 +534,24 @@ function acRenderFiles(assets){
   }).join('') + '</div>';
   grid.innerHTML = html;
 }
+// G13b: lazy-load the subscription cart iframe only when the Subscriptions tab is opened.
+function acLoadSubsFrame(){
+  if(window._acSubsFrameLoaded) return;
+  var f = document.getElementById('acSubsFrame'); if(!f) return;
+  window._acSubsFrameLoaded = true;
+  console.time('subs-frame-load');
+  f.addEventListener('load', function once(){ console.timeEnd('subs-frame-load'); f.removeEventListener('load', once); }, { once:true });
+  f.src = '/portal.html?embed=subs';
+}
+
 // D2: lazy-load the profile editor iframe only when the My Profile tab is opened.
 // localStorage is shared across same-origin iframes, so the portal session token flows through automatically.
 function acLoadProfileFrame(){
   if(window._acProfileFrameLoaded) return;
   var f = document.getElementById('acProfileFrame'); if(!f) return;
   window._acProfileFrameLoaded = true;
+  console.time('profile-frame-load');
+  f.addEventListener('load', function once(){ console.timeEnd('profile-frame-load'); f.removeEventListener('load', once); }, { once:true });
   f.src = '/portal.html?embed=profile';
 }
 

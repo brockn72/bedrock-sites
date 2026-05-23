@@ -12,6 +12,28 @@
 //   GOOGLE_BUSINESS_REDIRECT_URI   — must match the callback + a registered URI
 //   SUPABASE_URL, SUPABASE_SERVICE_KEY
 // (GOOGLE_BUSINESS_CLIENT_SECRET is used by google-oauth-callback.js.)
+//
+// ── G17b: REDIRECT URI VERIFICATION ──────────────────────────────────────────
+// The URI that GOOGLE_BUSINESS_REDIRECT_URI is set to MUST be registered in
+// Google Cloud Console -> APIs & Services -> Credentials -> the OAuth 2.0
+// Client -> "Authorized redirect URIs". Exact match — including https vs http,
+// trailing slash, and the path. The production value should look like:
+//
+//   https://bedrock-sites.com/.netlify/functions/google-oauth-callback
+//
+// IMPORTANT: localhost:8888 and bedrock-sites.com are completely separate
+// origins as far as Google is concerned. If you're testing the OAuth flow
+// locally with `netlify dev`, you must ALSO register:
+//
+//   http://localhost:8888/.netlify/functions/google-oauth-callback
+//
+// (both URIs in the same OAuth Client; Google supports multiple). Without
+// the local URI registered, the local flow will fail with redirect_uri_mismatch
+// even though production works. Until you publish the OAuth consent screen,
+// any contractor whose email isn't on the Testing-mode test-users list will
+// also see "not set up yet" / access_denied — publish or add their email.
+// See google-oauth-callback.js for the diagnostic logs that show the exact
+// URI being sent on each token exchange.
 
 // One consent screen, every scope the ecosystem uses.
 const SCOPES = [

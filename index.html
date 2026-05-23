@@ -1178,15 +1178,19 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   .mtb-icon svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
   .mtb-label{
-    font-size:0.55rem;
+    /* G18a: bigger label area + tighter type so words don't truncate; min 44px tap target via mtb-item height */
+    font-size:0.6rem;
     font-weight:600;
-    letter-spacing:0.04em;
-    color:rgba(255,255,255,0.62);
+    letter-spacing:0.02em;
+    color:rgba(255,255,255,0.7);
     transition:color 0.15s;
-    line-height:1.15;
+    line-height:1.1;
     text-align:center;
-    max-width:66px;
+    max-width:88px;
+    white-space:normal;
+    word-break:keep-all;
   }
+  @media(max-width:380px){.mtb-label{font-size:0.52rem;max-width:72px}}
 
   /* Middle "Create my account" — raised gold circle */
   .mtb-cta{justify-content:flex-start;padding-top:0}
@@ -1763,6 +1767,77 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     </div>
   </div>
   <div class="bd-hero-strata"><span></span><span></span><span></span><span></span></div>
+</section>
+
+<!-- G18d: "Email yourself a link" — mobile-only, sits right under the hero. Frictionless way for someone on
+     their phone to switch to a laptop without making an account. POSTs to /.netlify/functions/send-desktop-link.js. -->
+<section id="bd-mobile-link" aria-label="Email yourself a link to continue on your laptop">
+  <style>
+    #bd-mobile-link{display:none;background:#FAF7F2;border-top:1px solid rgba(13,27,46,0.08);border-bottom:1px solid rgba(13,27,46,0.08);padding:1.5rem 1.25rem}
+    @media(max-width:760px){#bd-mobile-link{display:block}}
+    .bml-wrap{max-width:520px;margin:0 auto;text-align:center}
+    .bml-eye{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;margin-bottom:0.5rem}
+    .bml-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:#0D1B2E;line-height:1.25;margin-bottom:0.4rem}
+    .bml-sub{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:#4A5568;line-height:1.55;margin-bottom:1rem}
+    .bml-btn{display:inline-flex;align-items:center;justify-content:center;gap:0.45rem;background:#0D1B2E;color:#fff;border:1.5px solid #C9922A;font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:0.8rem 1.3rem;border-radius:6px;cursor:pointer}
+    .bml-btn:hover{background:#1B3557}
+    .bml-form{display:none;flex-direction:column;gap:0.55rem;margin-top:0.5rem;align-items:stretch}
+    .bml-form.show{display:flex}
+    .bml-form input{font-family:'DM Sans',sans-serif;font-size:0.86rem;padding:0.7rem 0.9rem;border:1px solid rgba(13,27,46,0.18);border-radius:6px;background:#fff;color:#0D1B2E;outline:none;width:100%;text-align:center}
+    .bml-form input:focus{border-color:#C9922A}
+    .bml-form button{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:#C9922A;color:#0D1B2E;border:none;padding:0.78rem 1.2rem;border-radius:6px;cursor:pointer}
+    .bml-form button:disabled{opacity:0.55;cursor:wait}
+    .bml-msg{font-family:'DM Sans',sans-serif;font-size:0.74rem;color:#3b6d11;margin-top:0.5rem;min-height:1.2em}
+    .bml-msg.err{color:#b91c1c}
+  </style>
+  <div class="bml-wrap">
+    <div class="bml-eye">On your phone right now?</div>
+    <div class="bml-title">Continue on your laptop, no account required.</div>
+    <div class="bml-sub">We'll email you a link &mdash; open it on a bigger screen to look around.</div>
+    <button type="button" class="bml-btn" id="bmlBtn" onclick="bmlReveal()">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Email myself a link
+    </button>
+    <form class="bml-form" id="bmlForm" onsubmit="bmlSend(event)">
+      <input type="email" id="bmlEmail" required placeholder="you@yourbusiness.com" autocomplete="email">
+      <button type="submit" id="bmlSubmit">Send the link &rarr;</button>
+    </form>
+    <div class="bml-msg" id="bmlMsg"></div>
+  </div>
+  <script>
+    function bmlReveal(){
+      document.getElementById('bmlForm').classList.add('show');
+      document.getElementById('bmlBtn').style.display='none';
+      setTimeout(function(){var e=document.getElementById('bmlEmail'); if(e)e.focus();}, 80);
+    }
+    async function bmlSend(ev){
+      ev.preventDefault();
+      var email = (document.getElementById('bmlEmail').value||'').trim();
+      var msg = document.getElementById('bmlMsg');
+      var btn = document.getElementById('bmlSubmit');
+      if(!email || email.indexOf('@')===-1){ msg.textContent='Enter a valid email.'; msg.className='bml-msg err'; return; }
+      btn.disabled = true; var orig = btn.textContent; btn.textContent='Sending…';
+      msg.textContent = ''; msg.className = 'bml-msg';
+      try{
+        var r = await fetch('/.netlify/functions/send-desktop-link', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ email: email }),
+        });
+        var d = await r.json();
+        if(r.ok && d && d.success){
+          msg.textContent = 'Link sent! Check your inbox.';
+          msg.className = 'bml-msg';
+          document.getElementById('bmlForm').classList.remove('show');
+          document.getElementById('bmlBtn').style.display='';
+          document.getElementById('bmlEmail').value='';
+        } else {
+          msg.textContent = (d && d.error) || 'Send failed — try again in a moment.';
+          msg.className = 'bml-msg err';
+        }
+      }catch(_){ msg.textContent = 'Connection error — try again.'; msg.className='bml-msg err'; }
+      btn.disabled = false; btn.textContent = orig;
+    }
+  </script>
 </section>
 
 <!-- STAT BAR — hidden May 2026, stats moved into the Proof section below -->
@@ -3790,15 +3865,17 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="two-col">
       <div>
         <div class="tag tag-dark">Our Story</div>
-        <h2 class="heading">I built Bedrock because nobody else did.</h2>
+        <!-- G11a/b: rewritten in brand voice. Was first-person singular ("I built…"); now we/Bedrock. -->
+        <h2 class="heading">Bedrock was built because nobody else built it.</h2>
         <div class="divider"></div>
-        <p class="body-text">I started out running a lawn care company, and later a landscaping company. I did the work, knocked on doors, and ran the books out of a notebook. Like every trade business, I needed a website. I needed marketing. I needed to track money and show up on Google. None of those tools were built for me. Agencies wanted thousands of dollars and weeks of time. DIY platforms wanted hours I didn't have. QuickBooks felt like reading a foreign language.</p>
-        <p class="body-text">So I taped together a Facebook page and called it good. I lost jobs because of it. Customers couldn't find me, couldn't trust me, and couldn't see my work. The tools out there were built for office workers and tech companies. They were never built for someone running a crew out of a truck.</p>
-        <p class="body-text">Later, I spent time working as a small business consultant for more than 20 startup businesses. That's where it really clicked. I learned what small business owners actually need, what makes a business run efficiently, and what makes one stand out from the pack &mdash; and I watched the same gaps show up over and over.</p>
-        <p class="body-text">So I went looking again: connected tools for trade businesses, simple, at a fair price. I couldn't find them, so I'm building them. Bedrock is what I wish had existed back then. A connected system for the people who keep their towns running. One profile. One company. Built specifically for you, not adapted from something else.</p>
+        <p class="body-text">We come from trade businesses &mdash; lawn care, then landscaping, working out of a truck and running the books out of a notebook. Like every trade business, we needed a website. We needed marketing. We needed to track money and show up on Google. None of those tools were built for us. Agencies wanted thousands of dollars and weeks of time. DIY platforms wanted hours nobody had. QuickBooks felt like reading a foreign language.</p>
+        <p class="body-text">So we taped together a Facebook page and called it good. Jobs got lost because of it. Customers couldn't find us, couldn't trust us, couldn't see our work. The tools out there were built for office workers and tech companies &mdash; never for someone running a crew out of a truck.</p>
+        <p class="body-text">After years consulting for more than 20 startup businesses, the same gaps kept showing up: what small business owners actually need, what makes a business run efficiently, what makes one stand out from the pack.</p>
+        <p class="body-text">So we went looking again &mdash; connected tools for trade businesses, simple, at a fair price. Couldn't find them, so we're building them. Bedrock is what we wish had existed back then: a connected system for the people who keep their towns running. One profile. One company. Built specifically for you, not adapted from something else.</p>
       </div>
       <div>
-        <div class="founder-mini">
+        <!-- G11b: founder-mini block hidden — About section is about Bedrock Digital as a company, not personally about the founder. -->
+        <div class="founder-mini" style="display:none">
           <div class="founder-mono" aria-hidden="true">BN</div>
           <div>
             <div class="fm-name">Brock Niederer</div>
@@ -3806,8 +3883,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
           </div>
         </div>
         <div style="border-left:3px solid var(--accent);padding:1.25rem 1.5rem;background:var(--offwhite);border-radius:0 8px 8px 0">
-          <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:400;font-style:italic;color:var(--dark);line-height:1.55">"Stop doing the business bullsh*t you hate. I'll handle it."</p>
-          <p style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;color:var(--accent);margin-top:0.85rem">&mdash; Brock Niederer, Founder</p>
+          <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:400;font-style:italic;color:var(--dark);line-height:1.55">"Stop doing the business bullsh*t you hate. We'll handle it."</p>
+          <!-- G11b: founder byline hidden -->
+          <p style="display:none;font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;color:var(--accent);margin-top:0.85rem">&mdash; Brock Niederer, Founder</p>
         </div>
         <!-- logo + slogan block — fills the space, gives the page weight -->
         <div style="text-align:center;margin-top:1.5rem;padding:2.5rem 1.75rem;background:#0D1B2E;border-radius:10px;border-top:3px solid #C9922A">
@@ -11645,7 +11723,8 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     <span class="mtb-cta-circle"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg></span>
     <span class="mtb-label mtb-cta-label">Create Account</span>
   </button>
-  <button class="mtb-item" id="mtb-tools" onclick="openMtbDrawer('tools')" aria-label="Tools" aria-expanded="false">
+  <!-- G18c: tap Tools -> scroll directly to the tools tab bar with Operations preselected (no drawer). -->
+  <button class="mtb-item" id="mtb-tools" onclick="mtbNav('tools')" aria-label="Tools">
     <span class="mtb-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>
     <span class="mtb-label">Tools</span>
   </button>
@@ -11663,15 +11742,25 @@ function mtbNav(id){
   document.querySelectorAll('.mtb-item').forEach(function(el){el.classList.remove('mtb-active');});
   var btn=document.getElementById('mtb-'+id);
   if(btn)btn.classList.add('mtb-active');
+  /* G18c: when navigating to Tools, auto-scroll the sticky tab bar into view so the 4 OFMW
+     tabs are immediately visible. Operations is already preselected by selectToolTab defaults. */
+  if (id === 'tools') {
+    setTimeout(function(){
+      var tb = document.getElementById('toolsTabBar') || document.getElementById('tools');
+      if (tb && tb.scrollIntoView) tb.scrollIntoView({ behavior:'smooth', block:'start' });
+    }, 80);
+  }
 }
 
 // Tools + More both open the same drawer with different content.
 var MTB_DRAWERS={
+  /* G18b: current 4 tools (OFMW order) with their hubs; tapping each opens that tool's page. */
   tools:{ title:'Bedrock Tools', items:[
-    {label:'Bedrock Sites — Website Builder', href:'/sites.html'},
-    {label:'Bedrock Marketing — Brand Kit & Materials', href:'/bedrock-marketing-v1.html'},
-    {label:'Optimizer — Free Site Scan', page:'optimizer'},
-    {label:'See All Tools', page:'tools'}
+    {label:'Operations · Donna', href:'/bedrock-donna-v1.html'},
+    {label:'Finance · Analytics', href:'/bedrock-finance-v1.html'},
+    {label:'Marketing · Brand Kit', href:'/bedrock-marketing-v1.html'},
+    {label:'Website · Builder + SEO', href:'/bedrock-website-v1.html'},
+    {label:'Compare all tools', page:'tools'}
   ]},
   more:{ title:'More', items:[
     {label:'Our Work', page:'ourwork'},
@@ -11917,7 +12006,7 @@ document.addEventListener('click',function(e){ if(e.target&&e.target.id==='bdAut
   .bd-plan-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
   @media(max-width:600px){.bd-plan-fab{bottom:12px;right:12px;left:12px;align-items:center;min-width:0}.bd-plan-fab .pfl-main{font-size:0.88rem}.bd-plan-toast{bottom:82px;left:12px;right:12px;transform:translateY(8px);max-width:none}.bd-plan-toast.show{transform:translateY(0)}}
 </style>
-<a class="bd-plan-fab" id="bdPlanFab" href="/portal.html#subs" aria-label="Build my plan">
+<a class="bd-plan-fab" id="bdPlanFab" href="/portal.html" aria-label="Build my plan">
   <span class="pfn-badge" id="bdPlanFabN">0</span>
   <span class="pfl-top">Get Started</span>
   <span class="pfl-main">Build My Plan →</span>

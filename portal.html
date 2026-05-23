@@ -544,23 +544,28 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
 .wm-skip{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:0.7rem 1.1rem;cursor:pointer;border-radius:4px}
 .wm-skip:hover{border-color:var(--dark);color:var(--dark)}
 
-/* ── D2: ?embed=profile mode — strips portal chrome so account.html can iframe just the My Profile editor ── */
+/* ── D2 + G13b: ?embed=... modes — strip portal chrome so account.html can iframe individual panes ── */
 body.bd-embed{background:transparent !important}
-body.bd-embed-profile > nav,
-body.bd-embed-profile .tab-bar,
-body.bd-embed-profile #subStrip,
-body.bd-embed-profile .nav-tabs,
-body.bd-embed-profile #billingBanner,
-body.bd-embed-profile .welcome-overlay,
-body.bd-embed-profile .pt-toast,
-body.bd-embed-profile .profile-brain-cta,
-body.bd-embed-profile button[onclick*="goTab('dashboard'"]{display:none !important}
-/* Hide every portal-pane except the profile editor. */
+/* Shared chrome-stripping for any embed mode */
+body[class*="bd-embed-"] > nav,
+body[class*="bd-embed-"] .tab-bar,
+body[class*="bd-embed-"] #subStrip,
+body[class*="bd-embed-"] .nav-tabs,
+body[class*="bd-embed-"] #billingBanner,
+body[class*="bd-embed-"] .welcome-overlay,
+body[class*="bd-embed-"] .pt-toast,
+body[class*="bd-embed-"] .pt-add-fab,
+body[class*="bd-embed-"] button[onclick*="goTab('dashboard'"]{display:none !important}
+body[class*="bd-embed-"] .dash-wrap{max-width:100%;padding:0}
+body[class*="bd-embed-"] #pageDash{padding:1rem 1.25rem !important}
+@media(max-width:760px){body[class*="bd-embed-"] #pageDash{padding:0.85rem 1rem !important}}
+/* embed=profile: show only the profile editor */
 body.bd-embed-profile .portal-pane{display:none !important}
 body.bd-embed-profile #pane-profile-default{display:block !important}
-body.bd-embed-profile .dash-wrap{max-width:100%;padding:0}
-body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
-@media(max-width:760px){body.bd-embed-profile #pageDash{padding:0.85rem 1rem !important}}
+body.bd-embed-profile .profile-brain-cta{display:none !important}
+/* embed=subs: show only the subscription cart UI */
+body.bd-embed-subs .portal-pane{display:none !important}
+body.bd-embed-subs #pane-subs-cart{display:block !important}
 </style>
 </head>
 <body>
@@ -576,6 +581,11 @@ body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
       // Force the profile pane active once the portal's bootstrap finishes so loadProfile() fires.
       var fire = function(){ if(typeof goTab === 'function') goTab('profile','default'); else setTimeout(fire, 80); };
       document.addEventListener('DOMContentLoaded', function(){ setTimeout(fire, 50); });
+    }
+    if(emb === 'subs'){
+      // G13b: force the cart pane so renderCart() runs.
+      var fire2 = function(){ if(typeof goTab === 'function') goTab('subs','cart'); else setTimeout(fire2, 80); };
+      document.addEventListener('DOMContentLoaded', function(){ setTimeout(fire2, 50); });
     }
   }catch(_){}
 })();
@@ -643,8 +653,15 @@ body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
     <div class="nav-tab-group" data-top="profile" style="display:none">
       <button class="nav-tab-btn" onclick="goTab('profile','default')">My Profile</button>
     </div>
+    <!-- G12a/b: "My Website" -> "Website" + #mark-w added; #mark-m added to Marketing for OFMW consistency. -->
+    <!-- G12c: tab onclicks always navigate to the tool URL; the tool itself decides preview vs live from TOOL_SUBSCRIBED + cart (wired in Step 7 / G6). No tab is ever hard-locked. -->
     <div class="nav-tab-group" data-top="website">
-      <button class="nav-tab-btn" onclick="location.href='/bedrock-website-v1.html'">My Website <span class="nav-tab-dot" data-tool-dot="website" aria-hidden="true"></span><span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="location.href='/bedrock-website-v1.html'" title="Bedrock Website">
+        <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-w"/></svg>
+        Website
+        <span class="nav-tab-dot" data-tool-dot="website" aria-hidden="true"></span>
+        <span class="nav-tab-caret">▾</span>
+      </button>
       <div class="nav-tab-submenu">
         <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=start'"><span class="tsl-eyebrow">Manage</span>My Site</button>
         <button type="button" class="nav-tab-submenu-link" onclick="location.href='/bedrock-website-v1.html?panel=optimizer'"><span class="tsl-eyebrow">SEO/GEO</span>SEO / GEO Optimizer</button>
@@ -652,7 +669,12 @@ body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
       </div>
     </div>
     <div class="nav-tab-group" data-top="marketing">
-      <button class="nav-tab-btn" onclick="launchMarketing('wizard')">Marketing <span class="nav-tab-dot" data-tool-dot="marketing" aria-hidden="true"></span><span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="launchMarketing('wizard')" title="Bedrock Marketing">
+        <svg class="nav-tab-mark" viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-m"/></svg>
+        Marketing
+        <span class="nav-tab-dot" data-tool-dot="marketing" aria-hidden="true"></span>
+        <span class="nav-tab-caret">▾</span>
+      </button>
       <div class="nav-tab-submenu">
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('brand')"><span class="tsl-eyebrow">Step 1</span>Brand Kit</button>
         <button type="button" class="nav-tab-submenu-link" onclick="launchMarketing('build')"><span class="tsl-eyebrow">Step 2</span>Build Materials</button>
@@ -673,8 +695,9 @@ body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
       <button class="nav-tab-btn" onclick="goTab('cfo','default')">Operations</button>
     </div>
     <!-- G3d/G3e: My Account tab + submenu now navigate to /account.html (dedicated page), not embedded portal panels. -->
+    <!-- G16a/b: navigation only (no in-portal panel open) — most freeze sources removed; console.time marker on the click helps diagnose any remaining latency. -->
     <div class="nav-tab-group" data-top="subs">
-      <button class="nav-tab-btn" onclick="location.href='/account.html#info'">My Account <span class="nav-tab-caret">▾</span></button>
+      <button class="nav-tab-btn" onclick="console.time('account-open');location.href='/account.html#info';console.timeEnd('account-open');">My Account <span class="nav-tab-caret">▾</span></button>
       <div class="nav-tab-submenu">
         <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#profile'"><span class="tsl-eyebrow">Brain</span>My Profile</button>
         <button type="button" class="nav-tab-submenu-link" onclick="location.href='/account.html#integrations'"><span class="tsl-eyebrow">Connect</span>My Integrations</button>
@@ -963,7 +986,7 @@ body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
             <h4>Your business profile</h4>
             <div class="mb-big" id="dhProfilePct">0%<small>complete · finish so every tool gets smarter</small></div>
             <div class="dh-meter"><i id="dhProfileMeter" style="width:0%"></i></div>
-            <button type="button" class="dh-cta" onclick="goTab('profile','default')">Finish my profile →</button>
+            <button type="button" class="dh-cta" onclick="location.href='/account.html#profile'">Finish my profile →</button>
           </div>
           <div class="dh-mini">
             <h4>Time saved with Bedrock</h4>
@@ -1073,7 +1096,7 @@ body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
             <div class="pn-title">A complete profile means every tool knows your business.</div>
             <div class="pn-body">Marketing, Donna, and Finance read from one shared profile — so you never enter the same info twice. Finish your profile and every tool gets smarter.</div>
           </div>
-          <button type="button" class="pn-cta" onclick="goTab('profile','default')">Complete My Profile →</button>
+          <button type="button" class="pn-cta" onclick="location.href='/account.html#profile'">Complete My Profile →</button>
         </div>
 
         <!-- ONBOARDING CHECKLIST -->
@@ -1194,7 +1217,7 @@ body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
             <span class="pc-sync-chip" data-tool="operations"><span class="pc-sync-dot"></span>Operations</span>
             <span class="pc-sync-chip" data-tool="finance"><span class="pc-sync-dot"></span>Finance</span>
           </div>
-          <button type="button" class="pc-cta" onclick="goTab('profile','default')">Complete My Profile →</button>
+          <button type="button" class="pc-cta" onclick="location.href='/account.html#profile'">Complete My Profile →</button>
         </div>
 
         <!-- YOUR GOOGLE PRESENCE — populated from the Business Profile API when Google is connected -->
@@ -1877,6 +1900,18 @@ body.bd-embed-profile #pageDash{padding:1rem 1.25rem !important}
 
       <!-- SUBSCRIPTIONS: CART -->
       <div class="portal-pane subs-pane-bg" id="pane-subs-cart">
+        <!-- G13c: when visited directly in the portal (not embedded in account.html), surface a redirect to /account.html#subs.
+             Hidden in ?embed=subs mode so it doesn't appear inside the account.html iframe. -->
+        <style>
+          body.bd-embed #ptSubsMoved{display:none !important}
+          #ptSubsMoved{display:flex;gap:0.85rem;align-items:center;flex-wrap:wrap;background:linear-gradient(135deg,rgba(201,146,42,0.12),rgba(201,146,42,0.04));border:1px solid var(--accent);border-left:4px solid var(--accent);border-radius:8px;padding:0.9rem 1.15rem;margin-bottom:1rem;font-family:'DM Sans',sans-serif;font-size:0.84rem;color:var(--text)}
+          #ptSubsMoved a{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0.65rem 1.1rem;border-radius:5px;text-decoration:none;cursor:pointer;flex-shrink:0}
+          #ptSubsMoved a:hover{background:var(--accent-light)}
+        </style>
+        <div id="ptSubsMoved">
+          <span style="flex:1;min-width:240px"><strong>Subscriptions live on your My Account page now.</strong> Same plan, same prices &mdash; just one address for everything billing-related.</span>
+          <a href="/account.html#subs">Manage My Plan &rarr;</a>
+        </div>
         <div style="background:#fff;border-top:3px solid var(--accent);padding:1.5rem 1.75rem;margin-bottom:1.25rem">
           <div class="dc-label">My Subscriptions</div>
           <div class="dc-title">Pick what you want. Bundle and save.<span class="help-tip">?<span class="help-bubble">Choose the Bedrock tools you want. Add more anytime — bundle discounts apply automatically before checkout.</span></span></div>
@@ -2496,7 +2531,7 @@ var CURRENT_TAB = { top:'website', sub:'editor' };
 
 var TAB_DEFS = {
   dashboard: { label:'Dashboard',       subs:{ default:'Dashboard' } },
-  website:   { label:'My Website',      subs:{ hub:'Website Hub', editor:'My Site', optimizer:'Site Optimizer', analytics:'Site Analytics', builder:'Site Builder', status:'Site Info' } },
+  website:   { label:'Website',         subs:{ hub:'Website Hub', editor:'My Site', optimizer:'Site Optimizer', analytics:'Site Analytics', builder:'Site Builder', status:'Site Info' } },
   marketing: { label:'Marketing',       subs:{ hub:'Marketing Hub', brand:'Brand Kit', build:'Build Materials', library:'Asset Library', integrations:'Integrations' } },
   cfo:       { label:'Operations',      subs:{ default:'Operations' } },
   profile:   { label:'My Profile',      subs:{ default:'My Profile' } },
@@ -2683,6 +2718,7 @@ function loadProfile() {
       applyToolSubsFromDB(data.subscriptions || []);
       if (typeof window.paintToolDots === 'function') window.paintToolDots();
       if (typeof window.renderStep10Dashboard === 'function') window.renderStep10Dashboard();
+      if (typeof window.paintAddToolFab === 'function') window.paintAddToolFab();
       var source = PROFILE || PROFILE_DRAFT || {};
       Object.keys(STAGE_TOP_FIELDS).forEach(function(stage){ STAGE_TOP_FIELDS[stage].forEach(function(f){ setTopField(f, source[f]); }); });
       var extra = (source.extra || {}) || {};
@@ -2838,20 +2874,73 @@ document.addEventListener('input', function(e){
   if (e.target && e.target.id && (e.target.id.indexOf('pf_') === 0)) updateProfileMeter();
 });
 
-// ── NOTIFICATIONS (UI-only for now) ──────────────────────────────────────────
+// ── G14a: NOTIFICATIONS — typed events with auto-dismiss + persistent variants ─────
 var NOTIFICATIONS = [];
 function setNotifications(arr) { NOTIFICATIONS = arr || []; renderNotifications(); persistNotifications(); }
+
+// Push a typed notification. Auto-dedupe on id; auto-dismiss if dismissAfterMs is set.
+window.pushNotif = function(n){
+  if (!n || !n.id) return;
+  NOTIFICATIONS = NOTIFICATIONS.filter(function(x){ return x.id !== n.id; });
+  NOTIFICATIONS.unshift(Object.assign({ read:false, meta:'Just now', ts:Date.now() }, n));
+  renderNotifications(); persistNotifications();
+  if (n.dismissAfterMs && n.dismissAfterMs > 0) {
+    setTimeout(function(){ window.dismissNotif(n.id); }, n.dismissAfterMs);
+  }
+};
+window.dismissNotif = function(id){
+  NOTIFICATIONS = NOTIFICATIONS.filter(function(x){ return x.id !== id; });
+  renderNotifications(); persistNotifications();
+};
+
+// Typed helpers — call from anywhere in the portal to surface the right event.
+window.notifProfileIncomplete = function(pct){
+  if (typeof pct !== 'number' || pct >= 100) { window.dismissNotif('profile-incomplete'); return; }
+  window.pushNotif({
+    id:'profile-incomplete', icon:'👤', persistent:true,
+    msg:"Your profile is "+pct+"% complete. Finish it to get smarter insights.",
+    meta:'Just now', link:{ href:'/account.html#profile' },
+  });
+};
+window.notifIntegrationConnected = function(name){
+  window.pushNotif({
+    id:'int-ok-'+name, icon:'✓',
+    msg:name+' connected successfully.',
+    meta:'Just now', dismissAfterMs:5000,
+    link:{ href:'/account.html#integrations' },
+  });
+};
+window.notifIntegrationFailed = function(name){
+  window.pushNotif({
+    id:'int-fail-'+name, icon:'⚠',
+    msg:name+' connection failed — try again.',
+    meta:'Just now', persistent:true,
+    link:{ href:'/account.html#integrations' },
+  });
+};
+window.notifNewReview = function(detail){
+  window.pushNotif({
+    id:'review-'+Date.now(), icon:'★',
+    msg:'A client left you a review on Google'+(detail?' — "'+detail+'"':'.'),
+    meta:'Just now',
+    link:{ href:'/account.html#google' },
+  });
+};
+
 function loadStoredNotifications(session) {
   try {
     var raw = localStorage.getItem(NOTIF_KEY);
-    if (raw) { NOTIFICATIONS = JSON.parse(raw); renderNotifications(); return; }
+    if (raw) { NOTIFICATIONS = JSON.parse(raw); }
   } catch(_){}
-  // First load — seed with onboarding nudges
-  var seed = [];
-  if (currentLead && (!currentLead.site_url)) seed.push({ id:'profile-nudge', icon:'👤', msg:'Welcome! Complete your profile to unlock all features.', meta:'Just now', read:false, link:{tab:'profile',sub:'default'} });
-  seed.push({ id:'brand-nudge', icon:'🎨', msg:'Set up your Brand Kit in Marketing — colors and voice for every piece you make.', meta:'Just now', read:false, link:{tab:'marketing',sub:'brand'} });
-  NOTIFICATIONS = seed;
-  renderNotifications(); persistNotifications();
+  // G14a: re-seed the profile-incomplete nudge on each login if profile is still under 100%.
+  // Other dismissed notifs (auto-dismiss, integration ok) stay dismissed; the persistent ones
+  // (integration failed, profile incomplete) get re-asserted by the helper above.
+  try {
+    var pct = (typeof getProfileCompletion === 'function') ? getProfileCompletion() : null;
+    if (typeof pct === 'number' && pct < 100) window.notifProfileIncomplete(pct);
+    else window.dismissNotif('profile-incomplete');
+  } catch(_){}
+  renderNotifications();
 }
 function persistNotifications() { try { localStorage.setItem(NOTIF_KEY, JSON.stringify(NOTIFICATIONS)); } catch(_){} }
 function renderNotifications() {
@@ -3754,6 +3843,40 @@ document.addEventListener('blur', function(e){
   var stage = stageForFieldId(e.target.id);
   if (stage) autoSaveStage(stage);
 }, true);  // useCapture=true to catch blur (doesn't bubble)
+</script>
+
+<!-- G12d: portal dashboard "Add a Tool" FAB — bottom-right, hidden when user has all 4 tools active. -->
+<style>
+  .pt-add-fab{position:fixed;bottom:18px;right:18px;z-index:240;background:#0D1B2E;color:#fff;border:1.5px solid #C9922A;border-radius:10px;padding:0.65rem 1.05rem 0.7rem 0.95rem;font-family:'DM Sans',sans-serif;cursor:pointer;text-decoration:none;display:none;align-items:center;gap:0.6rem;box-shadow:0 8px 24px rgba(13,27,46,0.32);transition:transform .15s,background .15s}
+  .pt-add-fab:hover{background:#1B3557;transform:translateY(-1px)}
+  .pt-add-fab.show{display:inline-flex}
+  .pt-add-fab .ptaf-ic{width:24px;height:24px;border-radius:6px;background:#C9922A;color:#0D1B2E;display:inline-flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-weight:700;font-size:1.05rem;line-height:1;flex-shrink:0}
+  .pt-add-fab .ptaf-txt{display:flex;flex-direction:column;line-height:1.1;align-items:flex-start}
+  .pt-add-fab .ptaf-top{font-size:0.54rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:#F0C46A}
+  .pt-add-fab .ptaf-main{font-size:0.85rem;font-weight:700;color:#fff;margin-top:2px}
+  body.bd-embed .pt-add-fab{display:none !important}
+  @media(max-width:600px){.pt-add-fab{bottom:12px;right:12px;padding:0.55rem 0.85rem 0.6rem 0.75rem}.pt-add-fab .ptaf-main{font-size:0.78rem}}
+</style>
+<a class="pt-add-fab" id="ptAddFab" href="/account.html#subs" aria-label="Add a tool to my plan">
+  <span class="ptaf-ic" aria-hidden="true">+</span>
+  <span class="ptaf-txt">
+    <span class="ptaf-top">Subscriptions</span>
+    <span class="ptaf-main">Add a Tool →</span>
+  </span>
+</a>
+<script>
+(function(){
+  // Show the FAB unless TOOL_SUBSCRIBED already has all 4 tools active. Re-runs whenever
+  // applyToolSubsFromDB() fires (loadProfile + paintToolDots run after the subs fetch).
+  window.paintAddToolFab = function(){
+    var fab = document.getElementById('ptAddFab'); if(!fab) return;
+    var ts = window.TOOL_SUBSCRIBED || {};
+    var allFour = !!ts.donna && !!ts.finance && !!ts.marketing && !!ts.website;
+    fab.classList.toggle('show', !allFour);
+  };
+  document.addEventListener('DOMContentLoaded', window.paintAddToolFab);
+  setTimeout(window.paintAddToolFab, 600);
+})();
 </script>
 </body>
 </html>
