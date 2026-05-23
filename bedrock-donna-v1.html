@@ -219,6 +219,14 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .tot-row{display:flex;justify-content:space-between;font-size:0.78rem;color:var(--slate);padding:0.16rem 0}
 .tot-row.grand{font-size:0.95rem;font-weight:700;color:var(--navy-deep);border-top:1px solid var(--border-light);margin-top:0.3rem;padding-top:0.5rem}
 .draft-note{font-size:0.7rem;color:var(--slate);font-style:italic;background:var(--off-white);padding:0.55rem 0.7rem;border-radius:5px;margin-top:0.7rem;line-height:1.5}
+/* "From your profile" badge — appears next to fields auto-filled from the shared profile */
+.pf-badge{display:inline-flex;align-items:center;gap:4px;font-size:0.56rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);background:rgba(201,146,42,0.12);padding:0.16rem 0.42rem;border-radius:99px;margin-left:0.45rem;vertical-align:middle;line-height:1.2;border:1px solid rgba(201,146,42,0.25)}
+.pf-badge::before{content:'✓';font-size:0.7rem;line-height:1}
+/* Inline nudge — shown above the chat when profile is under 50% complete */
+.pf-nudge{display:flex;align-items:center;gap:0.6rem;background:rgba(201,146,42,0.08);border:1px solid rgba(201,146,42,0.25);border-radius:8px;padding:0.6rem 0.85rem;margin:0.7rem 0 0.9rem;font-size:0.78rem;color:var(--navy-deep);line-height:1.45}
+.pf-nudge .pn-pct{font-weight:700;color:var(--gold)}
+.pf-nudge a{color:var(--gold);font-weight:700;text-decoration:none;white-space:nowrap}
+.pf-nudge a:hover{text-decoration:underline}
 /* ── EDITABLE LINE-ITEM BUILDER (manual + menu estimate/invoice) ── */
 .bld-sublabel{font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--slate);margin:0.7rem 0 0.45rem}
 .bld-li{border:1px solid var(--border-light);border-radius:7px;padding:0.5rem 0.55rem;margin-bottom:0.45rem;background:#fff}
@@ -600,7 +608,7 @@ footer a{color:var(--gold);text-decoration:none}
 <script>
 // ═══════════════ SHARED PROFILE (Supabase-only; no localStorage) ═══════════════
 var BedrockProfile = (function(){
-  var TOKEN='', data={}, subs=[], conns={};
+  var TOKEN='', data={}, subs=[], conns={}, pct=0;
   var EXTRA=['labor_rate','material_markup_pct','travel_fee','cleanup_fee','default_payment_terms','tax_on_labor','tax_on_materials'];
   var COLS=['business_name','contact_name','phone','trade','city','service_areas'];
   function flatten(p){ if(!p)return {}; var o={}; COLS.forEach(function(k){if(p[k]!=null&&p[k]!=='')o[k]=p[k];}); var x=p.extra||{}; EXTRA.forEach(function(k){if(x[k]!=null&&x[k]!=='')o[k]=x[k];}); if(p.is_admin===true)o.is_admin=true; if(p.brand_colors)o.brand_colors=p.brand_colors; return o; }
@@ -611,11 +619,12 @@ var BedrockProfile = (function(){
       if(!TOKEN) return Promise.resolve(data);
       return fetch('/.netlify/functions/get-profile',{headers:{Authorization:'Bearer '+TOKEN}})
         .then(function(r){return r.ok?r.json():null;})
-        .then(function(d){ if(d){ if(d.profile){var l=flatten(d.profile);Object.keys(l).forEach(function(k){data[k]=l[k];});} if(d.subscriptions)subs=d.subscriptions; if(d.connections)conns=d.connections; } return data; })
+        .then(function(d){ if(d){ if(d.profile){var l=flatten(d.profile);Object.keys(l).forEach(function(k){data[k]=l[k];});} if(d.subscriptions)subs=d.subscriptions; if(d.connections)conns=d.connections; if(typeof d.completion_pct==='number')pct=d.completion_pct; } return data; })
         .catch(function(){return data;});
     },
     get:function(k){return data[k];},
     has:function(k){var v=data[k];return v!=null&&v!=='';},
+    completion:function(){return pct;},
     token:function(){return TOKEN;},
     connections:function(){return conns;},
     subscribedTo:function(tools){ return subs.some(function(s){ return (s.status==='active'||s.status==='past_due') && tools.indexOf(s.tool)!==-1; }); },
@@ -1295,8 +1304,8 @@ function renderDocBuilder(kind, who){
     +'<div class="bld-sublabel">Line items</div>'
     +'<div id="bldLines"></div>'
     +'<button type="button" class="bld-addrow" onclick="builderAddLine()">+ Add line item</button>'
-    +'<div class="bld-set"><label>Labor rate ($/hr)</label><input type="number" id="bldLabor" min="0" step="1" value="'+rate+'" oninput="recalcBuilder()"><button type="button" class="bld-mini" onclick="builderAddLabor()">+ Labor line</button></div>'
-    +'<div class="bld-set"><label><input type="checkbox" id="bldMarkupOn" '+(mk>0?'checked':'')+' onchange="recalcBuilder()"> Material markup</label><input type="number" id="bldMarkup" min="0" step="1" value="'+mk+'" oninput="recalcBuilder()"><span style="color:var(--slate);font-weight:600">%</span></div>'
+    +'<div class="bld-set"><label>Labor rate ($/hr)'+(BedrockProfile.has('labor_rate')?'<span class="pf-badge">From your profile</span>':'')+'</label><input type="number" id="bldLabor" min="0" step="1" value="'+rate+'" oninput="recalcBuilder()"><button type="button" class="bld-mini" onclick="builderAddLabor()">+ Labor line</button></div>'
+    +'<div class="bld-set"><label><input type="checkbox" id="bldMarkupOn" '+(mk>0?'checked':'')+' onchange="recalcBuilder()"> Material markup'+(BedrockProfile.has('material_markup_pct')?'<span class="pf-badge">From your profile</span>':'')+'</label><input type="number" id="bldMarkup" min="0" step="1" value="'+mk+'" oninput="recalcBuilder()"><span style="color:var(--slate);font-weight:600">%</span></div>'
     +'<div class="bld-set"><label><input type="checkbox" id="bldTaxOn" '+(taxDefault?'checked':'')+' onchange="recalcBuilder()"> Charge sales tax</label><input type="number" id="bldTax" min="0" step="0.1" value="0" oninput="recalcBuilder()"><span style="color:var(--slate);font-weight:600">%</span></div>'
     +'<div class="draft-totals" id="bldTotals"></div>'
     +'<div class="fld" style="margin-top:0.8rem"><label>Notes</label><textarea id="bldNotes" placeholder="Anything the customer should know">'+(isInv?('Payment terms: '+esc(terms)):'')+'</textarea></div>'
@@ -1789,11 +1798,28 @@ function dismissPreviewBanner(){
   var b = document.getElementById('previewBanner'); if(b) b.classList.remove('show');
 }
 
+// Inline "profile under 50%" nudge — non-blocking, dismissable via the link.
+// Injects above the chat thread so contractors see it without a popup.
+function showProfileNudge(){
+  var pct = BedrockProfile.completion();
+  if (!pct || pct >= 50) return;
+  if (!BedrockProfile.token()) return; // no nudge in free preview
+  var host = document.getElementById('chatHost') || document.getElementById('thread');
+  if (!host || document.getElementById('donnaPfNudge')) return;
+  var n = document.createElement('div');
+  n.id = 'donnaPfNudge';
+  n.className = 'pf-nudge';
+  n.innerHTML = '<span>Your profile is <span class="pn-pct">'+pct+'%</span> complete — add your trade, rates, and service area to make Donna smarter.</span>'
+    + '<a href="/portal.html#profile" target="_blank" rel="noopener">Complete profile →</a>';
+  host.parentNode.insertBefore(n, host);
+}
+
 // ═══════════════ INIT ═══════════════
 renderPanelDefault();
 BedrockProfile.load().then(function(){
   IS_SUBSCRIBED = !!BedrockProfile.get('is_admin') || BedrockProfile.subscribedTo(['finance_operations','operations']);
   showPreviewBanner();
+  showProfileNudge();
   applyConnDots();
   var _qbo = new URLSearchParams(location.search).get('qbo');
   if (_qbo === 'connected') setTimeout(function(){ alert('QuickBooks connected. Donna can now sync your customers, estimates, and invoices.'); }, 500);

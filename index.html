@@ -1747,8 +1747,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   </div>
   <div class="bd-hero-inner">
     <div class="bd-hero-eyebrow">Bedrock Digital</div>
-    <h1>Modern Business Solutions<br><em>for Contractors.</em></h1>
-    <p class="bd-hero-sub">The Bedrock Ecosystem &mdash; one company, one connected system.</p>
+    <h1>Run your contracting business.<br><em>Stop running paperwork.</em></h1>
+    <p class="bd-hero-sub">One platform handles your website, marketing, billing, and bookkeeping &mdash; built for contractors, not accountants.</p>
     <div class="bd-hero-ctas">
       <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-btn-gold">Test My Site for SEO</a>
       <a href="/sites.html?embed=builder" class="bd-btn-gold">Build My Website Free</a>
@@ -1821,6 +1821,13 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     #bd-whatwedo .wwd-acc-links{display:flex;gap:1.25rem;flex-wrap:wrap}
     #bd-whatwedo .wwd-acc-links a{font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#C9922A;text-decoration:none}
     #bd-whatwedo .wwd-acc-links a:hover{text-decoration:underline}
+    /* Operations scenarios — three tiny cards inside the Donna accordion */
+    #bd-whatwedo .wwd-scenarios{display:grid;grid-template-columns:repeat(3,1fr);gap:0.65rem;margin:0.9rem 0 1.1rem}
+    @media(max-width:680px){#bd-whatwedo .wwd-scenarios{grid-template-columns:1fr}}
+    #bd-whatwedo .wwd-scn{background:#FAF7F2;border:1px solid rgba(13,27,46,0.08);border-left:3px solid #C9922A;border-radius:6px;padding:0.7rem 0.85rem}
+    #bd-whatwedo .wwd-scn-icon{font-size:1.15rem;margin-bottom:0.3rem;line-height:1}
+    #bd-whatwedo .wwd-scn-h{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;font-weight:600;color:#0D1B2E;line-height:1.3;margin-bottom:0.25rem}
+    #bd-whatwedo .wwd-scn-b{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:#4A5568;line-height:1.5}
     #bd-whatwedo .wwd-truck{margin-top:2.25rem;padding:1.6rem 1.85rem;background:#0D1B2E;border-left:3px solid #C9922A;border-radius:0 8px 8px 0}
     #bd-whatwedo .wwd-truck p{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.12rem;line-height:1.65;color:#F5E6C8;margin:0}
     #bd-whatwedo .wwd-truck strong{color:#C9922A;font-style:normal;font-weight:600}
@@ -1902,6 +1909,24 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
             <span class="wwd-feat">Estimates &amp; Invoices</span>
           </div>
           <p class="wwd-acc-desc">Tell Donna what you need in plain words &mdash; or talk it out on the drive home &mdash; and she drafts the estimate, invoice, receipt, or schedule. You review, tweak, and approve; nothing goes to a customer without your say-so. Every customer, project, and job stays organized in one place, and she learns your rates and fees as you go.</p>
+          <!-- "What Donna handles" — three concrete contractor moments -->
+          <div class="wwd-scenarios">
+            <div class="wwd-scn">
+              <div class="wwd-scn-icon" aria-hidden="true">🧱</div>
+              <div class="wwd-scn-h">"Just finished a patio job."</div>
+              <div class="wwd-scn-b">Donna invoices it in 30 seconds &mdash; your customer, your rates, sent from your Gmail.</div>
+            </div>
+            <div class="wwd-scn">
+              <div class="wwd-scn-icon" aria-hidden="true">📝</div>
+              <div class="wwd-scn-h">"Customer wants a bid."</div>
+              <div class="wwd-scn-b">Donna drafts the estimate from your labor rate and markup &mdash; review, tweak, approve, send.</div>
+            </div>
+            <div class="wwd-scn">
+              <div class="wwd-scn-icon" aria-hidden="true">🧾</div>
+              <div class="wwd-scn-h">"Bought materials at the hardware store."</div>
+              <div class="wwd-scn-b">Snap the receipt. Donna files it against the job and Finance picks it up automatically.</div>
+            </div>
+          </div>
           <div class="wwd-acc-links">
             <a href="/bedrock-donna-v1.html">&rarr; Meet Donna</a>
           </div>
@@ -1991,6 +2016,73 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       if (!wasOpen) el.classList.add('open');
     }
   </script>
+</section>
+
+<!-- ===== THE POWER OF CONNECTED TOOLS — concrete before/after story ===== -->
+<section id="bd-connected" class="bd-section" style="background:#0D1B2E;padding:5rem 5%;color:#fff">
+  <style>
+    #bd-connected .bdc-wrap{max-width:1120px;margin:0 auto}
+    #bd-connected .bdc-head{text-align:center;max-width:740px;margin:0 auto 3rem}
+    #bd-connected .bdc-eyebrow{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.28em;text-transform:uppercase;color:#C9922A;margin-bottom:1rem}
+    #bd-connected h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.2rem,4.5vw,3.4rem);font-weight:700;color:#F5E6C8;line-height:1.1;margin-bottom:1rem;letter-spacing:-0.01em}
+    #bd-connected h2 em{font-style:italic;color:#C9922A}
+    #bd-connected .bdc-sub{font-family:'DM Sans',sans-serif;font-size:1.02rem;color:rgba(255,255,255,0.72);line-height:1.7}
+    #bd-connected .bdc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:stretch}
+    @media(max-width:780px){#bd-connected .bdc-grid{grid-template-columns:1fr}}
+    #bd-connected .bdc-col{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:1.85rem 1.85rem 1.6rem;display:flex;flex-direction:column}
+    #bd-connected .bdc-col.before{border-left:3px solid #b91c1c}
+    #bd-connected .bdc-col.after{background:linear-gradient(135deg,rgba(201,146,42,0.08),rgba(201,146,42,0.02));border-left:3px solid #C9922A}
+    #bd-connected .bdc-col .bdc-tag{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:0.5rem}
+    #bd-connected .bdc-col.after .bdc-tag{color:#C9922A}
+    #bd-connected .bdc-col h3{font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:600;color:#fff;margin-bottom:1.1rem;line-height:1.2}
+    #bd-connected .bdc-col.after h3 em{color:#C9922A;font-style:italic}
+    #bd-connected .bdc-step{display:flex;gap:0.7rem;padding:0.55rem 0;font-family:'DM Sans',sans-serif;font-size:0.88rem;line-height:1.55;color:rgba(255,255,255,0.78)}
+    #bd-connected .bdc-step .bdc-dot{flex-shrink:0;width:8px;height:8px;border-radius:50%;background:#b91c1c;margin-top:0.55rem}
+    #bd-connected .bdc-col.after .bdc-step .bdc-dot{background:#C9922A}
+    #bd-connected .bdc-foot{margin-top:1.1rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,0.08);font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.55);font-style:italic;line-height:1.55}
+    #bd-connected .bdc-col.before .bdc-foot{color:#dc6f6f}
+    #bd-connected .bdc-col.after .bdc-foot{color:#C9922A;font-style:normal;font-weight:600}
+    #bd-connected .bdc-cta{text-align:center;margin-top:2.5rem}
+    #bd-connected .bdc-cta a{display:inline-block;background:#C9922A;color:#0D1B2E;font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:1rem 1.85rem;border-radius:6px;text-decoration:none;transition:background .2s}
+    #bd-connected .bdc-cta a:hover{background:#D4A843}
+  </style>
+  <div class="bdc-wrap">
+    <div class="bdc-head">
+      <div class="bdc-eyebrow">The Power of Connected Tools</div>
+      <h2>One job done. <em>Five tools updated.</em></h2>
+      <p class="bdc-sub">Most software pretends to do everything but stays in its own lane. Bedrock's tools actually talk to each other &mdash; so finishing a job kicks off everything else automatically.</p>
+    </div>
+
+    <div class="bdc-grid">
+      <div class="bdc-col before">
+        <div class="bdc-tag">Without Bedrock</div>
+        <h3>Friday night, after a 10-hour day</h3>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Finish the patio job. Drive home tired.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Open Excel. Copy Joe's address from a text message.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Dig through notes on your phone for your hourly rate.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Try to remember the markup you used on the materials.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Save as PDF. Attach in Gmail. Hit send and hope it's right.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Forget to log the receipt from the supply yard.</span></div>
+        <div class="bdc-foot">~45 minutes. Three apps. One nagging "did I charge for the disposal fee?"</div>
+      </div>
+
+      <div class="bdc-col after">
+        <div class="bdc-tag">With Bedrock</div>
+        <h3>Same Friday. <em>30 seconds in the truck.</em></h3>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>"Donna, invoice Joe Smith for the patio job."</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>She pulls Joe's info from your customer database.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Applies your standard labor rate and markup from your profile.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Drafts the invoice and waits for your approval.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>One tap sends it from your Gmail.</span></div>
+        <div class="bdc-step"><span class="bdc-dot"></span><span>Finance logs the revenue. Snap the receipt — it's already on the job.</span></div>
+        <div class="bdc-foot">One platform. One approval. Every tool updated automatically.</div>
+      </div>
+    </div>
+
+    <div class="bdc-cta">
+      <a href="/portal.html">Start running my business this way →</a>
+    </div>
+  </div>
 </section>
 
 <!-- INTERACTIVE WORK-TRUCK SECTION — hidden May 2026, replaced by the simpler #bd-whatwedo above -->
@@ -4409,8 +4501,68 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <p>Every Bedrock tool is free to try. Start with a free site scan, build a website preview, or set up your Brand Kit &mdash; no card needed to look around.</p>
   </div>
 
-  <!-- VISUAL — product icon strip -->
-  <div class="tools-iconrow">
+  <!-- ─── FULL-WIDTH STICKY TAB BAR ─── -->
+  <div class="tools-tabbar" id="toolsTabBar" role="tablist" aria-label="Choose a tool">
+    <style>
+      #tools .tools-tabbar{position:sticky;top:0;z-index:30;background:#0D1B2E;border-bottom:1px solid rgba(201,146,42,0.18);box-shadow:0 4px 14px rgba(13,27,46,0.18)}
+      #tools .ttb-scroll{display:flex;align-items:stretch;max-width:1080px;margin:0 auto;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+      #tools .ttb-scroll::-webkit-scrollbar{display:none}
+      #tools .ttb-tab{flex:1;min-width:170px;display:flex;align-items:center;gap:0.7rem;padding:1rem 1.1rem;background:transparent;border:none;border-bottom:3px solid transparent;cursor:pointer;color:rgba(255,255,255,0.55);text-align:left;scroll-snap-align:center;font:inherit;transition:color .15s,background .15s,border-color .15s,transform .12s}
+      #tools .ttb-tab:hover{color:#F5E6C8;background:rgba(255,255,255,0.04)}
+      #tools .ttb-tab.active{color:#F5E6C8;background:#1B3557;border-bottom-color:#C9922A;transform:translateY(-1px)}
+      #tools .ttb-tab .ttb-mark{width:32px;height:32px;flex-shrink:0;display:block}
+      #tools .ttb-tab .ttb-mark svg{width:100%;height:100%;display:block}
+      #tools .ttb-tab .ttb-meta{display:flex;flex-direction:column;line-height:1.15;min-width:0}
+      #tools .ttb-tab .ttb-name{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;color:inherit;letter-spacing:-0.005em;white-space:nowrap}
+      #tools .ttb-tab.active .ttb-name{font-size:1.15rem}
+      #tools .ttb-tab .ttb-desc{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:500;letter-spacing:0.04em;color:rgba(255,255,255,0.5);margin-top:3px;white-space:nowrap}
+      #tools .ttb-tab.active .ttb-desc{color:#C9922A}
+      #tools .ttb-hint{display:none;font-family:'DM Sans',sans-serif;font-size:0.55rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.5);padding:0.45rem 1rem 0;border-bottom:1px dashed rgba(255,255,255,0.06);text-align:center}
+      @media(max-width:780px){
+        #tools .ttb-hint{display:block}
+        #tools .ttb-tab{flex:0 0 auto;min-width:auto;padding:0.85rem 0.9rem}
+        #tools .ttb-tab .ttb-mark{width:26px;height:26px}
+        #tools .ttb-tab .ttb-name{font-size:0.9rem}
+        #tools .ttb-tab.active .ttb-name{font-size:0.95rem}
+        #tools .ttb-tab .ttb-desc{font-size:0.58rem}
+      }
+      /* "Try it" preview CTA next to "Add to My Plan" inside each tool pane */
+      #tools .tool-cta-row{display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid rgba(13,27,46,0.06)}
+      #tools .tool-card.optimizer .tool-cta-row{border-top-color:rgba(255,255,255,0.08)}
+      #tools .tool-card .ttry-btn{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:transparent;border:1.5px solid #C9922A;color:#C9922A;padding:0.85rem 1.4rem;border-radius:6px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;transition:all .15s}
+      #tools .tool-card .ttry-btn:hover{background:#C9922A;color:#0D1B2E}
+      #tools .tool-card .tadd-btn{font-family:'DM Sans',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:#0D1B2E;color:#fff;padding:0.85rem 1.4rem;border-radius:6px;text-decoration:none;display:inline-flex;align-items:center;gap:0.4rem;transition:all .15s;border:1.5px solid #0D1B2E}
+      #tools .tool-card.optimizer .tadd-btn{background:#C9922A;color:#0D1B2E;border-color:#C9922A}
+      #tools .tool-card .tadd-btn:hover{background:#1B3557}
+      #tools .tool-card.optimizer .tadd-btn:hover{background:#D4A843}
+    </style>
+    <div class="ttb-hint">Swipe for more tools →</div>
+    <div class="ttb-scroll" id="ttbScroll">
+      <button type="button" class="ttb-tab active" role="tab" data-tool="operations" onclick="selectToolTab('operations',event)">
+        <span class="ttb-mark"><svg viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-d"/></svg></span>
+        <span class="ttb-meta"><span class="ttb-name">Operations</span><span class="ttb-desc">Admin + Estimates</span></span>
+      </button>
+      <button type="button" class="ttb-tab" role="tab" data-tool="finance" onclick="selectToolTab('finance',event)">
+        <span class="ttb-mark"><svg viewBox="0 0 68 68" aria-hidden="true"><use href="#mark-f"/></svg></span>
+        <span class="ttb-meta"><span class="ttb-name">Finance</span><span class="ttb-desc">Revenue + Margins</span></span>
+      </button>
+      <button type="button" class="ttb-tab" role="tab" data-tool="marketing" onclick="selectToolTab('marketing',event)">
+        <span class="ttb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l18-8v18l-7-3"/><path d="M3 11v6h4l3 4V8z"/></svg></span>
+        <span class="ttb-meta"><span class="ttb-name">Marketing</span><span class="ttb-desc">Brand Kit + Materials</span></span>
+      </button>
+      <button type="button" class="ttb-tab" role="tab" data-tool="website" onclick="selectToolTab('website',event)">
+        <span class="ttb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+        <span class="ttb-meta"><span class="ttb-name">Website</span><span class="ttb-desc">Builder + Editor</span></span>
+      </button>
+      <button type="button" class="ttb-tab" role="tab" data-tool="seo" onclick="selectToolTab('seo',event)">
+        <span class="ttb-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span>
+        <span class="ttb-meta"><span class="ttb-name">SEO / GEO</span><span class="ttb-desc">Audit + Optimizer</span></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- VISUAL — original product icon strip; kept (display:none) per no-delete rule. The new sticky tab bar above replaces it. -->
+  <div class="tools-iconrow" style="display:none">
     <style>
       #tools .tools-iconrow{background:#FAF7F2;padding:3rem 5% 1rem;text-align:center}
       #tools .tir-caption{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.3rem;color:#0D1B2E;margin-bottom:1.75rem}
@@ -4465,8 +4617,15 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <script>
       function selectToolTab(name, e){
         if(e) e.preventDefault();
+        // Update both the legacy icon strip (hidden) and the new sticky tab bar.
         document.querySelectorAll('#tools .tir-item').forEach(function(it){ it.classList.toggle('active', it.getAttribute('data-tool')===name); });
+        document.querySelectorAll('#tools .ttb-tab').forEach(function(it){ it.classList.toggle('active', it.getAttribute('data-tool')===name); });
         document.querySelectorAll('#tools .tool-pane').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-tool')===name); });
+        // Mobile: center the active tab in the scroll viewport.
+        var activeTab = document.querySelector('#tools .ttb-tab.active');
+        if (activeTab && activeTab.scrollIntoView) {
+          try { activeTab.scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'}); } catch(_) {}
+        }
         try { window.scrollTo({top: document.querySelector('#tools .tools-wrap').offsetTop - 80, behavior:'smooth'}); } catch(_) {}
       }
     </script>
@@ -4556,8 +4715,10 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <details><summary>What if Donna gets a number or a line item wrong?</summary><p>You catch it in the approval panel and tweak it before approving. Donna learns your typical rate, markup, and standard fees over time, so wrong guesses get rarer.</p></details>
         <details><summary>Can I use Donna without an accounting background?</summary><p>That's the whole point. No journal entries, no debits and credits — Donna handles estimates, invoices, receipts, and job tracking in plain language.</p></details>
       </div>
-      <a href="/bedrock-donna-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Preview Operations &rarr;</a>
-      <a href="/portal.html#subs" class="bd-btn-outline" style="font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">Add to My Plan &rarr;</a>
+      <div class="tool-cta-row">
+        <a href="/bedrock-donna-v1.html" class="ttry-btn">Try it →</a>
+        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
+      </div>
     </div>
 
     </div><!-- /tool-pane: operations -->
@@ -4642,8 +4803,10 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <details><summary>How accurate are the margins?</summary><p>They're labeled estimates. Job costs come from your QuickBooks expenses and Donna's line items; both are as accurate as what you put in. Finance is honest about what it doesn't know.</p></details>
         <details><summary>Can I export the reports?</summary><p>Print and PDF export are on the roadmap. For now, the dashboard is live in your browser and refreshes from QuickBooks on a 15-minute cache.</p></details>
       </div>
-      <a href="/bedrock-finance-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Preview Finance &rarr;</a>
-      <a href="/portal.html#subs" class="bd-btn-outline" style="font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">Add to My Plan &rarr;</a>
+      <div class="tool-cta-row">
+        <a href="/bedrock-finance-v1.html" class="ttry-btn">Try it →</a>
+        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
+      </div>
     </div>
 
     </div><!-- /tool-pane: finance -->
@@ -4712,8 +4875,10 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <details><summary>What if I don't have customer photos yet?</summary><p>Use stock-ish backgrounds from the built-in palette or your existing job photos. The asset library saves every piece you generate so you can come back to it.</p></details>
         <details><summary>Can I edit the AI-generated copy?</summary><p>Always. The AI writes a starting headline and CTA in your tone — you edit them right in the preview and the design updates live.</p></details>
       </div>
-      <a href="/bedrock-marketing-v1.html" class="bd-btn-gold" style="font-size:0.7rem;margin-top:1.25rem">Preview Marketing &rarr;</a>
-      <a href="/portal.html#subs" class="bd-btn-outline" style="font-size:0.7rem;margin-top:0.5rem;margin-left:0.5rem">Add to My Plan &rarr;</a>
+      <div class="tool-cta-row">
+        <a href="/bedrock-marketing-v1.html" class="ttry-btn">Try it →</a>
+        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
+      </div>
     </div>
 
     </div><!-- /tool-pane: marketing -->
@@ -4775,9 +4940,9 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <span class="tool-int-chip">Shared Business Profile</span>
         <span class="tool-int-chip">SEO/Geo Optimizer</span>
       </div>
-      <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:1.25rem">
-        <a href="/sites.html" class="bd-btn-gold" style="font-size:0.7rem">See Bedrock Website &rarr;</a>
-        <a href="/sites.html?embed=builder" class="bd-btn-outline" style="font-size:0.7rem;color:#0D1B2E;border-color:rgba(13,27,46,0.25)">Build a Free Preview</a>
+      <div class="tool-cta-row">
+        <a href="/sites.html?embed=builder" class="ttry-btn">Try it →</a>
+        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
       </div>
       <div class="tool-faq">
         <div class="tool-faq-title">Common questions</div>
@@ -4801,13 +4966,16 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <li>GEO readiness &mdash; how AI assistants describe your business</li>
         <li>A prioritized fix list, in plain English</li>
       </ul>
-      <a href="#optimizer" onclick="showPage('optimizer',event)" class="bd-btn-gold" style="font-size:0.7rem">Run My Free Scan &rarr;</a>
       <div class="tool-faq">
         <div class="tool-faq-title">Common questions</div>
         <details><summary>Is the audit really free?</summary><p>Yes. Paste any contractor URL — yours or a competitor's — and get the full score and fix list. No card, no signup required.</p></details>
         <details><summary>What's GEO and why does it matter?</summary><p>Generative Engine Optimization — how AI assistants (ChatGPT, Gemini, Claude) describe your business when a customer asks "best [trade] near me." Increasingly that's where customers start; GEO checks whether AI can answer accurately about you.</p></details>
         <details><summary>How is this different from a paid SEO service?</summary><p>The audit is the same checks an agency runs — but instant and self-serve. The fix list tells you what to change; if you want someone else to do it for you, hire one.</p></details>
         <details><summary>Will running the audit help with rankings directly?</summary><p>The audit itself just diagnoses. Ranking improvements come from acting on the prioritized fix list — most are 15–30 minute changes.</p></details>
+      </div>
+      <div class="tool-cta-row">
+        <a href="#optimizer" onclick="showPage('optimizer',event)" class="ttry-btn">Try it →</a>
+        <a href="/portal.html#subs" class="tadd-btn">Add to My Plan →</a>
       </div>
     </div>
     </div><!-- /tool-pane: seo -->

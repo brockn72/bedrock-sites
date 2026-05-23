@@ -537,7 +537,7 @@ footer a{color:var(--gold);text-decoration:none}
 // Finance reads labor rate + markup from the shared profile; never re-asks.
 // ═════════════════════════════════════════════════════════════════════════════
 var BedrockProfile = (function(){
-  var LS_KEY = 'bedrock_shared_profile', TOKEN = '', data = {}, subs = [], conns = {};
+  var LS_KEY = 'bedrock_shared_profile', TOKEN = '', data = {}, subs = [], conns = {}, pct = 0;
   var EXTRA = ['labor_rate','material_markup_pct','travel_fee','cleanup_fee','default_payment_terms','tax_on_labor','tax_on_materials'];
   var COLS = ['business_name','contact_name','phone','trade','city','service_areas'];
   // Profile data syncs to Supabase only — never localStorage. No account = nothing persists.
@@ -550,11 +550,12 @@ var BedrockProfile = (function(){
       if(!TOKEN) return Promise.resolve(data);
       return fetch('/.netlify/functions/get-profile',{headers:{Authorization:'Bearer '+TOKEN}})
         .then(function(r){ return r.ok?r.json():null; })
-        .then(function(d){ if(d){ if(d.profile){ var l=flatten(d.profile); Object.keys(l).forEach(function(k){data[k]=l[k];}); } if(d.subscriptions)subs=d.subscriptions; if(d.connections)conns=d.connections; } return data; })
+        .then(function(d){ if(d){ if(d.profile){ var l=flatten(d.profile); Object.keys(l).forEach(function(k){data[k]=l[k];}); } if(d.subscriptions)subs=d.subscriptions; if(d.connections)conns=d.connections; if(typeof d.completion_pct==='number')pct=d.completion_pct; } return data; })
         .catch(function(){ return data; });
     },
     get:function(k){ return data[k]; },
     has:function(k){ var v=data[k]; return v!=null&&v!==''; },
+    completion:function(){ return pct; },
     token:function(){ return TOKEN; },
     connections:function(){ return conns; },
     subscribedTo:function(tools){ return subs.some(function(s){ return (s.status==='active'||s.status==='past_due') && tools.indexOf(s.tool)!==-1; }); }
@@ -626,7 +627,14 @@ function navView(view){
 // ─────────────────────────────────────────────────────────────────────────────
 function renderProfileBanner(){
   var rate = BedrockProfile.get('labor_rate'), mk = BedrockProfile.get('material_markup_pct');
+  var pct = BedrockProfile.completion();
   var el = document.getElementById('profileBanner');
+  // <50% complete: lead with a shared-profile nudge that points back to the portal.
+  if (BedrockProfile.token() && pct && pct < 50){
+    el.className = 'profile-banner missing';
+    el.innerHTML = '<span style="font-size:1.1rem">📋</span><div class="pb-txt">Your profile is <strong>'+pct+'%</strong> complete — add your trade, labor rate, and service area to make Finance smarter.</div><a href="/portal.html#profile" target="_blank" rel="noopener" class="btn-gold">Complete profile →</a>';
+    return;
+  }
   if(rate && mk){
     el.className = 'profile-banner ok';
     el.innerHTML = '<span style="font-size:1rem">✓</span><div class="pb-txt">Using your profile — labor at <strong>$'+rate+'/hr</strong> and a <strong>'+mk+'% material markup</strong>. Margin estimates are calculated from those.</div>';

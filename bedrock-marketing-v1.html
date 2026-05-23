@@ -43,6 +43,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--na
 .preview-banner .preview-x{background:none;border:none;color:var(--navy-deep);font-size:1.3rem;cursor:pointer;line-height:1;padding:0 0.3rem;opacity:0.6;font-family:inherit}
 .preview-banner .preview-x:hover{opacity:1}
 @media(max-width:760px){.preview-banner{font-size:0.74rem;padding:0.5rem 0.75rem;gap:0.45rem}.preview-banner .preview-cta{font-size:0.58rem;padding:0.34rem 0.6rem}}
+/* "From your profile" badge — appears next to brand-kit field labels when the value came from the shared profile */
+.pf-badge{display:inline-flex;align-items:center;gap:4px;font-size:0.56rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);background:rgba(201,146,42,0.12);padding:0.16rem 0.42rem;border-radius:99px;margin-left:0.45rem;vertical-align:middle;line-height:1.2;border:1px solid rgba(201,146,42,0.25)}
+.pf-badge::before{content:'✓';font-size:0.7rem;line-height:1}
 
 /* ── NAV ── */
 nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;align-items:center;padding:0.85rem 2rem;border-bottom:3px solid var(--gold);flex-shrink:0;position:sticky;top:0;z-index:50;gap:1rem;flex-wrap:wrap}
@@ -1068,6 +1071,36 @@ function hydrateKit(k) {
     lp.innerHTML = '<img src="'+STATE.brandKit.logo_base64+'" alt="logo">';
   }
   updateBrandSummary();
+  markFieldsFromProfile();
+}
+
+// Tag any brand kit field whose value came from the shared profile.
+// The badge slots into the field's <label> so contractors see "the profile
+// already filled this — change it here if you need a Marketing-only override."
+function markFieldsFromProfile(){
+  var profileFields = [
+    'bk_business_name','bk_trade','bk_city','bk_phone','bk_tagline',
+    'bk_service_area','bk_target_customer',
+    'bk_color_primary','bk_color_secondary','bk_color_accent',
+  ];
+  profileFields.forEach(function(id){
+    var el = document.getElementById(id); if(!el) return;
+    var label = el.previousElementSibling;
+    // color pickers wrap in a row — walk up if needed
+    if (!label || label.tagName !== 'LABEL') {
+      var p = el.closest('.field, .color-pick'); if (p) label = p.querySelector('label');
+    }
+    if (!label) return;
+    if (label.querySelector('.pf-badge')) return; // idempotent
+    var v = el.value;
+    var defaults = { bk_color_primary:'#1B3557', bk_color_secondary:'#FFFFFF', bk_color_accent:'#C9922A' };
+    var filled = v && String(v).trim() !== '' && v !== defaults[id];
+    if (!filled) return;
+    var badge = document.createElement('span');
+    badge.className = 'pf-badge';
+    badge.textContent = 'From your profile';
+    label.appendChild(badge);
+  });
 }
 function setVal(id, v) { var el = document.getElementById(id); if (el) el.value = v || ''; }
 
@@ -1607,13 +1640,14 @@ function dismissPreviewBanner(){
   var b=document.getElementById('previewBanner'); if(b) b.classList.remove('show');
 }
 function checkPreviewBanner(){
-  try { if(sessionStorage.getItem('bedrock_preview_dismissed_marketing') === '1') return; } catch(e){}
+  var dismissed = false;
+  try { dismissed = sessionStorage.getItem('bedrock_preview_dismissed_marketing') === '1'; } catch(e){}
   if(!STATE.authToken){
     // Not signed in via portal — definitely in preview mode.
-    var b1=document.getElementById('previewBanner'); if(b1) b1.classList.add('show');
+    if(!dismissed){ var b1=document.getElementById('previewBanner'); if(b1) b1.classList.add('show'); }
     return;
   }
-  // Signed in — quick subscription check.
+  // Signed in — quick subscription check, and pick up profile completion for the < 50% nudge.
   fetch('/.netlify/functions/get-profile',{headers:{Authorization:'Bearer '+STATE.authToken}})
     .then(function(r){return r.ok?r.json():null;})
     .then(function(d){
@@ -1622,14 +1656,30 @@ function checkPreviewBanner(){
         if(d.profile && d.profile.is_admin) subbed = true;
         var subs = (d.subscriptions||[]);
         if(subs.some(function(s){ return (s.status==='active'||s.status==='past_due') && s.tool==='marketing'; })) subbed = true;
+        if(typeof d.completion_pct === 'number') showProfileNudge(d.completion_pct);
       }
-      if(!subbed){
+      if(!subbed && !dismissed){
         var b=document.getElementById('previewBanner'); if(b) b.classList.add('show');
       }
     })
     .catch(function(){
-      var b=document.getElementById('previewBanner'); if(b) b.classList.add('show');
+      if(!dismissed){ var b=document.getElementById('previewBanner'); if(b) b.classList.add('show'); }
     });
+}
+
+// Inline < 50% nudge for Marketing — surfaces above the wizard so the
+// contractor knows their brand kit gets richer as they fill the profile.
+function showProfileNudge(pct){
+  if (!pct || pct >= 50) return;
+  if (document.getElementById('mktPfNudge')) return;
+  var host = document.querySelector('.wiz-card, .stage-wrap, main, body');
+  if (!host) return;
+  var n = document.createElement('div');
+  n.id = 'mktPfNudge';
+  n.style.cssText = 'display:flex;align-items:center;gap:0.6rem;background:rgba(201,146,42,0.08);border:1px solid rgba(201,146,42,0.25);border-radius:8px;padding:0.6rem 0.85rem;margin:0.7rem 1.5rem 0.9rem;font-size:0.78rem;color:var(--navy-deep);line-height:1.45';
+  n.innerHTML = '<span>Your profile is <strong style="color:var(--gold)">'+pct+'%</strong> complete — add your trade, brand colors, and slogan to make Marketing smarter.</span>'
+    + '<a href="/portal.html#profile" target="_blank" rel="noopener" style="color:var(--gold);font-weight:700;text-decoration:none;white-space:nowrap;margin-left:auto">Complete profile →</a>';
+  host.insertBefore(n, host.firstChild);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

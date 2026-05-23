@@ -81,7 +81,12 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ profile: profiles[0], subscriptions, connections }),
+      body: JSON.stringify({
+        profile: profiles[0],
+        subscriptions,
+        connections,
+        completion_pct: computeCompletionPct(profiles[0]),
+      }),
     };
   }
 
@@ -105,6 +110,45 @@ exports.handler = async (event) => {
       draft: { email, user_id: userId, ...seed },
       subscriptions,
       connections,
+      completion_pct: 0,
     }),
   };
 };
+
+// Profile completeness — same field set the portal's stage UI counts, mirrored
+// here so every tool can read one canonical number (used for <50% nudges and
+// the dashboard meter). Keep these lists in sync with portal.html STAGE_*_FIELDS.
+function computeCompletionPct(profile) {
+  if (!profile) return 0;
+  const TOP = [
+    'business_name','contact_name','phone','trade','city',
+    'service_areas','about_copy','certifications',
+    'slogan','brand_tone','brand_colors','target_customer',
+    'target_keywords','service_radius_mi',
+    'employee_count','ops_notes',
+  ];
+  const EXTRA = [
+    'year_founded','street','state','zip','owner_title','website',
+    'license','insurance','hours','emergency','services',
+    'fb','ig','gbiz','img_style',
+    'best_service','competitors','review_count','review_rating','gbiz_url',
+    'avg_ticket','acct_software','payroll','bid_close','subs',
+  ];
+  function filled(v) {
+    if (v === null || v === undefined) return false;
+    if (typeof v === 'string') return v.trim() !== '';
+    if (Array.isArray(v)) return v.length > 0;
+    if (typeof v === 'number') return true;
+    if (typeof v === 'object') {
+      // brand_colors default sentinel — treat as unfilled
+      const d = { primary:'#1B3557', secondary:'#FFFFFF', accent:'#C9922A' };
+      return v.primary !== d.primary || v.secondary !== d.secondary || v.accent !== d.accent;
+    }
+    return false;
+  }
+  let total = TOP.length + EXTRA.length, hits = 0;
+  for (const k of TOP) if (filled(profile[k])) hits++;
+  const ex = (profile.extra && typeof profile.extra === 'object') ? profile.extra : {};
+  for (const k of EXTRA) if (filled(ex[k])) hits++;
+  return total ? Math.round(100 * hits / total) : 0;
+}
