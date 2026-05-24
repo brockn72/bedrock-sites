@@ -979,6 +979,14 @@ async function acfUploadFile(ev){
       setUM('ok','Uploaded.');
       window._acFilesLoaded = false;
       await acLoadFiles();
+      // B3a: log asset_uploaded so the portal "Time saved" card credits this file.
+      try {
+        fetch('/.netlify/functions/log-time-event', {
+          method:'POST',
+          headers:{'Content-Type':'application/json', Authorization:'Bearer '+s.access_token},
+          body: JSON.stringify({ action_type: 'asset_uploaded' })
+        }).catch(function(){});
+      } catch(_){}
       setTimeout(function(){ if(msg) msg.textContent=''; }, 2500);
     }
   } catch(e) { setUM('err','Upload failed.'); }

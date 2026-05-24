@@ -1107,56 +1107,91 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
         </div>
         <script>
         (function(){
-          // B3a: Time Saved — pull events from bedrock_time_log via /list-time-events (Supabase REST). MVP: count of minutes only.
-          // Falls back to localStorage 'bedrock_time_log_local' so even pre-DB the card has signal. Brock can deploy the table when ready.
+          // B3a: Time Saved — server-of-truth is bedrock_time_log via /log-time-event.
+          // localStorage is the write-through cache so the card has signal pre-auth and
+          // during the window between an action firing and the server round-trip.
+          // Keep TIME_CREDITS in sync with the same map in netlify/functions/log-time-event.js
+          // — the server is authoritative on actual credits; this map drives the UI breakdown.
           var TIME_CREDITS = {
             website_built:        180,
             brand_kit_completed:   90,
             estimate_created:      20,
+            estimate_approved:     20,
             invoice_created:       15,
+            invoice_sent:          15,
             receipt_scanned:        8,
             customer_added:         5,
             job_created:            5,
             marketing_exported:    25,
+            asset_uploaded:         3,
           };
           var TIME_LABELS = {
             website_built:        'Website built and launched',
             brand_kit_completed:  'Brand Kit completed',
             estimate_created:     'Estimate created via Donna',
+            estimate_approved:    'Estimate approved by customer',
             invoice_created:      'Invoice created via Donna',
+            invoice_sent:         'Invoice sent to customer',
             receipt_scanned:      'Receipt scanned/uploaded',
             customer_added:       'Customer added',
             job_created:          'Job created',
             marketing_exported:   'Marketing material exported',
+            asset_uploaded:       'Asset uploaded to library',
           };
+          var SERVER_EVENTS = null;   // hydrated by loadServerEvents() — null until first round-trip
+          function localEvents(){
+            try { return JSON.parse(localStorage.getItem('bedrock_time_log_local') || '[]'); }
+            catch(_){ return []; }
+          }
+          function eventsForRender(){
+            // Prefer server data once we have it; fall back to localStorage so the card
+            // still works pre-login or if /log-time-event 404s in a stale deploy.
+            return SERVER_EVENTS && SERVER_EVENTS.length ? SERVER_EVENTS : localEvents();
+          }
           // Public helper: log a time event (extensible — Donna/Marketing/Finance call this on real actions).
-          window.bedrockLogTime = function(actionType){
+          window.bedrockLogTime = function(actionType, opts){
             var minutes = TIME_CREDITS[actionType]; if(!minutes) return;
-            var ev = { action_type: actionType, minutes_credited: minutes, created_at: new Date().toISOString() };
+            opts = opts || {};
+            var ev = { action_type: actionType, minutes_credited: minutes, ref_id: opts.ref_id || null, metadata: opts.metadata || null, created_at: new Date().toISOString() };
             try {
-              var raw = localStorage.getItem('bedrock_time_log_local');
-              var arr = raw ? JSON.parse(raw) : [];
-              arr.push(ev);
+              var arr = localEvents(); arr.push(ev);
               localStorage.setItem('bedrock_time_log_local', JSON.stringify(arr));
             } catch(_){}
-            // Fire-and-forget server insert if /log-time-event exists. No-op if it 404s.
+            // Server insert — fire-and-forget but refresh from server once it succeeds so
+            // the breakdown shows the canonical timestamp/ref.
             try {
               if (window.currentSession && currentSession.access_token) {
-                fetch('/.netlify/functions/log-time-event', { method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer '+currentSession.access_token}, body: JSON.stringify(ev) }).catch(function(){});
+                fetch('/.netlify/functions/log-time-event', {
+                  method:'POST',
+                  headers:{'Content-Type':'application/json', Authorization:'Bearer '+currentSession.access_token},
+                  body: JSON.stringify({ action_type: actionType, ref_id: ev.ref_id, metadata: ev.metadata })
+                }).then(function(r){ if (r && r.ok) loadServerEvents(); }).catch(function(){});
               }
             } catch(_){}
             renderTimeSaved();
           };
+          // Hydrate SERVER_EVENTS from /log-time-event on demand.
+          function loadServerEvents(){
+            try {
+              if (!window.currentSession || !currentSession.access_token) return;
+              fetch('/.netlify/functions/log-time-event', {
+                method:'POST',
+                headers:{'Content-Type':'application/json', Authorization:'Bearer '+currentSession.access_token},
+                body: JSON.stringify({ action:'load' })
+              }).then(function(r){ if (r && r.ok) return r.json(); return null; })
+                .then(function(d){ if (d && Array.isArray(d.events)) { SERVER_EVENTS = d.events; renderTimeSaved(); } })
+                .catch(function(){});
+            } catch(_){}
+          }
+          window.bedrockReloadTimeLog = loadServerEvents;
           function renderTimeSaved(){
-            var events = [];
-            try { events = JSON.parse(localStorage.getItem('bedrock_time_log_local') || '[]'); } catch(_){}
+            var events = eventsForRender();
             var total = events.reduce(function(s,e){ return s + (e.minutes_credited || 0); }, 0);
             var n = document.getElementById('dhTimeSaved'); if(n) n.textContent = String(total|0);
             var sub = document.getElementById('dhTimeSavedSub');
             if (sub) sub.textContent = total > 0 ? 'minutes saved across ' + events.length + ' logged action' + (events.length === 1 ? '' : 's') + '.' : 'minutes — start using your tools to track time saved.';
             var br = document.getElementById('dhTimeBreakdown');
             if (br && events.length) {
-              // Group by action_type for breakdown
               var byType = {};
               events.forEach(function(e){ byType[e.action_type] = (byType[e.action_type] || 0) + (e.minutes_credited || 0); });
               br.innerHTML = Object.keys(byType).map(function(t){
@@ -1188,10 +1223,12 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
               }
             }
           }
-          // Re-render whenever subs update + on first load
+          // Re-render whenever subs update + on first load. Also hydrate from /log-time-event
+          // once we know there is a session (kicked off after a short delay so currentSession is set).
           window.renderStatsCards = function(){ renderTimeSaved(); renderMoneySaved(); };
           document.addEventListener('DOMContentLoaded', window.renderStatsCards);
           setTimeout(window.renderStatsCards, 600);
+          setTimeout(loadServerEvents, 1200);
         })();
         </script>
 

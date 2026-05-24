@@ -190,3 +190,34 @@ drop policy if exists "site_audits_read_own"   on site_audits;
 drop policy if exists "site_audits_insert_own" on site_audits;
 create policy "site_audits_read_own"   on site_audits for select using (auth.uid() = user_id);
 create policy "site_audits_insert_own" on site_audits for insert with check (auth.uid() = user_id);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- bedrock_time_log: every real action that saves the contractor time gets
+-- logged here so the portal "Time saved with Bedrock" card has an auditable
+-- backing store (B3a). action_type maps to a minute credit in the front-end.
+-- ─────────────────────────────────────────────────────────────────────────────
+create table if not exists bedrock_time_log (
+  id                uuid         default gen_random_uuid() primary key,
+  user_id           uuid         not null references auth.users(id) on delete cascade,
+  created_at        timestamptz  default now(),
+  action_type       text         not null,  -- estimate_created | invoice_created | receipt_scanned | …
+  minutes_credited  int          not null,
+  ref_id            text,                   -- optional pointer to the source record (job/customer id, asset id, etc.)
+  metadata          jsonb                   -- optional context — kept open so we don't migrate every time we add a credit type
+);
+create index if not exists bedrock_time_log_user_idx on bedrock_time_log (user_id, created_at desc);
+create index if not exists bedrock_time_log_action_idx on bedrock_time_log (user_id, action_type);
+
+alter table bedrock_time_log enable row level security;
+drop policy if exists "time_log_read_own"   on bedrock_time_log;
+drop policy if exists "time_log_insert_own" on bedrock_time_log;
+create policy "time_log_read_own"   on bedrock_time_log for select using (auth.uid() = user_id);
+create policy "time_log_insert_own" on bedrock_time_log for insert with check (auth.uid() = user_id);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Donna additive columns shipped in Session B (safe to run on an existing
+-- install — `add column if not exists` is a no-op when the column is there).
+-- ─────────────────────────────────────────────────────────────────────────────
+alter table if exists donna_jobs  add column if not exists trade text;
+alter table if exists donna_notes add column if not exists project_id uuid references donna_projects(id) on delete set null;
+alter table if exists donna_notes add column if not exists job_id     uuid references donna_jobs(id)     on delete set null;

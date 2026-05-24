@@ -25,8 +25,8 @@
 const ENTITIES = {
   customer: { table: 'donna_customers', cols: ['name', 'email', 'phone', 'address', 'city', 'notes', 'status', 'qbo_customer_id', 'spouse', 'source'] },
   project:  { table: 'donna_projects',  cols: ['name', 'customer_id', 'trade', 'description', 'status', 'notes'] },
-  job:      { table: 'donna_jobs',      cols: ['name', 'customer_id', 'project_id', 'amount', 'status', 'job_date', 'notes'] },
-  note:     { table: 'donna_notes',     cols: ['customer_id', 'text', 'note_date'] },
+  job:      { table: 'donna_jobs',      cols: ['name', 'customer_id', 'project_id', 'amount', 'status', 'job_date', 'notes', 'trade'] },
+  note:     { table: 'donna_notes',     cols: ['customer_id', 'project_id', 'job_id', 'text', 'note_date'] },
   // Write-only documents — persisted when the contractor approves a draft in Donna.
   receipt:  { table: 'donna_receipts',  cols: ['project_id', 'vendor', 'amount', 'date', 'category', 'description', 'status', 'qbo_expense_id'] },
   estimate: { table: 'donna_estimates', cols: ['project_id', 'line_items', 'subtotal', 'tax_rate', 'total', 'notes', 'status', 'qbo_estimate_id'] },

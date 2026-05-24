@@ -1133,6 +1133,14 @@ async function libUploadFile(ev){
       setMsg('ok','Uploaded — refreshing library…');
       MKT_ASSETS = null; // force a refetch
       await loadMarketingAssets(true);
+      // B3a: log a real time-saved event so the portal "Time saved" card credits this upload.
+      try {
+        fetch('/.netlify/functions/log-time-event', {
+          method:'POST',
+          headers:{'Content-Type':'application/json', Authorization:'Bearer '+STATE.authToken},
+          body: JSON.stringify({ action_type: 'asset_uploaded' })
+        }).catch(function(){});
+      } catch(_){}
       setTimeout(function(){ if(msg) msg.textContent=''; }, 2500);
     }
   } catch(e) { setMsg('err','Upload failed — '+(e && e.message || 'unknown error')); }

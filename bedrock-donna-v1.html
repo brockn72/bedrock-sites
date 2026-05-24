@@ -821,6 +821,20 @@ function newId(p){ SEQ++; return p+SEQ; }
 // The Supabase session token (passed by the portal as ?token=…).
 var DONNA_TOKEN = (new URLSearchParams(location.search).get('token')||'').trim();
 
+// B3a: log a real time-saved event server-side. Donna fires this on customer/job creation,
+// estimate/invoice approval, and receipt upload. Fire-and-forget — failures are silent so a
+// missing endpoint never blocks the actual save.
+function donnaLogTime(actionType, refId){
+  if (!DONNA_TOKEN) return; // free preview — nothing to log against
+  try {
+    fetch('/.netlify/functions/log-time-event', {
+      method:'POST',
+      headers:{'Content-Type':'application/json', Authorization:'Bearer '+DONNA_TOKEN},
+      body: JSON.stringify({ action_type: actionType, ref_id: refId || null })
+    }).catch(function(){});
+  } catch(_){}
+}
+
 // ═══════════════ DONNA DATA — Supabase-backed CRUD ═══════════════
 // Reads/writes the donna_customers / donna_projects / donna_jobs / donna_notes
 // tables through donna-crud.js. The UI render functions keep reading STORE —
@@ -1070,6 +1084,11 @@ function saveForm(e, type, id){
   var btn = document.querySelector('#modalBody button[type="submit"]'); if(btn){ btn.disabled=true; btn.textContent='Saving…'; }
   DonnaData.save(type, id, rec).then(function(saved){
     if(type==='customer' && saved) qboSyncCustomer(saved);
+    // B3a: log a real time-saved event on NEW records. Edits don't earn credit (the work was already done).
+    if (!id && saved) {
+      if      (type === 'customer') donnaLogTime('customer_added', saved.id);
+      else if (type === 'job')      donnaLogTime('job_created',    saved.id);
+    }
     refreshView();
     donnaToast((id?'Updated':'Saved')+' '+schema.title.toLowerCase()+'.', 'ok');
     // Chained-flow: after creating a NEW customer, offer to add a job/project for them.
@@ -1738,6 +1757,8 @@ function approve(kind){
     }
     // Persist to Supabase — saveP resolves to the saved row (for QBO linkback).
     var saveP=persistDoc(kind,draft);
+    // B3a: log the approved doc as a real time-saved event (estimate/invoice).
+    donnaLogTime(kind === 'estimate' ? 'estimate_approved' : 'invoice_sent');
     // Send the document — from the contractor's Gmail if connected, else Resend.
     if(DONNA_TOKEN){
       fetch('/.netlify/functions/gmail-send',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
@@ -1771,6 +1792,7 @@ function approve(kind){
     }
   } else if(kind==='receipt'){
     persistDoc('receipt',collectReceiptDraft());
+    donnaLogTime('receipt_scanned');
   } else if(kind==='schedule'){
     // Create a real Google Calendar event when Calendar is connected.
     if(DONNA_TOKEN && lastDraft && lastDraft.scheduleData){
