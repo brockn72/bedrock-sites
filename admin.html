@@ -82,6 +82,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--na
 .pill.past_due{background:var(--amber-bg);color:var(--amber)}
 .pill.canceled{background:var(--red-bg);color:var(--red)}
 .pill.admin{background:rgba(201,146,42,0.16);color:var(--gold)}
+/* Pre-beta task #3: profile completion badge in the Signups table. */
+.pct{display:inline-block;font-size:0.66rem;font-weight:700;padding:0.18rem 0.5rem;border-radius:5px;min-width:38px;text-align:center}
+.pct.pct-ok{background:var(--green-bg);color:var(--green)}
+.pct.pct-mid{background:var(--amber-bg);color:var(--amber)}
+.pct.pct-low{background:var(--red-bg);color:var(--red)}
 .empty{padding:1.5rem;text-align:center;color:var(--slate);font-size:0.86rem}
 
 /* ── RECENT ACTIVITY ── */
@@ -133,13 +138,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--na
 
   <div class="cards" id="overviewCards"></div>
 
-  <div class="section-title">Contractors</div>
+  <div class="section-title">Signups</div>
   <div class="table-wrap"><div class="tbl-scroll"><table class="tbl">
     <thead><tr>
-      <th>Name</th><th>Trade · City</th><th>Email</th><th>Signed up</th>
-      <th>Subscriptions</th><th>Site</th>
+      <th>Name</th><th>Trade &middot; City</th><th>Email</th><th>Signed up</th>
+      <th>Profile</th><th>Subscriptions</th><th>Site</th>
     </tr></thead>
     <tbody id="contractorRows"></tbody>
+  </table></div></div>
+
+  <div class="section-title">Active subscriptions</div>
+  <div class="table-wrap"><div class="tbl-scroll"><table class="tbl">
+    <thead><tr>
+      <th>Business</th><th>Email</th><th>Tools</th><th>Monthly value</th><th>Started</th><th>Status</th>
+    </tr></thead>
+    <tbody id="subRows"></tbody>
   </table></div></div>
 
   <div class="section-title">Recent activity</div>
@@ -218,18 +231,32 @@ function enterDash(data){
 function render(d){
   renderOverview(d);
   renderContractors(d);
+  renderSubscriptions(d);
   renderActivity(d);
   renderFailed(d);
+}
+
+// Pre-beta task #3: monthly price for every SKU. Keep this in sync with the
+// price/SKU map portal.html + create-subscription-checkout use. cfo and
+// finance_operations are the same Donna + Finance bundle.
+var SUB_PRICE = { website: 20, marketing: 30, finance_operations: 70, cfo: 70, operations: 40, finance: 35 };
+var SUB_LABEL = { website: 'Sites', marketing: 'Marketing', finance_operations: 'Finance &amp; Operations', cfo: 'Finance &amp; Operations', operations: 'Operations', finance: 'Finance' };
+
+function mrrFor(subs){
+  return (subs||[])
+    .filter(function(s){ return s.status === 'active' || s.status === 'past_due'; })
+    .reduce(function(sum, s){ return sum + (SUB_PRICE[s.tool] || 0); }, 0);
 }
 
 function renderOverview(d){
   var c = d.counts || {};
   var failed = c.failed_count || 0;
+  var mrr = mrrFor(d.subscriptions || []);
   document.getElementById('overviewCards').innerHTML =
-    card('Total contractors', c.total_contractors||0, c.sites_total!=null ? c.sites_total+' live sites' : '') +
-    card('Active paying', c.active_paying_total||0, toolBreakdown(c.active_by_tool||{}), 'gold') +
-    card('New this week', c.new_week||0, (c.new_month||0)+' in the last 30 days') +
-    card('Past due / canceled', failed, failed>0 ? 'Needs attention' : 'All good', failed>0 ? 'red' : '');
+    card('Total accounts',     c.total_contractors||0,   c.sites_total!=null ? c.sites_total+' live sites' : '') +
+    card('Active subscriptions', c.active_paying_total||0, toolBreakdown(c.active_by_tool||{}), 'gold') +
+    card('Total MRR',          money(mrr),               (c.new_week||0)+' new this week', 'gold') +
+    card('Past due / canceled', failed,                  failed>0 ? 'Needs attention' : 'All good', failed>0 ? 'red' : '');
 }
 function card(label, val, sub, cls){
   return '<div class="card '+(cls||'')+'"><div class="lbl">'+esc(label)+'</div>'
@@ -256,7 +283,7 @@ function renderContractors(d){
     if(uid){ if(!sitesBy[uid]) sitesBy[uid]=[]; sitesBy[uid].push(s); }
   });
   var tb = document.getElementById('contractorRows');
-  if(!profiles.length){ tb.innerHTML='<tr><td colspan="6" class="empty">No contractors yet.</td></tr>'; return; }
+  if(!profiles.length){ tb.innerHTML='<tr><td colspan="7" class="empty">No contractors yet.</td></tr>'; return; }
   tb.innerHTML = profiles.map(function(p){
     var ps = subsBy[p.user_id] || [];
     var has = {};
@@ -278,16 +305,53 @@ function renderContractors(d){
     if(p.is_admin) pill = '<span class="pill admin">Admin</span>';
     var statuses = ps.map(function(s){return s.status;}).filter(function(s,i,a){return a.indexOf(s)===i;});
     var subPills = statuses.map(function(st){ return '<span class="pill '+esc(st)+'">'+esc(st.replace('_',' '))+'</span>'; }).join(' ');
+    // Pre-beta task #3: profile % complete — only the fields exposed by admin-stats
+    // contribute (avoids stale guesses about fields we never see here).
+    var profileFields = ['business_name','contact_name','email','phone','trade','city'];
+    var filled = profileFields.filter(function(k){ return p[k] != null && String(p[k]).trim() !== ''; }).length;
+    var pct = Math.round((filled / profileFields.length) * 100);
+    var pctClass = pct >= 80 ? 'pct-ok' : (pct >= 50 ? 'pct-mid' : 'pct-low');
     return '<tr>'
-      +'<td><span class="name">'+esc(p.business_name||p.contact_name||'—')+'</span>'
+      +'<td><span class="name">'+esc(p.business_name||p.contact_name||'&mdash;')+'</span>'
         +(p.contact_name && p.business_name?'<div class="muted">'+esc(p.contact_name)+'</div>':'')+'</td>'
-      +'<td>'+esc(p.trade||'—')+(p.city?'<div class="muted">'+esc(p.city)+'</div>':'')+'</td>'
-      +'<td><a href="mailto:'+esc(p.email||'')+'">'+esc(p.email||'—')+'</a></td>'
+      +'<td>'+esc(p.trade||'&mdash;')+(p.city?'<div class="muted">'+esc(p.city)+'</div>':'')+'</td>'
+      +'<td><a href="mailto:'+esc(p.email||'')+'">'+esc(p.email||'&mdash;')+'</a></td>'
       +'<td>'+dateShort(p.created_at)+'</td>'
+      +'<td><span class="pct '+pctClass+'">'+pct+'%</span></td>'
       +'<td><div class="tool-row">'+(deduped||'<span class="muted">none</span>')+'</div>'
         +(subPills?'<div style="margin-top:4px">'+subPills+(pill?' '+pill:'')+'</div>':(pill?'<div style="margin-top:4px">'+pill+'</div>':''))+'</td>'
-      +'<td>'+(siteUrl?'<a href="'+esc(siteUrl)+'" target="_blank" rel="noopener">View →</a>':'<span class="muted">—</span>')+'</td>'
+      +'<td>'+(siteUrl?'<a href="'+esc(siteUrl)+'" target="_blank" rel="noopener">View &rarr;</a>':'<span class="muted">&mdash;</span>')+'</td>'
       +'</tr>';
+  }).join('');
+}
+
+function renderSubscriptions(d){
+  var tb = document.getElementById('subRows'); if(!tb) return;
+  var subs = (d.subscriptions || []).filter(function(s){ return s.status === 'active' || s.status === 'past_due' || s.status === 'canceled'; });
+  if (!subs.length) { tb.innerHTML = '<tr><td colspan="6" class="empty">No subscriptions yet.</td></tr>'; return; }
+  // Index profiles by user_id so we can show business + email next to each sub.
+  var profilesBy = {};
+  (d.profiles||[]).forEach(function(p){ profilesBy[p.user_id] = p; });
+  // Sort active first, then by start date desc.
+  subs.sort(function(a,b){
+    var rank = { active:0, past_due:1, canceled:2 };
+    if ((rank[a.status]||9) !== (rank[b.status]||9)) return (rank[a.status]||9) - (rank[b.status]||9);
+    return new Date(b.created_at||0) - new Date(a.created_at||0);
+  });
+  tb.innerHTML = subs.map(function(s){
+    var p = profilesBy[s.user_id] || {};
+    var biz = p.business_name || p.contact_name || '&mdash;';
+    var em  = p.email || '';
+    var label = SUB_LABEL[s.tool] || esc(s.tool);
+    var price = SUB_PRICE[s.tool];
+    return '<tr>'
+      + '<td><span class="name">'+esc(biz)+'</span></td>'
+      + '<td>'+(em?'<a href="mailto:'+esc(em)+'">'+esc(em)+'</a>':'<span class="muted">&mdash;</span>')+'</td>'
+      + '<td>'+label+'</td>'
+      + '<td>'+(price ? money(price)+'/mo' : '<span class="muted">&mdash;</span>')+'</td>'
+      + '<td>'+dateShort(s.created_at)+'</td>'
+      + '<td><span class="pill '+esc(s.status)+'">'+esc(s.status.replace('_',' '))+'</span></td>'
+      + '</tr>';
   }).join('');
 }
 

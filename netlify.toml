@@ -14,3 +14,10 @@
 # so they land first thing in the morning their time.
 [functions."onboarding-email-scheduler"]
   schedule = "0 14 * * *"
+
+# Pre-beta task #6: catch-all 404. Real files and Netlify Functions match
+# before this rule does, so this only fires for genuinely missing routes.
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404

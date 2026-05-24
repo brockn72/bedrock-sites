@@ -1,3 +1,11 @@
+// Small HTML-escape used by the welcome email so a stray "<" in someone's name
+// can't break the markup or open an injection vector.
+function escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -98,6 +106,41 @@ exports.handler = async (event) => {
     if (authRes.ok) {
       const authData = await authRes.json();
       userId = authData.id || null;
+      // Pre-beta task #1: warm welcome email when a real Supabase account was just
+      // created. Skipped if Auth creation failed (no account = nothing to welcome
+      // them into). Fire-and-forget so a Resend hiccup never blocks signup.
+      if (resendKey && email) {
+        const fromEmail = process.env.RESEND_FROM || 'hello@bedrock-sites.com';
+        const firstName = (contactName || '').trim().split(/\s+/)[0] || 'there';
+        const welcomeHtml = `
+          <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;color:#0D1B2E;line-height:1.55">
+            <p style="font-size:18px;margin:0 0 18px">Hey ${escHtml(firstName)},</p>
+            <p style="margin:0 0 14px">Welcome to Bedrock Digital. I built this thing so contractors like you can stop wasting nights on the business side of running a business &mdash; and actually go home.</p>
+            <p style="margin:0 0 6px"><strong>Your portal is live right now:</strong></p>
+            <p style="margin:0 0 22px"><a href="https://bedrock-sites.com/portal" style="background:#C9922A;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:6px;display:inline-block">Open My Portal &rarr;</a></p>
+            <p style="margin:0 0 8px"><strong>Three things to do first:</strong></p>
+            <ol style="margin:0 0 22px;padding-left:20px">
+              <li style="margin-bottom:8px"><strong>Complete your profile.</strong> Trade, labor rate, service area, the basics. Every tool gets smarter as you fill it in.</li>
+              <li style="margin-bottom:8px"><strong>Pick a tool to start with.</strong> Don&rsquo;t buy everything &mdash; pick whichever pain hits hardest. Most folks start with Sites (you need a website) or Marketing (you need leads).</li>
+              <li style="margin-bottom:8px"><strong>Connect what you already use.</strong> QuickBooks, Gmail, Google Calendar &mdash; one connection works across every Bedrock tool.</li>
+            </ol>
+            <p style="margin:0 0 14px">If something&rsquo;s confusing or broken, hit reply &mdash; this email goes straight to me and I usually answer the same day. No tickets, no phone tree, no script.</p>
+            <p style="margin:0 0 4px">&mdash; Brock</p>
+            <p style="margin:0;font-size:13px;color:#718096">Brock Niederer &middot; Founder, Bedrock Digital<br><a href="mailto:support@bedrock-sites.com" style="color:#C9922A;text-decoration:none">support@bedrock-sites.com</a></p>
+          </div>
+        `;
+        fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            from:    fromEmail,
+            to:      [email],
+            reply_to: process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com',
+            subject: "Welcome to Bedrock Digital — here's how to get started",
+            html:    welcomeHtml,
+          }),
+        }).catch((e) => console.error('[capture-lead] welcome email failed', e && e.message));
+      }
     } else {
       const authErr = await authRes.text();
       console.error(`[capture-lead] Auth user creation failed: ${authRes.status} — ${authErr}`);

@@ -1,3 +1,8 @@
+// BETA promo code: TEST200 (created in Stripe Dashboard → Coupons → 100% off setup fee only)
+// This removes the $200 setup fee; the $20/mo subscription is unaffected.
+// `allow_promotion_codes: true` is set below so the Stripe-hosted checkout shows
+// the promo-code field — the codes themselves live in Stripe (single source of truth).
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
