@@ -2165,8 +2165,8 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
             </div>
             <div style="padding:0.6rem 1.5rem 1.4rem">
               <div class="conn-line"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg><div style="flex:1;min-width:160px"><div class="cl-name">QuickBooks Online</div><div class="cl-sub">Invoices, estimates &amp; expenses</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('QuickBooks')">Connect</button></div>
-              <div class="conn-line"><span style="font-size:1.15rem">✉️</span><div style="flex:1;min-width:160px"><div class="cl-name">Gmail</div><div class="cl-sub">Send estimates &amp; invoices from your address</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('Gmail')">Connect</button></div>
-              <div class="conn-line"><span style="font-size:1.15rem">📅</span><div style="flex:1;min-width:160px"><div class="cl-name">Google Calendar</div><div class="cl-sub">Scheduled jobs &amp; customer reminders</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('Calendar')">Connect</button></div>
+              <div class="conn-line"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><div style="flex:1;min-width:160px"><div class="cl-name">Gmail</div><div class="cl-sub">Send estimates &amp; invoices from your address</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('Gmail')">Connect</button></div>
+              <div class="conn-line"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#C9922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><div style="flex:1;min-width:160px"><div class="cl-name">Google Calendar</div><div class="cl-sub">Scheduled jobs &amp; customer reminders</div></div><span class="cl-status">Not connected</span><button class="btn-outline" style="padding:0.5rem 0.95rem" onclick="connectTool('Calendar')">Connect</button></div>
             </div>
           </div>
 
@@ -2401,10 +2401,11 @@ function startDemo() {
   fillDemoAnalytics();
   // demo notifications
   setNotifications([
-    { id:'n1', icon:'👤', msg:'Welcome! Complete your profile to unlock all features.',         meta:'Just now',     read:false, link:{tab:'profile',sub:'default'} },
-    { id:'n2', icon:'📣', msg:'Your new yard sign is ready to download in Bedrock Marketing.',   meta:'2 hours ago',  read:false, link:{tab:'marketing',sub:'build'} },
-    { id:'n3', icon:'📈', msg:'Site analytics: 38 visitors this week, up 24% vs. last week.',   meta:'Yesterday',    read:true,  link:{tab:'website',sub:'analytics'} },
-    { id:'n4', icon:'🔍', msg:'Site Optimizer ready — you scored 72/100. Tap to view recommendations.',meta:'2 days ago',read:true,  link:{tab:'website',sub:'optimizer'} },
+    // Inline-SVG notification icons (no color emojis per B4b)
+    { id:'n1', icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>', msg:'Welcome! Complete your profile to unlock all features.',         meta:'Just now',     read:false, link:{tab:'profile',sub:'default'} },
+    { id:'n2', icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h3l8-6v14l-8-6H3z"/><path d="M16 8a4 4 0 0 1 0 8"/></svg>', msg:'Your new yard sign is ready to download in Bedrock Marketing.',   meta:'2 hours ago',  read:false, link:{tab:'marketing',sub:'build'} },
+    { id:'n3', icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>', msg:'Site analytics: 38 visitors this week, up 24% vs. last week.',   meta:'Yesterday',    read:true,  link:{tab:'website',sub:'analytics'} },
+    { id:'n4', icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>', msg:'Site Optimizer ready — you scored 72/100. Tap to view recommendations.',meta:'2 days ago',read:true,  link:{tab:'website',sub:'optimizer'} },
   ]);
   showPage('pageDash');
   goTab('dashboard','default');
@@ -3195,7 +3196,7 @@ window.dismissNotif = function(id){
 window.notifProfileIncomplete = function(pct){
   if (typeof pct !== 'number' || pct >= 100) { window.dismissNotif('profile-incomplete'); return; }
   window.pushNotif({
-    id:'profile-incomplete', icon:'👤', persistent:true,
+    id:'profile-incomplete', icon:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>', persistent:true,
     msg:"Your profile is "+pct+"% complete. Finish it to get smarter insights.",
     meta:'Just now', link:{ href:'/account.html#profile' },
   });
@@ -3701,7 +3702,7 @@ function renderIntegrationCards(c) {
     + '</div>'
     + '<div class="banner-card">'
       + '<div style="display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap">'
-        + '<div style="font-size:1.9rem;line-height:1">🔗</div>'
+        + '<div style="line-height:1;color:var(--accent)"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>'
         + '<div style="flex:1;min-width:210px">'
           + '<div style="font-family:\'Cormorant Garamond\',serif;font-size:1.2rem;font-weight:600;color:var(--dark)">Google</div>'
           + '<div style="font-size:0.78rem;color:var(--text-muted);line-height:1.55;margin-top:3px">One sign-in connects all three Google services your tools use.</div>'

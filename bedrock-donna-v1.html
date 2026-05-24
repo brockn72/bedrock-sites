@@ -1147,6 +1147,17 @@ function navView(view){
   if(view==='jobs') renderJobs();
   if(view==='current-jobs') renderCurrentJobs();
   if(view==='notes') renderNotes();
+  // B5c: first time the user opens My Projects, auto-show the Project vs Job explainer.
+  // localStorage flag means it only fires once per browser; the header link in the
+  // Projects view is still there for anyone who wants to re-read it.
+  if (view === 'projects') {
+    try {
+      if (!localStorage.getItem('donna_projexp_seen')) {
+        localStorage.setItem('donna_projexp_seen', '1');
+        setTimeout(openProjJobModal, 250);
+      }
+    } catch(_){}
+  }
 }
 function enterApp(){ showPage('pageApp'); if(!STATE.greeted){ greet(); STATE.greeted=true; } }
 var STATE = { greeted:false };
