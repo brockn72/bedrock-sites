@@ -316,6 +316,9 @@ body.preview-mode .draft::before{content:'PREVIEW';position:absolute;top:10px;ri
 .note-item{background:var(--off-white);border-left:3px solid var(--gold);padding:0.65rem 0.85rem;border-radius:4px;margin-bottom:0.6rem;display:flex;justify-content:space-between;gap:0.85rem;align-items:flex-start}
 .note-item .ni-cust{font-size:0.74rem;font-weight:700;color:var(--navy-deep)}
 .note-item .ni-text{font-size:0.78rem;color:var(--slate);line-height:1.55;margin-top:2px}
+.note-item .ni-chip{display:inline-block;margin-left:0.4rem;padding:0.1rem 0.5rem;border-radius:999px;font-size:0.62rem;font-weight:600;letter-spacing:0.02em}
+.note-item .ni-chip-proj{background:rgba(46,90,142,0.12);color:#2E5A8E}
+.note-item .ni-chip-job{background:rgba(201,146,42,0.15);color:#A8711A}
 .notebox{padding:0.8rem 1rem;background:#fff;border-left:3px solid var(--navy-deep);font-size:0.76rem;color:var(--slate);line-height:1.55;border-radius:4px}
 .notebox.warn{background:#fff8e6;border-left-color:#d49019}
 .conn-big{display:flex;gap:1rem;align-items:flex-start;background:#fff;border:1px solid var(--border-light);border-radius:8px;padding:1.15rem 1.25rem;margin-bottom:0.8rem}
@@ -630,6 +633,45 @@ window.bedrockInPreviewMode = function(toolKey){
       <div class="d-panel-body" id="panelBody"></div>
     </aside>
 
+    <!-- B5b: floating quick-add FAB — visible on every view (not just chat) so add-customer/add-job/upload-receipt is always one tap away. -->
+    <style>
+      .d-fab-wrap{position:fixed;right:1.25rem;bottom:5.25rem;z-index:140;pointer-events:none}
+      @media(min-width:721px){.d-fab-wrap{bottom:1.5rem}}
+      .d-fab-menu{position:absolute;right:0;bottom:64px;background:#0D1B2E;border:1px solid rgba(201,146,42,0.25);border-radius:10px;padding:0.4rem;display:none;flex-direction:column;gap:0.15rem;min-width:200px;box-shadow:0 12px 32px rgba(0,0,0,0.55);pointer-events:auto}
+      .d-fab-wrap.open .d-fab-menu{display:flex}
+      .d-fab-menu button{background:transparent;border:none;color:#fff;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;text-align:left;padding:0.55rem 0.75rem;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:0.55rem;transition:background .14s,color .14s}
+      .d-fab-menu button:hover{background:rgba(201,146,42,0.18);color:#F0C46A}
+      .d-fab-menu button svg{flex-shrink:0;opacity:0.8}
+      .d-fab-btn{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#C9922A 0%,#A8711A 100%);color:#fff;border:none;font-size:1.8rem;font-weight:300;line-height:1;cursor:pointer;box-shadow:0 8px 24px rgba(201,146,42,0.45);display:flex;align-items:center;justify-content:center;transition:transform .18s, box-shadow .18s;pointer-events:auto}
+      .d-fab-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(201,146,42,0.55)}
+      .d-fab-wrap.open .d-fab-btn{transform:rotate(45deg)}
+      .d-fab-hint{position:absolute;right:68px;top:50%;transform:translateY(-50%);background:rgba(13,27,46,0.9);color:#fff;font-family:'DM Sans',sans-serif;font-size:0.7rem;padding:0.35rem 0.65rem;border-radius:6px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .15s}
+      .d-fab-wrap:not(.open):hover .d-fab-hint{opacity:1}
+    </style>
+    <div class="d-fab-wrap" id="dFab" aria-label="Quick add">
+      <span class="d-fab-hint">Quick add</span>
+      <div class="d-fab-menu" role="menu">
+        <button onclick="dFabAct('customer')" role="menuitem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg> Add Customer</button>
+        <button onclick="dFabAct('job')" role="menuitem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Add Job</button>
+        <button onclick="dFabAct('receipt')" role="menuitem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 1 1V2l-1 1-3-2-3 2-3-2-3 2z"/></svg> Upload Receipt</button>
+      </div>
+      <button class="d-fab-btn" onclick="dFabToggle()" aria-label="Quick add menu" aria-expanded="false">+</button>
+    </div>
+    <script>
+    function dFabToggle(){ var w=document.getElementById('dFab'); if(!w) return; w.classList.toggle('open'); w.querySelector('.d-fab-btn').setAttribute('aria-expanded', w.classList.contains('open')?'true':'false'); }
+    function dFabAct(kind){
+      var w=document.getElementById('dFab'); if(w) w.classList.remove('open');
+      if (kind === 'customer' && typeof openForm === 'function') { openForm('customer', null); return; }
+      if (kind === 'job'      && typeof openForm === 'function') { openForm('job', null); return; }
+      if (kind === 'receipt'  && typeof quickAction === 'function') { quickAction('receipt'); return; }
+    }
+    // Close on outside click
+    document.addEventListener('click', function(e){
+      var w = document.getElementById('dFab'); if (!w || !w.classList.contains('open')) return;
+      if (!w.contains(e.target)) w.classList.remove('open');
+    });
+    </script>
+
     <!-- Mobile bottom-nav bar — shows only below 720px (sidebar replacement) -->
     <nav class="d-mobile-bar" id="dMobileBar" aria-label="Donna navigation">
       <button data-view="chat" onclick="navView('chat')">
@@ -742,11 +784,36 @@ function showGate(){
 // donna-crud.js and every write persists to Supabase (survives a refresh).
 // Without a session (free preview) the sample rows below stay and edits are
 // in-memory only — same behavior the preview always had.
+// B5g: rich demo data shown to preview users so the tool feels alive (not a one-row placeholder).
+// Sample data only — never persists. With a subscribed session, donna-crud.js wipes this and loads the real account.
 var STORE = {
-  customers:[ {id:'c1',name:'Joe Smith',phone:'(414) 555-0174',email:'joe.smith@email.com',address:'1820 Oak Ridge Dr, Menomonee Falls, WI'} ],
-  projects:[ {id:'p1',name:'Smith Backyard',customerId:'c1',status:'active'} ],
-  jobs:[ {id:'j1',name:'600 sq ft Paver Patio',customerId:'c1',projectId:'p1',amount:18000,status:'done'} ],
-  notes:[ {id:'n1',customerId:'c1',text:'Belgard pavers, charcoal border. Skid steer access through the side gate.',date:'May 14'} ]
+  customers:[
+    {id:'c1',name:'Joe Smith',phone:'(414) 555-0174',email:'joe.smith@email.com',address:'1820 Oak Ridge Dr, Menomonee Falls, WI',source:'Referral'},
+    {id:'c2',name:'Maria Lopez',phone:'(414) 555-0211',email:'maria.lopez@email.com',address:'88 Linden Ave, Wauwatosa, WI',source:'Google'},
+    {id:'c3',name:'Dave & Karen Becker',phone:'(414) 555-0388',email:'beckers@email.com',address:'5421 Highland Blvd, Brookfield, WI',source:'Repeat customer'},
+    {id:'c4',name:'Anthony Russo',phone:'(262) 555-0142',email:'anthony.r@email.com',address:'307 Maple St, Pewaukee, WI',source:'Door knock'},
+  ],
+  projects:[
+    {id:'p1',name:'Smith Backyard Build',customerId:'c1',trade:'Patio',status:'active'},
+    {id:'p2',name:'Lopez Drainage Fix',customerId:'c2',trade:'Drainage',status:'active'},
+    {id:'p3',name:'Becker Kitchen Remodel',customerId:'c3',trade:'General',status:'completed'},
+  ],
+  jobs:[
+    {id:'j1',name:'600 sq ft Paver Patio',customerId:'c1',projectId:'p1',trade:'Patio',amount:18000,status:'done'},
+    {id:'j2',name:'Fire pit + seating wall',customerId:'c1',projectId:'p1',trade:'Patio',amount:4200,status:'active'},
+    {id:'j3',name:'French drain — east side',customerId:'c2',projectId:'p2',trade:'Drainage',amount:3400,status:'active'},
+    {id:'j4',name:'Lawn aeration + reseed',customerId:'c2',trade:'Lawn care',amount:480,status:'done'},
+    {id:'j5',name:'Demo & haul-away',customerId:'c3',projectId:'p3',trade:'General',amount:2900,status:'done'},
+    {id:'j6',name:'Cabinet install',customerId:'c3',projectId:'p3',trade:'General',amount:7800,status:'done'},
+    {id:'j7',name:'Snow plow contract — Nov-Mar',customerId:'c4',trade:'Snow removal',amount:1800,status:'active'},
+  ],
+  notes:[
+    {id:'n1',customerId:'c1',projectId:'p1',jobId:'j1',text:'Belgard pavers, charcoal border. Skid steer access through the side gate.',date:'May 14'},
+    {id:'n2',customerId:'c1',projectId:'p1',text:'Joe wants gas line stubbed for grill. Coordinate with We Energies before pouring.',date:'May 16'},
+    {id:'n3',customerId:'c2',jobId:'j3',text:'Drain tile to daylight at NE corner. Confirm grade before backfill.',date:'May 18'},
+    {id:'n4',customerId:'c3',text:'Karen prefers email over phone. Anything past 5pm goes to voicemail.',date:'Apr 22'},
+    {id:'n5',customerId:'c4',jobId:'j7',text:'Wants pre-storm call confirmation. Driveway has slope — use the smaller plow.',date:'May 20'},
+  ]
 };
 var SEQ = 100;
 function newId(p){ SEQ++; return p+SEQ; }
@@ -762,18 +829,19 @@ var DonnaData = (function(){
   function fmtDate(d){ try{return new Date(d).toLocaleDateString('en-US',{month:'short',day:'numeric'});}catch(e){return d;} }
   // backend row (snake_case) → cache object (camelCase the render fns expect)
   function map(type,row){
-    if(type==='project') return Object.assign({},row,{customerId:row.customer_id});
-    if(type==='job')     return Object.assign({},row,{customerId:row.customer_id,projectId:row.project_id});
-    if(type==='note')    return Object.assign({},row,{customerId:row.customer_id,date:row.note_date?fmtDate(row.note_date):''});
+    if(type==='project') return Object.assign({},row,{customerId:row.customer_id,trade:row.trade});
+    if(type==='job')     return Object.assign({},row,{customerId:row.customer_id,projectId:row.project_id,trade:row.trade});
+    if(type==='note')    return Object.assign({},row,{customerId:row.customer_id,projectId:row.project_id||null,jobId:row.job_id||null,date:row.note_date?fmtDate(row.note_date):''});
     return row;
   }
   // UI form values → backend columns
   function unmap(type,rec){
     var o={};
     if(type==='customer'){ ['name','phone','email','address','qbo_customer_id'].forEach(function(k){ if(k in rec)o[k]=rec[k]; }); }
-    else if(type==='project'){ if('name'in rec)o.name=rec.name; if('customerId'in rec)o.customer_id=rec.customerId||null; if('status'in rec)o.status=rec.status; }
-    else if(type==='job'){ if('name'in rec)o.name=rec.name; if('customerId'in rec)o.customer_id=rec.customerId||null; if('projectId'in rec)o.project_id=rec.projectId||null; if('amount'in rec)o.amount=rec.amount?Number(rec.amount):null; if('status'in rec)o.status=rec.status; }
-    else if(type==='note'){ if('customerId'in rec)o.customer_id=rec.customerId||null; if('text'in rec)o.text=rec.text; }
+    else if(type==='project'){ if('name'in rec)o.name=rec.name; if('customerId'in rec)o.customer_id=rec.customerId||null; if('trade'in rec)o.trade=rec.trade||null; if('status'in rec)o.status=rec.status; }
+    // B5d: persist 'trade' on jobs; B5e: persist project_id + job_id on notes.
+    else if(type==='job'){ if('name'in rec)o.name=rec.name; if('customerId'in rec)o.customer_id=rec.customerId||null; if('projectId'in rec)o.project_id=rec.projectId||null; if('trade'in rec)o.trade=rec.trade||null; if('amount'in rec)o.amount=rec.amount?Number(rec.amount):null; if('status'in rec)o.status=rec.status; }
+    else if(type==='note'){ if('customerId'in rec)o.customer_id=rec.customerId||null; if('projectId'in rec)o.project_id=rec.projectId||null; if('jobId'in rec)o.job_id=rec.jobId||null; if('text'in rec)o.text=rec.text; }
     return o;
   }
   function call(payload){
@@ -845,18 +913,36 @@ var FIELDS = {
   project:{ title:'Project', fields:[
     {k:'name',label:'Project name',type:'text',req:true},
     {k:'customerId',label:'Customer',type:'customer'},
-    {k:'trade',label:'Job type',type:'select',opts:['','Patio','Roofing','Plumbing','HVAC','Landscaping','Electrical','Concrete','General','Other']},
+    {k:'trade',label:'Job type',type:'smart-trade'},
     {k:'status',label:'Status',type:'select',opts:['active','completed','closed']} ]},
+  // B5d: 'smart-trade' = free-text input + datalist suggestions built from defaults + the user's own past trades.
   job:{ title:'Job', fields:[
     {k:'name',label:'Job',type:'text',req:true},
     {k:'customerId',label:'Customer',type:'customer'},
     {k:'projectId',label:'Project',type:'project'},
+    {k:'trade',label:'Job type',type:'smart-trade'},
     {k:'amount',label:'Amount ($)',type:'number'},
     {k:'status',label:'Status',type:'select',opts:['active','done']} ]},
+  // B5e: notes now link to job + project too (both optional). Customer is still the primary anchor.
   note:{ title:'Note', fields:[
     {k:'customerId',label:'Customer',type:'customer'},
+    {k:'projectId',label:'Project (optional)',type:'project'},
+    {k:'jobId',label:'Job (optional)',type:'job'},
     {k:'text',label:'Note',type:'textarea',req:true} ]}
 };
+// B5d: defaults to seed the smart job-type datalist if the user's history is thin.
+var DEFAULT_TRADES = ['Patio','Roofing','Plumbing','HVAC','Landscaping','Electrical','Concrete','Paint','Drywall','Framing','Flooring','Lawn care','Snow removal','General','Other'];
+function buildTradeOptions(){
+  var seen = {}, out = [];
+  (STORE.projects||[]).concat(STORE.jobs||[]).forEach(function(r){ var t=(r.trade||'').trim(); if(t && !seen[t.toLowerCase()]){ seen[t.toLowerCase()]=1; out.push(t); } });
+  DEFAULT_TRADES.forEach(function(t){ if(!seen[t.toLowerCase()]){ seen[t.toLowerCase()]=1; out.push(t); } });
+  return out.map(function(t){ return '<option value="'+esc(t)+'">'; }).join('');
+}
+function buildJobOptions(customerId){
+  var jobs = STORE.jobs||[];
+  if(customerId) jobs = jobs.filter(function(j){return j.customerId===customerId;});
+  return jobs.map(function(j){return '<option value="'+esc(j.name)+'">';}).join('');
+}
 var STORE_KEY = { customer:'customers', project:'projects', job:'jobs', note:'notes' };
 
 // ═══════════════ MODAL CORE ═══════════════
@@ -876,7 +962,7 @@ function buildProjectOptions(customerId){
   if(customerId) projects = projects.filter(function(p){return p.customerId===customerId;});
   return projects.map(function(p){return '<option value="'+esc(p.name)+'">';}).join('');
 }
-// When a Job's customer changes, narrow the project datalist to that customer.
+// When a Job/Note's customer changes, narrow the project + job datalists to that customer.
 function rebuildProjectDL(){
   var custInput = document.querySelector('#modalBody input[data-resolve="customer"]');
   var dl = document.getElementById('dl-projects');
@@ -884,6 +970,14 @@ function rebuildProjectDL(){
   var name = (custInput.value||'').trim().toLowerCase();
   var match = STORE.customers.filter(function(c){return (c.name||'').toLowerCase()===name;})[0];
   dl.innerHTML = buildProjectOptions(match?match.id:null);
+}
+function rebuildJobDL(){
+  var custInput = document.querySelector('#modalBody input[data-resolve="customer"]');
+  var dl = document.getElementById('dl-jobs');
+  if(!custInput || !dl) return;
+  var name = (custInput.value||'').trim().toLowerCase();
+  var match = STORE.customers.filter(function(c){return (c.name||'').toLowerCase()===name;})[0];
+  dl.innerHTML = buildJobOptions(match?match.id:null);
 }
 
 // Generic add/edit form. `preset` lets callers pre-populate fields when chaining
@@ -903,10 +997,17 @@ function openForm(type, id, preset){
       // Searchable typeahead via HTML datalist. value displays the name; saveForm
       // resolves it back to the customer's UUID via STORE.customers.
       var custName=''; if(val){ var c=STORE.customers.filter(function(x){return x.id===val;})[0]; if(c) custName=c.name; }
-      html += '<input type="text" data-k="'+f.k+'" data-resolve="customer" list="dl-customers" value="'+esc(custName)+'" placeholder="Type a customer name…" autocomplete="off"'+(type==='job'?' oninput="rebuildProjectDL()"':'')+'>';
+      html += '<input type="text" data-k="'+f.k+'" data-resolve="customer" list="dl-customers" value="'+esc(custName)+'" placeholder="Type a customer name…" autocomplete="off"'+((type==='job'||type==='note')?' oninput="rebuildProjectDL();rebuildJobDL()"':'')+'>';
     } else if(f.type==='project'){
       var projName=''; if(val){ var pr=STORE.projects.filter(function(x){return x.id===val;})[0]; if(pr) projName=pr.name; }
       html += '<input type="text" data-k="'+f.k+'" data-resolve="project" list="dl-projects" value="'+esc(projName)+'" placeholder="Type a project name (optional)" autocomplete="off">';
+    } else if(f.type==='job'){
+      // B5e: job typeahead — same UX as customer/project picker. Optional field on notes.
+      var jobName=''; if(val){ var jb=(STORE.jobs||[]).filter(function(x){return x.id===val;})[0]; if(jb) jobName=jb.name; }
+      html += '<input type="text" data-k="'+f.k+'" data-resolve="job" list="dl-jobs" value="'+esc(jobName)+'" placeholder="Type a job name (optional)" autocomplete="off">';
+    } else if(f.type==='smart-trade'){
+      // B5d: free-text input + datalist of common trades + user's past trades. Free-text means new trades work too.
+      html += '<input type="text" data-k="'+f.k+'" list="dl-trades" value="'+esc(val)+'" placeholder="Start typing — patio, roofing, lawn care…" autocomplete="off">';
     } else if(f.type==='textarea'){
       html += '<textarea data-k="'+f.k+'">'+esc(val)+'</textarea>';
     } else {
@@ -921,6 +1022,13 @@ function openForm(type, id, preset){
   if(schema.fields.some(function(f){return f.type==='project';})){
     var presetCust = (rec.customerId) || null;
     html += '<datalist id="dl-projects">'+buildProjectOptions(presetCust)+'</datalist>';
+  }
+  if(schema.fields.some(function(f){return f.type==='job';})){
+    var presetCustJ = (rec.customerId) || null;
+    html += '<datalist id="dl-jobs">'+buildJobOptions(presetCustJ)+'</datalist>';
+  }
+  if(schema.fields.some(function(f){return f.type==='smart-trade';})){
+    html += '<datalist id="dl-trades">'+buildTradeOptions()+'</datalist>';
   }
   html += '<div class="modal-actions">'
     + (id ? '<button type="button" class="btn-outline" style="color:var(--red);border-color:rgba(185,28,28,0.4)" onclick="deleteRecord(\''+type+'\',\''+id+'\')">Delete</button>' : '')
@@ -950,6 +1058,9 @@ function saveForm(e, type, id){
     } else if(resolve==='project'){
       var p=STORE.projects.filter(function(x){return (x.name||'').toLowerCase()===val.toLowerCase();})[0];
       rec[k] = p ? p.id : '';
+    } else if(resolve==='job'){
+      var jb=(STORE.jobs||[]).filter(function(x){return (x.name||'').toLowerCase()===val.toLowerCase();})[0];
+      rec[k] = jb ? jb.id : '';
     } else {
       rec[k] = val;
     }
@@ -1848,7 +1959,11 @@ function renderNotes(){
   if(!STORE.notes.length){ body.innerHTML=emptyView('No notes yet. Tap <strong>+ Add Note</strong> to create one.'); return; }
   var html='';
   STORE.notes.forEach(function(n){
-    html+='<div class="note-item"><div><div class="ni-cust">'+esc(custName(n.customerId))+'</div><div class="ni-text">'+esc(n.text)+'</div></div>'+rowActions('note',n.id)+'</div>';
+    // B5e: surface the linked job/project chips alongside the customer name.
+    var chips = '';
+    if (n.projectId) { var p=(STORE.projects||[]).filter(function(x){return x.id===n.projectId;})[0]; if(p) chips += '<span class="ni-chip ni-chip-proj">'+esc(p.name)+'</span>'; }
+    if (n.jobId)     { var j=(STORE.jobs||[]).filter(function(x){return x.id===n.jobId;})[0];     if(j) chips += '<span class="ni-chip ni-chip-job">'+esc(j.name)+'</span>'; }
+    html+='<div class="note-item"><div><div class="ni-cust">'+esc(custName(n.customerId))+chips+'</div><div class="ni-text">'+esc(n.text)+'</div></div>'+rowActions('note',n.id)+'</div>';
   });
   body.innerHTML=html;
 }
