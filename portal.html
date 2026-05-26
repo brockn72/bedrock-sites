@@ -2318,6 +2318,41 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
 
       <!-- SUBSCRIPTIONS: MANAGE MY SUBSCRIPTION -->
       <div class="portal-pane subs-pane-bg" id="pane-subs-active">
+        <!-- G10 (Batch G, 2026-05-26): Referral widget. Sits above the existing
+             plan-management cards so contractors see their code first thing
+             when they open the Subscriptions tab. -->
+        <style>
+          .refer-card{background:#fff;border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:10px;padding:1.5rem 1.6rem;margin-bottom:1.25rem}
+          .refer-eyebrow{font-size:0.58rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent-text);margin-bottom:0.5rem}
+          .refer-title{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:var(--text);margin-bottom:0.35rem}
+          .refer-sub{font-family:'DM Sans',sans-serif;font-size:0.86rem;color:var(--text-muted);line-height:1.55;margin-bottom:1rem}
+          .refer-code-row{display:flex;gap:0.6rem;align-items:stretch;flex-wrap:wrap;margin-bottom:0.9rem}
+          .refer-code{flex:1;min-width:180px;font-family:'DM Sans',monospace;font-size:1.5rem;font-weight:700;letter-spacing:0.06em;color:var(--text);background:var(--offwhite);border:1px dashed var(--border);border-radius:6px;padding:0.85rem 1rem;display:flex;align-items:center;justify-content:center}
+          .refer-copy-btn{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:var(--accent);color:#fff;border:none;padding:0.7rem 1.2rem;border-radius:6px;cursor:pointer;transition:background .15s}
+          .refer-copy-btn:hover{background:var(--accent-light)}
+          .refer-link-row{font-size:0.78rem;color:var(--text-muted);margin-bottom:0.85rem;word-break:break-all}
+          .refer-link-row a{color:var(--accent-text);text-decoration:none;font-weight:600}
+          .refer-stats{display:flex;gap:1.5rem;flex-wrap:wrap;padding-top:0.85rem;border-top:1px solid var(--border)}
+          .refer-stat{display:flex;flex-direction:column;gap:2px}
+          .refer-stat-num{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--text)}
+          .refer-stat-lbl{font-size:0.62rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-muted)}
+          .refer-empty{font-size:0.82rem;color:var(--text-muted);font-style:italic}
+        </style>
+        <div class="refer-card" id="referCard">
+          <div class="refer-eyebrow">Refer a friend</div>
+          <div class="refer-title">2 months free for every contractor you send our way.</div>
+          <div class="refer-sub">Share your code with another contractor. When they sign up and pay, you get 2 months credited to your account automatically — no claiming, no forms.</div>
+          <div class="refer-code-row">
+            <div class="refer-code" id="referCodeDisplay">Loading…</div>
+            <button class="refer-copy-btn" type="button" id="referCopyBtn" onclick="copyReferralCode()" disabled>Copy code</button>
+          </div>
+          <div class="refer-link-row">Or share this link: <a id="referShareUrl" href="#">&mdash;</a></div>
+          <div class="refer-stats">
+            <div class="refer-stat"><span class="refer-stat-num" id="referInvited">0</span><span class="refer-stat-lbl">Invited</span></div>
+            <div class="refer-stat"><span class="refer-stat-num" id="referJoined">0</span><span class="refer-stat-lbl">Joined</span></div>
+            <div class="refer-stat"><span class="refer-stat-num" id="referCredited">0</span><span class="refer-stat-lbl">Months credited</span></div>
+          </div>
+        </div>
         <style>
           .ms-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:1.5rem 1.6rem;margin-bottom:1rem}
           .ms-card.plan{border-top:3px solid var(--accent)}
@@ -3945,7 +3980,44 @@ function showError(id, msg) { var el = document.getElementById(id); if (!el) ret
 function clearError(id) { var el = document.getElementById(id); if (el) { el.textContent = ''; el.style.display = 'none'; } }
 
 // init cart on load
-window.addEventListener('load', function(){ loadCart(); initTradesAndServices(); });
+window.addEventListener('load', function(){ loadCart(); initTradesAndServices(); loadReferralInfo(); });
+
+// G10 (Batch G, 2026-05-26): fetch + render the contractor's referral code +
+// stats. Bearer-authed against get-referral-info. Fails silently — the widget
+// stays in its placeholder state if anything errors.
+function loadReferralInfo(){
+  var codeEl = document.getElementById('referCodeDisplay'); if (!codeEl) return;
+  if (!currentSession || !currentSession.access_token){
+    codeEl.textContent = 'Sign in to see your code';
+    return;
+  }
+  fetch('/.netlify/functions/get-referral-info', {
+    headers: { Authorization: 'Bearer ' + currentSession.access_token },
+  })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+      if (!d){ codeEl.textContent = '—'; return; }
+      if (!d.code){ codeEl.textContent = 'Coming soon'; var sub=document.querySelector('.refer-sub'); if(sub&&d.message) sub.textContent=d.message; return; }
+      codeEl.textContent = d.code;
+      var copyBtn = document.getElementById('referCopyBtn'); if (copyBtn){ copyBtn.disabled = false; copyBtn.dataset.code = d.code; }
+      var linkEl = document.getElementById('referShareUrl');
+      if (linkEl){ linkEl.textContent = d.share_url; linkEl.href = d.share_url; }
+      var inv = document.getElementById('referInvited');  if (inv) inv.textContent  = d.invited  || 0;
+      var jn  = document.getElementById('referJoined');   if (jn)  jn.textContent   = d.joined   || 0;
+      var cr  = document.getElementById('referCredited'); if (cr)  cr.textContent   = (d.credits_earned_months || 0);
+    })
+    .catch(function(){ codeEl.textContent = '—'; });
+}
+function copyReferralCode(){
+  var btn = document.getElementById('referCopyBtn');
+  var code = (btn && btn.dataset.code) || (document.getElementById('referCodeDisplay').textContent || '').trim();
+  if (!code || code === '—' || code === 'Loading…') return;
+  try {
+    navigator.clipboard.writeText(code).then(function(){
+      if (btn){ var t = btn.textContent; btn.textContent = '✓ Copied'; setTimeout(function(){ btn.textContent = t; }, 1600); }
+    });
+  } catch(_){ /* clipboard unavailable — non-fatal */ }
+}
 
 // ── TRADES + SERVICES ───────────────────────────────────────────────────────
 // Mirrors the builder's TRADES + SVCS so the profile uses the same list.
