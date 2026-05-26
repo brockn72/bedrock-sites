@@ -4,6 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- G12 (Batch G, 2026-05-26): early ?ref= capture into localStorage. Mirrors
+     index.html so the code survives no matter which page the contractor
+     lands on first. window.getReferralCode() is reused below by each
+     capture-lead POST in the signup + claim flows. -->
+<script>
+(function(){
+  try {
+    var p = new URLSearchParams(location.search);
+    var ref = (p.get('ref') || '').toUpperCase();
+    if (/^[A-Z]{1,14}\d{2,4}$/.test(ref)) {
+      localStorage.setItem('bedrock-referral-code', ref);
+    }
+  } catch(_){}
+})();
+window.getReferralCode = function(){
+  try { return (localStorage.getItem('bedrock-referral-code') || '').toUpperCase(); }
+  catch(_){ return ''; }
+};
+</script>
+
 <!-- Primary SEO -->
 <title>Bedrock Website Builder — Professional contractor websites, built in minutes</title>
 <meta name="description" content="The Bedrock Digital website builder for trade contractors — plumbers, electricians, HVAC, landscapers. Free preview, $200 setup + $20/month, live the same day.">
@@ -6187,7 +6207,7 @@ function _opCreateAccount(email,pass,done,turnstileToken){
   var s=(_opData&&_opData.scraped)||{};
   var url=(_opData&&_opData.url)||_opEl('opUrl').value||'';
   fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({businessName:s.businessName||('Optimizer — '+_opHost(url)),contactName:'',email:email,password:pass,phone:s.phone||'',city:s.city||'',trade:s.trade||'',source:'signup',siteData:{audit:{url:url,score:_opData&&_opData.score}},turnstileToken:turnstileToken||''})
+    body:JSON.stringify({businessName:s.businessName||('Optimizer — '+_opHost(url)),contactName:'',email:email,password:pass,phone:s.phone||'',city:s.city||'',trade:s.trade||'',source:'signup',siteData:{audit:{url:url,score:_opData&&_opData.score}},turnstileToken:turnstileToken||'',referralCode:(window.getReferralCode&&window.getReferralCode())||''})
   }).then(function(){done();}).catch(function(){done();});
 }
 
@@ -6682,7 +6702,7 @@ async function submitLeadCapture(e){
     // SEC1: include the Turnstile token from the lcm form widget.
     const turnstileToken = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-lcm')) || '';
     const res=await fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({businessName:biz,contactName:name,email,phone,password:pass,trade:S.trade,services:S.services,city:document.getElementById('bCity')?.value||'',serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'signup',turnstileToken})});
+      body:JSON.stringify({businessName:biz,contactName:name,email,phone,password:pass,trade:S.trade,services:S.services,city:document.getElementById('bCity')?.value||'',serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'signup',turnstileToken,referralCode:(window.getReferralCode&&window.getReferralCode())||''})});
     ok=res.ok;
     if(!ok){
       let msg='We couldn’t create your account. Please try again.';
@@ -8685,7 +8705,7 @@ async function submitClaim(){
     // SEC1: include the Turnstile token from the claim widget.
     const turnstileToken = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-claim')) || '';
     const leadRes=await fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim',turnstileToken})});
+      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim',turnstileToken,referralCode:(window.getReferralCode&&window.getReferralCode())||''})});
     if(leadRes.ok){const d=await leadRes.json();leadId=d.leadId||null;}
     // 2. Try Stripe checkout — redirects away if available
     const checkRes=await fetch('/.netlify/functions/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -9996,7 +10016,7 @@ function bdmDoCreate(e){
   btn.disabled=true; btn.textContent='Creating…';
   // SEC1: include the Turnstile token from the auth-modal create widget.
   var turnstileToken = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-bdm')) || '';
-  fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({businessName:biz,contactName:name,email:email,password:pass,source:'signup',turnstileToken:turnstileToken})})
+  fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({businessName:biz,contactName:name,email:email,password:pass,source:'signup',turnstileToken:turnstileToken,referralCode:(window.getReferralCode&&window.getReferralCode())||''})})
     .then(function(r){return r.json();}).then(function(d){
       if(d.success===false){ btn.disabled=false; btn.textContent='Create My Account'; bdmErr('bdmCreateErr',d.error||'That email may already be registered — try signing in.'); return; }
       return fetch('/.netlify/functions/portal-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'signin',email:email,password:pass})})

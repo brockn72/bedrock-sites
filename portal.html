@@ -3663,7 +3663,7 @@ function checkout() {
   fetch('/.netlify/functions/create-subscription-checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + currentSession.access_token },
-    body: JSON.stringify({ tools: recurring, email: email, userId: userId, billing: BILLING }),
+    body: JSON.stringify({ tools: recurring, email: email, userId: userId, billing: BILLING, referralCode: (function(){ try { return (localStorage.getItem('bedrock-referral-code')||'').toUpperCase(); } catch(_){ return ''; } })() }),
   })
     .then(function(r){ return r.json(); })
     .then(function(d){

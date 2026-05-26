@@ -4,6 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<!-- G12 (Batch G, 2026-05-26): capture a ?ref= referral code into
+     localStorage as early as possible so it survives through the signup
+     flow regardless of which page the contractor lands on first. Read by
+     capture-lead.js's request body via the signup form. -->
+<script>
+(function(){
+  try {
+    var p = new URLSearchParams(location.search);
+    var ref = (p.get('ref') || '').toUpperCase();
+    if (/^[A-Z]{1,14}\d{2,4}$/.test(ref)) {
+      localStorage.setItem('bedrock-referral-code', ref);
+    }
+  } catch(_){ /* localStorage unavailable — silently ignore */ }
+})();
+</script>
+
 <!-- Primary SEO -->
 <title>Bedrock Digital — A complete business platform for trade contractors</title>
 <meta name="description" content="Bedrock Digital is five tools for trade contractors: a website builder, marketing kit, SEO optimizer, Donna (operations assistant), and Finance dashboards. Run your whole business in one place — $20/month and up.">

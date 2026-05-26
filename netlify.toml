@@ -15,6 +15,13 @@
 [functions."onboarding-email-scheduler"]
   schedule = "0 14 * * *"
 
+# G12 (Batch G, 2026-05-26): referral landing URL. /ref/SMITH10 → home with
+# the ref query param so the signup flow can stash and apply the code.
+[[redirects]]
+  from = "/ref/*"
+  to = "/?ref=:splat"
+  status = 302
+
 # Pre-beta task #6: catch-all 404. Real files and Netlify Functions match
 # before this rule does, so this only fires for genuinely missing routes.
 [[redirects]]
