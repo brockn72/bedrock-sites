@@ -1373,9 +1373,19 @@ function hydrateKit(k) {
   setVal('bk_color_accent',    STATE.brandKit.color_accent);
   setVal('bk_color_accent_picker',    STATE.brandKit.color_accent);
 
-  if (STATE.brandKit.logo_base64) {
-    var lp = document.getElementById('logoPreview');
-    lp.innerHTML = '<img src="'+STATE.brandKit.logo_base64+'" alt="logo">';
+  // Batch D2: show the logo preview — uploaded logo if any, else the auto
+  // generated wordmark so the contractor sees what the system will use for
+  // documents/assets until they upload a real logo.
+  var lp = document.getElementById('logoPreview');
+  if (lp) {
+    if (STATE.brandKit.logo_base64) {
+      lp.innerHTML = '<img src="'+STATE.brandKit.logo_base64+'" alt="logo">';
+      STATE.brandKit.wordmark_generated = false;
+    } else {
+      var src = generateWordmarkSVG(STATE.brandKit.business_name, STATE.brandKit.color_primary, STATE.brandKit.font_style);
+      lp.innerHTML = '<img src="'+src+'" alt="auto-generated wordmark"><div style="font-size:0.65rem;color:var(--slate);margin-top:0.35rem;font-style:italic">Auto-generated wordmark &mdash; upload a real logo to replace it.</div>';
+      STATE.brandKit.wordmark_generated = true;
+    }
   }
   updateBrandSummary();
   markFieldsFromProfile();
@@ -1722,10 +1732,40 @@ function renderDimsFor(dims) {
   return { w: MAX_RENDER_PX, h: Math.round(dims.h * s), scale: 1 / s };
 }
 
+// Batch D2 2026-05-25: SVG wordmark fallback for contractors without an
+// uploaded logo. Generates a clean badge using the brand's primary color and
+// the contractor's business name. Returned as a data: URL so it renders the
+// same way an uploaded logo would in <img>. The brand-kit gate (DEC4) treats
+// this as satisfying the "logo" requirement (wordmark_generated:true).
+function generateWordmarkSVG(name, primary, fontStyle){
+  var safe = String(name || 'Bedrock').slice(0, 28);
+  var fs = (typeof FONT_STYLES === 'object' && FONT_STYLES[fontStyle]) || (FONT_STYLES && FONT_STYLES.modern) || { display: "'DM Sans',sans-serif" };
+  var bg = primary || '#0D1B2E';
+  // Pad width by name length so longer names don't get cramped.
+  var w = Math.max(220, 30 + safe.length * 14);
+  var h = 80;
+  var fontFamily = String(fs.display).replace(/'/g, '');
+  var svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h + '">'
+    + '<rect width="' + w + '" height="' + h + '" rx="8" fill="' + bg + '"/>'
+    + '<text x="' + (w/2) + '" y="' + (h/2 + 9) + '" text-anchor="middle" fill="#FFFFFF" '
+    +   'font-family="' + fontFamily + '" font-weight="700" font-size="28" letter-spacing="1">'
+    +   String(safe).replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    + '</text>'
+    + '</svg>';
+  // Use unicode-safe encoding so & and accented chars survive in the data URL.
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+// Returns an <img> tag for the contractor's logo: uploaded base64 > remote URL >
+// auto-generated wordmark SVG. Always returns an <img> so layouts stay consistent.
+function logoImgHtml(b){
+  var src = b.logo_base64 || b.logo_url;
+  if (!src) src = generateWordmarkSVG(b.business_name || 'Your Logo', b.color_primary, b.font_style);
+  return '<img src="' + src + '" alt="logo">';
+}
+
 function templateHTML(b, copy, photoUrl, dims) {
-  var logoNode = b.logo_base64
-    ? '<img src="'+b.logo_base64+'" alt="logo">'
-    : (b.business_name || 'Your Logo');
+  var logoNode = logoImgHtml(b);
   var contact  = [b.phone, b.website || (b.city ? b.city : '')].filter(Boolean).join(' &middot; ');
   var headline = copy.headline || (b.tagline || 'Quality work, on time.');
   var sub      = copy.subheadline || (b.business_name ? (b.business_name + ' — ' + (b.trade || '')) : '');
