@@ -965,9 +965,17 @@ function renderProfileBanner(){
 // ─────────────────────────────────────────────────────────────────────────────
 // CHARTS
 // ─────────────────────────────────────────────────────────────────────────────
+// FIN5 2026-05-25: palette trimmed to ONE brand color (gold) used only for the
+// margin chart — the "is this business healthy" line — plus neutral grays for
+// all other context bars. No rainbows.
+var BRAND_PRIMARY = '#C9922A';
+var BRAND_PRIMARY_SOFT = 'rgba(201,146,42,0.12)';
+var GRAY_DARK = '#4A5568';
+var GRAY_MID  = '#8696AA';
+var GRAY_SOFT = 'rgba(74,85,104,0.10)';
 var charts = {}, currentPeriod = '30d', GRID = 'rgba(13,27,46,0.06)';
 Chart.defaults.font.family = "'DM Sans', sans-serif";
-Chart.defaults.color = '#4A5568';
+Chart.defaults.color = GRAY_DARK;
 function chartOpts(unit){
   return { responsive:true, maintainAspectRatio:false,
     plugins:{ legend:{display:false}, tooltip:{callbacks:{label:function(c){ return unit==='%'?c.parsed.y+'%':(unit==='n'?c.parsed.y+' jobs':'$'+c.parsed.y.toLocaleString('en-US')); }}} },
@@ -975,10 +983,11 @@ function chartOpts(unit){
 }
 function buildCharts(){
   var d = PERIODS[currentPeriod];
-  charts.revenue = new Chart(document.getElementById('chartRevenue'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.revenue,backgroundColor:'#1B3557',borderRadius:4,maxBarThickness:54}]},options:chartOpts('$')});
-  charts.margin = new Chart(document.getElementById('chartMargin'),{type:'line',data:{labels:d.revLabels,datasets:[{data:d.margin,borderColor:'#C9922A',backgroundColor:'rgba(201,146,42,0.12)',fill:true,tension:0.35,pointBackgroundColor:'#C9922A',pointRadius:3,borderWidth:2}]},options:chartOpts('%')});
-  charts.expense = new Chart(document.getElementById('chartExpense'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.expense,backgroundColor:'#8696AA',borderRadius:4,maxBarThickness:54}]},options:chartOpts('$')});
-  charts.jobs = new Chart(document.getElementById('chartJobs'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.jobs,backgroundColor:'#2E5A8E',borderRadius:4,maxBarThickness:54}]},options:chartOpts('n')});
+  charts.revenue = new Chart(document.getElementById('chartRevenue'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.revenue,backgroundColor:GRAY_DARK,borderRadius:4,maxBarThickness:54}]},options:chartOpts('$')});
+  // Margin gets the brand accent — it's THE health line the contractor cares about.
+  charts.margin = new Chart(document.getElementById('chartMargin'),{type:'line',data:{labels:d.revLabels,datasets:[{data:d.margin,borderColor:BRAND_PRIMARY,backgroundColor:BRAND_PRIMARY_SOFT,fill:true,tension:0.35,pointBackgroundColor:BRAND_PRIMARY,pointRadius:3,borderWidth:2}]},options:chartOpts('%')});
+  charts.expense = new Chart(document.getElementById('chartExpense'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.expense,backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:54}]},options:chartOpts('$')});
+  charts.jobs = new Chart(document.getElementById('chartJobs'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.jobs,backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:54}]},options:chartOpts('n')});
 }
 function updateCharts(){
   var d = PERIODS[currentPeriod];
@@ -1097,14 +1106,15 @@ function buildAnalytics(){
 
   if(analyticsBuilt){ resizeCharts(); return; }
   analyticsBuilt = true;
+  // FIN5: deeper charts stay gray; only matPct (a margin-adjacent metric) gets the brand line.
   charts.jobSize = new Chart(document.getElementById('chartJobSize'),{type:'line',
-    data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{data:[4900,4133,4733,4578,5350],borderColor:'#1B3557',backgroundColor:'rgba(27,53,87,0.1)',fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:'#1B3557',borderWidth:2}]},
+    data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{data:[4900,4133,4733,4578,5350],borderColor:GRAY_DARK,backgroundColor:GRAY_SOFT,fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:GRAY_DARK,borderWidth:2}]},
     options:chartOpts('$')});
   charts.season = new Chart(document.getElementById('chartSeason'),{type:'bar',
-    data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{data:[2,3,6,9,11,10],backgroundColor:'#2E5A8E',borderRadius:4,maxBarThickness:42}]},
+    data:{labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{data:[2,3,6,9,11,10],backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:42}]},
     options:chartOpts('n')});
   charts.matPct = new Chart(document.getElementById('chartMatPct'),{type:'line',
-    data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{data:[58,55,51,47,44],borderColor:'#C9922A',backgroundColor:'rgba(201,146,42,0.12)',fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:'#C9922A',borderWidth:2}]},
+    data:{labels:['Jan','Feb','Mar','Apr','May'],datasets:[{data:[58,55,51,47,44],borderColor:BRAND_PRIMARY,backgroundColor:BRAND_PRIMARY_SOFT,fill:true,tension:0.35,pointRadius:3,pointBackgroundColor:BRAND_PRIMARY,borderWidth:2}]},
     options:chartOpts('%')});
 }
 
