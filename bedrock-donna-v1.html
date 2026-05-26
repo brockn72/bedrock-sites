@@ -1596,7 +1596,8 @@ function approvalRow(kind){
   return '<div class="approval-row">'
     +'<button class="appr-btn appr-approve" onclick="approve(\''+kind+'\')">✓ Approve &amp; Send</button>'
     +'<button class="appr-btn appr-edit" onclick="editDraft()">Edit</button>'
-    +'<button class="appr-btn appr-pdf" onclick="generatePDF(\''+kind+'\')">View Full PDF</button>'
+    // Batch D1 2026-05-25: branded preview replaces the old jsPDF flow on the AI-chat draft too.
+    +'<button class="appr-btn appr-pdf" onclick="openBrandedPreview(\''+kind+'\')">Preview &amp; Print</button>'
     +'<button class="appr-btn appr-reject" onclick="rejectDraft()">Reject</button>'
     +'</div><div class="approval-banner">Nothing is sent to the customer until you approve.</div>';
 }
@@ -1642,7 +1643,10 @@ function renderDocBuilder(kind, who){
 function builderApprovalRow(kind){
   return '<div class="approval-row">'
     +'<button class="appr-btn appr-approve" onclick="approve(\''+kind+'\')">✓ Approve &amp; Send</button>'
-    +'<button class="appr-btn appr-pdf" onclick="generatePDF(\''+kind+'\')">View Full PDF</button>'
+    // Batch D1 2026-05-25: branded preview replaces the old jsPDF "View Full PDF" button.
+    // Opens a full-screen styled document built from the contractor's Brand Kit; "Print /
+    // Save as PDF" inside the overlay uses native window.print().
+    +'<button class="appr-btn appr-pdf" onclick="openBrandedPreview(\''+kind+'\')">Preview &amp; Print</button>'
     +'<button class="appr-btn appr-reject" onclick="rejectDraft()">Reject</button>'
     +'</div><div class="approval-banner">Nothing is sent to the customer until you approve.</div>';
 }
@@ -2421,6 +2425,331 @@ BedrockProfile.load().then(function(){
     else enterApp();
   }
 });
+
+// ═══════════════ BRANDED DOCUMENT GENERATION (Batch D1) ═══════════════
+// Produces a print-quality HTML document (estimate / invoice) using the
+// contractor's Brand Kit colors, logo, fonts, and business info. Opens in a
+// full-screen overlay over Donna's UI. "Print / Save as PDF" uses the browser's
+// native window.print() with @media print CSS that isolates the document.
+// ══════════════════════════════════════════════════════════════════════
+window.BedrockBrandKit = (function(){
+  var cache = null, pending = null;
+  function fetchKit(){
+    if (cache) return Promise.resolve(cache);
+    if (pending) return pending;
+    var email = '';
+    try {
+      var s = JSON.parse(localStorage.getItem('bd_session_v1') || '{}');
+      email = (s && s.user && s.user.email) || '';
+    } catch(_){}
+    if (!email) { cache = null; return Promise.resolve(null); }
+    pending = fetch('/.netlify/functions/get-brand-kit?email=' + encodeURIComponent(email),
+      DONNA_TOKEN ? { headers: { Authorization: 'Bearer ' + DONNA_TOKEN } } : undefined)
+      .then(function(r){ return r.json(); })
+      .then(function(d){ cache = (d && d.brand_kit) || null; return cache; })
+      .catch(function(){ cache = null; return null; });
+    return pending;
+  }
+  return { load: fetchKit, get: function(){ return cache; }, clear: function(){ cache = null; pending = null; } };
+})();
+
+// Map brand kit font_style → Google Font pair (heading + body). Falls back to
+// the system default for unknown values.
+var BEDROCK_DOC_FONTS = {
+  bold:     { heading: 'Oswald',            body: 'Roboto',        gf: 'Oswald:wght@500;700&family=Roboto:wght@400;500' },
+  modern:   { heading: 'Montserrat',        body: 'Open Sans',     gf: 'Montserrat:wght@500;700&family=Open+Sans:wght@400;500' },
+  rugged:   { heading: 'Anton',             body: 'Barlow',        gf: 'Anton&family=Barlow:wght@400;500' },
+  friendly: { heading: 'Poppins',           body: 'Nunito Sans',   gf: 'Poppins:wght@600;700&family=Nunito+Sans:wght@400;600' },
+  classic:  { heading: 'Merriweather',      body: 'Source Sans 3', gf: 'Merriweather:wght@700&family=Source+Sans+3:wght@400;600' },
+  premium:  { heading: 'Playfair Display',  body: 'Lato',          gf: 'Playfair+Display:wght@700&family=Lato:wght@400;700' }
+};
+function _docFonts(style){
+  var s = String(style || '').toLowerCase();
+  return BEDROCK_DOC_FONTS[s] || BEDROCK_DOC_FONTS.modern;
+}
+// Inject the right Google Font pair into <head> once per font key.
+function _ensureFontLink(fonts){
+  if (!fonts || !fonts.gf) return;
+  var id = 'bd-doc-font-' + fonts.heading.replace(/\W+/g,'').toLowerCase();
+  if (document.getElementById(id)) return;
+  var l = document.createElement('link');
+  l.id = id; l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=' + fonts.gf + '&display=swap';
+  document.head.appendChild(l);
+}
+
+function _docMoney(n){
+  return '$' + (Number(n) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function _docDate(d){
+  if (!d) return '';
+  try { var x = new Date(d); if (!isNaN(x)) return x.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }); } catch(_){}
+  return String(d);
+}
+function _docInitials(name){
+  var parts = String(name || '').trim().split(/\s+/).slice(0,2);
+  if (!parts.length || !parts[0]) return 'BD';
+  return parts.map(function(p){ return p[0].toUpperCase(); }).join('');
+}
+
+// Main renderer. Returns an HTML string for a styled document. Editable fields
+// are marked contenteditable so the contractor can tweak customer/dates/notes
+// directly in the preview before approving.
+function renderDonnaDocument(type, data, brandKit){
+  var isInv = type === 'invoice';
+  var bk = brandKit || {};
+  var fonts = _docFonts(bk.font_style);
+  _ensureFontLink(fonts);
+
+  // Defaults when no brand kit exists yet.
+  var hasBrand = bk && (bk.color_primary || bk.logo_url || bk.business_name);
+  var primary   = bk.color_primary   || '#0D1B2E';
+  var secondary = bk.color_secondary || '#1B3557';
+  var accent    = bk.color_accent    || '#C9922A';
+  var biz       = bk.business_name   || (BedrockProfile && BedrockProfile.get && BedrockProfile.get('business_name')) || 'Your Business';
+  var tagline   = bk.tagline         || '';
+  var website   = bk.website         || '';
+  var phone     = bk.phone           || (BedrockProfile && BedrockProfile.get && BedrockProfile.get('phone')) || '';
+  var addrParts = [bk.city || (BedrockProfile && BedrockProfile.get && BedrockProfile.get('city'))].filter(Boolean);
+  var addr      = addrParts.join(' · ');
+
+  // Contractor + document number / dates.
+  var docNum = data.doc_number || ('00' + Math.floor(Math.random() * 90 + 10));
+  var today  = data.date       || new Date().toISOString().slice(0,10);
+  var validOrDue = data.due_date || data.valid_through ||
+    (function(){ var d = new Date(); d.setDate(d.getDate() + (isInv ? 30 : 30)); return d.toISOString().slice(0,10); })();
+
+  var cust = (data.customer || data.aiData && data.aiData.customer) || {};
+  var custName  = cust.name    || '';
+  var custEmail = cust.email   || '';
+  var custAddr  = cust.address || '';
+  var custPhone = cust.phone   || '';
+
+  var lines  = Array.isArray(data.line_items) ? data.line_items : (Array.isArray(data.lines) ? data.lines : []);
+  var subtotal = (data.subtotal != null) ? Number(data.subtotal)
+              : lines.reduce(function(s,l){ return s + (Number(l.total) || (Number(l.qty)||0)*(Number(l.unit_price)||0)); }, 0);
+  var tax      = Number(data.tax)    || 0;
+  var total    = Number(data.total) || (subtotal + tax);
+  var taxPct   = Number(data.tax_pct) || 0;
+  var notes    = data.notes || '';
+  var terms    = data.terms || (isInv ? 'Net 30 — payment due within 30 days' : 'Estimate valid for 30 days. 50% deposit due to schedule the job.');
+  var paymentStatus = isInv ? (data.payment_status || 'Unpaid') : null;
+
+  // Logo block: <img> if logo_url present, otherwise a primary-colored initials box.
+  var logoHtml = bk.logo_url
+    ? '<img src="' + esc(bk.logo_url) + '" alt="' + esc(biz) + ' logo" style="max-height:60px;max-width:180px;object-fit:contain"/>'
+    : '<div style="width:60px;height:60px;border-radius:8px;background:' + primary + ';color:#fff;display:flex;align-items:center;justify-content:center;font:700 22px/1 \'' + fonts.heading + '\',sans-serif;letter-spacing:0.04em">' + esc(_docInitials(biz)) + '</div>';
+
+  // Brand-kit nudge for users who haven't set one up yet.
+  var nudge = hasBrand ? '' :
+    '<div class="bd-doc-nudge" style="background:#FFF8EC;border:1px solid #C9922A;border-radius:6px;padding:0.85rem 1.1rem;margin-bottom:1.25rem;font:14px/1.55 \'' + fonts.body + '\',sans-serif;color:#92660e">' +
+      '<strong>Add your logo and colors.</strong> Documents use the default Bedrock palette right now. ' +
+      '<a href="/bedrock-marketing-v1.html#brand-kit" target="_blank" style="color:#92660e;font-weight:700;text-decoration:underline">Set up your Brand Kit →</a>' +
+    '</div>';
+
+  // Line-item table rows (alternating shading).
+  var rowsHtml = lines.length
+    ? lines.map(function(l, i){
+        var bg = i % 2 ? '#F4F4F4' : '#FFFFFF';
+        var lt = Number(l.total) || (Number(l.qty)||0) * (Number(l.unit_price)||0);
+        return '<tr style="background:' + bg + '">' +
+          '<td style="padding:10px 12px;border-bottom:1px solid #E5E7EB">' + esc(l.description || '') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid #E5E7EB;text-align:center;white-space:nowrap">' + (l.qty != null ? esc(String(l.qty)) : '') + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid #E5E7EB;text-align:right;white-space:nowrap">' + _docMoney(l.unit_price) + '</td>' +
+          '<td style="padding:10px 12px;border-bottom:1px solid #E5E7EB;text-align:right;white-space:nowrap;font-weight:600">' + _docMoney(lt) + '</td>' +
+        '</tr>';
+      }).join('')
+    : '<tr><td colspan="4" style="padding:14px 12px;text-align:center;color:#9CA3AF;font-style:italic">No line items yet</td></tr>';
+
+  var label = isInv ? 'INVOICE' : 'ESTIMATE';
+  var dateLabel = isInv ? 'Due date' : 'Valid through';
+  var statusBadge = isInv && paymentStatus
+    ? '<span style="display:inline-block;background:' + (paymentStatus === 'Paid' ? '#3b6d11' : paymentStatus === 'Partial' ? '#C9922A' : '#b91c1c') + ';color:#fff;font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.12em;text-transform:uppercase;padding:5px 10px;border-radius:3px;margin-left:0.6rem;vertical-align:middle">' + esc(paymentStatus) + '</span>'
+    : '';
+
+  // The document container itself. Outer .bd-doc gets the print-CSS hook.
+  return ''
+    + nudge
+    + '<div class="bd-doc" data-doc-type="' + type + '" style="background:#fff;color:#111;max-width:800px;margin:0 auto;box-shadow:0 12px 32px rgba(0,0,0,0.12);font-family:\'' + fonts.body + '\',Arial,sans-serif;font-size:14px;line-height:1.55">'
+
+    +   '<div style="background:' + primary + ';color:#fff;padding:1.5rem 1.75rem;display:flex;align-items:center;gap:1.25rem">'
+    +     '<div>' + logoHtml + '</div>'
+    +     '<div style="flex:1;min-width:0">'
+    +       '<div style="font:700 22px/1.1 \'' + fonts.heading + '\',sans-serif;letter-spacing:-0.01em">' + esc(biz) + '</div>'
+    +       '<div style="font-size:12.5px;color:rgba(255,255,255,0.78);margin-top:4px">'
+    +         [addr, phone, website].filter(Boolean).map(esc).join(' &middot; ')
+    +       '</div>'
+    +       (tagline ? '<div style="font-style:italic;font-size:12px;color:rgba(255,255,255,0.65);margin-top:3px">' + esc(tagline) + '</div>' : '')
+    +     '</div>'
+    +   '</div>'
+
+    +   '<div style="padding:1.5rem 1.75rem 0.5rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:1rem">'
+    +     '<div>'
+    +       '<div style="font:700 24px/1 \'' + fonts.heading + '\',sans-serif;letter-spacing:0.12em;color:' + primary + '">' + label + ' #<span class="bd-doc-edit" contenteditable="true" data-field="doc_number">' + esc(docNum) + '</span>' + statusBadge + '</div>'
+    +       '<div style="margin-top:0.75rem;font-size:13px;color:#4B5563">'
+    +         '<div><strong>Date:</strong> <span class="bd-doc-edit" contenteditable="true" data-field="date">' + esc(_docDate(today)) + '</span></div>'
+    +         '<div><strong>' + dateLabel + ':</strong> <span class="bd-doc-edit" contenteditable="true" data-field="validOrDue">' + esc(_docDate(validOrDue)) + '</span></div>'
+    +       '</div>'
+    +     '</div>'
+    +     '<div style="text-align:right;min-width:240px">'
+    +       '<div style="font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.14em;text-transform:uppercase;color:' + accent + '">Prepared for</div>'
+    +       '<div style="margin-top:0.4rem;font-size:14px;line-height:1.55">'
+    +         '<div class="bd-doc-edit" contenteditable="true" data-field="cust_name" style="font-weight:700;color:#111">' + esc(custName || 'Customer name') + '</div>'
+    +         '<div class="bd-doc-edit" contenteditable="true" data-field="cust_addr" style="color:#4B5563">' + esc(custAddr || '') + '</div>'
+    +         '<div class="bd-doc-edit" contenteditable="true" data-field="cust_email" style="color:#4B5563">' + esc(custEmail || '') + '</div>'
+    +         (custPhone ? '<div style="color:#4B5563">' + esc(custPhone) + '</div>' : '')
+    +       '</div>'
+    +     '</div>'
+    +   '</div>'
+
+    +   '<div style="padding:1rem 1.75rem">'
+    +     '<table style="width:100%;border-collapse:collapse;border:1px solid #E5E7EB">'
+    +       '<thead><tr style="background:' + primary + ';color:#fff">'
+    +         '<th style="padding:10px 12px;text-align:left;font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.12em;text-transform:uppercase">Description</th>'
+    +         '<th style="padding:10px 12px;text-align:center;font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.12em;text-transform:uppercase;width:60px">Qty</th>'
+    +         '<th style="padding:10px 12px;text-align:right;font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.12em;text-transform:uppercase;width:110px">Unit price</th>'
+    +         '<th style="padding:10px 12px;text-align:right;font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.12em;text-transform:uppercase;width:110px">Amount</th>'
+    +       '</tr></thead>'
+    +       '<tbody>' + rowsHtml + '</tbody>'
+    +     '</table>'
+
+    +     '<div style="margin-top:0.85rem;display:flex;justify-content:flex-end">'
+    +       '<table style="border-collapse:collapse;min-width:280px">'
+    +         '<tr><td style="padding:6px 14px;text-align:right;color:#4B5563">Subtotal:</td><td style="padding:6px 0;text-align:right;font-weight:600;min-width:110px">' + _docMoney(subtotal) + '</td></tr>'
+    +         (tax > 0 ? '<tr><td style="padding:6px 14px;text-align:right;color:#4B5563">Tax (' + taxPct + '%):</td><td style="padding:6px 0;text-align:right;font-weight:600">' + _docMoney(tax) + '</td></tr>' : '')
+    +         '<tr style="background:' + accent + ';color:#fff"><td style="padding:12px 14px;text-align:right;font:700 14px/1 \'' + fonts.heading + '\',sans-serif;letter-spacing:0.12em;text-transform:uppercase">' + (isInv ? 'Balance due' : 'Total') + '</td><td style="padding:12px 0 12px 14px;text-align:right;font:700 18px/1 \'' + fonts.heading + '\',sans-serif">' + _docMoney(total) + '</td></tr>'
+    +       '</table>'
+    +     '</div>'
+    +   '</div>'
+
+    +   '<div style="padding:0 1.75rem 1.75rem;border-top:1px solid #E5E7EB;margin-top:0.5rem">'
+    +     '<div style="margin-top:1rem">'
+    +       '<div style="font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.14em;text-transform:uppercase;color:' + accent + ';margin-bottom:0.4rem">Terms</div>'
+    +       '<div class="bd-doc-edit" contenteditable="true" data-field="terms" style="color:#374151">' + esc(terms) + '</div>'
+    +     '</div>'
+    +     (notes ? '<div style="margin-top:0.9rem"><div style="font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.14em;text-transform:uppercase;color:' + accent + ';margin-bottom:0.4rem">Notes</div><div class="bd-doc-edit" contenteditable="true" data-field="notes" style="color:#374151">' + esc(notes) + '</div></div>' : '<div style="margin-top:0.9rem"><div style="font:600 11px/1 \'' + fonts.body + '\',sans-serif;letter-spacing:0.14em;text-transform:uppercase;color:' + accent + ';margin-bottom:0.4rem">Notes</div><div class="bd-doc-edit" contenteditable="true" data-field="notes" style="color:#9CA3AF;font-style:italic">Add any notes for your customer…</div></div>')
+    +     '<div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #E5E7EB;text-align:center;font-style:italic;color:#6B7280">Thank you for your business.</div>'
+    +   '</div>'
+    + '</div>';
+}
+
+// Overlay open / close + plumbing.
+function openBrandedPreview(kind){
+  // Try the builder first; if it's not active, fall back to the AI-chat draft
+  // data hanging off lastDraft. Either way we end up with line_items + totals.
+  var data;
+  var builderActive = !!document.getElementById('bldLines');
+  if (builderActive) {
+    if (typeof builderSyncLines === 'function') builderSyncLines();
+    var state = builderState();
+    data = {
+      line_items: state.lines || [],
+      subtotal:   state.subtotal || 0,
+      tax:        state.tax || 0,
+      tax_pct:    state.taxPct || 0,
+      total:      state.total || 0,
+      notes:      state.notes || '',
+    };
+  } else if (window.lastDraft && lastDraft.aiData) {
+    var ai = lastDraft.aiData;
+    data = {
+      line_items: ai.line_items || [],
+      subtotal:   ai.subtotal != null ? ai.subtotal : 0,
+      tax:        ai.tax || 0,
+      tax_pct:    ai.tax_pct || 0,
+      total:      ai.total != null ? ai.total : (ai.subtotal || 0),
+      notes:      ai.notes || '',
+      due_date:   ai.due_date || null,
+    };
+  } else {
+    data = { line_items: [], subtotal: 0, total: 0, notes: '' };
+  }
+  data.customer = (typeof approvalCustomer === 'function') ? approvalCustomer() : {};
+  // Cache the data so the in-preview edits land back on it at approve time.
+  window._brandedDocData = data;
+  window._brandedDocKind = kind;
+
+  var overlay = document.getElementById('brandedDocOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'brandedDocOverlay';
+    overlay.innerHTML =
+      '<div class="bd-overlay-bar">'
+      + '<div class="bd-overlay-title">Document preview &mdash; edit any field, then print or approve</div>'
+      + '<div class="bd-overlay-actions">'
+      +   '<button class="btn-outline" onclick="closeBrandedPreview()">← Back to edit</button>'
+      +   '<button class="btn-outline" onclick="window.print()">🖨 Print / Save as PDF</button>'
+      +   '<button class="appr-btn appr-approve" style="padding:0.55rem 1.1rem" onclick="approveFromPreview()">✓ Approve &amp; Send</button>'
+      + '</div>'
+      + '</div>'
+      + '<div class="bd-overlay-scroll"><div id="brandedDocHost" style="padding:2rem 1.25rem"></div></div>';
+    document.body.appendChild(overlay);
+  }
+
+  BedrockBrandKit.load().then(function(bk){
+    var host = document.getElementById('brandedDocHost');
+    host.innerHTML = renderDonnaDocument(kind, data, bk);
+  });
+  document.body.classList.add('bd-doc-open');
+}
+
+function closeBrandedPreview(){ document.body.classList.remove('bd-doc-open'); }
+
+// Harvest the contenteditable fields back into the draft and fire the normal approve flow.
+function approveFromPreview(){
+  var host = document.getElementById('brandedDocHost');
+  if (host && window._brandedDocData) {
+    host.querySelectorAll('.bd-doc-edit').forEach(function(el){
+      var f = el.getAttribute('data-field');
+      var v = (el.innerText || el.textContent || '').trim();
+      if (f === 'cust_name'  && window._brandedDocData.customer) window._brandedDocData.customer.name    = v;
+      if (f === 'cust_addr'  && window._brandedDocData.customer) window._brandedDocData.customer.address = v;
+      if (f === 'cust_email' && window._brandedDocData.customer) window._brandedDocData.customer.email   = v;
+      if (f === 'notes') window._brandedDocData.notes = v;
+      if (f === 'terms') window._brandedDocData.terms = v;
+      if (f === 'doc_number') window._brandedDocData.doc_number = v;
+    });
+  }
+  closeBrandedPreview();
+  if (typeof approve === 'function') approve(window._brandedDocKind || 'estimate');
+}
+
+// Pre-warm the brand kit fetch when Donna boots so the preview opens fast.
+document.addEventListener('DOMContentLoaded', function(){
+  if (window.BedrockBrandKit) window.BedrockBrandKit.load();
+});
 </script>
+
+<style>
+/* OVERLAY (screen) */
+#brandedDocOverlay{display:none;position:fixed;inset:0;background:rgba(13,27,46,0.92);z-index:1000;flex-direction:column}
+body.bd-doc-open{overflow:hidden}
+body.bd-doc-open #brandedDocOverlay{display:flex}
+.bd-overlay-bar{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:0.75rem 1.25rem;background:#0D1B2E;color:#fff;border-bottom:2px solid #C9922A;flex-wrap:wrap}
+.bd-overlay-title{font-family:'DM Sans',sans-serif;font-size:0.86rem;font-weight:500;color:rgba(255,255,255,0.85)}
+.bd-overlay-actions{display:flex;gap:0.6rem;flex-wrap:wrap}
+.bd-overlay-actions .btn-outline{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.35);padding:0.5rem 0.9rem;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;border-radius:5px;cursor:pointer}
+.bd-overlay-actions .btn-outline:hover{background:rgba(255,255,255,0.1)}
+.bd-overlay-scroll{flex:1;overflow-y:auto;background:#1B3557;padding:0}
+.bd-doc{background:#fff}
+.bd-doc-edit{outline:1px dashed transparent;outline-offset:2px;border-radius:2px;transition:outline-color .12s}
+.bd-doc-edit:hover{outline-color:rgba(201,146,42,0.45)}
+.bd-doc-edit:focus{outline:1px solid #C9922A;background:rgba(201,146,42,0.06)}
+
+/* PRINT — isolate just the document container so the overlay/chrome/nav disappear */
+@media print {
+  @page { margin: 0.75in; size: letter; }
+  body * { visibility: hidden !important; }
+  body.bd-doc-open #brandedDocOverlay,
+  body.bd-doc-open #brandedDocOverlay * { visibility: visible !important; }
+  body.bd-doc-open #brandedDocOverlay { position: static !important; background: #fff !important; overflow: visible !important; }
+  body.bd-doc-open .bd-overlay-bar { display: none !important; }
+  body.bd-doc-open .bd-overlay-scroll { background: #fff !important; padding: 0 !important; overflow: visible !important; }
+  body.bd-doc-open #brandedDocHost { padding: 0 !important; }
+  body.bd-doc-open .bd-doc { box-shadow: none !important; max-width: 100% !important; }
+  body.bd-doc-open .bd-doc-edit { outline: none !important; background: transparent !important; }
+  body.bd-doc-open .bd-doc-nudge { display: none !important; }
+}
+</style>
 </body>
 </html>
