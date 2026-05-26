@@ -1724,12 +1724,18 @@ function renderReceipt(){
 }
 // Send the receipt photo to Google Vision OCR (vision-ocr.js) and pre-fill
 // the form with the vendor / amount / date it reads back.
+// OPS7 2026-05-25: stash the raw data URL on _lastReceiptImageB64 so the
+// approval flow can also attach the image to the QBO Purchase via qbo-attach.
+var _lastReceiptImageB64 = null;
+var _lastReceiptFileName = null;
 function scanReceipt(e){
   var file=e.target.files&&e.target.files[0]; if(!file) return;
+  _lastReceiptFileName = file.name || null;
   var result=document.getElementById('receiptResult');
   result.innerHTML='<div class="notebox">Reading the receipt…</div>';
   var reader=new FileReader();
   reader.onload=function(ev){
+    _lastReceiptImageB64 = ev.target.result; // keep for OPS7 attach-to-QBO
     if(!DONNA_TOKEN){ renderReceiptForm({}); return; }
     fetch('/.netlify/functions/vision-ocr',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
       body:JSON.stringify({image_base64:ev.target.result})})
@@ -2096,6 +2102,23 @@ function approve(kind){
               headers:{'Content-Type':'application/json', Authorization:'Bearer '+DONNA_TOKEN},
               body: JSON.stringify({action:'save', entity:'receipt', id:savedRow.id,
                 record:{ qbo_purchase_id: sync.qbo_id }})
+            }).catch(function(){});
+          }
+          // OPS7 2026-05-25: attach the receipt photo to the QBO Purchase so
+          // the image lives in QuickBooks against the expense. Best-effort —
+          // a failed attach doesn't undo the synced expense, just logs it.
+          if (sync.qbo_id && _lastReceiptImageB64) {
+            fetch('/.netlify/functions/qbo-attach', {
+              method:'POST',
+              headers:{'Content-Type':'application/json', Authorization:'Bearer '+DONNA_TOKEN},
+              body: JSON.stringify({
+                purchase_id:  sync.qbo_id,
+                image_base64: _lastReceiptImageB64,
+                file_name:    _lastReceiptFileName || null,
+              })
+            }).then(function(r){return r.json();}).then(function(a){
+              if (a && a.attached) donnaReply("Attached the photo to the QuickBooks receipt. ✓");
+              // We don't surface a fail as a red bang — the expense is in QBO either way.
             }).catch(function(){});
           }
         } else if (sync && sync.skipped) {
