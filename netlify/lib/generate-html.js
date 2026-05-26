@@ -60,7 +60,11 @@ function generateCustomerSite(lead) {
     gallery_1:   false,
     process:     !!(d.process_steps && d.process_steps.length),
     areas:       !!(d.service_areas && d.service_areas.length),
-    reviews:     !!(d.reviews && d.reviews.length),
+    // WEB7 2026-05-25: reviews strip is ON by default on every deployed site.
+    // If d.reviews is populated (from a Google Business Profile pull or manual
+    // entry in the builder) we render the real reviews; otherwise a graceful
+    // placeholder strip stands in so the section anchors the social-proof slot.
+    reviews:     true,
     faq:         !!(d.faqs && d.faqs.length),
     credentials: false,
   };
@@ -202,14 +206,27 @@ function generateCustomerSite(lead) {
   <p style="font-size:0.78rem;font-weight:300;color:${t.textLight};margin-top:1.5rem">Don't see your area? Give us a call — we travel further than you might think.</p>
 </section>`:'';
 
-  const reviewsHtml=(sVis.reviews&&d.reviews&&d.reviews.length)?`
-<section style="padding:4rem 5%;background:${t.cardBg}">
+  // WEB7: reviews strip — real reviews when available, graceful placeholder
+  // when not. Top 3 are shown (most contractors should pull from Google
+  // Business Profile; the builder also lets them paste manual reviews into
+  // site_data.reviews). The aggregate rating + count is also surfaced when
+  // d.review_rating / d.review_count are present (set by the Google fetch).
+  const reviewsTop = (Array.isArray(d.reviews) ? d.reviews : []).slice(0, 3);
+  const ratingHtml = (d.review_rating && d.review_count)
+    ? `<p style="font-size:0.82rem;color:${t.textLight};margin-bottom:1.5rem">${Number(d.review_rating).toFixed(1)} <span style="color:${t.accent}">★★★★★</span> · ${d.review_count} Google reviews</p>` : '';
+  const reviewsHtml = sVis.reviews ? `
+<section id="reviews" style="padding:4rem 5%;background:${t.cardBg}">
   <p style="font-size:0.58rem;font-weight:700;letter-spacing:0.3em;text-transform:uppercase;color:${t.accent};margin-bottom:0.5rem">Reviews</p>
-  <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:${t.text};margin-bottom:2rem">What our customers say.</h2>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem">
-    ${d.reviews.map(r=>`<div style="padding:1.75rem;border:1px solid ${isDark?'rgba(255,255,255,0.12)':'rgba(0,0,0,0.08)'};background:${t.bg}"><div style="font-size:0.78rem;color:${t.accent};margin-bottom:0.75rem">${'★'.repeat(r.stars||5)}</div><p style="font-size:0.8rem;font-weight:300;line-height:1.8;color:${t.textLight};font-style:italic;margin-bottom:0.75rem">"${esc(r.text)}"</p><div style="font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:${t.text}">— ${esc(r.name)}${r.job?` · ${esc(r.job)}`:''}</div></div>`).join('')}
-  </div>
-</section>`:'';
+  <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:${t.text};margin-bottom:0.75rem">What our customers say.</h2>
+  ${ratingHtml}
+  ${reviewsTop.length
+    ? `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem">
+        ${reviewsTop.map(r=>`<div style="padding:1.75rem;border:1px solid ${isDark?'rgba(255,255,255,0.12)':'rgba(0,0,0,0.08)'};background:${t.bg}"><div style="font-size:0.78rem;color:${t.accent};margin-bottom:0.75rem">${'★'.repeat(r.stars||5)}</div><p style="font-size:0.8rem;font-weight:300;line-height:1.8;color:${t.textLight};font-style:italic;margin-bottom:0.75rem">"${esc(r.text||r.comment||'')}"</p><div style="font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:${t.text}">— ${esc(r.name||r.author||'Customer')}${r.job?` · ${esc(r.job)}`:''}</div></div>`).join('')}
+      </div>`
+    : `<div style="padding:1.5rem 1.75rem;border:1px dashed ${isDark?'rgba(255,255,255,0.18)':'rgba(0,0,0,0.15)'};background:${t.bg};font-size:0.82rem;color:${t.textLight};line-height:1.7">
+        Customer reviews from <strong style="color:${t.text}">${esc(biz)}</strong> will appear here. To feature your Google reviews automatically, connect your Google Business Profile in the portal &mdash; reviews land here on the next deploy.
+      </div>`}
+</section>` : '';
 
   const faqHtml=(sVis.faq&&d.faqs&&d.faqs.length)?`
 <section id="faq" style="padding:5rem 5%;background:${t.bg}">
