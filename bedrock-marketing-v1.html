@@ -972,15 +972,22 @@ footer a:hover{text-decoration:underline}
 // ─────────────────────────────────────────────────────────────────────────────
 // CONSTANTS
 // ─────────────────────────────────────────────────────────────────────────────
+// MKT7 2026-05-25: print sizes recomputed at 300 DPI (inch × 300 = px) so
+// downloads are crisp enough for a print shop. Door hanger flipped to spec
+// (4×11 in portrait → 1200×3300 px). Yard sign flipped to portrait per Bedrock
+// spec (18×24 in → 5400×7200 px). Print PDFs use the `mm` field (216 mm/in ÷
+// 25.4 = inches), so `mm` is independent of the px scale.
+// Flyer / business card / postcard already rendered crisp at their original
+// scales; bumped to 300 DPI consistency.
 var MATERIALS = {
-  social:    { name:'Social Media Post',     w:1080, h:1080, mm:null,            cat:'social',  shape:'square',    sizeText:'1080 × 1080 · square' },
-  flyer:     { name:'Print Flyer',           w:1275, h:1650, mm:[216,279],       cat:'print',   shape:'tall',      sizeText:'8.5 × 11 in · portrait' },
-  door:      { name:'Door Hanger',           w:600,  h:1650, mm:[102,279],       cat:'print',   shape:'tall',      sizeText:'4 × 11 in · narrow tall' },
-  yard:      { name:'Yard Sign',             w:2700, h:1800, mm:[610,457],       cat:'print',   shape:'wide',      sizeText:'24 × 18 in · landscape' },
-  bizcard:   { name:'Business Card',         w:1050, h:600,  mm:[88.9,50.8],     cat:'print',   shape:'card',      sizeText:'3.5 × 2 in · landscape' },
-  postcard:  { name:'Postcard',              w:1800, h:1200, mm:[152.4,101.6],   cat:'print',   shape:'postcard',  sizeText:'6 × 4 in · landscape' },
-  emailsig:  { name:'Email Signature',       w:640,  h:200,  mm:null,            cat:'digital', shape:'wide-thin', sizeText:'640 × 200 · banner' },
-  fbcover:   { name:'Facebook Cover',        w:820,  h:312,  mm:null,            cat:'digital', shape:'wide-thin', sizeText:'820 × 312 · banner' },
+  social:    { name:'Social Media Post',     w:1080, h:1080, mm:null,            dpi:null, cat:'social',  shape:'square',    sizeText:'1080 × 1080 · square' },
+  flyer:     { name:'Print Flyer',           w:2550, h:3300, mm:[216,279],       dpi:300,  cat:'print',   shape:'tall',      sizeText:'8.5 × 11 in @ 300 dpi · portrait' },
+  door:      { name:'Door Hanger',           w:1200, h:3300, mm:[102,279],       dpi:300,  cat:'print',   shape:'tall',      sizeText:'4 × 11 in @ 300 dpi · narrow tall' },
+  yard:      { name:'Yard Sign',             w:5400, h:7200, mm:[457,610],       dpi:300,  cat:'print',   shape:'tall',      sizeText:'18 × 24 in @ 300 dpi · portrait' },
+  bizcard:   { name:'Business Card',         w:1050, h:600,  mm:[88.9,50.8],     dpi:300,  cat:'print',   shape:'card',      sizeText:'3.5 × 2 in @ 300 dpi · landscape' },
+  postcard:  { name:'Postcard',              w:1800, h:1200, mm:[152.4,101.6],   dpi:300,  cat:'print',   shape:'postcard',  sizeText:'6 × 4 in @ 300 dpi · landscape' },
+  emailsig:  { name:'Email Signature',       w:640,  h:200,  mm:null,            dpi:null, cat:'digital', shape:'wide-thin', sizeText:'640 × 200 · banner' },
+  fbcover:   { name:'Facebook Cover',        w:820,  h:312,  mm:null,            dpi:null, cat:'digital', shape:'wide-thin', sizeText:'820 × 312 · banner' },
 };
 var MATERIAL_ORDER = ['social','flyer','door','yard','bizcard','postcard','emailsig','fbcover'];
 
@@ -1641,6 +1648,19 @@ function readCopy() {
   STATE.campaign_note    = (document.getElementById('campaign_note').value    || '').trim();
 }
 
+// MKT7 2026-05-25: cap the offscreen render at ~2400 px wide so a 5400×7200
+// yard sign doesn't blow up the browser's memory. html2canvas captures with
+// `scale = dims.w / renderDims.w` so the FINAL exported pixel dimensions are
+// still the target (5400×7200 etc.) — fonts and layout stay crisp because
+// they were sized proportionally to the capped render width.
+var MAX_RENDER_PX = 2400;
+function renderDimsFor(dims) {
+  if (!dims) return { w: 1080, h: 1080, scale: 1 };
+  if (dims.w <= MAX_RENDER_PX) return { w: dims.w, h: dims.h, scale: 1 };
+  var s = MAX_RENDER_PX / dims.w;
+  return { w: MAX_RENDER_PX, h: Math.round(dims.h * s), scale: 1 / s };
+}
+
 function templateHTML(b, copy, photoUrl, dims) {
   var logoNode = b.logo_base64
     ? '<img src="'+b.logo_base64+'" alt="logo">'
@@ -1650,6 +1670,10 @@ function templateHTML(b, copy, photoUrl, dims) {
   var sub      = copy.subheadline || (b.business_name ? (b.business_name + ' — ' + (b.trade || '')) : '');
   var cta      = copy.cta || 'Call Today';
 
+  // Use capped render dimensions for the DOM/font sizing; html2canvas will
+  // upscale by renderDimsFor(dims).scale during capture to hit target px.
+  var rd = renderDimsFor(dims);
+  dims = { w: rd.w, h: rd.h, mm: dims.mm, dpi: dims.dpi, cat: dims.cat, shape: dims.shape, sizeText: dims.sizeText, name: dims.name };
   var W = dims.w;
   var hSize  = Math.round(W * 0.058);
   var h2Size = Math.round(W * 0.022);
@@ -1859,7 +1883,11 @@ async function captureCanvas() {
   await new Promise(function(r){ setTimeout(r, 450); });
   var node = document.querySelector('#renderMount .tmpl');
   if (!node) throw new Error('Nothing to render yet');
-  return await html2canvas(node, { scale:1, useCORS:true, backgroundColor:'#ffffff' });
+  // MKT7: capture at scale = target_w / rendered_w so output hits the spec'd
+  // pixel size even when the DOM is rendered at our capped MAX_RENDER_PX.
+  var dims = MATERIALS[STATE.material];
+  var captureScale = dims && dims.w > MAX_RENDER_PX ? (dims.w / MAX_RENDER_PX) : 1;
+  return await html2canvas(node, { scale: captureScale, useCORS: true, backgroundColor: '#ffffff' });
 }
 
 async function downloadFile(kind) {
