@@ -311,16 +311,14 @@ footer a{color:var(--gold);text-decoration:none}
   </div>
 </nav>
 
-<!-- Mobile sub-nav — shows only below 760px (sidebar replacement) -->
+<!-- DEC2 2026-05-25: collapsed to 5 sections. Each button maps to one (or
+     several) underlying views; navView handles the composition. -->
 <nav class="fin-mobile-tabs" aria-label="Finance sections">
-  <button data-view="graphs" class="active" onclick="navView('graphs')">Graphs</button>
-  <button data-view="statements" onclick="navView('statements')">Statements</button>
-  <button data-view="projects" onclick="navView('projects')">Projects</button>
-  <button data-view="analytics" onclick="navView('analytics')">Analytics</button>
-  <button data-view="est-statements" onclick="navView('est-statements')">Est. Statements</button>
-  <button data-view="import" onclick="navView('import')">Import</button>
-  <button data-view="integrations" onclick="navView('integrations')">Integrations</button>
-  <button data-view="connect" onclick="navView('connect')">Connect</button>
+  <button data-tab="dashboard"  class="active" onclick="navTab('dashboard')">Dashboard</button>
+  <button data-tab="graphs"     onclick="navTab('graphs')">Graphs</button>
+  <button data-tab="statements" onclick="navTab('statements')">Statements</button>
+  <button data-tab="projects"   onclick="navTab('projects')">Projects</button>
+  <button data-tab="settings"   onclick="navTab('settings')">Settings</button>
 </nav>
 
 <div class="fin-app">
@@ -331,40 +329,30 @@ footer a{color:var(--gold);text-decoration:none}
       <svg width="34" height="34" viewBox="0 0 68 68"><use href="#mark-f"/></svg>
       <div><div class="fsb-name">Finance</div><div class="fsb-sub">Analytics</div></div>
     </div>
-    <div class="fin-side-label">Dashboard</div>
-    <button class="fin-nav active" data-view="graphs" onclick="navView('graphs')">
+    <!-- DEC2 2026-05-25: 5-tab sidebar (Dashboard / Graphs / Statements / Projects / Settings).
+         Analytics is folded into Graphs; Est. Statements is appended to Statements;
+         Data Import + Integrations + Connect are all sections of Settings. -->
+    <div class="fin-side-label">Sections</div>
+    <button class="fin-nav active" data-tab="dashboard" onclick="navTab('dashboard')">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+      <span>Dashboard</span>
+    </button>
+    <button class="fin-nav" data-tab="graphs" onclick="navTab('graphs')">
       <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
       <span>Graphs</span>
     </button>
-    <button class="fin-nav" data-view="statements" onclick="navView('statements')">
+    <button class="fin-nav" data-tab="statements" onclick="navTab('statements')">
       <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
       <span>Statements</span>
     </button>
-    <button class="fin-nav" data-view="projects" onclick="navView('projects')">
+    <button class="fin-nav" data-tab="projects" onclick="navTab('projects')">
       <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h18v13H3z"/><path d="M8 7V4h8v3"/></svg>
       <span>Projects</span>
     </button>
-    <button class="fin-nav" data-view="analytics" onclick="navView('analytics')">
-      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21H3V3"/><path d="M7 14l4-4 3 3 5-6"/></svg>
-      <span>Analytics</span>
-    </button>
-    <button class="fin-nav" data-view="est-statements" onclick="navView('est-statements')">
-      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11H5a2 2 0 0 0-2 2v7h6V11z"/><path d="M15 7h-4a2 2 0 0 0-2 2v11h8V9a2 2 0 0 0-2-2z"/><path d="M21 3h-4a2 2 0 0 0-2 2v15h6V5a2 2 0 0 0-2-2z"/></svg>
-      <span>Est. Statements</span>
-    </button>
     <div class="fin-side-spacer"></div>
-    <div class="fin-side-label">Data</div>
-    <button class="fin-nav" data-view="import" onclick="navView('import')">
-      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-      <span>Data Import</span>
-    </button>
-    <button class="fin-nav" data-view="integrations" onclick="navView('integrations')">
-      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-      <span>Integrations</span>
-    </button>
-    <button class="fin-nav" data-view="connect" onclick="navView('connect')">
-      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0l3-3m-3 3L9 5"/><rect x="3" y="12" width="18" height="9" rx="2"/></svg>
-      <span>Connect Your Numbers</span>
+    <button class="fin-nav" data-tab="settings" onclick="navTab('settings')">
+      <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span>Settings</span>
     </button>
     <div id="finSideConn" style="padding:0.6rem 1.25rem 0;font-size:0.68rem;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:0.45rem">
       <span id="finQboDot" style="width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.4)"></span>
@@ -896,12 +884,37 @@ function statusClass(s){ return 'st-'+s.toLowerCase(); }
 // ─────────────────────────────────────────────────────────────────────────────
 // VIEW NAV
 // ─────────────────────────────────────────────────────────────────────────────
+// DEC2 2026-05-25: 5-tab router. Each tab maps to one or several underlying
+// views; navTab composes them. Old single-view callers still work via the
+// legacy navView() shim below.
+var TAB_VIEWS = {
+  dashboard:  ['graphs'],                          // KPIs + Inside Finance snapshot + chart cards
+  graphs:     ['analytics'],                        // deeper service/customer/seasonal charts
+  statements: ['statements', 'est-statements'],     // Actuals + Estimated Statements stacked
+  projects:   ['projects'],
+  settings:   ['integrations', 'connect', 'import'] // Integrations row, Connect Your Numbers, Import a sheet
+};
+function navTab(tab){
+  var views = TAB_VIEWS[tab] || [tab];
+  // toggle nav highlights (sidebar + mobile)
+  document.querySelectorAll('.fin-nav[data-tab], .fin-mobile-tabs button[data-tab]').forEach(function(b){
+    b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+  });
+  // hide every view, show the composed ones
+  document.querySelectorAll('.fin-view').forEach(function(v){ v.classList.remove('active'); });
+  views.forEach(function(name){ var vw = document.getElementById('view-' + name); if (vw) vw.classList.add('active'); });
+  // trigger any per-view post-render hooks
+  if (views.indexOf('graphs')    !== -1) setTimeout(resizeCharts, 30);
+  if (views.indexOf('analytics') !== -1) { try { buildAnalytics(); } catch(_){} setTimeout(resizeCharts, 30); }
+  try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch(_) { window.scrollTo(0,0); }
+}
+// Legacy shim: any older code path calling navView('graphs') etc. still works.
 function navView(view){
-  document.querySelectorAll('.fin-nav[data-view], .fin-mobile-tabs button[data-view]').forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-view')===view); });
+  // Map a single view name back to the new tab that contains it.
+  for (var t in TAB_VIEWS) if (TAB_VIEWS[t].indexOf(view) !== -1) return navTab(t);
+  // Fallback: behave like before for any view we don't recognize.
   document.querySelectorAll('.fin-view').forEach(function(v){ v.classList.remove('active'); });
   var vw = document.getElementById('view-'+view); if(vw) vw.classList.add('active');
-  if(view==='graphs') setTimeout(resizeCharts,30);
-  if(view==='analytics'){ buildAnalytics(); setTimeout(resizeCharts,30); }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
