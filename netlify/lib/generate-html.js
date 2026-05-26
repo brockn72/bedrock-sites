@@ -231,9 +231,83 @@ function generateCustomerSite(lead) {
 
   const pair = FONT_PAIRS[fontPair] || FONT_PAIRS.classic;
 
+  // WEB1 2026-05-25: deep SEO + AI-discoverability metadata for every deployed
+  // customer site. Everything below is driven by the contractor's profile data
+  // (no fabrication). Mirrors what Mad Ox got via hand-edits.
+  const pageTitle = `${esc(biz)}${city?' — '+esc(city):''} | ${esc(tradeLabel)}`;
+  const pageDesc  = esc(d.subheadline || (biz + ' — ' + tradeLabel + ' serving ' + (city || 'your area') + '. Call ' + (phone || 'today') + ' for a free estimate.'));
+  const siteUrl   = lead.live_url || lead.site_url || (d._selectedDomain ? ('https://' + d._selectedDomain) : '');
+  const ogImage   = (d.photos && d.photos[0]) || (Array.isArray(d.hero_photos) && d.hero_photos[0]) || '';
+  const serviceAreasList = (d.service_areas && d.service_areas.length ? d.service_areas : (city ? [city] : []));
+  const trade     = lead.trade || '';
+
+  // LocalBusiness JSON-LD. Includes telephone, address, geo-coverage list, and
+  // serviceType so Google Maps / Knowledge Panel / AI-search can pick it up.
+  const ldBusiness = {
+    "@context": "https://schema.org",
+    "@type":    ["LocalBusiness", "ProfessionalService"],
+    "name":     biz,
+    "description": pageDesc,
+    "telephone":   phone || undefined,
+    "email":       email || undefined,
+    "url":         siteUrl || undefined,
+    "address": city ? { "@type": "PostalAddress", "addressLocality": city, "addressCountry": "US" } : undefined,
+    "areaServed":  serviceAreasList.length ? serviceAreasList.map((a) => ({ "@type": "City", "name": a })) : undefined,
+    "serviceType": services && services.length ? services : (tradeLabel || undefined),
+    "priceRange":  "$$"
+  };
+  // Drop undefined keys so JSON stays clean.
+  Object.keys(ldBusiness).forEach((k) => { if (ldBusiness[k] === undefined) delete ldBusiness[k]; });
+
+  // FAQPage JSON-LD when the contractor wrote FAQs in the builder — feeds
+  // Google's FAQ rich snippet + AI answer engines (Perplexity / ChatGPT).
+  const faqs = Array.isArray(d.faqs) ? d.faqs.filter((q) => q && q.question && q.answer) : [];
+  const ldFaq = faqs.length ? {
+    "@context": "https://schema.org",
+    "@type":    "FAQPage",
+    "mainEntity": faqs.map((q) => ({
+      "@type": "Question",
+      "name":  String(q.question),
+      "acceptedAnswer": { "@type": "Answer", "text": String(q.answer) }
+    }))
+  } : null;
+
+  // Optional geo coordinates — populated when the builder captured them on
+  // the contractor's city pick (d._geo = {lat, lng}). Skipped otherwise.
+  const geoLat = d._geo && d._geo.lat;
+  const geoLng = d._geo && d._geo.lng;
+
   let html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>${esc(biz)}${city?' — '+esc(city):''} ${esc(tradeLabel)}</title>
-<meta name="description" content="${esc(d.subheadline||biz+' — '+tradeLabel+' serving '+city)}">
+<title>${pageTitle}</title>
+<meta name="description" content="${pageDesc}">
+<meta name="author" content="${esc(biz)}">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+${city ? `<meta name="geo.region" content="US">
+<meta name="geo.placename" content="${esc(city)}">` : ''}
+${(geoLat && geoLng) ? `<meta name="geo.position" content="${geoLat};${geoLng}">
+<meta name="ICBM" content="${geoLat}, ${geoLng}">` : ''}
+${siteUrl ? `<link rel="canonical" href="${esc(siteUrl)}">` : ''}
+
+<!-- Open Graph (Facebook / LinkedIn / iMessage previews) -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="${esc(biz)}">
+<meta property="og:title" content="${pageTitle}">
+<meta property="og:description" content="${pageDesc}">
+${siteUrl ? `<meta property="og:url" content="${esc(siteUrl)}">` : ''}
+${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">
+<meta property="og:image:alt" content="${esc(biz)} — ${esc(tradeLabel)}">` : ''}
+
+<!-- Twitter card -->
+<meta name="twitter:card" content="${ogImage ? 'summary_large_image' : 'summary'}">
+<meta name="twitter:title" content="${pageTitle}">
+<meta name="twitter:description" content="${pageDesc}">
+${ogImage ? `<meta name="twitter:image" content="${esc(ogImage)}">` : ''}
+
+<!-- Structured data: LocalBusiness + (optional) FAQPage -->
+<script type="application/ld+json">${JSON.stringify(ldBusiness)}</script>
+${ldFaq ? `<script type="application/ld+json">${JSON.stringify(ldFaq)}</script>` : ''}
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300&family=Montserrat:wght@300;400;500;600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600&family=Merriweather:wght@300;400;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
