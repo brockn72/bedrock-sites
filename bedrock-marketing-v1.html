@@ -828,11 +828,31 @@ footer a:hover{text-decoration:underline}
             <a href="#" onclick="navTo('brand');return false" style="color:var(--gold);font-weight:600">finish your Brand Kit →</a>
           </div>
 
-          <!-- material picker -->
+          <!-- MKT1 2026-05-25: Recipe-first picker. Each recipe locks the
+               material + template + a copy prompt so the AI never designs
+               freely — it fills validated short slots inside a chosen layout. -->
           <div style="background:#fff;border:1px solid var(--border-light);border-top:3px solid var(--gold);padding:1.5rem;margin-bottom:1.25rem">
-            <div class="control-label" style="margin-bottom:10px">Choose a material</div>
-            <div class="mat-grid" id="matGrid"></div>
+            <div class="control-label" style="margin-bottom:10px">Pick a recipe</div>
+            <div class="recipe-grid" id="recipeGrid"></div>
+            <div style="margin-top:0.85rem;text-align:center">
+              <button type="button" class="btn-link" id="matToggleBtn" onclick="toggleMatPicker()" style="background:none;border:none;color:var(--slate);font-family:'DM Sans',sans-serif;font-size:0.72rem;cursor:pointer;text-decoration:underline">Or pick a custom format &rarr;</button>
+            </div>
+            <div id="matPickerWrap" style="display:none;margin-top:0.85rem;padding-top:0.85rem;border-top:1px dashed var(--border-light)">
+              <div class="control-label" style="margin-bottom:10px">Custom format (advanced)</div>
+              <div class="mat-grid" id="matGrid"></div>
+            </div>
           </div>
+
+          <style>
+            .recipe-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.6rem}
+            @media(max-width:780px){.recipe-grid{grid-template-columns:repeat(2,1fr)}}
+            .recipe-card{background:#fff;border:1px solid var(--border-light);border-left:3px solid var(--gold);border-radius:6px;padding:0.7rem 0.85rem;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:0.3rem;transition:background .12s,border-color .12s,transform .08s;font-family:inherit}
+            .recipe-card:hover{background:#FFF8EC;transform:translateY(-1px)}
+            .recipe-card.active{border-left-color:#A8711A;background:#FFF8EC;box-shadow:0 0 0 1px var(--gold)}
+            .recipe-card .rc-name{font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:700;color:var(--navy-deep);line-height:1.1}
+            .recipe-card .rc-fmt{font-family:'DM Sans',sans-serif;font-size:0.62rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);font-weight:700}
+            .recipe-card .rc-hint{font-family:'DM Sans',sans-serif;font-size:0.66rem;color:var(--slate);line-height:1.4}
+          </style>
 
           <div class="gen-layout">
 
@@ -995,6 +1015,23 @@ var MATERIALS = {
 };
 var MATERIAL_ORDER = ['social','flyer','door','yard','bizcard','postcard','emailsig','fbcover'];
 
+// MKT1 2026-05-25: fixed recipes. Each binds a material + a default template +
+// a copy intent (passed to the AI as campaign_note so the model knows what the
+// asset is for). The AI still only fills the three text slots (headline,
+// subheadline, CTA); the layout/colors/fonts are deterministic from the Brand
+// Kit. Add new recipes here, not by inventing new templates.
+var RECIPES = [
+  { key:'service_promo',  name:'Service Promo',     material:'social',   template:1, fmtLabel:'Instagram 1080×1080', hint:'Promote one specific service', defaultCta:'Call Today',     intent:'Service promo for a single service — what it is, why it matters, how to book.' },
+  { key:'seasonal_offer', name:'Seasonal Offer',    material:'postcard', template:1, fmtLabel:'Postcard 6×4 in',     hint:'Spring tune-up, fall cleanup, etc.', defaultCta:'Reserve Your Spot', intent:'Seasonal promotion — timely offer with a discount or limited window.' },
+  { key:'just_completed', name:'Just-Completed',    material:'door',     template:1, fmtLabel:'Door hanger 4×11 in', hint:'Drop on the block after a job',     defaultCta:'See Our Work',  intent:'Just-completed neighborhood door hanger — "we just did this kind of work right around the corner" social proof.' },
+  { key:'yard_sign',      name:'Yard Sign',         material:'yard',     template:1, fmtLabel:'Yard sign 18×24 in',  hint:'For the job-site lawn',              defaultCta:'Get a Quote',   intent:'Yard sign for the active job site — bold, readable from the street.' },
+  { key:'review_request', name:'Review Request',    material:'postcard', template:2, fmtLabel:'Postcard 6×4 in',     hint:'Ask happy customers to review',     defaultCta:'Leave a Review',intent:'Review request to a finished customer — thank them, ask for a Google review, make it easy.' },
+  { key:'referral_card',  name:'Referral Card',     material:'bizcard',  template:2, fmtLabel:'Business card 3.5×2 in', hint:'Thank-you card with a referral ask', defaultCta:'Refer a Friend', intent:'Referral card — thank-you + a small reward for sending neighbors our way.' },
+  { key:'hiring',         name:'Hiring',            material:'social',   template:2, fmtLabel:'Instagram 1080×1080', hint:'We\'re hiring — roles + apply path', defaultCta:'Hiring Now',     intent:'Hiring post — what role, pay range hint, how to apply. Direct, no fluff.' },
+  { key:'emergency_card', name:'Emergency Card',    material:'bizcard',  template:1, fmtLabel:'Business card 3.5×2 in', hint:'After-hours phone + service area',  defaultCta:'Call Now',       intent:'Emergency contact card — 24/7 number, what counts as an emergency, service area.' },
+];
+function recipeByKey(k){ for (var i=0;i<RECIPES.length;i++) if (RECIPES[i].key === k) return RECIPES[i]; return null; }
+
 var TONE_EXAMPLES = {
   'Bold':              '"We show up. We get it done. No excuses."',
   'Friendly':          '"Hey neighbor — need a hand with the plumbing? We&rsquo;ve got you."',
@@ -1096,6 +1133,7 @@ function navTo(view) {
   var vw = document.getElementById('view-'+view); if (vw) vw.style.display = 'block';
   if (view === 'build') {
     document.getElementById('brandLockNote').style.display = STATE.brandKitComplete ? 'none' : 'block';
+    paintRecipeGrid();
     paintMatGrid();
     renderPreview();
   }
@@ -1640,6 +1678,48 @@ function removePhoto(i) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// MKT1: Recipe grid + selection. Selecting a recipe locks the material + template
+// and seeds the campaign-note + CTA so the AI knows exactly what asset it's for.
+function paintRecipeGrid(){
+  var grid = document.getElementById('recipeGrid'); if (!grid) return;
+  grid.innerHTML = RECIPES.map(function(r){
+    var active = STATE.recipe === r.key ? ' active' : '';
+    return '<button type="button" class="recipe-card'+active+'" data-recipe="'+r.key+'" '
+      + 'aria-pressed="' + (STATE.recipe === r.key ? 'true' : 'false') + '" '
+      + 'aria-label="Pick recipe: '+escapeHTML(r.name)+' ('+escapeHTML(r.fmtLabel)+')" '
+      + 'onclick="selectRecipe(\''+r.key+'\')">'
+      + '<span class="rc-fmt">'+escapeHTML(r.fmtLabel)+'</span>'
+      + '<span class="rc-name">'+escapeHTML(r.name)+'</span>'
+      + '<span class="rc-hint">'+escapeHTML(r.hint)+'</span>'
+      + '</button>';
+  }).join('');
+}
+function selectRecipe(key){
+  var r = recipeByKey(key); if (!r) return;
+  STATE.recipe = key;
+  STATE.material = r.material;
+  STATE.template = r.template;
+  // Seed campaign_note so the AI knows the recipe intent, and prefill the CTA
+  // so the contractor sees a sane default for THIS recipe (still editable).
+  var cn = document.getElementById('campaign_note');
+  if (cn && !cn.value.trim()) cn.value = r.intent;
+  var cta = document.getElementById('copy_cta');
+  if (cta && !cta.value.trim()) cta.value = r.defaultCta;
+  paintRecipeGrid();
+  paintMatGrid && paintMatGrid();
+  // Update the visible "Selected Material" header.
+  var sel = document.getElementById('selectedMat');     if (sel) sel.textContent = MATERIALS[r.material].name;
+  var sz  = document.getElementById('selectedMatSize'); if (sz)  sz.textContent  = MATERIALS[r.material].sizeText;
+  renderPreview && renderPreview();
+}
+function toggleMatPicker(){
+  var w = document.getElementById('matPickerWrap'); if (!w) return;
+  var open = w.style.display !== 'none';
+  w.style.display = open ? 'none' : 'block';
+  var b = document.getElementById('matToggleBtn');
+  if (b) b.textContent = open ? 'Or pick a custom format →' : '← Back to recipes';
+}
+
 // MATERIAL PICKER + TEMPLATE
 // ─────────────────────────────────────────────────────────────────────────────
 function paintMatGrid() {
