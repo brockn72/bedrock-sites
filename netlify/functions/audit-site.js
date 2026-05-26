@@ -109,6 +109,7 @@ function buildChecks({ html, text, url, ps, jsonld }) {
     firstMatch(/<meta[^>]+content=["']([^"']*)["'][^>]+name=["']description["']/i, html);
 
   const localBiz = jsonld.find((n) => typeMatches(n, LOCALBUSINESS_TYPES));
+  const anySchema  = jsonld.length > 0;
   const faqSchema = jsonld.find((n) => typeMatches(n, ['faqpage']));
 
   const hasTelLink = /href=["']tel:/i.test(html);
@@ -138,6 +139,37 @@ function buildChecks({ html, text, url, ps, jsonld }) {
 
   const wordCount = text.split(/\s+/).filter(Boolean).length;
   const mentionsTrade = TRADES.some((t) => text.toLowerCase().includes(t));
+
+  // WEB4 2026-05-25: detect whether this site is actually a local-business
+  // site. We were scoring the whole world against a contractor rubric, which
+  // is why polished generic sites (apple.com, microsoft.com) landed in the 40s
+  // — they fail "city in title" + "LocalBusiness schema" through no fault of
+  // their own. Sites that fail this detection are scored on UNIVERSAL checks
+  // only (speed, https, meta, title, OG); contractor checks are marked 'n/a'
+  // and contribute zero to denominator.
+  const localSignals = [
+    !!localBiz,
+    hasTelLink,
+    addrText,
+    mentionsTrade,
+    cityInTitle || cityInH1,
+  ].filter(Boolean).length;
+  const isLocalBusinessSite = localSignals >= 2;
+
+  // WEB4: universal best-practice signals (apply to every site type).
+  const hasTitle = !!(titleTag && titleTag.length >= 10);
+  const hasOgTitle = /<meta[^>]+property=["']og:title["']/i.test(html);
+  const hasOgDesc  = /<meta[^>]+property=["']og:description["']/i.test(html);
+  const hasOgImage = /<meta[^>]+property=["']og:image["']/i.test(html);
+  const hasOg = hasOgTitle && hasOgDesc;
+
+  // WEB8: GEO / AI-answer-engine readiness signals (clear pricing + detailed
+  // service area). These help contractor sites rank in Perplexity / ChatGPT /
+  // Google AI Overviews — the things people actually search now.
+  const hasPricingSignal = /\$\s?\d{2,}\b|\bstarts?\s+at\b|\bstarting\s+(?:at|from)\b|\bpricing\b|\bprice list\b|\bflat rate\b|\bhourly\s+rate\b/i.test(text);
+  const cityListMatches = text.match(cityStateRe);
+  const areaListMatches = (text.match(/\b(?:we serve|service area|areas served|serving)\b/gi) || []).length;
+  const hasServiceAreaDetail = areaListMatches > 0 && (cityListMatches || zipText);
 
   const schemaName = (localBiz?.name || '').toLowerCase();
   const cleanTitle = titleTag.toLowerCase().split(/[|\-–—:·]/)[0].trim();
@@ -285,6 +317,30 @@ function buildChecks({ html, text, url, ps, jsonld }) {
     nameResult = "We couldn't pin down a consistent business name anywhere on the page.";
   }
 
+  // WEB4: universal best-practice checks.
+  const titleTier = hasTitle ? 'good' : 'bad';
+  const titleResult = hasTitle
+    ? 'Your page has a real <title> tag — the line Google shows in search results.'
+    : 'Your page is missing a meaningful <title> tag — Google has nothing to show in search results.';
+  const ogTier = hasOg && hasOgImage ? 'good' : (hasOg || hasOgImage ? 'warn' : 'bad');
+  const ogResult = hasOg && hasOgImage
+    ? 'Open Graph tags are in place — links you share on social media show a real preview.'
+    : (hasOg || hasOgImage
+      ? 'Some Open Graph tags are set but not all — your shared links may show an incomplete preview.'
+      : 'No Open Graph tags. When someone shares your link, it shows a plain URL instead of a real preview card.');
+
+  // WEB8: GEO / AI-answer-engine readiness — clear pricing + service area detail.
+  const pricingTier = hasPricingSignal ? 'good' : 'warn';
+  const pricingResult = hasPricingSignal
+    ? 'You give the visitor a concrete pricing signal — AI answer engines love this.'
+    : 'No pricing detail on the page. AI answers favor businesses that say "starts at $X" or list a flat rate.';
+  const areaDetailTier = hasServiceAreaDetail ? 'good' : (areaListMatches || cityListMatches ? 'warn' : 'bad');
+  const areaDetailResult = hasServiceAreaDetail
+    ? 'Your service area is spelled out clearly with cities or ZIP codes — exactly what AI search needs.'
+    : (areaListMatches || cityListMatches
+      ? 'You mention a service area but not in detail — listing specific cities or ZIP codes helps Google + AI rank you for those areas.'
+      : 'No clear service area listed. "We serve all of Wisconsin" is much weaker than naming the specific cities or ZIPs.');
+
   const INFO = {
     mobile_speed: {
       why: 'Over half of local searches happen on a phone. A slow site loses the customer before they ever see your work.',
@@ -346,24 +402,74 @@ function buildChecks({ html, text, url, ps, jsonld }) {
       measures: 'Whether your business name matches across the title, headline, and schema.',
       fix: 'Use the exact same business name everywhere — site, Google profile, directories. Bedrock keeps it consistent.',
     },
+    // WEB4 new universal checks
+    page_title: {
+      why: 'The <title> tag is the line Google shows in search results. Without one, Google fills it in for you — and never as well as you would.',
+      measures: 'Whether the page has a meaningful <title> tag (at least 10 characters).',
+      fix: 'Write a title like "Service + City | Business Name." Bedrock generates this automatically.',
+    },
+    open_graph: {
+      why: "When someone shares your site in Messages / Facebook / LinkedIn, Open Graph tags decide whether the link shows a real preview or a plain URL. Real previews get clicked far more.",
+      measures: 'Whether og:title, og:description, and og:image are present.',
+      fix: 'Add Open Graph meta tags with a title, description, and hero image. Bedrock writes these for you.',
+    },
+    any_schema: {
+      why: 'Structured data (Schema.org) is how a search result becomes a "rich" result with extra info like ratings, FAQ snippets, or product details.',
+      measures: 'Whether the page exposes any JSON-LD structured data.',
+      fix: 'Add Organization / Product / Article schema depending on what the page is. Bedrock injects the right schema by default.',
+    },
+    // WEB8 new GEO checks
+    clear_pricing: {
+      why: 'AI answer engines (Perplexity, ChatGPT, Google AI Overviews) preferentially quote businesses that show a concrete pricing signal — "starts at $X," "$Y flat rate," etc.',
+      measures: 'Whether a real pricing signal appears in the page text.',
+      fix: 'Show a starting price, hourly rate, or flat-rate range next to each service. Bedrock surfaces a Pricing section by default.',
+    },
+    service_area_detail: {
+      why: '"We serve the entire state" is far weaker than "We serve Milwaukee, Brookfield, Waukesha, and Wauwatosa." Specific cities + ZIPs win local + AI ranking.',
+      measures: 'Whether you spell out specific cities / ZIPs in a Service Area section.',
+      fix: 'List 5–15 specific cities or ZIPs you serve. Bedrock includes a Service Areas section that uses your real list.',
+    },
   };
 
-  const raw = [
-    ['Performance', 'mobile_speed', 'Loads fast on a phone', 15, speedTier, speedResult],
-    ['Performance', 'load_under_3s', 'First content in under 3 seconds', 10, fcpTier, fcpResult],
-    ['Local SEO', 'phone_visible', 'Phone number is tap-to-call', 10, phoneTier, phoneResult],
-    ['Local SEO', 'address_present', 'Address or service area shown', 8, addrTier, addrResult],
-    ['Local SEO', 'city_in_title', 'Your city is in the page title', 7, cityTier, cityResult],
-    ['Local SEO', 'https', 'Secure (HTTPS) connection', 5, httpsTier,
+  // WEB4 2026-05-25: rubric is now split into UNIVERSAL checks (every site)
+  // + LOCAL-BUSINESS-ONLY checks. When detection says the audited site isn't
+  // a local business, the local checks become n/a (zero points, zero
+  // denominator) so a clean generic site can score in the 80s/90s instead of
+  // 40s through no fault of its own.
+  const universalChecks = [
+    ['Performance', 'mobile_speed',     'Loads fast on a phone',           15, speedTier,    speedResult],
+    ['Performance', 'load_under_3s',    'First content in under 3 seconds', 10, fcpTier,      fcpResult],
+    ['Security',    'https',            'Secure (HTTPS) connection',         5, httpsTier,
       isHttps ? 'Your site loads securely over HTTPS.' : 'Your site is not secure (no HTTPS). Browsers warn visitors and Google ranks you lower.'],
-    ['Schema', 'localbusiness_schema', 'LocalBusiness schema markup', 10, lbTier,
-      localBiz ? 'Your site has LocalBusiness structured data.' : 'No LocalBusiness markup — the code that tells Google and AI what your business is.'],
-    ['Schema', 'meta_description', 'Search-result description', 8, metaTier, metaResult],
-    ['Schema', 'faq_present', 'FAQ section or FAQ schema', 7, faqTier, faqResult],
-    ['GEO', 'faq_for_ai', 'Q&A content for AI search', 8, geoFaqTier, geoFaqResult],
-    ['GEO', 'service_detail', 'Detailed service descriptions', 7, svcTier, svcResult],
-    ['GEO', 'name_consistent', 'Business name consistent', 5, nameTier, nameResult],
+    ['Discoverability', 'page_title',   'Real <title> tag in the head',      5, titleTier,    titleResult],
+    ['Discoverability', 'meta_description', 'Search-result description',     8, metaTier,     metaResult],
+    ['Discoverability', 'open_graph',   'Open Graph link preview tags',      5, ogTier,       ogResult],
   ];
+  const localBusinessChecks = isLocalBusinessSite ? [
+    ['Local SEO', 'phone_visible',       'Phone number is tap-to-call',     10, phoneTier,   phoneResult],
+    ['Local SEO', 'address_present',     'Address or service area shown',    8, addrTier,    addrResult],
+    ['Local SEO', 'city_in_title',       'Your city is in the page title',   7, cityTier,    cityResult],
+    ['Schema',    'localbusiness_schema','LocalBusiness schema markup',     10, lbTier,
+      localBiz ? 'Your site has LocalBusiness structured data.' : 'No LocalBusiness markup — the code that tells Google and AI what your business is.'],
+    ['Schema',    'faq_present',         'FAQ section or FAQ schema',        7, faqTier,     faqResult],
+    ['GEO',       'faq_for_ai',          'Q&A content for AI search',        8, geoFaqTier,  geoFaqResult],
+    ['GEO',       'service_detail',      'Detailed service descriptions',    7, svcTier,     svcResult],
+    ['GEO',       'name_consistent',     'Business name consistent',         5, nameTier,    nameResult],
+    // WEB8 NEW GEO checks: pricing + service-area detail.
+    ['GEO',       'clear_pricing',       'Clear pricing on the page',        5, pricingTier, pricingResult],
+    ['GEO',       'service_area_detail', 'Service area listed in detail',    7, areaDetailTier, areaDetailResult],
+  ] : [];
+
+  // For general sites, also score "structured data of any kind" (rich-result
+  // potential, e.g. Article / Organization / Product schemas).
+  if (!isLocalBusinessSite) {
+    universalChecks.push(['Discoverability', 'any_schema', 'Structured data on the page', 7,
+      anySchema ? 'good' : 'warn',
+      anySchema ? 'Your page exposes structured data — search engines can build a richer result for you.'
+                : 'No structured data on the page. Adding Schema.org markup unlocks richer Google results.']);
+  }
+
+  const raw = universalChecks.concat(localBusinessChecks);
 
   const checks = raw.map(([cat, key, label, points, tier, result]) => ({
     cat,
@@ -375,7 +481,11 @@ function buildChecks({ html, text, url, ps, jsonld }) {
     info: INFO[key],
   }));
 
-  return { checks, scraped: scrape({ html, text, titleTag, h1, localBiz, url }) };
+  return {
+    checks,
+    siteContext: isLocalBusinessSite ? 'local_business' : 'general',
+    scraped: scrape({ html, text, titleTag, h1, localBiz, url })
+  };
 }
 
 function scrape({ html, text, titleTag, h1, localBiz, url }) {
@@ -520,7 +630,7 @@ exports.handler = async (event) => {
 
   const text = stripTags(html).slice(0, 200000);
   const jsonld = extractJsonLd(html);
-  const { checks, scraped } = buildChecks({ html, text, url, ps, jsonld });
+  const { checks, scraped, siteContext } = buildChecks({ html, text, url, ps, jsonld });
 
   let earned = 0;
   let possible = 0;
@@ -533,18 +643,32 @@ exports.handler = async (event) => {
     cats[c.cat].earned += got;
     cats[c.cat].possible += c.points;
   }
-  const score = Math.round((earned / possible) * 100);
+  const score = possible > 0 ? Math.round((earned / possible) * 100) : 0;
   const categories = Object.entries(cats).map(([name, v]) => ({
     name,
     pct: Math.round((v.earned / v.possible) * 100),
   }));
 
+  // WEB4 + WEB8: TOP 3 FIXES only, each with a plain-English next step.
+  // We sort bad > warn, then by points (biggest needle-movers first). The
+  // `fix` line on the INFO entry is the actionable plain-English sentence.
   const rank = { bad: 0, warn: 1, good: 2 };
   const topIssues = checks
     .filter((c) => c.tier !== 'good')
     .sort((a, b) => rank[a.tier] - rank[b.tier] || b.points - a.points)
     .slice(0, 3)
-    .map((c) => ({ label: c.label, result: c.result, tier: c.tier }));
+    .map((c) => ({
+      label:  c.label,
+      result: c.result,
+      tier:   c.tier,
+      // The plain-English "do this" — from INFO[c.key].fix when available.
+      next_step: c.info && c.info.fix ? c.info.fix : ''
+    }));
+
+  // WEB4: human-readable context line for the UI.
+  const siteContextLabel = siteContext === 'local_business'
+    ? 'Looks like a local-business site — scored against the full contractor rubric.'
+    : 'Doesn\'t look like a local-business site — scored against universal best practices only (no penalty for missing LocalBusiness schema, FAQ schema, etc.).';
 
   return {
     statusCode: 200,
@@ -558,6 +682,8 @@ exports.handler = async (event) => {
       checks,
       topIssues,
       scraped,
+      siteContext,
+      siteContextLabel,
       pageSpeedMeasured: ps.ok,
       fetchOk,
     }),
