@@ -734,18 +734,28 @@ footer a:hover{text-decoration:underline}
             <div class="bk-card">
               <h3>Colors</h3>
               <div class="bk-card-sub">Your brand colors. Not sure? Tap a trade palette.</div>
-              <div class="color-pickers">
+              <!-- Accessibility 2026-05-25: color inputs paired with their label via aria-label; hex inputs name themselves clearly for screen readers. -->
+              <div class="color-pickers" role="group" aria-label="Brand colors">
                 <div class="color-pick">
-                  <label class="control-label">Primary</label>
-                  <div class="color-pick-row"><input id="bk_color_primary_picker" type="color" value="#1B3557" oninput="syncColor('primary')"><input id="bk_color_primary" type="text" value="#1B3557" oninput="syncColorHex('primary')"></div>
+                  <label class="control-label" for="bk_color_primary_picker">Primary</label>
+                  <div class="color-pick-row">
+                    <input id="bk_color_primary_picker" type="color" value="#1B3557" oninput="syncColor('primary')" aria-label="Primary color picker">
+                    <input id="bk_color_primary"        type="text"  value="#1B3557" oninput="syncColorHex('primary')" aria-label="Primary color hex code">
+                  </div>
                 </div>
                 <div class="color-pick">
-                  <label class="control-label">Secondary</label>
-                  <div class="color-pick-row"><input id="bk_color_secondary_picker" type="color" value="#FFFFFF" oninput="syncColor('secondary')"><input id="bk_color_secondary" type="text" value="#FFFFFF" oninput="syncColorHex('secondary')"></div>
+                  <label class="control-label" for="bk_color_secondary_picker">Secondary</label>
+                  <div class="color-pick-row">
+                    <input id="bk_color_secondary_picker" type="color" value="#FFFFFF" oninput="syncColor('secondary')" aria-label="Secondary color picker">
+                    <input id="bk_color_secondary"        type="text"  value="#FFFFFF" oninput="syncColorHex('secondary')" aria-label="Secondary color hex code">
+                  </div>
                 </div>
                 <div class="color-pick">
-                  <label class="control-label">Accent</label>
-                  <div class="color-pick-row"><input id="bk_color_accent_picker" type="color" value="#C9922A" oninput="syncColor('accent')"><input id="bk_color_accent" type="text" value="#C9922A" oninput="syncColorHex('accent')"></div>
+                  <label class="control-label" for="bk_color_accent_picker">Accent</label>
+                  <div class="color-pick-row">
+                    <input id="bk_color_accent_picker" type="color" value="#C9922A" oninput="syncColor('accent')" aria-label="Accent color picker">
+                    <input id="bk_color_accent"        type="text"  value="#C9922A" oninput="syncColorHex('accent')" aria-label="Accent color hex code">
+                  </div>
                 </div>
               </div>
               <!-- G8a: presets collapsed behind a dropdown by default -->
@@ -761,27 +771,28 @@ footer a:hover{text-decoration:underline}
             <div class="bk-card">
               <h3>Typography</h3>
               <div class="bk-card-sub">Pick a style. We'll handle the specific font pairing.</div>
-              <div class="font-pick" id="fontPick">
-                <div class="font-card" data-font-style="modern" onclick="selectFontStyle('modern')"><div class="font-card-name">Modern</div><div class="font-card-preview" style="font-family:'DM Sans',sans-serif">Aa</div></div>
-                <div class="font-card" data-font-style="classic" onclick="selectFontStyle('classic')"><div class="font-card-name">Classic</div><div class="font-card-preview" style="font-family:'Cormorant Garamond',serif">Aa</div></div>
-                <div class="font-card" data-font-style="bold" onclick="selectFontStyle('bold')"><div class="font-card-name">Bold</div><div class="font-card-preview" style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em">Aa</div></div>
-                <div class="font-card" data-font-style="rugged" onclick="selectFontStyle('rugged')"><div class="font-card-name">Rugged</div><div class="font-card-preview" style="font-family:'Oswald',sans-serif">Aa</div></div>
+              <div class="font-pick" id="fontPick" role="radiogroup" aria-label="Typography style — pick one">
+                <div class="font-card" data-font-style="modern"  role="radio" tabindex="0" aria-checked="false" aria-label="Modern typography"  onclick="selectFontStyle('modern')"  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectFontStyle('modern');}"><div class="font-card-name">Modern</div><div class="font-card-preview" style="font-family:'DM Sans',sans-serif">Aa</div></div>
+                <div class="font-card" data-font-style="classic" role="radio" tabindex="0" aria-checked="false" aria-label="Classic typography" onclick="selectFontStyle('classic')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectFontStyle('classic');}"><div class="font-card-name">Classic</div><div class="font-card-preview" style="font-family:'Cormorant Garamond',serif">Aa</div></div>
+                <div class="font-card" data-font-style="bold"    role="radio" tabindex="0" aria-checked="false" aria-label="Bold typography"    onclick="selectFontStyle('bold')"    onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectFontStyle('bold');}"><div class="font-card-name">Bold</div><div class="font-card-preview" style="font-family:'Bebas Neue',sans-serif;letter-spacing:0.05em">Aa</div></div>
+                <div class="font-card" data-font-style="rugged"  role="radio" tabindex="0" aria-checked="false" aria-label="Rugged typography"  onclick="selectFontStyle('rugged')"  onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectFontStyle('rugged');}"><div class="font-card-name">Rugged</div><div class="font-card-preview" style="font-family:'Oswald',sans-serif">Aa</div></div>
               </div>
             </div>
 
             <div class="bk-card">
               <h3>Voice &amp; Tone</h3>
               <div class="bk-card-sub">How should your marketing sound? Pick one &mdash; this drives any AI copy.</div>
-              <div class="tone-chips" id="toneChips">
-                <button type="button" class="tone-chip" data-tone="Bold"             onclick="selectTone('Bold')">Bold</button>
-                <button type="button" class="tone-chip" data-tone="Friendly"         onclick="selectTone('Friendly')">Friendly</button>
-                <button type="button" class="tone-chip" data-tone="Premium"          onclick="selectTone('Premium')">Premium</button>
-                <button type="button" class="tone-chip" data-tone="Family-owned"     onclick="selectTone('Family-owned')">Family-owned</button>
-                <button type="button" class="tone-chip" data-tone="Industrial"       onclick="selectTone('Industrial')">Industrial</button>
-                <button type="button" class="tone-chip" data-tone="Emergency-focused" onclick="selectTone('Emergency-focused')">Emergency</button>
-                <button type="button" class="tone-chip" data-tone="Modern"           onclick="selectTone('Modern')">Modern</button>
-                <button type="button" class="tone-chip" data-tone="Rugged"           onclick="selectTone('Rugged')">Rugged</button>
-                <button type="button" class="tone-chip" data-tone="Luxury"           onclick="selectTone('Luxury')">Luxury</button>
+              <!-- Accessibility 2026-05-25: chips form a single-select group; selectTone() flips aria-pressed -->
+              <div class="tone-chips" id="toneChips" role="radiogroup" aria-label="Brand voice — pick one tone">
+                <button type="button" class="tone-chip" data-tone="Bold"              role="radio" aria-checked="false" aria-label="Bold tone"              onclick="selectTone('Bold')">Bold</button>
+                <button type="button" class="tone-chip" data-tone="Friendly"          role="radio" aria-checked="false" aria-label="Friendly tone"          onclick="selectTone('Friendly')">Friendly</button>
+                <button type="button" class="tone-chip" data-tone="Premium"           role="radio" aria-checked="false" aria-label="Premium tone"           onclick="selectTone('Premium')">Premium</button>
+                <button type="button" class="tone-chip" data-tone="Family-owned"      role="radio" aria-checked="false" aria-label="Family-owned tone"      onclick="selectTone('Family-owned')">Family-owned</button>
+                <button type="button" class="tone-chip" data-tone="Industrial"        role="radio" aria-checked="false" aria-label="Industrial tone"        onclick="selectTone('Industrial')">Industrial</button>
+                <button type="button" class="tone-chip" data-tone="Emergency-focused" role="radio" aria-checked="false" aria-label="Emergency-focused tone" onclick="selectTone('Emergency-focused')">Emergency</button>
+                <button type="button" class="tone-chip" data-tone="Modern"            role="radio" aria-checked="false" aria-label="Modern tone"            onclick="selectTone('Modern')">Modern</button>
+                <button type="button" class="tone-chip" data-tone="Rugged"            role="radio" aria-checked="false" aria-label="Rugged tone"            onclick="selectTone('Rugged')">Rugged</button>
+                <button type="button" class="tone-chip" data-tone="Luxury"            role="radio" aria-checked="false" aria-label="Luxury tone"            onclick="selectTone('Luxury')">Luxury</button>
               </div>
               <div id="toneExample" class="tone-example"></div>
               <div class="field" style="margin-top:1rem"><label>Target customer (optional)</label><input id="bk_target_customer" type="text" placeholder="Homeowners 35-65 who care about quality, not the cheapest bid"></div>
@@ -1662,12 +1673,21 @@ function ensureTradeDefaultPalette(){
 }
 function selectFontStyle(style){
   STATE.brandKit.font_style = style;
-  document.querySelectorAll('#fontPick .font-card').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-font-style') === style); });
+  // Accessibility: flip aria-checked alongside the visual .active state.
+  document.querySelectorAll('#fontPick .font-card').forEach(function(c){
+    var on = c.getAttribute('data-font-style') === style;
+    c.classList.toggle('active', on);
+    c.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
   updateBrandSummary();
 }
 function selectTone(tone){
   STATE.brandKit.tone = tone;
-  document.querySelectorAll('#toneChips .tone-chip').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-tone') === tone); });
+  document.querySelectorAll('#toneChips .tone-chip').forEach(function(c){
+    var on = c.getAttribute('data-tone') === tone;
+    c.classList.toggle('active', on);
+    c.setAttribute('aria-checked', on ? 'true' : 'false');
+  });
   var ex = document.getElementById('toneExample');
   if (ex && TONE_EXAMPLES[tone]) { ex.innerHTML = TONE_EXAMPLES[tone]; ex.classList.add('show'); }
   updateBrandSummary();
