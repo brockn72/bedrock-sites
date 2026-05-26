@@ -1061,30 +1061,54 @@ function navTo(view) {
   if (view === 'library' || view === 'campaigns') loadMarketingAssets();
   try { window.scrollTo({ top:0, behavior:'instant' }); } catch(e){}
 }
-// B6b: completeness check per spec — must have (logo OR colors) AND at least one font selected.
+// DEC4 2026-05-25: tighter gate — logo + colors + tone + contact info before
+// Build Materials unlocks. (Was "(logo OR colors) AND font" — too loose.)
+// "Logo" satisfies either an uploaded image OR a generated wordmark; "colors"
+// means anything other than the navy/white/gold defaults; "tone" is the
+// brand-voice chip; "contact info" is a phone or website the asset can use.
+// missingBrandKitFields() returns the list of what's still needed so the lock
+// modal can spell it out instead of saying "incomplete".
 function isBrandKitMinimallyComplete(){
-  if (!STATE || !STATE.brandKit) return false;
+  return missingBrandKitFields().length === 0;
+}
+function missingBrandKitFields(){
+  if (!STATE || !STATE.brandKit) return ['logo','colors','tone','contact'];
   var k = STATE.brandKit;
-  var hasLogo = !!(k.logo_url || k.logo_base64);
+  var miss = [];
+  var hasLogo = !!(k.logo_url || k.logo_base64 || k.wordmark_generated);
+  if (!hasLogo) miss.push('logo');
   var DEFAULT_PRIMARY = '#1B3557', DEFAULT_SECONDARY = '#FFFFFF', DEFAULT_ACCENT = '#C9922A';
   var hasColors = (k.color_primary && k.color_primary.toUpperCase() !== DEFAULT_PRIMARY)
                || (k.color_secondary && k.color_secondary.toUpperCase() !== DEFAULT_SECONDARY)
                || (k.color_accent && k.color_accent.toUpperCase() !== DEFAULT_ACCENT);
-  var hasFont = !!k.font_style;
-  return (hasLogo || hasColors) && hasFont;
+  if (!hasColors) miss.push('colors');
+  if (!k.tone) miss.push('tone');
+  var hasContact = !!(k.phone || k.website);
+  if (!hasContact) miss.push('contact');
+  return miss;
+}
+function lockBody(checklist){
+  return ''
+    + '<div class="bk-lock-eye">Brand Kit required</div>'
+    + '<h3>Finish your Brand Kit first</h3>'
+    + '<p>You only do this once. Every flyer, post, sign, and business card uses your colors, logo, fonts, and contact info automatically.</p>'
+    + (checklist ? '<div style="font-weight:700;font-size:0.78rem;color:#0D1B2E;letter-spacing:0.04em;margin-top:0.85rem">Still needed:</div>' + checklist : '')
+    + '<div class="bk-lock-actions"><button type="button" class="btn-outline" onclick="document.getElementById(\'bkLockModal\').classList.remove(\'show\')">Not yet</button>'
+    + '<button type="button" class="btn-gold" onclick="document.getElementById(\'bkLockModal\').classList.remove(\'show\');navTo(\'brand\')">Go to Brand Kit &rarr;</button></div>';
 }
 function showBrandKitLockModal(){
-  var m = document.getElementById('bkLockModal'); if (m) { m.classList.add('show'); return; }
+  // DEC4: list exactly what's missing so the contractor knows what to add.
+  var missing = (typeof missingBrandKitFields === 'function') ? missingBrandKitFields() : [];
+  var labels = { logo: 'Logo (upload one or generate a wordmark)', colors: 'Brand colors (or pick a trade preset)', tone: 'Brand voice (pick a tone)', contact: 'Phone or website' };
+  var checklist = missing.length
+    ? '<ul style="margin:0.6rem 0 1rem;padding-left:1.1rem;font-size:0.84rem;line-height:1.65;color:#0D1B2E">' + missing.map(function(k){ return '<li>' + (labels[k] || k) + '</li>'; }).join('') + '</ul>'
+    : '';
+  var m = document.getElementById('bkLockModal');
+  if (m) { m.querySelector('.bk-lock-card-body').innerHTML = lockBody(checklist); m.classList.add('show'); return; }
   m = document.createElement('div');
   m.id = 'bkLockModal';
   m.className = 'bk-lock-overlay show';
-  m.innerHTML = '<div class="bk-lock-card">'
-    + '<div class="bk-lock-eye">Brand Kit required</div>'
-    + '<h3>Build your Brand Kit first</h3>'
-    + '<p>You only do this once. Every flyer, post, sign, and business card you make will automatically use your colors, logo, and fonts.</p>'
-    + '<div class="bk-lock-actions"><button type="button" class="btn-outline" onclick="document.getElementById(\'bkLockModal\').classList.remove(\'show\')">Not yet</button>'
-    + '<button type="button" class="btn-gold" onclick="document.getElementById(\'bkLockModal\').classList.remove(\'show\');navTo(\'brand\')">Go to Brand Kit &rarr;</button></div>'
-    + '</div>';
+  m.innerHTML = '<div class="bk-lock-card"><div class="bk-lock-card-body">' + lockBody(checklist) + '</div></div>';
   document.body.appendChild(m);
   if (!document.getElementById('bkLockModalStyle')) {
     var s = document.createElement('style'); s.id='bkLockModalStyle';
