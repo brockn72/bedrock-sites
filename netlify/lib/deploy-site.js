@@ -37,8 +37,10 @@ function slugify(name) {
 }
 
 async function deploySite(leadId) {
-  const cfToken     = process.env.CLOUDFLARE_API_TOKEN;
-  const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  // BE1 2026-05-25: prefer correct spelling; fall back to legacy CLOUDFARE_* typo
+  // for the brief rollout window while Netlify env vars are being renamed.
+  const cfToken     = process.env.CLOUDFLARE_API_TOKEN  || process.env.CLOUDFARE_API_TOKEN;
+  const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CLOUDFARE_ACCOUNT_ID;
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
 

@@ -26,8 +26,9 @@ async function checkAvailability(domain) {
 }
 
 async function createCloudflareZone(domain) {
-  const cfToken     = process.env.CLOUDFLARE_API_TOKEN;
-  const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  // BE1 2026-05-25: prefer correct spelling; fall back to legacy CLOUDFARE_* typo.
+  const cfToken     = process.env.CLOUDFLARE_API_TOKEN  || process.env.CLOUDFARE_API_TOKEN;
+  const cfAccountId = process.env.CLOUDFLARE_ACCOUNT_ID || process.env.CLOUDFARE_ACCOUNT_ID;
 
   const res = await fetch(`${CF_BASE}/zones`, {
     method: 'POST',
@@ -52,7 +53,8 @@ async function createCloudflareZone(domain) {
 }
 
 async function wireWorkerToZone(zoneId, domain, scriptName) {
-  const cfToken  = process.env.CLOUDFLARE_API_TOKEN;
+  // BE1 2026-05-25: prefer correct spelling; fall back to legacy CLOUDFARE_* typo.
+  const cfToken  = process.env.CLOUDFLARE_API_TOKEN || process.env.CLOUDFARE_API_TOKEN;
   const headers  = cfHeaders(cfToken);
   const dnsBase  = `${CF_BASE}/zones/${zoneId}/dns_records`;
   const routeBase = `${CF_BASE}/zones/${zoneId}/workers/routes`;
