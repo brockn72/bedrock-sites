@@ -533,6 +533,92 @@ window.bedrockInPreviewMode = function(toolKey){
           <svg width="34" height="34" viewBox="0 0 68 68"><use href="#mark-d"/></svg>
           <div><div class="dch-name">Donna</div><div class="dch-status">Ready when you are</div></div>
         </div>
+
+        <!-- OPS5 2026-05-25: workflow-menu-first surface. Six big buttons up top are the
+             primary way to start work; the chat thread + composer below stay as a fallback
+             for free-form requests. Brock can collapse the menu via the chevron (state
+             persisted in localStorage under 'donna_qs_open'). -->
+        <style>
+          .d-quickstart{padding:0.9rem 1rem 0.4rem;border-bottom:1px solid var(--border-light);background:#FAFAFA}
+          .d-quickstart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem}
+          .d-quickstart-title{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:700;color:var(--ink)}
+          .d-quickstart-sub{font-family:'DM Sans',sans-serif;font-size:0.7rem;color:var(--slate);margin-top:1px}
+          .d-quickstart-toggle{background:transparent;border:none;color:var(--slate);font-family:'DM Sans',sans-serif;font-size:0.7rem;cursor:pointer;display:inline-flex;align-items:center;gap:4px;padding:0.25rem 0.5rem;border-radius:4px}
+          .d-quickstart-toggle:hover{background:rgba(0,0,0,0.04);color:var(--ink)}
+          .d-quickstart-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem}
+          @media(max-width:520px){.d-quickstart-grid{grid-template-columns:repeat(2,1fr)}}
+          .d-quickstart-btn{display:flex;flex-direction:column;align-items:flex-start;gap:0.35rem;background:#fff;border:1px solid var(--border-light);border-left:3px solid var(--gold);border-radius:6px;padding:0.7rem 0.85rem;cursor:pointer;text-align:left;font-family:inherit;transition:background .12s,border-color .12s,transform .08s}
+          .d-quickstart-btn:hover{background:#FFF8EC;border-left-color:#A8711A;transform:translateY(-1px)}
+          .d-quickstart-btn .qs-ic{color:var(--gold);width:18px;height:18px}
+          .d-quickstart-btn .qs-name{font-family:'DM Sans',sans-serif;font-size:0.84rem;font-weight:600;color:var(--ink);line-height:1.1}
+          .d-quickstart-btn .qs-hint{font-family:'DM Sans',sans-serif;font-size:0.66rem;color:var(--slate);line-height:1.3}
+          .d-quickstart.collapsed .d-quickstart-grid{display:none}
+          .d-quickstart-fallback{font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate);text-align:center;margin-top:0.6rem;padding-top:0.55rem;border-top:1px dashed var(--border-light)}
+          .d-quickstart.collapsed .d-quickstart-fallback{display:none}
+        </style>
+        <div class="d-quickstart" id="dQuickstart">
+          <div class="d-quickstart-head">
+            <div>
+              <div class="d-quickstart-title">What do you need to get done?</div>
+              <div class="d-quickstart-sub">Pick one &mdash; Donna drafts it, you approve.</div>
+            </div>
+            <button class="d-quickstart-toggle" onclick="dQsToggle()" aria-label="Collapse quick-start menu">
+              <span id="dQsToggleLabel">Hide</span>
+              <svg id="dQsToggleIc" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+          </div>
+          <div class="d-quickstart-grid">
+            <button class="d-quickstart-btn" onclick="quickAction('customer')">
+              <svg class="qs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+              <span class="qs-name">Create Customer</span>
+              <span class="qs-hint">Add someone new to the book</span>
+            </button>
+            <button class="d-quickstart-btn" onclick="quickAction('estimate')">
+              <svg class="qs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span class="qs-name">Generate Estimate</span>
+              <span class="qs-hint">Quote a job before you start</span>
+            </button>
+            <button class="d-quickstart-btn" onclick="quickAction('invoice')">
+              <svg class="qs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              <span class="qs-name">Generate Invoice</span>
+              <span class="qs-hint">Bill after the work is done</span>
+            </button>
+            <button class="d-quickstart-btn" onclick="quickAction('receipt')">
+              <svg class="qs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 1 1V2l-1 1-3-2-3 2-3-2-3 2z"/></svg>
+              <span class="qs-name">Log Receipt</span>
+              <span class="qs-hint">Photo or details &mdash; we file it</span>
+            </button>
+            <button class="d-quickstart-btn" onclick="quickAction('schedule')">
+              <svg class="qs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+              <span class="qs-name">Schedule Job</span>
+              <span class="qs-hint">Calendar event + crew note</span>
+            </button>
+            <button class="d-quickstart-btn" onclick="quickAction('email')">
+              <svg class="qs-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+              <span class="qs-name">Draft Email</span>
+              <span class="qs-hint">Follow-up, thank-you, reminder</span>
+            </button>
+          </div>
+          <div class="d-quickstart-fallback">Or just type below &mdash; Donna understands plain English too.</div>
+        </div>
+        <script>
+          (function(){
+            try {
+              var saved = localStorage.getItem('donna_qs_open');
+              if (saved === '0') document.getElementById('dQuickstart').classList.add('collapsed');
+              if (saved === '0') { var l=document.getElementById('dQsToggleLabel'); if(l) l.textContent='Show'; }
+            } catch(_){}
+          })();
+          window.dQsToggle = function(){
+            var el = document.getElementById('dQuickstart'); if (!el) return;
+            el.classList.toggle('collapsed');
+            var collapsed = el.classList.contains('collapsed');
+            var lbl = document.getElementById('dQsToggleLabel'); if (lbl) lbl.textContent = collapsed ? 'Show' : 'Hide';
+            var ic = document.getElementById('dQsToggleIc'); if (ic) ic.style.transform = collapsed ? 'rotate(-90deg)' : '';
+            try { localStorage.setItem('donna_qs_open', collapsed ? '0' : '1'); } catch(_){}
+          };
+        </script>
+
         <div class="d-thread" id="thread"></div>
         <div class="d-composer">
           <div class="plus-menu" id="plusMenu">
@@ -1396,7 +1482,24 @@ function toggleMic(){
 }
 function togglePlus(){ document.getElementById('plusMenu').classList.toggle('open'); document.getElementById('plusBtn').classList.toggle('open'); }
 function closePlus(){ document.getElementById('plusMenu').classList.remove('open'); document.getElementById('plusBtn').classList.remove('open'); }
-function quickAction(flow){ closePlus(); startWhoFor(flow); }
+function quickAction(flow){
+  closePlus();
+  // OPS5 2026-05-25: "Draft Email" is a chat-prompt shortcut — Donna writes the
+  // email text inline (no separate document or sync). Pre-fills the composer
+  // with a starter prompt the contractor can edit before sending.
+  if (flow === 'email') {
+    if(document.getElementById('view-chat').classList.contains('active')===false) navView('chat');
+    var c = document.getElementById('composer');
+    if (c) {
+      c.value = c.value || 'Draft a short follow-up email to [customer name] about [reason]. Keep it friendly, 3 sentences, sign as me.';
+      if (typeof autoGrow === 'function') autoGrow(c);
+      c.focus();
+      try { c.setSelectionRange(c.value.indexOf('[customer name]'), c.value.indexOf('[customer name]') + '[customer name]'.length); } catch(_){}
+    }
+    return;
+  }
+  startWhoFor(flow);
+}
 document.addEventListener('click',function(e){ if(!e.target.closest('.d-composer')) closePlus(); });
 
 // ═══════════════ "WHO IS THIS FOR?" POPUP ═══════════════
