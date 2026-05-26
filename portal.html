@@ -53,7 +53,8 @@ nav{background:var(--dark);display:flex;justify-content:space-between;align-item
 .nav-wm{display:flex;flex-direction:column;line-height:1}
 .nav-logo .wordmark{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;letter-spacing:-0.02em;color:#F5E6C8}
 .nav-logo .sub{font-size:0.54rem;font-weight:500;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase;margin-top:3px}
-.nav-home-link{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .2s;border-left:1px solid rgba(255,255,255,0.12);padding-left:1.25rem;margin-left:0.25rem}
+/* A11Y1 2026-05-26: nav text bumped from 0.4 → 0.7 alpha — was ~3.8:1 contrast on navy, below AA 4.5:1 for small caps text. */
+.nav-home-link{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;transition:color .2s;border-left:1px solid rgba(255,255,255,0.12);padding-left:1.25rem;margin-left:0.25rem}
 .nav-home-link:hover{color:var(--accent)}
 .nav-right{display:flex;align-items:center;gap:1rem}
 .nav-user{font-size:0.64rem;font-weight:500;color:rgba(255,255,255,0.55);letter-spacing:0.06em}
@@ -810,7 +811,7 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
 
       <div style="display:flex;gap:0;margin-bottom:1.5rem;border-bottom:2px solid rgba(255,255,255,0.1)">
         <button id="tabLogin" onclick="switchAuthTab('login')" style="flex:1;padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border:none;background:transparent;color:var(--accent);border-bottom:2px solid var(--accent);margin-bottom:-2px;cursor:pointer">Sign In</button>
-        <button id="tabCreate" onclick="switchAuthTab('create')" style="flex:1;padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border:none;background:transparent;color:rgba(255,255,255,0.4);border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer">Create Account</button>
+        <button id="tabCreate" onclick="switchAuthTab('create')" style="flex:1;padding:0.75rem;font-family:'DM Sans',sans-serif;font-size:0.64rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;border:none;background:transparent;color:rgba(255,255,255,0.7);border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer">Create Account</button>
       </div>
 
       <div id="formLogin">
@@ -1589,7 +1590,7 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
             .wsh-yn button{min-width:0}
           }
           .wsh-side{background:var(--dark);padding:1.25rem 0.75rem}
-          .wsh-side-label{font-size:0.55rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);padding:0 0.75rem;margin-bottom:0.85rem}
+          .wsh-side-label{font-size:0.55rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.7);padding:0 0.75rem;margin-bottom:0.85rem}
           .wsh-link{display:block;width:100%;text-align:left;background:transparent;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.72);padding:0.7rem 0.85rem;border-radius:6px;transition:all .15s}
           .wsh-link:hover{background:rgba(255,255,255,0.05);color:#fff}
           .wsh-link.active{background:rgba(201,146,42,0.16);color:var(--accent);border-left:3px solid var(--accent);padding-left:calc(0.85rem - 3px)}
@@ -2524,8 +2525,9 @@ function switchAuthTab(tab) {
   var isLogin = tab === 'login';
   document.getElementById('formLogin').style.display = isLogin ? '' : 'none';
   document.getElementById('formCreate').style.display = isLogin ? 'none' : '';
-  document.getElementById('tabLogin').style.color = isLogin ? 'var(--accent)' : 'rgba(255,255,255,0.4)';
-  document.getElementById('tabCreate').style.color = isLogin ? 'rgba(255,255,255,0.4)' : 'var(--accent)';
+  // A11Y1 2026-05-26: inactive tab bumped from 0.4 → 0.7 alpha so it meets AA.
+  document.getElementById('tabLogin').style.color = isLogin ? 'var(--accent)' : 'rgba(255,255,255,0.7)';
+  document.getElementById('tabCreate').style.color = isLogin ? 'rgba(255,255,255,0.7)' : 'var(--accent)';
   document.getElementById('tabLogin').style.borderBottomColor = isLogin ? 'var(--accent)' : 'transparent';
   document.getElementById('tabCreate').style.borderBottomColor = isLogin ? 'transparent' : 'var(--accent)';
   document.getElementById('loginTitle').textContent = isLogin ? 'Welcome back.' : 'Create your account.';

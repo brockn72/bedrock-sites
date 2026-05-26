@@ -102,7 +102,8 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .fin-nav.active{background:rgba(201,146,42,0.13);color:var(--gold);border-left-color:var(--gold)}
 .fin-nav .nic{width:18px;height:18px;flex-shrink:0;opacity:0.85}
 .fin-side-spacer{flex:1}
-.fin-side-foot{padding:0.9rem 1.25rem 0;border-top:1px solid rgba(255,255,255,0.07);font-size:0.66rem;color:rgba(255,255,255,0.4);line-height:1.5}
+/* A11Y1 2026-05-26: sidebar footer text bumped from 0.4 → 0.7 alpha (AA contrast). */
+.fin-side-foot{padding:0.9rem 1.25rem 0;border-top:1px solid rgba(255,255,255,0.07);font-size:0.66rem;color:rgba(255,255,255,0.7);line-height:1.5}
 
 /* main */
 .fin-main{background:var(--off-white);overflow-x:hidden}
@@ -835,7 +836,7 @@ footer a{color:var(--gold);text-decoration:none}
 
 <!-- B7a/B8a: standardized tool footer with Back to Dashboard + My Account quick links. -->
 <style>
-  .bd-tool-foot{background:#0D1B2E;padding:0.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.08);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.5);flex-shrink:0;gap:1rem;flex-wrap:wrap}
+  .bd-tool-foot{background:#0D1B2E;padding:0.85rem 1.5rem;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,0.08);font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.75);flex-shrink:0;gap:1rem;flex-wrap:wrap}
   .bd-tool-foot a{color:rgba(255,255,255,0.65);text-decoration:none;font-weight:500;letter-spacing:0.04em;transition:color .15s}
   .bd-tool-foot a:hover{color:#C9922A}
 </style>
