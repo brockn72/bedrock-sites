@@ -199,6 +199,10 @@ table.fin-table tbody tr:hover{background:var(--off-white)}
 .st-approved::before{content:'✓'}
 .st-declined{background:var(--red-bg);color:var(--red)}
 .st-declined::before{content:'×'}
+/* FIN7 2026-05-25: sortable header affordance. */
+.fin-table th.sortable{cursor:pointer;user-select:none}
+.fin-table th.sortable:hover{color:var(--gold)}
+.fin-table th.sortable .sort-arrow{display:inline-block;margin-left:4px;color:var(--gold);font-size:0.7rem}
 .margin-bar{display:flex;align-items:center;gap:0.5rem;justify-content:flex-end}
 .margin-track{width:54px;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
 .margin-fill{height:100%;border-radius:3px}
@@ -604,13 +608,18 @@ footer a{color:var(--gold);text-decoration:none}
           <select class="select-mini" id="projDateFilter" onchange="renderProjects()">
             <option value="all">All dates</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option>
           </select>
-          <select class="select-mini" id="projMarginFilter" onchange="renderProjects()">
-            <option value="all">Any margin</option><option value="high">Above 45%</option><option value="low">Below 45%</option>
+          <!-- FIN7 2026-05-25: tightened margin filter (the "show me losers" question contractors actually ask). -->
+          <select class="select-mini" id="projMarginFilter" onchange="renderProjects()" aria-label="Filter by margin">
+            <option value="all">Any margin</option>
+            <option value="under25">Under 25% margin (warning)</option>
+            <option value="under35">Under 35% margin</option>
+            <option value="45plus">45% or higher</option>
           </select>
         </div>
         <div class="table-block">
-          <div class="table-block-head"><div class="tb-eyebrow">Projects</div><h3>Job Profitability</h3><div class="tb-sub">Revenue versus estimated cost, job by job.</div></div>
-          <div class="table-scroll"><table class="fin-table"><thead><tr><th>Job</th><th>Customer</th><th class="num">Revenue</th><th class="num">Est. Cost</th><th class="num">Est. Margin</th></tr></thead><tbody id="projectRows"></tbody></table></div>
+          <div class="table-block-head"><div class="tb-eyebrow">Projects</div><h3>Job Profitability</h3><div class="tb-sub">Revenue versus estimated cost, job by job. <strong>Click a column header to sort.</strong></div></div>
+          <!-- FIN7: sortable column headers — Revenue, Cost, Margin. -->
+          <div class="table-scroll"><table class="fin-table"><thead><tr><th>Job</th><th>Customer</th><th class="num sortable" onclick="setProjSort('revenue')" id="projSortRev">Revenue <span class="sort-arrow"></span></th><th class="num sortable" onclick="setProjSort('cost')" id="projSortCost">Est. Cost <span class="sort-arrow"></span></th><th class="num sortable" onclick="setProjSort('margin')" id="projSortMargin">Est. Margin <span class="sort-arrow">▼</span></th></tr></thead><tbody id="projectRows"></tbody></table></div>
         </div>
       </div>
     </div>
@@ -1141,6 +1150,23 @@ function renderEstimates(){
 // PROJECTS
 // ─────────────────────────────────────────────────────────────────────────────
 function marginColor(m){ return m>=50?'#3b6d11':(m>=35?'#C9922A':'#b91c1c'); }
+// FIN7 2026-05-25: sort state. Click a column header to cycle desc→asc→desc.
+var PROJ_SORT = { col: 'margin', dir: 'desc' };
+function setProjSort(col){
+  if (PROJ_SORT.col === col) PROJ_SORT.dir = PROJ_SORT.dir === 'desc' ? 'asc' : 'desc';
+  else { PROJ_SORT.col = col; PROJ_SORT.dir = 'desc'; }
+  renderProjects();
+}
+function paintSortArrows(){
+  ['projSortRev','projSortCost','projSortMargin'].forEach(function(id){
+    var el = document.getElementById(id); if (!el) return;
+    var arr = el.querySelector('.sort-arrow'); if (!arr) return;
+    var key = id === 'projSortRev' ? 'revenue' : id === 'projSortCost' ? 'cost' : 'margin';
+    arr.textContent = (PROJ_SORT.col === key) ? (PROJ_SORT.dir === 'asc' ? '▲' : '▼') : '';
+  });
+}
+function projMarginPct(p){ return (p.cost!=null && p.revenue>0) ? ((p.revenue - p.cost) / p.revenue * 100) : null; }
+
 function renderProjects(){
   var badge=document.getElementById('donnaDataBadge');
   if(badge) badge.innerHTML = DONNA_PROJECTS_ACTIVE
@@ -1149,13 +1175,26 @@ function renderProjects(){
     : '';
   var svc=document.getElementById('projServiceFilter').value, df=document.getElementById('projDateFilter').value, mf=document.getElementById('projMarginFilter').value;
   var rows = PROJECTS.filter(function(p){
-    var m=(p.cost!=null)?(p.revenue-p.cost)/p.revenue*100:null;
+    var m = projMarginPct(p);
     if(svc!=='all'&&p.service!==svc)return false;
     if(df!=='all'&&p.daysAgo>parseInt(df,10))return false;
-    if(mf==='high'&&(m==null||m<45))return false;
-    if(mf==='low'&&(m==null||m>=45))return false;
+    // FIN7: new margin-range filter values
+    if(mf==='under25' && (m == null || m >= 25)) return false;
+    if(mf==='under35' && (m == null || m >= 35)) return false;
+    if(mf==='45plus' && (m == null || m <  45)) return false;
     return true;
   });
+  // FIN7: stable sort by selected column.
+  var key = PROJ_SORT.col, dir = PROJ_SORT.dir === 'asc' ? 1 : -1;
+  rows = rows.slice().sort(function(a, b){
+    var av = key === 'margin' ? projMarginPct(a) : a[key];
+    var bv = key === 'margin' ? projMarginPct(b) : b[key];
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;            // null margins sink to the bottom regardless of dir
+    if (bv == null) return -1;
+    return (av - bv) * dir;
+  });
+  paintSortArrows();
   var tb = document.getElementById('projectRows');
   tb.innerHTML = rows.length ? rows.map(function(p){
     if(p.cost==null){
