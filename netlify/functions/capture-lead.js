@@ -1,3 +1,9 @@
+// SEC1: bot check + per-IP rate limit on signup/claim flow. Both helpers
+// degrade open if their env vars / tables aren't configured yet, so this
+// code can ship before Brock wires the Turnstile widget.
+const { verifyTurnstile }   = require('../lib/turnstile');
+const { checkAndIncrement } = require('../lib/rate-limit');
+
 // Small HTML-escape used by the welcome email so a stray "<" in someone's name
 // can't break the markup or open an injection vector.
 function escHtml(s) {
@@ -23,6 +29,7 @@ exports.handler = async (event) => {
     trade, city, services, serviceAreas, siteData, source,
     password,       // only present when source === 'claim'
     selectedDomain, // domain picked in Step 2
+    turnstileToken, // Cloudflare Turnstile token from the signup form (SEC1)
   } = body;
 
   // Merge selected domain into site_data so deploy-site can access it
@@ -81,6 +88,28 @@ exports.handler = async (event) => {
           body: JSON.stringify({ success: true, leadId }),
         };
       }
+    }
+  }
+
+  // SEC1: bot check + per-IP rate limit gating the signup / claim path. The
+  // dedup branch above can already return early, so by the time we get here
+  // we know we're about to create a real Supabase Auth account.
+  if (source === 'signup' || source === 'claim') {
+    const rl = await checkAndIncrement(event, 'signup', 3);
+    if (!rl.ok) {
+      return {
+        statusCode: 429,
+        headers: { 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfter || 3600) },
+        body: JSON.stringify({ error: rl.error }),
+      };
+    }
+    const ts = await verifyTurnstile(turnstileToken, event);
+    if (!ts.ok) {
+      return {
+        statusCode: 403,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: ts.error }),
+      };
     }
   }
 
