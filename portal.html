@@ -2759,11 +2759,22 @@ function renderDashboardActivity(d) {
 }
 
 // ── LAUNCH EDITOR ─────────────────────────────────────────────────────────────
+// DEC5 2026-05-25: post-deploy Site Editor. Reuses the existing builder
+// (sites.html), pre-loaded with the contractor's saved site_data, so they can
+// tweak text / photos / colors and trigger a redeploy without contacting us.
+// Save → PATCH lead row + POST /.netlify/functions/deploy-customer-site.
 function launchEditor() {
   if (DEMO) { alert('The site editor is disabled in demo mode — this is a preview of the client dashboard.'); return; }
   if (!currentSession || !currentLead) { alert('Site data is still loading. Please wait a moment and try again.'); return; }
-  sessionStorage.setItem('bedrock_editor_session', JSON.stringify({ token:currentSession.access_token, lead:currentLead }));
-  window.location.href = '/?portalEdit=1';
+  // Stash the session + lead so the builder can hydrate from it on the other side.
+  sessionStorage.setItem('bedrock_editor_session', JSON.stringify({
+    token: currentSession.access_token,
+    lead:  currentLead,
+  }));
+  // Redirect to the builder with the edit flag; the builder reads the session
+  // stash on boot, swaps to "edit my live site" mode, and shows a Save & Redeploy
+  // button that updates the lead row + triggers Cloudflare redeploy.
+  window.location.href = '/sites.html?edit=1&embed=builder';
 }
 
 // ── MARKETING LAUNCH ──────────────────────────────────────────────────────────

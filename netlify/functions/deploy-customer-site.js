@@ -41,10 +41,33 @@ exports.handler = async (event) => {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
-  // Require a secret header so this endpoint can't be triggered by anyone who finds the URL
-  const deploySecret = process.env.DEPLOY_SECRET;
+  // Two ways to authorize a deploy:
+  //   (1) Server-secret header `x-deploy-secret` — used by stripe-webhook and ops scripts.
+  //   (2) DEC5 2026-05-25: Supabase Bearer token where the authenticated user
+  //       owns the lead (lead.user_id === auth.uid()). Lets contractors
+  //       redeploy their own site from the post-deploy Site Editor without
+  //       handing them a shared secret.
+  const deploySecret   = process.env.DEPLOY_SECRET;
   const providedSecret = event.headers['x-deploy-secret'] || event.headers['X-Deploy-Secret'];
-  if (!deploySecret || providedSecret !== deploySecret) {
+  const auth           = (event.headers.authorization || event.headers.Authorization || '').trim();
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+  let authorized = false;
+  let authedUserId = null;
+
+  if (deploySecret && providedSecret === deploySecret) {
+    authorized = true; // path 1
+  } else if (auth.startsWith('Bearer ') && supabaseUrl && supabaseKey) {
+    // path 2 — verify the Supabase token, capture the user id for the lead-owner check below.
+    const token = auth.slice(7);
+    try {
+      const u = await fetch(`${supabaseUrl}/auth/v1/user`, {
+        headers: { Authorization: `Bearer ${token}`, apikey: supabaseKey },
+      });
+      if (u.ok) { const user = await u.json(); authedUserId = user && user.id; if (authedUserId) authorized = true; }
+    } catch (_) {}
+  }
+  if (!authorized) {
     return { statusCode: 401, body: JSON.stringify({ error: 'Unauthorized' }) };
   }
 
@@ -59,10 +82,27 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'leadId required' }) };
   }
 
+  // DEC5: when authorized via Bearer (path 2), require the authed user to own
+  // the lead. Lookup uses the service key but only confirms ownership — no
+  // mutation. The secret path skips this check (ops trust).
+  if (authedUserId && supabaseUrl && supabaseKey) {
+    try {
+      const r = await fetch(`${supabaseUrl}/rest/v1/leads?id=eq.${encodeURIComponent(leadId)}&select=user_id&limit=1`, {
+        headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` },
+      });
+      if (!r.ok) return { statusCode: 403, body: JSON.stringify({ error: 'Lead lookup failed' }) };
+      const rows = await r.json();
+      if (!rows.length || String(rows[0].user_id) !== String(authedUserId)) {
+        return { statusCode: 403, body: JSON.stringify({ error: 'You do not own this site.' }) };
+      }
+    } catch (_) {
+      return { statusCode: 403, body: JSON.stringify({ error: 'Lead ownership check failed' }) };
+    }
+  }
+
   // SEC6: enforce per-lead cooldown. If the column doesn't exist yet (pre-migration)
   // getLastDeployedAt returns null and the cooldown is effectively skipped — safe.
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_KEY;
+  // (supabaseUrl + supabaseKey hoisted above for the lead-ownership check.)
   if (supabaseUrl && supabaseKey) {
     const last = await getLastDeployedAt(supabaseUrl, supabaseKey, leadId);
     if (last) {

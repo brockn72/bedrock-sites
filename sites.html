@@ -5858,8 +5858,100 @@ window.addEventListener('DOMContentLoaded',()=>{
     const el=document.getElementById('successPaid');if(el)el.style.display='block';
     return;
   }
+  // DEC5 2026-05-25: post-deploy Site Editor mode. Portal → /sites.html?edit=1
+  // hydrates the builder from the contractor's saved site_data (stashed in
+  // sessionStorage by portal.js's launchEditor), then exposes a Save & Redeploy
+  // button instead of the four-step new-site flow.
+  if (params.get('edit') === '1') { try { startSiteEditorMode(); } catch(e){ console.warn('site editor mode init failed', e); } }
   const h=(location.hash||'').replace('#','');if(h&&document.getElementById(h)&&document.getElementById(h).classList.contains('page')){showPage(h)}dmRender('overview');checkForSavedBuild();initTiltCards();initBeliefsCarousel();
 });
+
+// DEC5 2026-05-25: hydrate the builder from a portal-stashed session blob and
+// switch to "edit my live site" mode. The builder UI stays the same; we just
+// pre-fill S with the contractor's existing site, jump to Step 3 (Build &
+// Preview), and show a Save & Redeploy button instead of Pay Now.
+function startSiteEditorMode(){
+  var raw; try { raw = sessionStorage.getItem('bedrock_editor_session'); } catch(_){}
+  if (!raw) return; // No stash — silently fall through to normal builder flow
+  var sess; try { sess = JSON.parse(raw); } catch(_){ return; }
+  var lead = sess && sess.lead; if (!lead) return;
+  var sd = lead.site_data || {};
+  // Pull the contractor's existing data into S so the preview renders their
+  // real site, not a fresh template.
+  S.trade        = lead.trade        || S.trade;
+  S.services     = lead.services     || S.services;
+  S.serviceAreas = lead.service_areas|| S.serviceAreas;
+  S.bizName      = lead.business_name|| S.bizName;
+  S.phone        = lead.phone        || S.phone;
+  S.email        = lead.email        || S.email;
+  S.city         = lead.city         || S.city;
+  S.photos       = Array.isArray(sd.photos) ? sd.photos.slice() : (S.photos || []);
+  S.photoAlts    = Array.isArray(sd.photoAlts) ? sd.photoAlts.slice() : (S.photoAlts || []);
+  S.color        = sd._color      || S.color;
+  S.heroStyle    = sd._heroStyle  || S.heroStyle;
+  S.fontPair     = sd._fontPair   || S.fontPair;
+  S.siteData     = sd;
+  S._editorMode  = true;
+  S._editorLeadId = lead.id;
+  S._editorToken  = sess.token || '';
+  // Jump straight into the builder's Step 3 (Build & Preview) — that's the
+  // sweet spot for editing existing copy/photos/colors.
+  showPage('builder');
+  try { goBS && goBS('3'); } catch(_){ }
+  // Replace the Step-4 Pay button with a Save & Redeploy button.
+  setTimeout(installEditorSaveBar, 100);
+}
+
+function installEditorSaveBar(){
+  if (document.getElementById('editorSaveBar')) return;
+  var bar = document.createElement('div');
+  bar.id = 'editorSaveBar';
+  bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:var(--dark);color:#fff;padding:0.85rem 1.25rem;display:flex;align-items:center;gap:0.85rem;justify-content:center;flex-wrap:wrap;border-top:3px solid var(--accent);z-index:9000;font-family:DM Sans,sans-serif;box-shadow:0 -8px 24px rgba(0,0,0,0.25)';
+  bar.innerHTML = '<span style="font-size:0.82rem;color:rgba(255,255,255,0.85)">Editing your live site</span>'
+    + '<button class="btn-gold" style="padding:0.65rem 1.5rem" onclick="saveAndRedeploy()">Save &amp; Redeploy →</button>'
+    + '<button class="btn-outline" style="color:#fff;border-color:rgba(255,255,255,0.4);padding:0.6rem 1.1rem;background:transparent" onclick="window.location.href=\'/portal.html\'">Cancel</button>'
+    + '<span id="editorSaveStatus" style="font-size:0.74rem;color:rgba(255,255,255,0.6);min-width:140px;text-align:left"></span>';
+  document.body.appendChild(bar);
+  document.body.style.paddingBottom = '80px';
+}
+
+async function saveAndRedeploy(){
+  var st = document.getElementById('editorSaveStatus');
+  if (st) st.textContent = 'Saving…';
+  if (!S._editorLeadId || !S._editorToken) { if (st) st.textContent = 'Session expired — refresh + try again.'; return; }
+  // Collect the latest site_data the same way the builder does on submit.
+  var siteData = Object.assign({}, S.siteData || {}, {
+    photos:     S.photos,
+    photoAlts:  S.photoAlts,
+    _color:     S.color,
+    _heroStyle: S.heroStyle,
+    _fontPair:  S.fontPair,
+  });
+  try {
+    // PATCH the lead's site_data through update-site.js (already RLS-aware).
+    var r = await fetch('/.netlify/functions/update-site', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + S._editorToken },
+      body: JSON.stringify({ siteData: siteData })
+    });
+    if (!r.ok) { if (st) st.textContent = 'Save failed — try again.'; return; }
+    if (st) st.textContent = 'Saved. Redeploying…';
+    // Trigger redeploy. deploy-customer-site has a per-lead 60s cooldown (SEC6)
+    // so rapid double-clicks return 429 — surface the message.
+    // DEC5: Bearer auth — the Supabase token authorizes the contractor to redeploy
+    // ONLY a lead they own; deploy-customer-site verifies lead.user_id matches.
+    var dr = await fetch('/.netlify/functions/deploy-customer-site', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + S._editorToken },
+      body: JSON.stringify({ leadId: S._editorLeadId })
+    });
+    if (dr.status === 429) { if (st) st.textContent = 'Saved. Redeploy queued — give it a minute then refresh.'; return; }
+    if (!dr.ok) { if (st) st.textContent = 'Saved here — redeploy hit a snag, contact support.'; return; }
+    if (st) st.textContent = 'Saved + redeployed. Changes are live in ~30s.';
+  } catch (e) {
+    if (st) st.textContent = 'Network error — check connection + try again.';
+  }
+}
 function initTiltCards(){
   if(window.matchMedia&&(window.matchMedia('(prefers-reduced-motion:reduce)').matches||window.matchMedia('(hover:none)').matches))return;
   document.querySelectorAll('.tilt-card').forEach(function(card){
