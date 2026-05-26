@@ -81,6 +81,16 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: 'Invalid JSON' };
   }
 
+  // SEC3: replay guard — reject Stripe events older than 5 minutes. Stripe's
+  // signature alone doesn't expire, so a captured webhook can otherwise be
+  // re-fired indefinitely. event.created is a Unix-seconds timestamp.
+  if (typeof stripeEvent.created === 'number'
+      && Math.abs(Date.now() / 1000 - stripeEvent.created) > 300) {
+    console.log('[stripe-webhook] rejected stale event', stripeEvent.id, 'age=' +
+      Math.round(Date.now() / 1000 - stripeEvent.created) + 's');
+    return { statusCode: 400, body: 'Event too old' };
+  }
+
   // ── Tool subscription lifecycle (Marketing / Finance & Operations) ──────────
   // Fired when a Stripe subscription changes state. Site-build subscriptions
   // carry metadata.lead_id (no tools) so they're skipped here.
