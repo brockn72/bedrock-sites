@@ -1756,9 +1756,67 @@ function renderReceiptForm(d){
     +'<div class="fld"><label>Vendor</label><input id="rcVendor" value="'+esc(d.vendor||'')+'"></div>'
     +'<div class="fld"><label>Amount ($)</label><input id="rcAmount" type="number" step="0.01" value="'+esc(d.amount!=null?d.amount:'')+'"></div>'
     +'<div class="fld"><label>Date</label><input id="rcDate" type="date" value="'+esc(d.date||'')+'"></div>'
+    // OPS6 2026-05-25: category dropdown populated from the contractor's real
+    // QBO chart of accounts (cached on connect, see lib/qbo-setup.js).
+    +'<div class="fld"><label>Category</label><select id="rcCategory" data-loading="1"><option value="">Loading your QuickBooks categories…</option></select></div>'
     +'<div class="draft-note">Donna: "Fix anything I got wrong, then confirm and I\'ll file it."</div></div>'
     +'<div class="approval-row"><button class="appr-btn appr-approve" onclick="approve(\'receipt\')">✓ Confirm &amp; File</button>'
     +'<button class="appr-btn appr-reject" onclick="rejectDraft()">Discard</button></div></div>';
+  loadReceiptCategories(d.vendor || '');
+}
+
+// Fetch the contractor's cached QBO expense accounts and fill the category
+// dropdown. When not connected, fall back to a small generic list and tell the
+// contractor exactly why (no green-checking what isn't true).
+function loadReceiptCategories(vendor){
+  var sel = document.getElementById('rcCategory'); if (!sel) return;
+  if (!DONNA_TOKEN) {
+    fillReceiptCategoriesFallback(sel, 'Sign in to load your QuickBooks categories');
+    return;
+  }
+  fetch('/.netlify/functions/get-qbo-meta', {
+    headers: { Authorization: 'Bearer ' + DONNA_TOKEN },
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (!d || !d.connected || !Array.isArray(d.expense_accounts) || !d.expense_accounts.length) {
+      fillReceiptCategoriesFallback(sel, 'Connect QuickBooks to see your real categories');
+      return;
+    }
+    // Real options: each <option value="<qbo account id>">Name</option>
+    var opts = '<option value="">Pick a category…</option>';
+    d.expense_accounts.forEach(function(a){
+      opts += '<option value="'+esc(a.id)+'">'+esc(a.name)+'</option>';
+    });
+    sel.innerHTML = opts;
+    sel.removeAttribute('data-loading');
+    // Heuristic pre-select based on vendor name keywords (Home Depot / Menards
+    // → Materials-ish; Shell / BP / Chevron → Fuel/Travel; etc.). Best-guess
+    // only — contractor confirms.
+    var v = (vendor || '').toLowerCase();
+    var guess = null;
+    if (/menards|home depot|lowe|lumber|paver|stone|hardware/.test(v)) guess = /material|suppl|cost of/i;
+    else if (/shell|chevron|bp|exxon|mobil|gas|fuel/.test(v))           guess = /fuel|gas|auto|vehicle|travel/i;
+    else if (/uhaul|u-haul|rental|sunbelt|united rentals/.test(v))      guess = /rent|equipment/i;
+    if (guess) {
+      Array.prototype.find && d.expense_accounts.forEach(function(a){
+        if (guess.test(a.name)) sel.value = a.id;
+      });
+    }
+  }).catch(function(){
+    fillReceiptCategoriesFallback(sel, 'Couldn\'t load your QuickBooks categories — try again');
+  });
+}
+
+function fillReceiptCategoriesFallback(sel, note){
+  // Small generic fallback list (no QBO account id — qbo-sync will use its
+  // own heuristic findExpenseAccountRef when account_id is empty). The label
+  // is informational so the contractor can still tag the receipt locally.
+  sel.innerHTML = '<option value="">' + esc(note || 'Pick a category…') + '</option>'
+    + '<option value="">Materials</option>'
+    + '<option value="">Fuel / Vehicle</option>'
+    + '<option value="">Equipment rental</option>'
+    + '<option value="">Office supplies</option>'
+    + '<option value="">Other expense</option>';
+  sel.removeAttribute('data-loading');
 }
 function mockReceiptScan(){
   document.getElementById('receiptResult').innerHTML=
@@ -1869,11 +1927,14 @@ function collectDocDraft(){
 function collectReceiptDraft(){
   var v=document.getElementById('rcVendor');
   if(!v) return null;
-  var a=document.getElementById('rcAmount'), dt=document.getElementById('rcDate');
+  var a=document.getElementById('rcAmount'), dt=document.getElementById('rcDate'), c=document.getElementById('rcCategory');
   return {
     vendor:(v.value||'').trim()||null,
     amount:(a&&a.value!=='')?Number(a.value):null,
     date:(dt&&dt.value)||null,
+    // OPS6: real QBO expense-account id (or empty when contractor hasn't picked one /
+    // QBO isn't connected — qbo-sync falls back to its heuristic).
+    account_id:(c&&c.value)?c.value:null,
     status:'approved'
   };
 }
