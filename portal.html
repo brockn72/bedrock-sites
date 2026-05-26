@@ -2219,7 +2219,7 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           <button type="button" class="sub-card" data-prod="website" onclick="toggleProduct('website')">
             <span class="sc-status">Live</span>
             <div class="sc-tag">Website Builder</div>
-            <div class="sc-name">Bedrock Sites</div>
+            <div class="sc-name">Bedrock Website</div>
             <div class="sc-desc">Your contractor website — clean design, mobile-friendly, hosted, SEO-ready. Edit any time from your portal.</div>
             <div class="sc-price">$20<span class="sc-price-unit">/mo</span></div>
             <div class="sc-extra">+ $200 one-time setup fee</div>
@@ -2260,7 +2260,7 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
             <div class="bundle-name">Bedrock Digital &mdash; Full Ecosystem</div>
             <div class="bundle-desc">Everything Bedrock makes, in one bundle. Website build + monthly hosting, Marketing builder, and the Finance &amp; Operations tools. One profile, one bill, every tool ready when you are.</div>
             <div class="bundle-incl">
-              <span>Bedrock Sites</span>
+              <span>Bedrock Website</span>
               <span>Bedrock Marketing</span>
               <span>Finance &amp; Operations</span>
               <span>Shared Profile</span>
@@ -3378,7 +3378,7 @@ function renderCart() {
   var isFullEco  = selected.length === 3;
   var setupTotal = isFullEco ? 0 : rawSetup;   // Full Ecosystem waives the $200 site setup fee
 
-  var names = { website:'Bedrock Sites (Website Builder)', marketing:'Bedrock Marketing', cfo:'Finance &amp; Operations' };
+  var names = { website:'Bedrock Website', marketing:'Bedrock Marketing', cfo:'Bedrock Finance &amp; Operations' };
   var lines = selected.map(function(p){
     return '<div class="cart-line"><span class="cl-name">' + names[p] + '</span><span class="cl-price">$' + PRICES[p] + '<span style="font-size:0.65rem;color:var(--text-muted);font-weight:400;margin-left:3px">/mo</span></span></div>';
   });
@@ -3433,7 +3433,7 @@ function clearCart() { CART = { website:false, marketing:false, cfo:false }; ACT
 function renderManageSubs() {
   var body = document.getElementById('manageSubsBody'); if (!body) return;
   var selected = ['website','marketing','cfo'].filter(function(p){ return CART[p]; });
-  var names = { website:'Bedrock Sites', marketing:'Bedrock Marketing', cfo:'Finance &amp; Operations' };
+  var names = { website:'Bedrock Website', marketing:'Bedrock Marketing', cfo:'Bedrock Finance &amp; Operations' };
   var descs = {
     website:'Your contractor website — hosted, mobile-ready, SEO-ready.',
     marketing:'Brand Kit plus flyers, social posts, signs, and more.',
