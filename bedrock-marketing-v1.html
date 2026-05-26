@@ -176,9 +176,13 @@ p.hero-sub{font-family:'DM Sans',sans-serif;font-size:clamp(0.95rem,1.4vw,1.05re
 .palette-presets-toggle .ppt-caret{transition:transform .15s;color:var(--gold);font-size:0.85rem}
 .palette-presets-wrap.open .palette-presets-toggle .ppt-caret{transform:rotate(180deg)}
 .palette-presets-wrap.open .palette-suggest{display:flex !important;margin-top:0.55rem}
-.palette-presets-wrap.hide-presets{display:none}
-.palette-chip{display:flex;gap:4px;padding:4px 7px;background:#fff;border:1px solid var(--border-light);border-radius:6px;cursor:pointer;align-items:center;transition:border-color .15s}
+/* DEC3 2026-05-25: hide-presets removed — palette row stays visible always. */
+.palette-chip{display:flex;gap:4px;padding:4px 7px;background:#fff;border:1px solid var(--border-light);border-radius:6px;cursor:pointer;align-items:center;transition:border-color .15s;font-family:'DM Sans',sans-serif;font-size:0.72rem;color:var(--slate)}
 .palette-chip:hover{border-color:var(--navy)}
+.palette-chip-default{border:1.5px solid var(--gold);background:rgba(201,146,42,0.06)}
+.palette-chip-default .palette-label{color:var(--navy-deep);font-weight:700}
+.palette-chip-revert{border:1.5px dashed var(--gold);background:#fff;color:var(--navy-deep);font-weight:600;padding:0.55rem 0.85rem;width:100%;justify-content:center;margin-bottom:0.45rem}
+.palette-chip-revert:hover{background:rgba(201,146,42,0.1)}
 .palette-swatch{width:14px;height:14px;border-radius:3px;border:1px solid rgba(0,0,0,0.1)}
 .palette-label{font-size:0.6rem;color:var(--slate);font-weight:600;letter-spacing:0.06em}
 
@@ -1003,14 +1007,44 @@ var TONE_EXAMPLES = {
   'Luxury':            '"Discreet, premium service for homes that demand the best."',
 };
 
+// MKT6 + DEC3 2026-05-25: trade palettes are the default. tradeKey() normalizes
+// whatever string is in brand kit (e.g. "Plumber", "plumbing", "Master Plumber")
+// to one of these keys; tradePaletteFor() returns the matching swatch trio.
 var PALETTES = [
-  { label:'Plumbing',     c:['#1F4E79','#FFFFFF','#C9922A'] },
-  { label:'Electrical',   c:['#1F1F1F','#FFD23F','#FF6B35'] },
-  { label:'Landscaping',  c:['#234E1B','#F5F5F5','#A87C2E'] },
-  { label:'HVAC',         c:['#0E2A47','#E5E5E5','#D14A2B'] },
-  { label:'Roofing',      c:['#2B2B2B','#FFFFFF','#C44A1E'] },
-  { label:'Concrete',     c:['#3D3D3D','#F1ECE3','#C9922A'] },
+  { key:'plumbing',     label:'Plumbing',     c:['#1F4E79','#FFFFFF','#FFD23F'] },  // navy + safety yellow
+  { key:'electrical',   label:'Electrical',   c:['#1F1F1F','#FFD23F','#FF6B35'] },  // black + caution yellow
+  { key:'landscaping',  label:'Landscaping',  c:['#234E1B','#000000','#A87C2E'] },  // forest green + black
+  { key:'hvac',         label:'HVAC',         c:['#0E2A47','#E5E5E5','#D14A2B'] },
+  { key:'roofing',      label:'Roofing',      c:['#2B2B2B','#FFFFFF','#C44A1E'] },
+  { key:'concrete',     label:'Concrete',     c:['#3D3D3D','#F1ECE3','#C9922A'] },
+  { key:'painting',     label:'Painting',     c:['#1E3A5F','#FFFFFF','#D14A2B'] },
+  { key:'handyman',     label:'Handyman',     c:['#2B2B2B','#FFFFFF','#C9922A'] },
+  { key:'cleaning',     label:'Cleaning',     c:['#0E5F6E','#FFFFFF','#5BC0BE'] },
+  { key:'flooring',     label:'Flooring',     c:['#5A4A32','#F5F0E8','#C9922A'] },
+  { key:'fencing',      label:'Fencing',      c:['#3D3D3D','#F5F0E8','#5A8A3A'] },
 ];
+// Map varied trade strings (Plumber, Plumbing, plumber, "Master Plumber") to a palette key.
+function tradeKey(trade){
+  var t = String(trade || '').toLowerCase();
+  if (!t) return null;
+  if (/plumb/.test(t))                                return 'plumbing';
+  if (/electric|electrician/.test(t))                 return 'electrical';
+  if (/landscap|lawn|outdoor|hardscape|paver/.test(t)) return 'landscaping';
+  if (/hvac|heat|cool|furnace|a\/?c\b/.test(t))       return 'hvac';
+  if (/roof/.test(t))                                 return 'roofing';
+  if (/concrete|cement|masonry/.test(t))              return 'concrete';
+  if (/paint/.test(t))                                return 'painting';
+  if (/handy/.test(t))                                return 'handyman';
+  if (/clean|janitor/.test(t))                        return 'cleaning';
+  if (/floor|tile|carpet/.test(t))                    return 'flooring';
+  if (/fenc|gate/.test(t))                            return 'fencing';
+  return null;
+}
+function tradePaletteFor(trade){
+  var k = tradeKey(trade); if (!k) return null;
+  for (var i = 0; i < PALETTES.length; i++) if (PALETTES[i].key === k) return PALETTES[i];
+  return null;
+}
 
 var FONT_STYLES = {
   modern:  { display:"'DM Sans',sans-serif",            body:"'DM Sans',sans-serif" },
@@ -1285,6 +1319,7 @@ async function startWithEmail(e) {
   }
 
   showPage('pageHub');
+  ensureTradeDefaultPalette(); // MKT6: apply trade default before painting if no custom colors
   paintPalettes();
   selectFontStyle(STATE.brandKit.font_style, true);
   selectTone(STATE.brandKit.tone, true);
@@ -1491,29 +1526,55 @@ function syncColorHex(key) {
 }
 function paintPalettes() {
   var wrap = document.getElementById('paletteSuggest'); if (!wrap) return;
-  wrap.innerHTML = PALETTES.map(function(p){
+  // MKT6 + DEC3: trade default chip first, with a "Back to my [trade] default"
+  // label so the contractor can return to it after any custom edit. All other
+  // trade palettes stay visible too — presets never get hidden anymore.
+  var trade = STATE && STATE.brandKit && STATE.brandKit.trade;
+  var defaultPal = tradePaletteFor(trade);
+  var chips = PALETTES.map(function(p){
     var sw = p.c.map(function(c){return '<span class="palette-swatch" style="background:'+c+'"></span>';}).join('');
-    return '<button type="button" class="palette-chip" onclick="applyPalette(\''+p.c.join(',')+'\')">'+sw+'<span class="palette-label">'+p.label+'</span></button>';
+    var active = defaultPal && defaultPal.key === p.key;
+    var lbl = active ? p.label + ' default' : p.label;
+    return '<button type="button" class="palette-chip'+(active?' palette-chip-default':'')+'" aria-label="Apply '+escapeHTML(p.label)+' palette" onclick="applyPalette(\''+p.c.join(',')+'\',\''+p.key+'\')">'+sw+'<span class="palette-label">'+escapeHTML(lbl)+'</span></button>';
   }).join('');
-  // G8a: if user has already set custom (non-default) colors, hide the presets wrapper entirely.
-  var presetsWrap = document.getElementById('palettePresetsWrap'); if (!presetsWrap) return;
-  var DEFAULT_PRIMARY = '#1B3557', DEFAULT_SECONDARY = '#FFFFFF', DEFAULT_ACCENT = '#C9922A';
-  var p = (STATE.brandKit.color_primary   || '').toUpperCase();
-  var s = (STATE.brandKit.color_secondary || '').toUpperCase();
-  var a = (STATE.brandKit.color_accent    || '').toUpperCase();
-  var customSet = (p && p !== DEFAULT_PRIMARY) || (s && s !== DEFAULT_SECONDARY) || (a && a !== DEFAULT_ACCENT);
-  presetsWrap.classList.toggle('hide-presets', !!customSet);
+  // "Back to my default" pinned button when the contractor has a known trade.
+  var revert = defaultPal
+    ? '<button type="button" class="palette-chip palette-chip-revert" aria-label="Reset colors to my '+escapeHTML(defaultPal.label)+' default" onclick="applyPalette(\''+defaultPal.c.join(',')+'\',\''+defaultPal.key+'\')">↩ Back to my '+escapeHTML(defaultPal.label)+' default</button>'
+    : '';
+  wrap.innerHTML = revert + chips;
+  // DEC3: presets stay open + visible. Old hide-presets / collapse behavior removed.
+  var presetsWrap = document.getElementById('palettePresetsWrap');
+  if (presetsWrap) { presetsWrap.classList.remove('hide-presets'); presetsWrap.classList.add('open'); }
 }
 function togglePresetPalettes(){
-  var w = document.getElementById('palettePresetsWrap'); if (w) w.classList.toggle('open');
+  // No-op now — presets stay visible. Kept for the existing onclick wiring.
+  var w = document.getElementById('palettePresetsWrap');
+  if (w) w.classList.add('open');
 }
-function applyPalette(csv) {
+function applyPalette(csv /*, fromKey */) {
   var parts = csv.split(',');
   setVal('bk_color_primary',   parts[0]); setVal('bk_color_primary_picker',   parts[0]);
   setVal('bk_color_secondary', parts[1]); setVal('bk_color_secondary_picker', parts[1]);
   setVal('bk_color_accent',    parts[2]); setVal('bk_color_accent_picker',    parts[2]);
   STATE.brandKit.color_primary = parts[0]; STATE.brandKit.color_secondary = parts[1]; STATE.brandKit.color_accent = parts[2];
   updateBrandSummary();
+  paintPalettes(); // refresh the default-chip highlight
+}
+
+// MKT6: when a contractor lands without custom colors set, auto-apply their
+// trade's palette so day-one assets already look on-brand for plumbers vs
+// landscapers vs HVAC etc.
+function ensureTradeDefaultPalette(){
+  if (!STATE || !STATE.brandKit) return;
+  var k = STATE.brandKit;
+  var DEFAULT_PRIMARY = '#1B3557', DEFAULT_SECONDARY = '#FFFFFF', DEFAULT_ACCENT = '#C9922A';
+  var p = (k.color_primary || '').toUpperCase();
+  var s = (k.color_secondary || '').toUpperCase();
+  var a = (k.color_accent || '').toUpperCase();
+  var stillDefault = (p === DEFAULT_PRIMARY || !p) && (s === DEFAULT_SECONDARY || !s) && (a === DEFAULT_ACCENT || !a);
+  if (!stillDefault) return; // user already customized — never override.
+  var pal = tradePaletteFor(k.trade); if (!pal) return;
+  applyPalette(pal.c.join(','), pal.key);
 }
 function selectFontStyle(style){
   STATE.brandKit.font_style = style;
