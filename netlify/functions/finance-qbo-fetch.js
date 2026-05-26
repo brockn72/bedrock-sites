@@ -15,8 +15,9 @@
 //   POST { force?: true }   — force a fresh QBO pull, ignoring the cache
 //
 // Donna data is folded in on every response (regardless of QBO connection):
-//   • donna_receipts → merged into data.expenses (they never sync to QBO, so
-//     no double-count) so Finance shows every expense.
+//   • donna_receipts → merged into data.expenses. After OPS1 (2026-05-25)
+//     receipts CAN sync to QBO as Purchase records; rows with qbo_purchase_id
+//     set are filtered out below so we don't double-count them.
 //   • donna_estimates / donna_invoices → returned raw so the Projects page can
 //     compute real per-job margins QBO alone can't provide.
 //
@@ -115,13 +116,17 @@ async function getDonnaFinanceData(userId, supabaseUrl, supabaseKey) {
     const r = await fetch(`${supabaseUrl}/rest/v1/donna_receipts?user_id=eq.${userId}&select=*`, hdr);
     if (r.ok) {
       const receipts = await r.json();
-      out.receiptExpenses = receipts.map((rc) => ({
-        Id:       'donna-' + rc.id,
-        TxnDate:  rc.date || (rc.created_at ? String(rc.created_at).slice(0, 10) : null),
-        TotalAmt: Number(rc.amount) || 0,
-        _source:  'donna',
-        vendor:   rc.vendor || '',
-      }));
+      // OPS1 dedup: if a receipt has been pushed to QBO (qbo_purchase_id set),
+      // the QBO pull above already includes the Purchase — skip the Donna copy.
+      out.receiptExpenses = receipts
+        .filter((rc) => !rc.qbo_purchase_id)
+        .map((rc) => ({
+          Id:       'donna-' + rc.id,
+          TxnDate:  rc.date || (rc.created_at ? String(rc.created_at).slice(0, 10) : null),
+          TotalAmt: Number(rc.amount) || 0,
+          _source:  'donna',
+          vendor:   rc.vendor || '',
+        }));
     }
   } catch (e) { console.error('[finance-qbo-fetch] donna_receipts:', e.message); }
   return out;
