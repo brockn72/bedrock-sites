@@ -10,12 +10,12 @@
 //   STRIPE_FINOPS_PRICE_ID             — Finance & Operations monthly price ($70/mo)
 //   STRIPE_BUNDLE_ALL_PRICE_ID         — Full Ecosystem monthly bundle ($100/mo)
 // ── Annual prices (G1 / Batch G, 2026-05-26) ───────────────────────────────
-//   STRIPE_WEBSITE_ANNUAL_PRICE_ID     — Website annual ($216/yr — 10% off)
+//   STRIPE_WEBSITE_ANNUAL_PRICE_ID     — Website annual ($220/yr — save $20/yr)
 //     (Falls back to STRIPE_SUBSCRIPTION_PRICE_ID if the explicit annual var
 //      isn't set, so the pre-existing env var has a use.)
-//   STRIPE_MARKETING_ANNUAL_PRICE_ID   — Marketing annual ($324/yr — 10% off)
-//   STRIPE_FINOPS_ANNUAL_PRICE_ID      — FinOps annual ($756/yr — 10% off)
-//   STRIPE_BUNDLE_ALL_ANNUAL_PRICE_ID  — Full Ecosystem annual ($1020/yr — 15% off)
+//   STRIPE_MARKETING_ANNUAL_PRICE_ID   — Marketing annual ($320/yr — save $40/yr)
+//   STRIPE_FINOPS_ANNUAL_PRICE_ID      — FinOps annual ($750/yr — save $90/yr)
+//   STRIPE_BUNDLE_ALL_ANNUAL_PRICE_ID  — Full Ecosystem annual ($1000/yr — save $200/yr)
 // Create those products in the Stripe dashboard (test mode FIRST, then live),
 // copy each recurring price ID (price_...), and add them as Netlify env vars.
 //

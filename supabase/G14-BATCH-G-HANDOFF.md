@@ -62,14 +62,14 @@ Toggle Stripe dashboard to **Test mode** (top right). Create five products:
 
 | Product name | Recurring? | Price | Suggested name in Stripe |
 |---|---|---|---|
-| Bedrock Website — Annual | Yes, yearly | $216.00 | "Website Annual" |
-| Bedrock Marketing — Annual | Yes, yearly | $324.00 | "Marketing Annual" |
-| Bedrock Finance & Operations — Annual | Yes, yearly | $756.00 | "FinOps Annual" |
-| Bedrock Full Ecosystem — Annual | Yes, yearly | $1020.00 | "Bundle Annual" |
+| Bedrock Website — Annual | Yes, yearly | $220.00 | "Website Annual" |
+| Bedrock Marketing — Annual | Yes, yearly | $320.00 | "Marketing Annual" |
+| Bedrock Finance & Operations — Annual | Yes, yearly | $750.00 | "FinOps Annual" |
+| Bedrock Full Ecosystem — Annual | Yes, yearly | $1000.00 | "Bundle Annual" |
 
 For each, copy the **price ID** (starts with `price_`).
 
-If you'd rather repurpose `STRIPE_SUBSCRIPTION_PRICE_ID` for Website annual (since it was already set to something), point it at the new $216/yr Website Annual price.
+If you'd rather repurpose `STRIPE_SUBSCRIPTION_PRICE_ID` for Website annual (since it was already set to something), point it at the new $220/yr Website Annual price.
 
 ---
 
@@ -106,14 +106,14 @@ In Netlify → Site settings → Environment variables, **temporarily**:
 2. Sign in as a test contractor (use a test email like `you+test1@yourdomain.com`).
 3. Verify the **Monthly | Annual** toggle is visible above the subscription grid.
 4. Click **Annual**. Confirm:
-   - Bedrock Website card shows `$216 /yr`
-   - Marketing shows `$324 /yr`
-   - FinOps shows `$756 /yr`
-   - Full Ecosystem bundle shows `$1,020 /yr` with the updated "Save $180/yr vs. monthly billing" line
-5. Add Website to cart, click checkout. You should land on Stripe Checkout showing `$216.00 / year`.
+   - Bedrock Website card shows `$220 /yr`
+   - Marketing shows `$320 /yr`
+   - FinOps shows `$750 /yr`
+   - Full Ecosystem bundle shows `$1,000 /yr` with the updated "Save $200/yr vs. monthly billing" line
+5. Add Website to cart, click checkout. You should land on Stripe Checkout showing `$220.00 / year`.
 6. Pay with `4242 4242 4242 4242` / any future expiry / any CVV / any ZIP.
 7. After redirect, in Supabase: `select * from subscriptions where user_id = '<test user id>' order by updated_at desc limit 5;` — should show a row with `tool='website'` and `status='active'`. ✓ Pass.
-8. Repeat for the bundle (pick all three tools, switch to Annual, checkout). Stripe should show one line item at $1,020/yr.
+8. Repeat for the bundle (pick all three tools, switch to Annual, checkout). Stripe should show one line item at $1,000/yr.
 
 If step 5 shows an error like "Missing Stripe price IDs: STRIPE_WEBSITE_ANNUAL_PRICE_ID", you forgot to set the env var. Set it and redeploy.
 

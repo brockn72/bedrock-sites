@@ -2216,7 +2216,8 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
         </div>
 
         <!-- G2 (Batch G, 2026-05-26): monthly/annual billing toggle. Defaults to monthly.
-             Annual saves 10% on each tool and 15% on the Full Ecosystem bundle. -->
+             Annual saves $20/yr (Website), $40/yr (Marketing), $90/yr (FinOps),
+             and $200/yr on the Full Ecosystem bundle. -->
         <style>
           .billing-toggle{display:inline-flex;background:#fff;border:1px solid var(--border);border-radius:8px;padding:4px;margin-bottom:1rem;font-family:'DM Sans',sans-serif}
           .billing-toggle button{background:transparent;border:none;font-family:inherit;font-size:0.74rem;font-weight:700;letter-spacing:0.04em;color:var(--text-muted);padding:0.5rem 1.1rem;border-radius:5px;cursor:pointer;transition:background .15s,color .15s;position:relative}
@@ -2227,9 +2228,9 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
         </style>
         <div role="group" aria-label="Billing cycle" class="billing-toggle">
           <button type="button" id="billMonthBtn" class="active" aria-pressed="true" onclick="setBilling('monthly')">Monthly</button>
-          <button type="button" id="billAnnualBtn" aria-pressed="false" onclick="setBilling('annual')">Annual <span class="save-pill">Save 10–15%</span></button>
+          <button type="button" id="billAnnualBtn" aria-pressed="false" onclick="setBilling('annual')">Annual <span class="save-pill">Save up to $200/yr</span></button>
         </div>
-        <div class="billing-hint" id="billingHint">Charged monthly. Switch to annual to save 10% on each tool — and 15% on the Full Ecosystem bundle.</div>
+        <div class="billing-hint" id="billingHint">Charged monthly. Switch to annual to save up to $200/yr on the Full Ecosystem bundle.</div>
 
         <div class="subs-grid" id="subsGrid">
           <!-- WEBSITE -->
@@ -3365,18 +3366,19 @@ var BUNDLE_TOTALS = {  // monthly total when this exact combo selected
   'website+marketing+cfo':  100,
 };
 // G2 (Batch G, 2026-05-26): annual billing support. Annual prices are
-// hand-set to match the Stripe products Brock creates (10% off per tool,
-// 15% off the Full Ecosystem bundle). Keep these in sync with the
-// STRIPE_*_ANNUAL_PRICE_ID values configured in Netlify.
-var PRICES_ANNUAL = { website:216, marketing:324, cfo:756 };
+// hand-set to match the Stripe products Brock creates. Round-number pricing
+// (updated 2026-05-26): saves $20/yr Website, $40/yr Marketing, $90/yr
+// FinOps, $200/yr on the Full Ecosystem bundle. Keep these in sync with
+// the STRIPE_*_ANNUAL_PRICE_ID values configured in Netlify.
+var PRICES_ANNUAL = { website:220, marketing:320, cfo:750 };
 var BUNDLE_TOTALS_ANNUAL = {
-  'website':                216,
-  'marketing':              324,
-  'cfo':                    756,
+  'website':                220,
+  'marketing':              320,
+  'cfo':                    750,
   'website+marketing':      540,    // sum of two annuals (no extra bundle discount)
-  'website+cfo':            972,
-  'marketing+cfo':          1080,
-  'website+marketing+cfo':  1020,   // 15% off the $1200/yr (= $100/mo × 12) full ecosystem
+  'website+cfo':            970,
+  'marketing+cfo':          1070,
+  'website+marketing+cfo':  1000,   // $200/yr off the $1200/yr (= $100/mo × 12) full ecosystem
 };
 var BILLING = 'monthly'; // 'monthly' | 'annual'
 var BILLING_KEY = 'bedrock-portal-billing';
@@ -3406,11 +3408,11 @@ function applyBillingToToggleUI(){
   if (BILLING === 'annual'){
     m.classList.remove('active'); m.setAttribute('aria-pressed','false');
     a.classList.add('active');    a.setAttribute('aria-pressed','true');
-    if (hint) hint.textContent = 'Charged once a year. Save 10% on each tool — and 15% on the Full Ecosystem bundle ($1,020/yr vs $1,200/yr).';
+    if (hint) hint.textContent = 'Charged once a year. Save up to $200/yr on the Full Ecosystem bundle ($1,000/yr vs $1,200/yr).';
   } else {
     a.classList.remove('active'); a.setAttribute('aria-pressed','false');
     m.classList.add('active');    m.setAttribute('aria-pressed','true');
-    if (hint) hint.textContent = 'Charged monthly. Switch to annual to save 10% on each tool — and 15% on the Full Ecosystem bundle.';
+    if (hint) hint.textContent = 'Charged monthly. Switch to annual to save up to $200/yr on the Full Ecosystem bundle.';
   }
 }
 function toggleProduct(p) {
@@ -3436,14 +3438,14 @@ function paintCart() {
   var bundleSave  = document.querySelector('.bundle-card .bundle-save');
   if (bundlePrice){
     if (BILLING === 'annual'){
-      bundlePrice.innerHTML = '$1,020<span class="bundle-price-unit">/yr</span>';
+      bundlePrice.innerHTML = '$1,000<span class="bundle-price-unit">/yr</span>';
     } else {
       bundlePrice.innerHTML = '$100<span class="bundle-price-unit">/mo</span>';
     }
   }
   if (bundleSave){
     if (BILLING === 'annual'){
-      bundleSave.textContent = '$200 site setup fee waived. Save $180/yr vs. monthly billing — and $360/yr vs. buying all three separately.';
+      bundleSave.textContent = '$200 site setup fee waived. Save $200/yr vs. monthly billing — and $290/yr vs. buying all three separately.';
     } else {
       bundleSave.textContent = '$200 site setup fee waived. Save $20/mo vs. buying all three separately.';
     }
@@ -3508,8 +3510,8 @@ function renderCart() {
   });
   if (isFullEco) {
     /* G4b: explicit savings — strikethrough $120 → $100 + "Save $20/mo vs. buying separately"
-       G2: annual variant shows $1020 with $180 savings vs. monthly bundle. */
-    var ecoPriceTxt = (BILLING === 'annual') ? '$1,020' : '$100';
+       G2: annual variant shows $1,000 with $200 savings vs. monthly bundle. */
+    var ecoPriceTxt = (BILLING === 'annual') ? '$1,000' : '$100';
     lines.unshift('<div class="cart-line" style="background:#0D1B2E;border-radius:6px;padding:0.75rem 0.85rem 0.65rem;margin-bottom:0.35rem;display:flex;flex-direction:column;align-items:stretch;gap:0.35rem">'
       + '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:0.6rem;flex-wrap:wrap">'
         + '<span class="cl-name" style="color:#C9922A;font-weight:700">★ Full Ecosystem &mdash; all three tools</span>'
