@@ -3649,20 +3649,29 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <!-- STEP 2 -->
     <div id="bs2" class="b-card" style="display:none">
       <div class="b-eyebrow">Step 2 of 4 · About 3 minutes</div>
-      <div class="b-title">Branding &amp; style</div>
-      <div class="b-sub">Pick the colors, fonts, and top banner style for your site. Already have a logo? Upload it and we'll match the rest. No logo yet? No problem — we'll suggest a clean palette based on your trade.</div>
+      <!-- WEB2 2026-05-25: photo-first step. Photos lead because they're what
+           makes the site look real; portrait photos auto-fit to 16:9 in the
+           upload pipeline so the hero never breaks. Branding (logo / colors /
+           fonts) sits below as the second decision. -->
+      <div class="b-title">Add your work photos.</div>
+      <div class="b-sub">Photos make your site real. Drop a few in here first — Donna can adjust the layout around them.</div>
 
-      <!-- PHOTOS — independent of branding -->
-      <div style="padding-top:1.25rem;border-top:1px solid var(--border)">
-        <div class="b-eyebrow" style="color:var(--dark);margin-bottom:0.5rem">Work Photos</div>
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--dark);margin-bottom:0.4rem">Upload photos of your work.</div>
-        <p style="font-size:0.78rem;font-weight:300;color:var(--text-muted);line-height:1.7;margin-bottom:1rem">Before/after shots, your truck, equipment, completed jobs. Up to 40 photos. All optional.</p>
+      <!-- PHOTOS — primary upload, lifted to the top of Step 2 -->
+      <div style="padding-top:0.4rem">
+        <p style="font-size:0.78rem;font-weight:300;color:var(--text-muted);line-height:1.7;margin-bottom:1rem">Before/after shots, your truck, equipment, completed jobs. Up to 40 photos. <strong>Portrait photos are auto-cropped to 16:9</strong> so they sit cleanly in the hero.</p>
         <input type="file" id="photosInput" accept="image/*" multiple style="display:none" onchange="handlePhotos(event)">
         <div class="upload-zone" id="photosDrop" onclick="document.getElementById('photosInput').click()" style="margin-bottom:0.85rem"><span class="upload-zone-icon" aria-hidden="true">⤓</span><div class="upload-zone-text">Drop work photos here</div><span class="upload-zone-or">or</span><div class="upload-zone-sub">Click to browse — up to 40 photos, JPG or PNG</div></div>
         <div class="photo-grid" id="photoGrid"></div>
       </div>
       <div class="banner-gold">No photos? That's fine. We'll use clean placeholders and you can swap in real photos later from your dashboard.</div>
       <div class="stat-badge"><span class="stat-badge-num">35%</span><span class="stat-badge-text"><strong>more clicks to your website</strong> for businesses with photos vs. without. Adding 3+ photos of your work also gets you 42% more direction requests on Google Maps. <em>— Google</em></span></div>
+
+      <!-- BRANDING — now the SECOND decision in Step 2, after photos -->
+      <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border)">
+        <div class="b-eyebrow" style="color:var(--dark);margin-bottom:0.5rem">Logo + colors</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:300;color:var(--dark);margin-bottom:0.4rem">Branding &amp; style</div>
+        <p style="font-size:0.78rem;font-weight:300;color:var(--text-muted);line-height:1.7;margin-bottom:1rem">Already have a logo? Upload it and we'll match the colors. No logo yet? No problem — we'll suggest a clean palette based on your trade.</p>
+      </div>
 
       <!-- Typography picker -->
       <div style="margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border)">
@@ -4969,6 +4978,11 @@ function fileToBase64(file){return new Promise((r,j)=>{const reader=new FileRead
 // (older browser, weird file type), so we never lose a user's photo.
 const MAX_PHOTO_WIDTH=1600;
 const PHOTO_JPEG_QUALITY=0.85;
+// WEB2 2026-05-25: hero target ratio. When an uploaded photo is more portrait
+// than this, we center-crop down to 16:9 so it lands cleanly in the hero band
+// instead of leaving the contractor staring at a chopped-off head. Landscape
+// + square photos are kept as-is (galleries still want them whole).
+const HERO_RATIO = 16/9;
 function fileToCompressedBase64(file){
   return new Promise(function(resolve){
     // If it's not a raster image (e.g. SVG), don't try to canvas-compress it
@@ -4979,24 +4993,35 @@ function fileToCompressedBase64(file){
     const img=new Image();
     img.onload=function(){
       try{
-        let w=img.naturalWidth||img.width||1600;
-        let h=img.naturalHeight||img.height||1200;
-        // Only downscale — never upscale a small photo
-        if(w>MAX_PHOTO_WIDTH){
-          const scale=MAX_PHOTO_WIDTH/w;
-          w=MAX_PHOTO_WIDTH;
-          h=Math.round(h*scale);
+        let nw=img.naturalWidth||img.width||1600;
+        let nh=img.naturalHeight||img.height||1200;
+
+        // WEB2: detect "portrait taller than 16:9" and center-crop the SOURCE
+        // region to 16:9 (sx, sy, sw, sh in drawImage's 9-arg form). Keeps the
+        // visual center intact and produces a hero-safe photo straight out of
+        // upload — no surprise letterboxing or weird crops later.
+        let sx = 0, sy = 0, sw = nw, sh = nh;
+        if (nh > 0 && (nw / nh) < HERO_RATIO) {
+          // Too tall — crop top + bottom equally to hit 16:9.
+          sh = Math.round(nw / HERO_RATIO);
+          sy = Math.round((nh - sh) / 2);
+        }
+
+        // Now scale the (possibly cropped) source down to MAX_PHOTO_WIDTH.
+        let w = sw, h = sh;
+        if (w > MAX_PHOTO_WIDTH) {
+          const scale = MAX_PHOTO_WIDTH / w;
+          w = MAX_PHOTO_WIDTH;
+          h = Math.round(h * scale);
         }
         const canvas=document.createElement('canvas');
         canvas.width=w;canvas.height=h;
         const ctx=canvas.getContext('2d');
-        // White background fill so transparent PNGs don't render with black
-        // where the contractor expected white (e.g. logo screenshots on white)
         ctx.fillStyle='#ffffff';
         ctx.fillRect(0,0,w,h);
-        ctx.drawImage(img,0,0,w,h);
+        // 9-arg drawImage: source (sx,sy,sw,sh) → dest (0,0,w,h)
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, w, h);
         URL.revokeObjectURL(url);
-        // JPEG re-encode at the chosen quality; toDataURL is sync
         const dataUrl=canvas.toDataURL('image/jpeg',PHOTO_JPEG_QUALITY);
         resolve(dataUrl);
       } catch(e){
