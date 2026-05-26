@@ -2230,7 +2230,7 @@ function renderCustomers(){
   var html='<div class="list-card">';
   STORE.customers.slice().sort(function(a,b){return a.name.localeCompare(b.name);}).forEach(function(c){
     var jc=STORE.jobs.filter(function(j){return j.customerId===c.id;}).length;
-    html+='<div class="list-row"><div class="lr-main" onclick="showCustomerDetail(\''+c.id+'\')">'
+    html+='<div class="list-row"><div class="lr-main" role="button" tabindex="0" aria-label="Open customer detail" onclick="showCustomerDetail(\''+c.id+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();showCustomerDetail(\''+c.id+'\');}">'
       +'<span class="list-avatar">'+initials(c.name)+'</span>'
       +'<span><span class="lr-name">'+esc(c.name)+'</span><br><span class="lr-sub">'+esc(c.phone||'')+' · '+jc+' job'+(jc!==1?'s':'')+'</span></span></div>'
       +rowActions('customer',c.id)+'</div>';
@@ -2274,7 +2274,7 @@ function renderProjects(){
   var html='<div class="list-card">';
   STORE.projects.forEach(function(p){
     var jc=STORE.jobs.filter(function(j){return j.projectId===p.id;}).length;
-    html+='<div class="list-row"><div class="lr-main" onclick="openForm(\'project\',\''+p.id+'\')">'
+    html+='<div class="list-row"><div class="lr-main" role="button" tabindex="0" aria-label="Edit project" onclick="openForm(\'project\',\''+p.id+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openForm(\'project\',\''+p.id+'\');}">'
       +'<span class="list-avatar" style="background:var(--gold)">'+initials(p.name)+'</span>'
       +'<span><span class="lr-name">'+esc(p.name)+'</span><br><span class="lr-sub">'+esc(custName(p.customerId))+' · '+jc+' job'+(jc!==1?'s':'')+' · <span class="status-pill st-'+(p.status||'active')+'">'+(p.status||'active')+'</span></span></span></div>'
       +rowActions('project',p.id)+'</div>';
@@ -2289,7 +2289,7 @@ function renderJobs(){
   if(!done.length){ body.innerHTML=emptyView('No completed jobs yet. Once you mark a job done, it shows up here.'); return; }
   var html='<div class="list-card">';
   done.forEach(function(j){
-    html+='<div class="list-row"><div class="lr-main" onclick="openForm(\'job\',\''+j.id+'\')">'
+    html+='<div class="list-row"><div class="lr-main" role="button" tabindex="0" aria-label="Edit job" onclick="openForm(\'job\',\''+j.id+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openForm(\'job\',\''+j.id+'\');}">'
       +'<span class="list-avatar" style="background:var(--green)">'+initials(j.name)+'</span>'
       +'<span><span class="lr-name">'+esc(j.name)+'</span><br><span class="lr-sub">'+esc(custName(j.customerId))+' &middot; '+money(j.amount||0)+' &middot; <span class="status-pill st-done">done</span></span></span></div>'
       +rowActions('job',j.id)+'</div>';
@@ -2304,7 +2304,7 @@ function renderCurrentJobs(){
   if(!active.length){ body.innerHTML=emptyView('No active jobs. Tap <strong>+ Add Job</strong> when you have one on the calendar.'); return; }
   var html='<div class="list-card">';
   active.forEach(function(j){
-    html+='<div class="list-row"><div class="lr-main" onclick="openForm(\'job\',\''+j.id+'\')">'
+    html+='<div class="list-row"><div class="lr-main" role="button" tabindex="0" aria-label="Edit job" onclick="openForm(\'job\',\''+j.id+'\')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openForm(\'job\',\''+j.id+'\');}">'
       +'<span class="list-avatar" style="background:var(--navy)">'+initials(j.name)+'</span>'
       +'<span><span class="lr-name">'+esc(j.name)+'</span><br><span class="lr-sub">'+esc(custName(j.customerId))+' &middot; '+money(j.amount||0)+' &middot; <span class="status-pill st-'+(j.status||'active')+'">'+(j.status||'active')+'</span></span></span></div>'
       +rowActions('job',j.id)+'</div>';

@@ -879,15 +879,15 @@ footer a:hover{text-decoration:underline}
               <div class="control-group">
                 <div class="control-label">Template</div>
                 <div class="tmpl-grid" id="tmplPick">
-                  <div class="tmpl-card active" data-tmpl="1" onclick="selectTemplate(1)">
+                  <div class="tmpl-card active" data-tmpl="1" role="button" tabindex="0" aria-label="Photo template" aria-pressed="true" onclick="selectTemplate(1)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectTemplate(1);}">
                     <div class="tmpl-card-mini" style="background:linear-gradient(180deg,#1B3557 65%,#0D1B2E 65%)"></div>
                     <div class="tmpl-card-label">Photo</div>
                   </div>
-                  <div class="tmpl-card" data-tmpl="2" onclick="selectTemplate(2)">
+                  <div class="tmpl-card" data-tmpl="2" role="button" tabindex="0" aria-label="Text template" aria-pressed="false" onclick="selectTemplate(2)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectTemplate(2);}">
                     <div class="tmpl-card-mini" style="background:#0D1B2E;position:relative"><div style="position:absolute;left:8px;right:24px;top:18px;height:4px;background:#fff"></div><div style="position:absolute;left:8px;right:32px;top:28px;height:2px;background:rgba(255,255,255,0.5)"></div></div>
                     <div class="tmpl-card-label">Text</div>
                   </div>
-                  <div class="tmpl-card" data-tmpl="3" onclick="selectTemplate(3)">
+                  <div class="tmpl-card" data-tmpl="3" role="button" tabindex="0" aria-label="Split template" aria-pressed="false" onclick="selectTemplate(3)" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();selectTemplate(3);}">
                     <div class="tmpl-card-mini" style="background:linear-gradient(90deg,#0D1B2E 50%,#1B3557 50%)"></div>
                     <div class="tmpl-card-label">Split</div>
                   </div>
@@ -1724,7 +1724,7 @@ function paintPhotos() {
   var bin = document.getElementById('photoBin'); if (!bin) return;
   bin.innerHTML = STATE.photos.map(function(p, i){
     var active = i === STATE.activePhoto ? ' active' : '';
-    return '<div class="photo-thumb'+active+'" onclick="setActivePhoto('+i+')"><img src="'+p+'" alt=""><button class="remove" onclick="event.stopPropagation();removePhoto('+i+')">×</button></div>';
+    return '<div class="photo-thumb'+active+'" role="button" tabindex="0" aria-label="Use photo '+(i+1)+'" onclick="setActivePhoto('+i+')" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();setActivePhoto('+i+');}"><img src="'+p+'" alt=""><button class="remove" aria-label="Remove photo '+(i+1)+'" onclick="event.stopPropagation();removePhoto('+i+')">×</button></div>';
   }).join('');
 }
 function setActivePhoto(i) { STATE.activePhoto = i; paintPhotos(); renderPreview(); }

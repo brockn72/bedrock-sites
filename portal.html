@@ -1095,7 +1095,7 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
             <div class="dh-meter"><i id="dhProfileMeter" style="width:0%"></i></div>
             <button type="button" class="dh-cta" onclick="location.href='/account.html#profile'">Finish my profile &rarr;</button>
           </div>
-          <div class="dh-mini dh-clickable" id="dhTimeCard" onclick="this.classList.toggle('expanded')">
+          <div class="dh-mini dh-clickable" id="dhTimeCard" role="button" tabindex="0" aria-label="Toggle time-saved card detail" onclick="this.classList.toggle('expanded')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('expanded');}">
             <h4>Time saved with Bedrock</h4>
             <div class="mb-big"><span id="dhTimeSaved">0</span><small id="dhTimeSavedSub">minutes &mdash; start using your tools to track time saved.</small></div>
             <div class="dh-cta" style="color:var(--accent)">Click to see breakdown &darr;</div>
@@ -1103,7 +1103,7 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
               <div style="color:var(--text-muted);font-style:italic">No logged events yet. Each estimate, invoice, receipt, or asset you produce gets logged here with the minutes it would have taken without Bedrock.</div>
             </div>
           </div>
-          <div class="dh-mini dh-clickable" id="dhMoneyCard" onclick="this.classList.toggle('expanded')">
+          <div class="dh-mini dh-clickable" id="dhMoneyCard" role="button" tabindex="0" aria-label="Toggle money-saved card detail" onclick="this.classList.toggle('expanded')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.classList.toggle('expanded');}">
             <h4>Money saved vs hiring out</h4>
             <div class="mb-big">$<span id="dhMoneySaved">0</span><small>/mo &mdash; estimate vs hiring agencies + bookkeeper for the same work.</small></div>
             <div class="dh-cta" style="color:var(--accent)">Click to see breakdown &darr;</div>
