@@ -4934,51 +4934,92 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     </style>
     <div class="hp-inner">
       <h2>Simple, flexible pricing.</h2>
-      <p class="hp-sub">It's a subscription service &mdash; pick the tools you want and add more anytime. No long contracts, cancel whenever.</p>
-      <div class="hp-grid">
-        <div class="hp-card">
-          <div class="hp-name">Bedrock Sites</div>
-          <div class="hp-price">$20<span>/mo</span></div>
-          <div class="hp-note">A professional website for your trade. One-time $200 build fee, then $20/month for hosting, edits, and support.</div>
-        </div>
-        <div class="hp-card">
-          <div class="hp-name">Bedrock Marketing</div>
-          <div class="hp-price">$30<span>/mo</span></div>
-          <div class="hp-note">Brand Kit plus unlimited flyers, social posts, signs, and print materials &mdash; all on-brand.</div>
-        </div>
-        <div class="hp-card">
-          <div class="hp-name">Finance &amp; Operations</div>
-          <div class="hp-price">$70<span>/mo</span></div>
-          <ul style="list-style:none;margin:0.7rem 0 0.2rem;padding:0;text-align:left">
-            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Optimizer Free Scan</li>
-            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Finance Dashboard</li>
-            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Donna Operations Assistant</li>
-            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Customer Database</li>
-            <li style="font-family:'DM Sans',sans-serif;font-size:0.78rem;color:rgba(255,255,255,0.82);padding:0.22rem 0;display:flex;gap:0.5rem"><span style="color:#C9922A;font-weight:700">&#10003;</span>Project Tracking</li>
+      <p class="hp-sub">Most contractors save by going with the bundle &mdash; everything's connected by design. You can also pick individual tools.</p>
+
+      <!-- SITE9 2026-05-25: bundle dominates. Full Ecosystem is the visual default; individual tiers are escape hatches below. -->
+      <style>
+        #hiw-pricing .hp-hero{background:linear-gradient(135deg,rgba(201,146,42,0.22),rgba(46,90,142,0.18));border:2px solid #C9922A;border-radius:14px;padding:2.5rem 2rem;margin-bottom:2rem;display:grid;grid-template-columns:1.1fr 1fr;gap:2rem;align-items:center;text-align:left;box-shadow:0 18px 48px rgba(0,0,0,0.32)}
+        @media(max-width:760px){#hiw-pricing .hp-hero{grid-template-columns:1fr;text-align:center}}
+        #hiw-pricing .hp-hero .hh-eyebrow{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.26em;text-transform:uppercase;color:#F5E6C8;margin-bottom:0.65rem}
+        #hiw-pricing .hp-hero .hh-name{font-family:'Cormorant Garamond',serif;font-size:clamp(1.7rem,3vw,2.4rem);font-weight:700;color:#fff;line-height:1.1;margin-bottom:0.45rem}
+        #hiw-pricing .hp-hero .hh-tag{font-family:'DM Sans',sans-serif;font-size:0.92rem;color:rgba(255,255,255,0.82);line-height:1.55;margin-bottom:1rem}
+        #hiw-pricing .hp-hero .hh-price{font-family:'Cormorant Garamond',serif;font-size:clamp(2.6rem,5vw,4rem);font-weight:700;color:#fff;line-height:1}
+        #hiw-pricing .hp-hero .hh-price span{font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:400;color:rgba(255,255,255,0.7)}
+        #hiw-pricing .hp-hero .hh-fee{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:#C9922A;font-weight:700;margin-top:0.4rem;letter-spacing:0.04em}
+        #hiw-pricing .hp-hero ul{list-style:none;margin:0.4rem 0 1rem;padding:0}
+        #hiw-pricing .hp-hero ul li{font-family:'DM Sans',sans-serif;font-size:0.84rem;color:rgba(255,255,255,0.88);padding:0.28rem 0;display:flex;gap:0.55rem;align-items:flex-start}
+        #hiw-pricing .hp-hero ul li::before{content:'\2713';color:#C9922A;font-weight:700;flex-shrink:0}
+        #hiw-pricing .hp-hero .hh-cta{display:inline-block;background:#C9922A;color:#0D1B2E;font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:0.95rem 1.85rem;border-radius:5px;text-decoration:none;margin-top:0.8rem}
+        #hiw-pricing .hp-hero .hh-cta:hover{background:#b8831f}
+        #hiw-pricing .hp-others-label{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.45);text-align:center;margin:1.5rem 0 1rem}
+        #hiw-pricing .hp-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem}
+        @media(max-width:760px){#hiw-pricing .hp-mini-grid{grid-template-columns:repeat(2,1fr)}}
+        #hiw-pricing .hp-mini{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:1rem 0.9rem;text-align:left}
+        #hiw-pricing .hp-mini .hpm-name{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#C9922A;margin-bottom:0.35rem}
+        #hiw-pricing .hp-mini .hpm-price{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:#fff;line-height:1}
+        #hiw-pricing .hp-mini .hpm-price span{font-family:'DM Sans',sans-serif;font-size:0.7rem;font-weight:400;color:rgba(255,255,255,0.5)}
+        #hiw-pricing .hp-mini .hpm-note{font-family:'DM Sans',sans-serif;font-size:0.7rem;color:rgba(255,255,255,0.62);line-height:1.5;margin-top:0.4rem}
+      </style>
+
+      <!-- HERO TIER: Full Ecosystem -->
+      <div class="hp-hero">
+        <div>
+          <div class="hh-eyebrow">Recommended &middot; Best Value</div>
+          <div class="hh-name">The Full Ecosystem</div>
+          <p class="hh-tag">Every Bedrock tool, connected by design. One profile powers your website, marketing, finances, and daily operations.</p>
+          <ul>
+            <li>Professional website + hosting (Sites)</li>
+            <li>Brand kit + unlimited print/social assets (Marketing)</li>
+            <li>Read-only finance dashboard (Finance)</li>
+            <li>Donna &mdash; conversational admin assistant (Operations)</li>
           </ul>
-          <details style="margin-top:0.6rem;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.5rem">
-            <summary style="font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;color:#C9922A;cursor:pointer;list-style:none">What's inside Bedrock Donna?</summary>
-            <p style="font-family:'DM Sans',sans-serif;font-size:0.76rem;color:rgba(255,255,255,0.62);line-height:1.6;margin-top:0.5rem">Your conversational admin assistant: drafts estimates and invoices, files receipts, schedules jobs, and keeps a customer database &mdash; all approval-gated. <a href="/bedrock-donna-v1.html" style="color:#C9922A">Open Operations &rarr;</a></p>
-          </details>
-          <details style="margin-top:0.35rem">
-            <summary style="font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:600;color:#C9922A;cursor:pointer;list-style:none">What's inside Bedrock Finance?</summary>
-            <p style="font-family:'DM Sans',sans-serif;font-size:0.76rem;color:rgba(255,255,255,0.62);line-height:1.6;margin-top:0.5rem">A read-only dashboard: revenue trends, gross margin, outstanding invoices, and job-by-job profitability &mdash; in plain language. <a href="/bedrock-finance-v1.html" style="color:#C9922A">Open Finance &rarr;</a></p>
-          </details>
+          <a class="hh-cta" href="#" onclick="event.preventDefault();openAuthModal('create')">Start free &mdash; see it before you pay &rarr;</a>
         </div>
+        <div style="text-align:center">
+          <div class="hh-price">$100<span>/mo</span></div>
+          <div class="hh-fee">Setup waived &middot; $200 build fee included</div>
+        </div>
+      </div>
+
+      <div class="hp-others-label">Or pick individual tools</div>
+
+      <div class="hp-mini-grid">
+        <div class="hp-mini">
+          <div class="hpm-name">Bedrock Sites</div>
+          <div class="hpm-price">$20<span>/mo</span></div>
+          <div class="hpm-note">Pro contractor website. $200 one-time build fee.</div>
+        </div>
+        <div class="hp-mini">
+          <div class="hpm-name">Bedrock Marketing</div>
+          <div class="hpm-price">$30<span>/mo</span></div>
+          <div class="hpm-note">Brand kit + unlimited flyers, signs, social posts.</div>
+        </div>
+        <div class="hp-mini">
+          <div class="hpm-name">Sites + Marketing</div>
+          <div class="hpm-price">$40<span>/mo</span></div>
+          <div class="hpm-note">The two most-bought tools, bundled.</div>
+        </div>
+        <div class="hp-mini">
+          <div class="hpm-name">Finance &amp; Operations</div>
+          <div class="hpm-price">$70<span>/mo</span></div>
+          <div class="hpm-note">Donna (Operations) + Finance dashboard.</div>
+        </div>
+      </div>
+
+      <!-- ARCHIVED 2026-05-25: SITE9 — previous equal-weight 3-up + 2-up pricing grid moved into the hero/mini structure above. -->
+      <!--
+      <div class="hp-grid">
+        <div class="hp-card">Sites $20</div>
+        <div class="hp-card">Marketing $30</div>
+        <div class="hp-card">Finance & Operations $70 with feature list</div>
       </div>
       <div class="hp-grid" style="grid-template-columns:1fr 1fr">
-        <div class="hp-card">
-          <div class="hp-name">Sites + Marketing Bundle</div>
-          <div class="hp-price">$40<span>/mo</span></div>
-          <div class="hp-note">Website and Marketing together &mdash; save versus buying each on its own.</div>
-        </div>
-        <div class="hp-card featured">
-          <div class="hp-name">Full Ecosystem &middot; Best Value</div>
-          <div class="hp-price">$100<span>/mo</span></div>
-          <div class="hp-note">Every Bedrock tool &mdash; Sites, Marketing, plus Finance &amp; Operations. The $200 site build fee is waived.</div>
-        </div>
+        <div class="hp-card">Sites + Marketing $40</div>
+        <div class="hp-card featured">Full Ecosystem $100</div>
       </div>
-      <p class="hp-fine">Pricing is confirmed in your portal before any charge. <strong>You only pay when you're ready.</strong></p>
+      -->
+
+      <p class="hp-fine" style="margin-top:1.5rem">Pricing is confirmed in your portal before any charge. <strong>You only pay when you're ready.</strong></p>
     </div>
   </section>
 
