@@ -3240,6 +3240,20 @@ function loadStoredNotifications(session) {
     if (typeof pct === 'number' && pct < 100) window.notifProfileIncomplete(pct);
     else window.dismissNotif('profile-incomplete');
   } catch(_){}
+  // SHELL1 2026-05-25: surface OAuth callback results in the bell.
+  // qbo-callback.js → ?qbo=connected|error · google-oauth-callback.js → ?google=connected|error
+  try {
+    var qp = new URLSearchParams(window.location.search);
+    var changed = false;
+    if (qp.get('qbo') === 'connected')    { window.notifIntegrationConnected('QuickBooks');     qp.delete('qbo'); changed = true; }
+    else if (qp.get('qbo') === 'error')   { window.notifIntegrationFailed('QuickBooks');         qp.delete('qbo'); changed = true; }
+    if (qp.get('google') === 'connected') { window.notifIntegrationConnected('Google');          qp.delete('google'); changed = true; }
+    else if (qp.get('google') === 'error'){ window.notifIntegrationFailed('Google');             qp.delete('google'); changed = true; }
+    if (changed) {
+      var qs = qp.toString();
+      history.replaceState({}, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
+    }
+  } catch(_){}
   renderNotifications();
 }
 function persistNotifications() { try { localStorage.setItem(NOTIF_KEY, JSON.stringify(NOTIFICATIONS)); } catch(_){} }
