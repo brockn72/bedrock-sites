@@ -81,13 +81,17 @@ async function getQboConnection(userId, supabaseUrl, supabaseKey) {
   );
   const rows = tokRes.ok ? await tokRes.json() : [];
   if (!rows.length) return { connected: false };
-  const fresh = await ensureFreshToken(rows[0], supabaseUrl, supabaseKey);
+  const row = rows[0];
+  const fresh = await ensureFreshToken(row, supabaseUrl, supabaseKey);
   return {
     connected:        true,
     access_token:     fresh.access_token,
     realm_id:         fresh.realm_id,
     token_expires_at: fresh.token_expires_at,
     refreshed:        fresh.refreshed,
+    // OPS6 + reusable-items setup cache (populated by lib/qbo-setup.js on connect).
+    bedrock_item_ids: row.bedrock_item_ids || null,
+    expense_accounts: row.expense_accounts || null,
   };
 }
 

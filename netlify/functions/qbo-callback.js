@@ -2,6 +2,12 @@
 // they consent. Exchanges the authorization code for tokens and stores them in
 // donna_qbo_tokens, then redirects the contractor back to the Operations tool.
 //
+// After the token store, runs lib/qbo-setup.js to ensure the contractor has
+// the six reusable Bedrock Items (Labor/Materials/Equipment/Travel/Cleanup/
+// Service Call) and caches their expense accounts for the receipt dropdown.
+
+const { runPostConnectSetup } = require('../lib/qbo-setup');
+//
 // ── Required Netlify env vars ──────────────────────────────────────────────
 //   QBO_CLIENT_ID, QBO_CLIENT_SECRET — from the Intuit developer console
 //   QBO_REDIRECT_URI                 — must match qbo-auth.js exactly
@@ -92,13 +98,26 @@ exports.handler = async (event) => {
       }),
     });
     if (!r.ok) {
-      console.error('[qbo-callback] token store', r.status, await r.text());
+      // Status only — body echoes service-key fragments.
+      console.error('[qbo-callback] token store status=', r.status);
       return back('error');
     }
   } catch (e) {
-    console.error('[qbo-callback] token store failed:', e.message);
+    console.error('[qbo-callback] token store code=', (e && e.code) || 'unknown');
     return back('error');
   }
+
+  // Post-connect setup (Items + expense-account cache). Fire-and-forget within
+  // the function lifetime; never blocks the redirect to the contractor.
+  try {
+    await runPostConnectSetup({
+      accessToken: tok.access_token,
+      realmId,
+      userId,
+      supabaseUrl,
+      supabaseKey,
+    });
+  } catch (_) { /* non-fatal */ }
 
   return back('connected');
 };

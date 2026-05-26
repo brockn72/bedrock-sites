@@ -103,15 +103,34 @@ async function findExpenseAccountRef(accessToken, realmId) {
   return acc ? { value: acc.Id, name: acc.Name } : null;
 }
 
-// Convert Donna line_items into QBO SalesItemLine objects.
-function buildLines(lineItems, itemRef) {
+// Map a free-text line description to one of our six reusable Bedrock Items.
+// Keeps the contractor's QBO Items list clean (Labor / Materials / Equipment /
+// Travel / Cleanup / Service Call) instead of growing one Item per job.
+function pickBedrockItem(description, bedrockItemIds) {
+  const d = String(description || '').toLowerCase();
+  if (!bedrockItemIds) return null;
+  if (/labor|hour|hrs?\b|man[- ]hour/.test(d)        && bedrockItemIds['Labor'])        return { value: bedrockItemIds['Labor'],        name: 'Labor' };
+  if (/material|supplies|lumber|paint|paver|stone/.test(d) && bedrockItemIds['Materials']) return { value: bedrockItemIds['Materials'],    name: 'Materials' };
+  if (/equipment|rental|skid|bobcat|excavator|trencher/.test(d) && bedrockItemIds['Equipment']) return { value: bedrockItemIds['Equipment'], name: 'Equipment' };
+  if (/travel|mileage|trip charge/.test(d)            && bedrockItemIds['Travel'])       return { value: bedrockItemIds['Travel'],       name: 'Travel' };
+  if (/clean[- ]?up|haul[- ]?away|dump fee/.test(d)   && bedrockItemIds['Cleanup'])      return { value: bedrockItemIds['Cleanup'],      name: 'Cleanup' };
+  // Anything else falls back to Service Call.
+  if (bedrockItemIds['Service Call']) return { value: bedrockItemIds['Service Call'], name: 'Service Call' };
+  return null;
+}
+
+// Convert Donna line_items into QBO SalesItemLine objects. Each line picks its
+// own reusable Item from the cached Bedrock set; falls back to defaultRef if
+// none match (e.g. before post-connect setup ran).
+function buildLines(lineItems, defaultRef, bedrockItemIds) {
   const items = Array.isArray(lineItems) && lineItems.length ? lineItems : [];
   if (!items.length) return null;
   return items.map((li) => {
     const qty   = Number(li.qty) || 1;
     const price = Number(li.unit_price);
     const amount = Number(li.total) || (isFinite(price) ? price * qty : 0);
-    const detail = { ItemRef: itemRef, Qty: qty };
+    const ref    = pickBedrockItem(li.description, bedrockItemIds) || defaultRef;
+    const detail = { ItemRef: ref, Qty: qty };
     if (isFinite(price)) detail.UnitPrice = price;
     return {
       DetailType:          'SalesItemLineDetail',
@@ -186,7 +205,11 @@ exports.handler = async (event) => {
           body: JSON.stringify({ synced: false, skipped: true, reason: 'No amount on receipt — saved in Bedrock only.' }) };
       }
       const payAcct = await findPaymentAccountRef(accessToken, realmId);
-      const expAcct = await findExpenseAccountRef(accessToken, realmId);
+      // OPS6: prefer the contractor's chosen expense account (record.account_id)
+      // over the heuristic findExpenseAccountRef.
+      let expAcct = null;
+      if (record.account_id) expAcct = { value: String(record.account_id) };
+      if (!expAcct) expAcct = await findExpenseAccountRef(accessToken, realmId);
       if (!payAcct || !expAcct) {
         return { statusCode: 200, headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ synced: false, skipped: true,
@@ -217,16 +240,24 @@ exports.handler = async (event) => {
     const qboCustomerId = await ensureQboCustomer(accessToken, realmId, customer);
     if (!qboCustomerId) throw new Error('Could not resolve a QBO customer');
 
+    // Prefer the cached six-Item set (Labor / Materials / Equipment / Travel /
+    // Cleanup / Service Call) seeded on connect. Fall back to whatever Service
+    // Item QBO already has if the cache is empty (e.g. token row pre-dates the
+    // OPS-Items migration).
+    const bedrockItemIds = conn.bedrock_item_ids || null;
     const itemRef = await findServiceItemRef(accessToken, realmId);
-    let lines = buildLines(record.line_items, itemRef);
+    let lines = buildLines(record.line_items, itemRef, bedrockItemIds);
     if (!lines) {
       // No itemized lines — fall back to a single line for the total.
       const total = Number(record.total) || 0;
+      const fallbackRef = (bedrockItemIds && bedrockItemIds['Service Call'])
+        ? { value: bedrockItemIds['Service Call'] }
+        : itemRef;
       lines = [{
         DetailType:          'SalesItemLineDetail',
         Amount:              Number(total.toFixed(2)),
         Description:         String(record.description || (entity === 'invoice' ? 'Invoice' : 'Estimate')),
-        SalesItemLineDetail: { ItemRef: itemRef, Qty: 1, UnitPrice: total },
+        SalesItemLineDetail: { ItemRef: fallbackRef, Qty: 1, UnitPrice: total },
       }];
     }
 
@@ -239,9 +270,8 @@ exports.handler = async (event) => {
     return { statusCode: 200, headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ synced: true, qbo_id: qboObj.Id || null, qbo_customer_id: qboCustomerId }) };
   } catch (e) {
-    console.error('[qbo-sync]', entity, e.message);
-    // Don't fail the whole approval — report the sync miss so Donna can tell
-    // the contractor their record saved but QuickBooks didn't update.
+    // Short message only — QBO bodies echo realm + access-token hints.
+    console.error('[qbo-sync]', entity, 'code=', (e && e.code) || 'unknown', 'msg=', (e && e.message || '').slice(0, 120));
     return { statusCode: 200, headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ synced: false, skipped: false, error: 'QuickBooks didn’t accept that — saved in Bedrock only.' }) };
   }
