@@ -3957,7 +3957,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <div style="display:flex;gap:8px;flex-shrink:0;flex-wrap:wrap">
       <button onclick="continueSavedBuild()" class="btn-gold" style="padding:0.6rem 1.2rem;font-size:0.62rem">Continue Build</button>
       <button onclick="if(confirm('Start over? Your saved build will be erased.')){clearSavedBuild();}" style="font-family:'Montserrat',sans-serif;padding:0.6rem 1rem;font-size:0.6rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);background:transparent;border:1px solid var(--border);cursor:pointer">Start Fresh</button>
-      <button onclick="dismissResumeBanner()" title="Dismiss" style="background:transparent;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;line-height:1;padding:0 0.4rem">✕</button>
+      <button onclick="dismissResumeBanner()" title="Dismiss" aria-label="Dismiss banner" style="background:transparent;border:none;color:var(--text-muted);font-size:1.1rem;cursor:pointer;line-height:1;padding:0 0.4rem">✕</button>
     </div>
   </div>
 
@@ -8207,7 +8207,7 @@ function _populateDirectEditInner(){
   // Services — always shown
   html+=groupHeader('Services','The main services you offer. Each gets its own card on your site with a name and short description. Click + Add Service to add more, or X to remove one.',null,'services');
   (d.services||[]).forEach((s,i)=>{
-    html+=`<div class="de-item-box"><button class="de-item-remove" onclick="deRemoveArr('services',${i})">✕</button><div class="de-field"><div class="de-field-label">Service ${i+1} name</div><input class="de-input" value="${esc(s.name||'')}" oninput="deSetArr('services',${i},'name',this.value)"></div><div class="de-field" style="margin-top:4px"><div class="de-field-label">Description</div><textarea class="de-input de-textarea" oninput="deSetArr('services',${i},'desc',this.value)">${esc(s.desc||'')}</textarea></div></div>`;
+    html+=`<div class="de-item-box"><button class="de-item-remove" aria-label="Remove item" onclick="deRemoveArr('services',${i})">✕</button><div class="de-field"><div class="de-field-label">Service ${i+1} name</div><input class="de-input" value="${esc(s.name||'')}" oninput="deSetArr('services',${i},'name',this.value)"></div><div class="de-field" style="margin-top:4px"><div class="de-field-label">Description</div><textarea class="de-input de-textarea" oninput="deSetArr('services',${i},'desc',this.value)">${esc(s.desc||'')}</textarea></div></div>`;
   });
   html+=`<button class="de-add-btn" onclick="deAddArr('services',{name:'New Service',desc:'Description of this service.'})">+ Add Service</button>`;
 
@@ -8220,7 +8220,7 @@ function _populateDirectEditInner(){
   html+=`<div class="${sectionVis.pricing?'':'de-section-collapsed'}">`;
   html+=`<div class="de-field"><div class="de-field-label">Intro sentence</div><textarea class="de-input de-textarea" oninput="deSet('pricing_intro',this.value)">${esc(d.pricing_intro||'')}</textarea></div>`;
   (d.pricing_items||[]).forEach((p,i)=>{
-    html+=`<div class="de-item-box"><button class="de-item-remove" onclick="deRemoveArr('pricing_items',${i})">✕</button>
+    html+=`<div class="de-item-box"><button class="de-item-remove" aria-label="Remove item" onclick="deRemoveArr('pricing_items',${i})">✕</button>
     <div class="de-row2"><div class="de-field"><div class="de-field-label">Service</div><input class="de-input" value="${esc(p.name||'')}" oninput="deSetArr('pricing_items',${i},'name',this.value)"></div><div class="de-field"><div class="de-field-label">Price</div><input class="de-input" value="${esc(p.price||'')}" oninput="deSetArr('pricing_items',${i},'price',this.value)"></div></div>
     <div class="de-field" style="margin-top:4px"><div class="de-field-label">Note / what's included</div><input class="de-input" value="${esc(p.note||'')}" oninput="deSetArr('pricing_items',${i},'note',this.value)"></div></div>`;
   });
@@ -8253,7 +8253,7 @@ function _populateDirectEditInner(){
             ${i<S.photos.length-1?`<button class="de-photo-action de-photo-arrow" onclick="movePhoto(${i},1)" title="Move right">→</button>`:''}
           </div>
         </div>
-        <button class="photo-remove" onclick="editorRemovePhoto(${i})" title="Remove">✕</button>
+        <button class="photo-remove" onclick="editorRemovePhoto(${i})" title="Remove" aria-label="Remove photo">✕</button>
       </div>`;
     });
     if(S.photos.length<PHOTO_CAP)html+=`<div class="de-photo-add" onclick="document.getElementById('editorPhotosInput').click()"><div class="de-photo-add-icon">+</div>Add Photo</div>`;
@@ -8325,7 +8325,7 @@ function _populateDirectEditInner(){
           const beforeOpts=`<option value="">— Pick a photo —</option>`+S.photos.map(function(url,pi){return `<option value="${url}"${pair.before===url?' selected':''}>Photo ${pi+1}</option>`;}).join('');
           const afterOpts=`<option value="">— Pick a photo —</option>`+S.photos.map(function(url,pi){return `<option value="${url}"${pair.after===url?' selected':''}>Photo ${pi+1}</option>`;}).join('');
           html+=`<div style="position:relative;padding:0.85rem;background:#fff;border:1px solid var(--border);margin-bottom:0.5rem">
-            <button class="de-item-remove" onclick="baRemovePair('${gal.key}',${i})" style="position:absolute;top:6px;right:6px">✕</button>
+            <button class="de-item-remove" onclick="baRemovePair('${gal.key}',${i})" aria-label="Remove pair" style="position:absolute;top:6px;right:6px">✕</button>
             <div style="font-family:'Cormorant Garamond',serif;font-size:0.78rem;font-style:italic;color:var(--accent);margin-bottom:0.5rem">Pair ${i+1}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem">
               <div>
@@ -8373,7 +8373,7 @@ function _populateDirectEditInner(){
     const currentPhoto=S.processPhotos[i]||'';
     let photoOptions=`<option value="">— No photo —</option>`;
     S.photos.forEach((url,pi)=>{photoOptions+=`<option value="${url}"${currentPhoto===url?' selected':''}>Photo ${pi+1}</option>`;});
-    html+=`<div class="de-item-box"><button class="de-item-remove" onclick="deRemoveArr('process_steps',${i})">✕</button>
+    html+=`<div class="de-item-box"><button class="de-item-remove" aria-label="Remove item" onclick="deRemoveArr('process_steps',${i})">✕</button>
     <div class="de-row2"><div class="de-field"><div class="de-field-label">Step #</div><input class="de-input" value="${esc(p.num||'')}" oninput="deSetArr('process_steps',${i},'num',this.value)"></div><div class="de-field"><div class="de-field-label">Title</div><input class="de-input" value="${esc(p.title||'')}" oninput="deSetArr('process_steps',${i},'title',this.value)"></div></div>
     <div class="de-field" style="margin-top:4px"><div class="de-field-label">Description</div><textarea class="de-input de-textarea" oninput="deSetArr('process_steps',${i},'desc',this.value)">${esc(p.desc||'')}</textarea></div>
     <div class="de-field" style="margin-top:4px"><div class="de-field-label">Photo (optional)</div>${S.photos.length===0?`<div style="font-size:0.66rem;color:var(--text-muted);font-style:italic;padding:5px 0">Upload photos in the Work Gallery section to attach them here.</div>`:`<select class="de-input" style="font-size:0.74rem" onchange="setProcessPhoto(${i},this.value)">${photoOptions}</select>${currentPhoto?`<div style="margin-top:6px;width:100%;max-width:140px;aspect-ratio:4/3"><img src="${currentPhoto}" style="width:100%;height:100%;object-fit:cover;display:block;border:1px solid var(--border)"></div>`:''}`}</div>
@@ -8385,7 +8385,7 @@ function _populateDirectEditInner(){
   // Trust Bar — always shown
   html+=groupHeader('Trust Bar','The four small stats right under your hero. Use claims you can verify — &quot;Free Estimates&quot;, &quot;Local Business&quot;, &quot;Family Owned&quot;, &quot;Same-Day Quotes&quot;. Avoid licensed/insured/certified claims unless you are ready to back them up. Big value is the bold text, small label is below it.',null);
   (d.trust_items||[]).forEach((p,i)=>{
-    html+=`<div class="de-item-box"><button class="de-item-remove" onclick="deRemoveArr('trust_items',${i})">✕</button>
+    html+=`<div class="de-item-box"><button class="de-item-remove" aria-label="Remove item" onclick="deRemoveArr('trust_items',${i})">✕</button>
     <div class="de-row2"><div class="de-field"><div class="de-field-label">Big value</div><input class="de-input" value="${esc(p.val||'')}" oninput="deSetArr('trust_items',${i},'val',this.value)"></div><div class="de-field"><div class="de-field-label">Small label</div><input class="de-input" value="${esc(p.label||'')}" oninput="deSetArr('trust_items',${i},'label',this.value)"></div></div></div>`;
   });
   html+=`<button class="de-add-btn" onclick="deAddArr('trust_items',{val:'New',label:'item'})">+ Add Trust Item</button>`;
@@ -8431,7 +8431,7 @@ function _populateDirectEditInner(){
   html+=groupHeader('Reviews','Customer testimonials. Use real reviews if you have them — otherwise these realistic samples work fine. Toggle on the left to show or hide the reviews section.','reviews','reviews');
   html+=`<div class="${sectionVis.reviews?'':'de-section-collapsed'}"><div class="stat-badge"><span class="stat-badge-num">75%</span><span class="stat-badge-text"><strong>of consumers always or regularly read online reviews</strong> before contacting a local business. Even 3 strong reviews can move you up in Google's results. <em>— BrightLocal Local Consumer Review Survey</em></span></div>`;
   (d.reviews||[]).forEach((r,i)=>{
-    html+=`<div class="de-item-box"><button class="de-item-remove" onclick="deRemoveArr('reviews',${i})">✕</button>
+    html+=`<div class="de-item-box"><button class="de-item-remove" aria-label="Remove item" onclick="deRemoveArr('reviews',${i})">✕</button>
     <div class="de-row2"><div class="de-field"><div class="de-field-label">Name</div><input class="de-input" value="${esc(r.name||'')}" oninput="deSetArr('reviews',${i},'name',this.value)"></div><div class="de-field"><div class="de-field-label">Job type</div><input class="de-input" value="${esc(r.job||'')}" oninput="deSetArr('reviews',${i},'job',this.value)"></div></div>
     <div class="de-field" style="margin-top:4px"><div class="de-field-label">Review text</div><textarea class="de-input de-textarea" oninput="deSetArr('reviews',${i},'text',this.value)">${esc(r.text||'')}</textarea></div></div>`;
   });
@@ -8442,7 +8442,7 @@ function _populateDirectEditInner(){
   html+=groupHeader('FAQ Section','Common questions and your honest answers — &quot;Are you licensed?&quot;, &quot;Do you offer free estimates?&quot;, &quot;What areas do you serve?&quot;. Big SEO win — Google often pulls FAQs into search results. Toggle on the left to show or hide on your site.','faq','faq');
   html+=`<div class="${sectionVis.faq?'':'de-section-collapsed'}">`;
   (d.faqs||[]).forEach((f,i)=>{
-    html+=`<div class="de-item-box"><button class="de-item-remove" onclick="deRemoveArr('faqs',${i})">✕</button>
+    html+=`<div class="de-item-box"><button class="de-item-remove" aria-label="Remove item" onclick="deRemoveArr('faqs',${i})">✕</button>
     <div class="de-field"><div class="de-field-label">Question ${i+1}</div><input class="de-input" value="${esc(f.q||'')}" oninput="deSetArr('faqs',${i},'q',this.value)"></div>
     <div class="de-field" style="margin-top:4px"><div class="de-field-label">Answer</div><textarea class="de-input de-textarea" oninput="deSetArr('faqs',${i},'a',this.value)">${esc(f.a||'')}</textarea></div></div>`;
   });
