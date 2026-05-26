@@ -1181,6 +1181,13 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     word-break:keep-all;
   }
   @media(max-width:380px){.mtb-label{font-size:0.52rem;max-width:72px}}
+  /* SITE14 2026-05-25: extra-tight breakpoint for 360px iPhones — keeps "How It Works" + "Create Account" from overflowing the 5-up flex layout. */
+  @media(max-width:360px){
+    .mtb-item{padding:0 2px;min-width:0}
+    .mtb-label{font-size:0.48rem;letter-spacing:0;max-width:64px;line-height:1.05}
+    .mtb-cta-circle{width:48px;height:48px;margin-top:-22px}
+    .mtb-cta-circle svg{width:20px;height:20px}
+  }
 
   /* Middle "Create my account" — raised gold circle */
   .mtb-cta{justify-content:flex-start;padding-top:0}
