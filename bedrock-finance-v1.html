@@ -569,6 +569,8 @@ footer a{color:var(--gold);text-decoration:none}
           <select class="select-mini" id="invDateFilter" onchange="renderInvoices()">
             <option value="all">All dates</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option>
           </select>
+          <!-- DEC9 2026-05-25: Excel export for invoices table -->
+          <button class="select-mini" onclick="exportInvoicesXlsx()" aria-label="Export filtered invoices to Excel" style="cursor:pointer;background:#fff;border:1px solid var(--border-light);color:var(--navy-deep);font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:600;padding:0.45rem 0.85rem;border-radius:5px">⤓ Excel</button>
         </div>
         <div class="table-block">
           <div class="table-block-head"><div class="tb-eyebrow">Invoices</div><h3>Money You're Owed</h3><div class="tb-sub">Jobs you've billed for. Outstanding and overdue rows are money still coming to you.</div></div>
@@ -580,6 +582,8 @@ footer a{color:var(--gold);text-decoration:none}
             <option value="all">All estimates</option><option value="Draft">Draft</option>
             <option value="Sent">Sent</option><option value="Approved">Approved</option><option value="Declined">Declined</option>
           </select>
+          <!-- DEC9 2026-05-25: Excel export for estimates table -->
+          <button class="select-mini" onclick="exportEstimatesXlsx()" aria-label="Export filtered estimates to Excel" style="cursor:pointer;background:#fff;border:1px solid var(--border-light);color:var(--navy-deep);font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:600;padding:0.45rem 0.85rem;border-radius:5px">⤓ Excel</button>
         </div>
         <div class="table-block">
           <div class="table-block-head"><div class="tb-eyebrow">Estimates</div><h3>Jobs You've Quoted</h3><div class="tb-sub">Bids you've sent out. Approved estimates usually become invoices once the work is done.</div></div>
@@ -615,6 +619,8 @@ footer a{color:var(--gold);text-decoration:none}
             <option value="under35">Under 35% margin</option>
             <option value="45plus">45% or higher</option>
           </select>
+          <!-- DEC9 2026-05-25: Excel export -->
+          <button class="select-mini" onclick="exportProjectsXlsx()" aria-label="Export filtered projects to Excel" style="cursor:pointer;background:#fff;border:1px solid var(--border-light);color:var(--navy-deep);font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:600;padding:0.45rem 0.85rem;border-radius:5px">⤓ Excel</button>
         </div>
         <div class="table-block">
           <div class="table-block-head"><div class="tb-eyebrow">Projects</div><h3>Job Profitability</h3><div class="tb-sub">Revenue versus estimated cost, job by job. <strong>Click a column header to sort.</strong></div></div>
@@ -1166,6 +1172,77 @@ function paintSortArrows(){
   });
 }
 function projMarginPct(p){ return (p.cost!=null && p.revenue>0) ? ((p.revenue - p.cost) / p.revenue * 100) : null; }
+
+// DEC9 2026-05-25: simple one-click Excel export. SheetJS (XLSX) is already
+// loaded for the .xlsx import path; reusing it here. Each export reads the
+// CURRENTLY filtered/sorted dataset shown to the contractor and ships it as
+// a single .xlsx file. Filenames stamped with today's date.
+function xlsxDownload(rows, sheetName, filename){
+  if (typeof XLSX === 'undefined') { alert('Excel library not loaded — refresh and try again.'); return; }
+  if (!rows.length) { alert('Nothing to export — your filter set is empty.'); return; }
+  var ws = XLSX.utils.json_to_sheet(rows);
+  var wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, sheetName);
+  XLSX.writeFile(wb, filename);
+}
+function todayStamp(){ var d = new Date(); return d.toISOString().slice(0,10); }
+function exportProjectsXlsx(){
+  // Re-apply current filters + sort exactly like renderProjects, then map to plain rows.
+  var svc = document.getElementById('projServiceFilter').value;
+  var df  = document.getElementById('projDateFilter').value;
+  var mf  = document.getElementById('projMarginFilter').value;
+  var rows = PROJECTS.filter(function(p){
+    var m = projMarginPct(p);
+    if (svc !== 'all' && p.service !== svc) return false;
+    if (df  !== 'all' && p.daysAgo > parseInt(df, 10)) return false;
+    if (mf === 'under25' && (m == null || m >= 25)) return false;
+    if (mf === 'under35' && (m == null || m >= 35)) return false;
+    if (mf === '45plus'  && (m == null || m <  45)) return false;
+    return true;
+  });
+  var key = PROJ_SORT.col, dir = PROJ_SORT.dir === 'asc' ? 1 : -1;
+  rows = rows.slice().sort(function(a, b){
+    var av = key === 'margin' ? projMarginPct(a) : a[key];
+    var bv = key === 'margin' ? projMarginPct(b) : b[key];
+    if (av == null && bv == null) return 0;
+    if (av == null) return 1;
+    if (bv == null) return -1;
+    return (av - bv) * dir;
+  });
+  var flat = rows.map(function(p){
+    var m = projMarginPct(p);
+    return {
+      Job:      p.job,
+      Customer: p.customer,
+      Service:  p.service || '',
+      Revenue:  Number(p.revenue || 0),
+      'Est. Cost':   p.cost != null ? Number(p.cost) : '',
+      'Est. Margin %': m != null ? Math.round(m) : '',
+      'Days ago':    p.daysAgo != null ? p.daysAgo : '',
+    };
+  });
+  xlsxDownload(flat, 'Projects', 'bedrock-projects-' + todayStamp() + '.xlsx');
+}
+function exportInvoicesXlsx(){
+  var sf = document.getElementById('invStatusFilter').value, df = document.getElementById('invDateFilter').value;
+  var rows = INVOICES.filter(function(i){
+    if (sf !== 'all' && i.status !== sf) return false;
+    if (df !== 'all' && i.daysAgo > parseInt(df, 10)) return false;
+    return true;
+  });
+  var flat = rows.map(function(i){
+    return { Customer: i.customer, Job: i.job, Amount: Number(i.amount || 0), Date: i.date, Status: i.status };
+  });
+  xlsxDownload(flat, 'Invoices', 'bedrock-invoices-' + todayStamp() + '.xlsx');
+}
+function exportEstimatesXlsx(){
+  var sf = document.getElementById('estStatusFilter').value;
+  var rows = ESTIMATES.filter(function(e){ return sf === 'all' || e.status === sf; });
+  var flat = rows.map(function(e){
+    return { Customer: e.customer, Job: e.job, Amount: Number(e.amount || 0), Date: e.date, Status: e.status };
+  });
+  xlsxDownload(flat, 'Estimates', 'bedrock-estimates-' + todayStamp() + '.xlsx');
+}
 
 function renderProjects(){
   var badge=document.getElementById('donnaDataBadge');
