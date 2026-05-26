@@ -1004,7 +1004,7 @@ function renderInvoices(){
   var rows = INVOICES.filter(function(i){ if(sf!=='all'&&i.status!==sf)return false; if(df!=='all'&&i.daysAgo>parseInt(df,10))return false; return true; });
   var tb = document.getElementById('invoiceRows');
   tb.innerHTML = rows.length ? rows.map(function(i){
-    return '<tr><td class="cust">'+i.customer+'</td><td class="job-sub">'+i.job+'</td><td class="num amt">'+money(i.amount)+'</td><td>'+i.date+'</td><td><span class="status-pill '+statusClass(i.status)+'">'+i.status+'</span></td></tr>';
+    return '<tr><td class="cust">'+i.customer+'</td><td class="job-sub">'+i.job+'</td><td class="num amt">'+money(i.amount)+'</td><td>'+i.date+'</td><td>'+statusPillHtml(i.status)+'</td></tr>';
   }).join('') : emptyRow(5,'No invoices match those filters.');
 }
 function renderEstimates(){
@@ -1012,7 +1012,7 @@ function renderEstimates(){
   var rows = ESTIMATES.filter(function(e){ return sf==='all'||e.status===sf; });
   var tb = document.getElementById('estimateRows');
   tb.innerHTML = rows.length ? rows.map(function(e){
-    return '<tr><td class="cust">'+e.customer+'</td><td class="job-sub">'+e.job+'</td><td class="num amt">'+money(e.amount)+'</td><td>'+e.date+'</td><td><span class="status-pill '+statusClass(e.status)+'">'+e.status+'</span></td></tr>';
+    return '<tr><td class="cust">'+e.customer+'</td><td class="job-sub">'+e.job+'</td><td class="num amt">'+money(e.amount)+'</td><td>'+e.date+'</td><td>'+statusPillHtml(e.status)+'</td></tr>';
   }).join('') : emptyRow(5,'No estimates match that status.');
 }
 
