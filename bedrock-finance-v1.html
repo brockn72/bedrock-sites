@@ -198,6 +198,13 @@ table.fin-table tbody tr:hover{background:var(--off-white)}
 .margin-fill{height:100%;border-radius:3px}
 .margin-pct{font-weight:700;min-width:34px;text-align:right}
 .disclaimer{background:var(--amber-bg);border-left:3px solid var(--amber);padding:0.8rem 1rem;border-radius:4px;font-size:0.74rem;color:#6e5212;line-height:1.55;margin-bottom:1.25rem}
+/* FIN6 2026-05-25: per-view freshness line. Sits inside view-head, right side. */
+.freshness-line{font-family:'DM Sans',sans-serif;font-size:0.7rem;color:var(--slate);margin-top:0.5rem;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+.freshness-line .fr-dot{width:8px;height:8px;border-radius:50%;background:#3b6d11}
+.freshness-line .fr-dot.stale{background:var(--amber)}
+.freshness-line .fr-dot.cold{background:var(--slate)}
+.freshness-line .fr-refresh{background:none;border:none;color:var(--gold);font-family:inherit;font-size:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline}
+.freshness-line .fr-refresh:hover{color:var(--gold-dark,#A8711A)}
 /* estimated financial statements */
 .section-title{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--navy-deep);margin:1.75rem 0 0.2rem}
 .section-sub{font-size:0.78rem;color:var(--slate);margin-bottom:1rem}
@@ -1152,6 +1159,8 @@ function qDate(s){ var d=new Date(String(s).length>10?s:(s+'T00:00:00')); return
 // The sample-vs-live banner above the filters, with a Refresh button when live.
 function renderDataSourceBar(state){
   var el=document.getElementById('dataSourceBar'); if(!el) return;
+  // FIN6: keep every view's freshness line in sync with the bar.
+  try { paintFreshnessLines(); } catch(_){}
   if(state==='loading'){
     el.innerHTML='<div class="profile-banner ok" style="background:#fff;border-color:var(--border-light);color:var(--slate)"><span>⏳</span><div class="pb-txt">Loading your QuickBooks data…</div></div>';
     return;
@@ -1174,6 +1183,45 @@ function renderDataSourceBar(state){
     +'<button class="btn-gold" onclick="navView(\'connect\')">Connect QuickBooks</button></div>';
 }
 function refreshFinance(){ loadFinanceData(true); }
+
+// FIN6 2026-05-25: every data view gets a small "Last updated HH:MM via QBO •
+// Refresh" line under its title so the 15-min cache freshness is visible.
+// ensureFreshnessLines() injects an empty .freshness-line into each view-head
+// once at boot; paintFreshnessLines() rewrites them whenever data resolves.
+function ensureFreshnessLines(){
+  document.querySelectorAll('#view-graphs .view-head, #view-statements .view-head, #view-projects .view-head, #view-analytics .view-head, #view-est-statements .view-head').forEach(function(h){
+    if (!h.querySelector('.freshness-line')) {
+      var d = document.createElement('div');
+      d.className = 'freshness-line';
+      h.appendChild(d);
+    }
+  });
+}
+function fmtClock(iso){
+  if (!iso) return '';
+  var d = new Date(iso); if (isNaN(d)) return '';
+  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+}
+function paintFreshnessLines(){
+  ensureFreshnessLines();
+  var lines = document.querySelectorAll('.freshness-line');
+  var source = DATA_SOURCE === 'qbo' ? 'QuickBooks'
+             : DATA_SOURCE === 'donna' ? 'Donna data'
+             : DATA_SOURCE === 'sheet' ? 'uploaded spreadsheet'
+             : 'sample data';
+  var stamp = LAST_UPDATED ? fmtClock(LAST_UPDATED) : '';
+  var ageMin = LAST_UPDATED ? Math.floor((Date.now() - new Date(LAST_UPDATED).getTime()) / 60000) : null;
+  var dotCls = LIVE ? (ageMin != null && ageMin >= 15 ? 'stale' : '') : 'cold';
+  var body = LIVE
+    ? '<span class="fr-dot ' + dotCls + '" aria-hidden="true"></span>'
+      + '<span>Last updated ' + (stamp || 'recently') + ' via ' + source
+      + (ageMin != null ? ' &middot; ' + (ageMin < 1 ? 'just now' : ageMin + ' min ago') : '')
+      + '</span>'
+      + (DATA_SOURCE === 'qbo' ? '<button class="fr-refresh" onclick="refreshFinance()">Refresh</button>' : '')
+    : '<span class="fr-dot cold" aria-hidden="true"></span><span>Sample data &middot; connect QuickBooks for live numbers</span>';
+  lines.forEach(function(l){ l.innerHTML = body; });
+}
+document.addEventListener('DOMContentLoaded', ensureFreshnessLines);
 
 function setKpiSkeleton(on){
   document.querySelectorAll('.kpi-card').forEach(function(el){ el.classList.toggle('skel',!!on); });
