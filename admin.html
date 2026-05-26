@@ -77,11 +77,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--off-white);color:var(--na
 .tool-dot.on{background:#3b6d11}
 .tool-row{display:flex;gap:0.8rem;flex-wrap:wrap;font-size:0.7rem;color:var(--slate)}
 .tool-row span{white-space:nowrap}
-.pill{display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.22rem 0.55rem;border-radius:99px;white-space:nowrap}
+/* SHELL3 + A11Y4 2026-05-26: admin subscription pills carry a leading glyph
+   so status is readable without color (color-blind safe). past_due was already
+   amber/warn (correct — not green-ok); verified during this batch. Active=✓,
+   past_due=!, canceled=×, admin=★. Renderer at line ~307 should also pass an
+   aria-label so screen readers say "Status: past due" instead of just "past due". */
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:0.58rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;padding:0.22rem 0.55rem;border-radius:99px;white-space:nowrap}
+.pill::before{font-weight:700;line-height:1}
 .pill.active{background:var(--green-bg);color:var(--green)}
+.pill.active::before{content:'✓'}
 .pill.past_due{background:var(--amber-bg);color:var(--amber)}
+.pill.past_due::before{content:'!'}
 .pill.canceled{background:var(--red-bg);color:var(--red)}
+.pill.canceled::before{content:'×'}
 .pill.admin{background:rgba(201,146,42,0.16);color:var(--gold)}
+.pill.admin::before{content:'★'}
 /* Pre-beta task #3: profile completion badge in the Signups table. */
 .pct{display:inline-block;font-size:0.66rem;font-weight:700;padding:0.18rem 0.5rem;border-radius:5px;min-width:38px;text-align:center}
 .pct.pct-ok{background:var(--green-bg);color:var(--green)}
@@ -304,7 +314,7 @@ function renderContractors(d){
     var pill = '';
     if(p.is_admin) pill = '<span class="pill admin">Admin</span>';
     var statuses = ps.map(function(s){return s.status;}).filter(function(s,i,a){return a.indexOf(s)===i;});
-    var subPills = statuses.map(function(st){ return '<span class="pill '+esc(st)+'">'+esc(st.replace('_',' '))+'</span>'; }).join(' ');
+    var subPills = statuses.map(function(st){ var label = esc(st.replace('_',' ')); return '<span class="pill '+esc(st)+'" role="status" aria-label="Status: '+label+'">'+label+'</span>'; }).join(' ');
     // Pre-beta task #3: profile % complete — only the fields exposed by admin-stats
     // contribute (avoids stale guesses about fields we never see here).
     var profileFields = ['business_name','contact_name','email','phone','trade','city'];
