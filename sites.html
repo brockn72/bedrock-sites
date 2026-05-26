@@ -1697,8 +1697,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="logo-text"><span class="wordmark">Bedrock</span><span class="sub">Digital</span></div>
   </a>
   <ul class="nav-links" id="hpNavLinks">
-    <li><a id="nl-home" href="/">Home</a></li>
-    <li><a id="nl-howitworks" href="/#howitworks">How It Works</a></li>
+    <!-- SITE3 2026-05-25: nav collapsed to 5 links (Tools · How It Works · Pricing · Our Work · Sign In) + gold CTA, mirroring index.html. Old Home/About archived below. -->
     <li class="nav-home-wrap">
       <a id="nl-tools" href="/#tools">Tools</a>
       <ul class="nav-jumps">
@@ -1707,8 +1706,12 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <li><a href="#optimizer" onclick="showPage('optimizer',event)">Optimizer &mdash; Free Scan</a></li>
       </ul>
     </li>
+    <li><a id="nl-howitworks" href="/#howitworks">How It Works</a></li>
+    <li><a id="nl-pricing" href="/#hiw-pricing">Pricing</a></li>
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
-    <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li>
+    <!-- ARCHIVED 2026-05-25: SITE3 — Home/About hidden -->
+    <!-- <li><a id="nl-home" href="/">Home</a></li> -->
+    <!-- <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li> -->
     <li id="navLoginLi">
       <a id="nlLoginLink" href="#" onclick="event.preventDefault();openAuthModal('signin')">Sign In</a>
       <a id="nlProfileBtn" href="portal.html" title="My Account" style="display:none;align-items:center;gap:0.5rem;text-decoration:none;border:1.5px solid #C9922A;border-radius:6px;padding:0.35rem 0.7rem;background:rgba(201,146,42,0.1)"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label" style="color:#C9922A;font-weight:700">My Account</span></a>

@@ -1705,14 +1705,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     <div class="logo-text"><span class="wordmark">Bedrock</span><span class="sub">Digital</span></div>
   </a>
   <ul class="nav-links" id="hpNavLinks">
-    <li><a id="nl-home" href="#home" onclick="showPage('home',event)">Home</a></li>
-    <li class="nav-home-wrap">
-      <a id="nl-howitworks" href="#howitworks" onclick="showPage('howitworks',event)">How It Works</a>
-      <ul class="nav-jumps">
-        <li><a href="#hiw-pricing" onclick="showPage('howitworks',event);setTimeout(function(){var p=document.getElementById('hiw-pricing');if(p)p.scrollIntoView({behavior:'smooth'});},250)">Pricing</a></li>
-        <li><a href="#hiw-faq" onclick="showPage('howitworks',event);setTimeout(function(){var f=document.getElementById('hiw-faq');if(f)f.scrollIntoView({behavior:'smooth'});},250)">FAQ</a></li>
-      </ul>
-    </li>
+    <!-- SITE3 2026-05-25: nav collapsed to 5 links (Tools · How It Works · Pricing · Our Work · Sign In) + one gold CTA. Old Home/About links archived below. -->
     <li class="nav-home-wrap">
       <a id="nl-tools" href="#tools" onclick="showPage('tools',event)">Tools</a>
       <ul class="nav-jumps">
@@ -1724,8 +1717,18 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <li style="display:none"><a href="#optimizer" onclick="showPage('optimizer',event)">SEO/Geo Optimizer</a></li>
       </ul>
     </li>
+    <li class="nav-home-wrap">
+      <a id="nl-howitworks" href="#howitworks" onclick="showPage('howitworks',event)">How It Works</a>
+      <ul class="nav-jumps">
+        <li><a href="#hiw-faq" onclick="showPage('howitworks',event);setTimeout(function(){var f=document.getElementById('hiw-faq');if(f)f.scrollIntoView({behavior:'smooth'});},250)">FAQ</a></li>
+      </ul>
+    </li>
+    <li><a id="nl-pricing" href="#hiw-pricing" onclick="showPage('howitworks',event);setTimeout(function(){var p=document.getElementById('hiw-pricing');if(p)p.scrollIntoView({behavior:'smooth'});},250)">Pricing</a></li>
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
-    <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li>
+    <!-- ARCHIVED 2026-05-25: SITE3 — Home link removed; logo on the left already links home -->
+    <!-- <li><a id="nl-home" href="#home" onclick="showPage('home',event)">Home</a></li> -->
+    <!-- ARCHIVED 2026-05-25: SITE3 — About link moved to footer; reachable via /about deep-link -->
+    <!-- <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li> -->
     <li id="navLoginLi">
       <a id="nlLoginLink" href="#" onclick="event.preventDefault();openAuthModal('signin')">Sign In</a>
       <a id="nlProfileBtn" href="portal.html" title="My Account" style="display:none;align-items:center;gap:0.5rem;text-decoration:none;border:1.5px solid #C9922A;border-radius:6px;padding:0.35rem 0.7rem;background:rgba(201,146,42,0.1)"><span class="nav-avatar" id="nlAvatar">U</span><span class="nav-portal-label" style="color:#C9922A;font-weight:700">My Account</span></a>
