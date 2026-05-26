@@ -3493,8 +3493,16 @@ function checkout() {
   var userId = (currentSession && currentSession.user && currentSession.user.id) || '';
   var btn = document.querySelector('button.btn-gold[onclick="checkout()"]');
   if (btn) { btn.disabled = true; btn.textContent = 'Starting checkout…'; }
+  // SEC5: send the access token so the server resolves user_id from the verified JWT,
+  // not from body.userId (which the client could tamper with).
+  if (!currentSession || !currentSession.access_token) {
+    if (typeof showToast === 'function') showToast('Please sign in again to start checkout.', 'err');
+    if (btn) { btn.disabled = false; btn.textContent = 'Update My Subscription →'; }
+    return;
+  }
   fetch('/.netlify/functions/create-subscription-checkout', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + currentSession.access_token },
     body: JSON.stringify({ tools: recurring, email: email, userId: userId }),
   })
     .then(function(r){ return r.json(); })

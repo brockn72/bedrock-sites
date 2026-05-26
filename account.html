@@ -422,8 +422,12 @@ footer a{color:var(--gold);text-decoration:none}
         var btn = document.getElementById('acSubsCheckoutBtn');
         if (btn) { btn.disabled = true; btn.textContent = 'Starting checkout…'; }
         var bp = window.BedrockProfile, lead = bp && bp.lead ? bp.lead() : {}, email = (lead && lead.email) || '', userId = (lead && lead.id) || '';
+        // SEC5: server now resolves user from this access token, not from body.userId.
+        var sess = (typeof getSession === 'function') ? getSession() : null;
+        if (!sess || !sess.access_token) { if (msg) msg.textContent = 'Please sign in again to start checkout.'; if (btn) { btn.disabled = false; btn.textContent = 'Update my subscription →'; } return; }
         fetch('/.netlify/functions/create-subscription-checkout', {
-          method:'POST', headers:{'Content-Type':'application/json'},
+          method:'POST',
+          headers:{'Content-Type':'application/json', Authorization:'Bearer '+sess.access_token},
           body: JSON.stringify({ tools: selected, email: email, userId: userId })
         }).then(function(r){ return r.json(); }).then(function(d){
           if (d && d.url) { window.location.href = d.url; return; }

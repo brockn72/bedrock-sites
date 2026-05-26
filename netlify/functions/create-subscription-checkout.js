@@ -19,6 +19,14 @@
 // because PRICE_ENV had no entry for "website". Now Website is included as its
 // own recurring price; if STRIPE_BUNDLE_ALL_PRICE_ID is set and the request
 // contains the full set, we use the single bundle price instead.
+//
+// SEC5: requires Authorization: Bearer <supabase access token>. The user_id
+// we attach to the checkout comes from that verified token, not from the
+// request body — so a tampered client can't subscribe tools onto someone
+// else's account.
+
+const { getUserFromAuthHeader } = require('../lib/auth');
+const { createCheckoutState }   = require('../lib/checkout-state');
 
 const PRICE_ENV = {
   website:            'STRIPE_WEBSITE_PRICE_ID',
@@ -43,12 +51,19 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body); }
   catch { return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
 
-  const tools  = Array.isArray(body.tools) ? body.tools : [];
-  const email  = body.email || '';
-  const userId = body.userId || '';
+  const tools = Array.isArray(body.tools) ? body.tools : [];
   if (!tools.length) {
     return { statusCode: 400, body: JSON.stringify({ error: 'No tools selected' }) };
   }
+
+  // SEC5: server resolves the user from the Supabase access token in the
+  // Authorization header. Anything the client posted in body.userId is ignored.
+  const authResult = await getUserFromAuthHeader(event);
+  if (!authResult.ok) {
+    return { statusCode: 401, body: JSON.stringify({ error: authResult.error }) };
+  }
+  const userId = authResult.user.id;
+  const email  = authResult.user.email || body.email || '';
 
   // G4e: If the request contains all three SKUs (Full Ecosystem) and a bundle price
   // is configured in Stripe, use that single line item ($100/mo) instead of summing
@@ -102,6 +117,21 @@ exports.handler = async (event) => {
   // Metadata so stripe-webhook.js can mark the right tools active for the right
   // account once the subscription is confirmed.
   const toolList = billed.join(',');
+
+  // SEC5: issue + attach the one-time state token. The webhook prefers state
+  // over the legacy metadata.user_id / metadata.tools fields (still emitted
+  // for backward compat during the rollout window).
+  const stateRes = await createCheckoutState({
+    kind:    'tools',
+    user_id: userId,
+    email:   email || null,
+    tools:   billed,
+  });
+  if (!stateRes.ok) {
+    return { statusCode: 500, body: JSON.stringify({ error: stateRes.error || 'Could not start checkout.' }) };
+  }
+  params.append('metadata[state]',                    stateRes.token);
+  params.append('subscription_data[metadata][state]', stateRes.token);
   params.append('metadata[user_id]', userId);
   params.append('metadata[tools]',   toolList);
   params.append('subscription_data[metadata][user_id]', userId);

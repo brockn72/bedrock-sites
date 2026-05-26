@@ -1,6 +1,7 @@
 const { createHmac, timingSafeEqual } = require('crypto');
 const { deploySite } = require('../lib/deploy-site');
 const { sendOnboardingEmail } = require('../lib/onboarding-email');
+const { consumeCheckoutState } = require('../lib/checkout-state');
 
 function verifyStripeSignature(rawBody, sigHeader, secret) {
   if (!sigHeader) return false;
@@ -119,13 +120,30 @@ exports.handler = async (event) => {
   if (stripeEvent.type === 'checkout.session.completed') {
     const session      = stripeEvent.data.object;
 
+    // SEC5: prefer the server-stored mapping behind metadata.state. Falls back
+    // to legacy metadata.user_id / metadata.lead_id only when no state token
+    // is present (in-flight checkouts from before this deploy).
+    let trustedState = null;
+    if (session.metadata && session.metadata.state) {
+      const consumed = await consumeCheckoutState(session.metadata.state);
+      if (consumed.ok) trustedState = consumed.state;
+      else console.warn('[stripe-webhook] state resolve failed:', consumed.error, 'session=', session.id);
+    } else {
+      console.warn('[stripe-webhook] DEPRECATED: webhook arrived with no metadata.state — using legacy metadata fields');
+    }
+
     // ── Tool subscription checkout (Marketing / Finance & Operations) ─────────
     // Distinguished from a site build by metadata.tools (site builds use
     // metadata.lead_id). Mark the tools active and stop — none of the
     // site-build logic below applies.
-    if (session.metadata && session.metadata.tools) {
-      const subUserId = session.metadata.user_id || '';
-      const subTools  = session.metadata.tools.split(',').map((s) => s.trim()).filter(Boolean);
+    const isToolCheckout = (trustedState && trustedState.kind === 'tools')
+                        || (session.metadata && session.metadata.tools);
+    if (isToolCheckout) {
+      const subUserId = (trustedState && trustedState.user_id)
+                     || (session.metadata && session.metadata.user_id) || '';
+      const subTools  = (trustedState && Array.isArray(trustedState.tools) && trustedState.tools.length)
+                     ? trustedState.tools
+                     : (session.metadata.tools || '').split(',').map((s) => s.trim()).filter(Boolean);
       await upsertToolSubs(supabaseUrl, supabaseKey, subUserId, subTools, 'active',
                            session.subscription || '', session.customer || '');
       if (resendKey && process.env.RESEND_DRY_RUN === 'true') {
@@ -150,9 +168,12 @@ exports.handler = async (event) => {
       return { statusCode: 200, body: JSON.stringify({ received: true }) };
     }
 
-    const leadId       = session.metadata?.lead_id;
-    const businessName = session.metadata?.business_name || 'Unknown Business';
-    const customerEmail = session.customer_details?.email || session.customer_email || '';
+    // SEC5: trusted state wins over client-supplied metadata for the site-build flow.
+    const leadId       = (trustedState && trustedState.lead_id) || session.metadata?.lead_id;
+    const businessName = (trustedState && trustedState.business_name)
+                       || session.metadata?.business_name || 'Unknown Business';
+    const customerEmail = session.customer_details?.email || session.customer_email
+                       || (trustedState && trustedState.email) || '';
 
     // Mark lead as paid in Supabase
     if (supabaseUrl && supabaseKey && leadId) {
