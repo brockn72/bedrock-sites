@@ -214,7 +214,7 @@ footer a{color:var(--gold);text-decoration:none}
           <p style="font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--slate);line-height:1.55;margin-bottom:0.85rem">You'll be asked for a 6-digit code from your authenticator app the next time you sign in. Keep your phone safe &mdash; if you lose access, contact <a href="mailto:support@bedrock-sites.com" style="color:var(--gold);font-weight:600">support</a>.</p>
           <button class="ac-btn outline" type="button" id="ac2faDisableBtn" onclick="ac2faDisable()">Disable 2FA</button>
         </div>
-        <div class="ac-msg" id="ac2faMsg"></div>
+        <div class="ac-msg" id="ac2faMsg" role="status" aria-live="polite"></div>
       </div>
 
       <!-- B9b: utility link at the bottom of Account Info pointing to the profile editor. -->
@@ -813,6 +813,19 @@ async function ac2faEnroll(){
   var c = await acSupa(); if(!c){ ac2faSetMsg('err','Auth service not reachable.'); return; }
   var btn = document.getElementById('ac2faEnableBtn'); if(btn){ btn.disabled=true; btn.textContent='Generating…'; }
   try {
+    // SHELL4 2026-05-26: Supabase only allows one TOTP factor at a time. If a
+    // previous enroll attempt was abandoned, an unverified factor lingers and
+    // the next POST fails with factor_exists. Clean those up first.
+    try {
+      var listR = await fetch(c.url + '/auth/v1/factors', { headers:{ apikey:c.anon, Authorization:'Bearer '+s.access_token } });
+      if (listR.ok){
+        var listData = await listR.json();
+        var stale = (listData.totp || listData.all || listData.factors || []).filter(function(f){ return f.factor_type==='totp' && f.status!=='verified'; });
+        for (var i=0; i<stale.length; i++){
+          await fetch(c.url + '/auth/v1/factors/'+stale[i].id, { method:'DELETE', headers:{ apikey:c.anon, Authorization:'Bearer '+s.access_token } });
+        }
+      }
+    } catch(_){ /* best-effort cleanup; fall through to enroll */ }
     var r = await fetch(c.url + '/auth/v1/factors', {
       method:'POST',
       headers:{ apikey:c.anon, Authorization:'Bearer '+s.access_token, 'Content-Type':'application/json' },
