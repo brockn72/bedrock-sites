@@ -45,7 +45,8 @@ async function upsertToolSubs(supabaseUrl, supabaseKey, userId, tools, status, s
       },
       body: JSON.stringify(rows),
     });
-    if (!r.ok) console.error('[stripe-webhook] subscriptions upsert', r.status, await r.text());
+    // SEC8: status only — body may contain user / customer identifiers.
+    if (!r.ok) console.error('[stripe-webhook] subscriptions upsert status=', r.status);
   } catch (e) {
     console.error('[stripe-webhook] subscriptions upsert failed:', e.message);
   }

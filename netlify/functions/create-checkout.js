@@ -128,8 +128,10 @@ exports.handler = async (event) => {
   });
 
   if (!res.ok) {
-    const err = await res.text();
-    return { statusCode: 502, body: JSON.stringify({ error: `Stripe error: ${err}` }) };
+    // SEC8: log status only; surface a generic error to the client. Stripe
+    // bodies include the API key prefix and customer email.
+    console.error('[create-checkout] Stripe status=', res.status);
+    return { statusCode: 502, body: JSON.stringify({ error: 'Stripe error — try again.' }) };
   }
 
   const session = await res.json();

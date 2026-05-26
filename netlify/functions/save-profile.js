@@ -95,8 +95,8 @@ exports.handler = async (event) => {
   });
 
   if (!res.ok) {
-    const errText = await res.text();
-    console.error(`[save-profile] ${res.status} — ${errText}`);
+    // SEC8: status only.
+    console.error('[save-profile] upsert status=', res.status);
     return { statusCode: 500, body: JSON.stringify({ error: 'Save failed' }) };
   }
 
@@ -139,8 +139,8 @@ exports.handler = async (event) => {
       body: JSON.stringify(brandPatch),
     });
     if (!bkRes.ok) {
-      const t = await bkRes.text();
-      console.error(`[save-profile] brand_kits sync ${bkRes.status} — ${t}`);
+      // SEC8: status only.
+      console.error('[save-profile] brand_kits sync status=', bkRes.status);
       // do not fail the profile save just because brand_kits sync failed
     }
   }

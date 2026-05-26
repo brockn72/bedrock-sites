@@ -123,8 +123,8 @@ async function sendOnboardingEmail(opts) {
       }),
     });
     if (!res.ok) {
-      const t = await res.text();
-      console.error('[onboarding-email] resend', res.status, t);
+      // SEC8: status only — body echoes recipient address.
+      console.error('[onboarding-email] resend status=', res.status);
       return { sent: false, error: 'Resend failed (' + res.status + ')' };
     }
   } catch (e) {

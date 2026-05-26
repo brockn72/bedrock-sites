@@ -42,7 +42,7 @@ exports.handler = async () => {
       hdr
     );
     if (r.ok) profiles = await r.json();
-    else console.error('[onboarding-scheduler] profiles list', r.status, await r.text());
+    else console.error('[onboarding-scheduler] profiles list status=', r.status);
   } catch (e) {
     console.error('[onboarding-scheduler] profiles list failed:', e.message);
     return { statusCode: 200, body: 'error listing profiles' };

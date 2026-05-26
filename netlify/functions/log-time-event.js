@@ -73,7 +73,8 @@ exports.handler = async (event) => {
     const res = await sb(supabaseUrl, supabaseKey,
       `bedrock_time_log?user_id=eq.${userId}&select=action_type,minutes_credited,ref_id,metadata,created_at&order=created_at.desc`);
     if (!res.ok) {
-      console.error('[log-time-event] load', res.status, await res.text());
+      // SEC8: status only.
+      console.error('[log-time-event] load status=', res.status);
       return { statusCode: 500, body: JSON.stringify({ error: 'Load failed' }) };
     }
     const events = await res.json();
@@ -97,7 +98,8 @@ exports.handler = async (event) => {
   const res = await sb(supabaseUrl, supabaseKey, 'bedrock_time_log',
     { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(rec) });
   if (!res.ok) {
-    console.error('[log-time-event] insert', res.status, await res.text());
+    // SEC8: status only.
+    console.error('[log-time-event] insert status=', res.status);
     return { statusCode: 500, body: JSON.stringify({ error: 'Insert failed' }) };
   }
   const rows = await res.json();

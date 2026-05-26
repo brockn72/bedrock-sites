@@ -177,8 +177,8 @@ exports.handler = async (event) => {
         }).catch((e) => console.error('[capture-lead] welcome email failed', e && e.message));
       }
     } else {
-      const authErr = await authRes.text();
-      console.error(`[capture-lead] Auth user creation failed: ${authRes.status} — ${authErr}`);
+      // SEC8: log status only — the response body can contain the email or other PII.
+      console.error('[capture-lead] auth user creation failed status=', authRes.status);
     }
     // If account creation fails (e.g. email already exists), we continue anyway
     // so the claim and payment still go through. Brock can manually link accounts if needed.
@@ -207,7 +207,8 @@ exports.handler = async (event) => {
         body: JSON.stringify(profilePayload),
       });
       if (!profRes.ok) {
-        console.error(`[capture-lead] Profile upsert failed: ${profRes.status} — ${await profRes.text()}`);
+        // SEC8: status only.
+        console.error('[capture-lead] profile upsert failed status=', profRes.status);
       }
     }
   }
@@ -242,8 +243,8 @@ exports.handler = async (event) => {
       const rows = await res.json();
       leadId = rows[0]?.id || null;
     } else {
-      const leadErr = await res.text();
-      console.error(`[capture-lead] Lead insert failed: ${res.status} — ${leadErr}`);
+      // SEC8: status only.
+      console.error('[capture-lead] lead insert failed status=', res.status);
     }
   }
 

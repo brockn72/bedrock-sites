@@ -91,12 +91,13 @@ exports.handler = async (event) => {
       }),
     });
     if (!res.ok) {
-      const t = await res.text();
-      console.error(`[submit-feedback] Resend ${res.status} — ${t}`);
+      // SEC8: status only — body echoes the message + recipient.
+      console.error('[submit-feedback] Resend status=', res.status);
       return { statusCode: 502, body: JSON.stringify({ error: 'Could not send right now — try again later.' }) };
     }
   } catch (e) {
-    console.error('[submit-feedback] network', e);
+    // SEC8: short message only — full error may include connection details.
+    console.error('[submit-feedback] network code=', (e && e.code) || 'unknown', 'msg=', (e && e.message) || '');
     return { statusCode: 502, body: JSON.stringify({ error: 'Email service unreachable' }) };
   }
 

@@ -56,8 +56,8 @@ exports.handler = async (event) => {
   });
 
   if (!res.ok) {
-    const t = await res.text();
-    console.error(`[save-audit] ${res.status} — ${t}`);
+    // SEC8: status only.
+    console.error('[save-audit] insert status=', res.status);
     return { statusCode: 500, body: JSON.stringify({ error: 'Could not save audit' }) };
   }
 

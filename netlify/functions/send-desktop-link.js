@@ -86,8 +86,8 @@ exports.handler = async (event) => {
       }),
     });
     if (!r.ok) {
-      const t = await r.text();
-      console.error(`[send-desktop-link] Resend ${r.status} — ${t}`);
+      // SEC8: log status only; the response body echoes recipient email.
+      console.error('[send-desktop-link] Resend status=', r.status);
       return { statusCode: 502, body: JSON.stringify({ error: 'Could not send right now — please try again.' }) };
     }
   } catch (e) {
