@@ -24,6 +24,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<!-- FIN4 2026-05-25: Chart.js annotation plugin for max/min markers on lines -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -981,18 +983,64 @@ var GRAY_SOFT = 'rgba(74,85,104,0.10)';
 var charts = {}, currentPeriod = '30d', GRID = 'rgba(13,27,46,0.06)';
 Chart.defaults.font.family = "'DM Sans', sans-serif";
 Chart.defaults.color = GRAY_DARK;
-function chartOpts(unit){
-  return { responsive:true, maintainAspectRatio:false,
+// FIN4 2026-05-25: register the Chart.js annotation plugin so we can mark
+// max/min points directly on every chart.
+try {
+  if (window['chartjs-plugin-annotation']) Chart.register(window['chartjs-plugin-annotation']);
+} catch(_){}
+
+// FIN4: helper that returns annotation config for chart options. Marks the
+// max as a green dot + label and the min as a red dot + label, both with a
+// short caption ("Peak: $14,200"). Used by every Chart.js card.
+function extremaAnnotations(arr, unit){
+  if (!Array.isArray(arr) || arr.length < 2) return {};
+  var maxI = 0, minI = 0;
+  for (var i = 1; i < arr.length; i++) {
+    if (arr[i] > arr[maxI]) maxI = i;
+    if (arr[i] < arr[minI]) minI = i;
+  }
+  if (maxI === minI) return {};
+  function fmt(v){
+    if (unit === '%') return v + '%';
+    if (unit === 'n') return v + ' jobs';
+    return '$' + Number(v).toLocaleString('en-US');
+  }
+  return {
+    annotations: {
+      peak: {
+        type: 'point', xValue: maxI, yValue: arr[maxI],
+        backgroundColor: '#3b6d11', borderColor: '#fff', borderWidth: 2, radius: 6,
+        label: { display: true, content: 'Peak: ' + fmt(arr[maxI]), position: 'start',
+                 backgroundColor: '#3b6d11', color: '#fff',
+                 font: { size: 10, weight: '700' }, padding: 4, yAdjust: -16 }
+      },
+      low: {
+        type: 'point', xValue: minI, yValue: arr[minI],
+        backgroundColor: '#b91c1c', borderColor: '#fff', borderWidth: 2, radius: 5,
+        label: { display: true, content: 'Low: ' + fmt(arr[minI]), position: 'start',
+                 backgroundColor: '#b91c1c', color: '#fff',
+                 font: { size: 10, weight: '700' }, padding: 4, yAdjust: 18 }
+      }
+    }
+  };
+}
+function chartOpts(unit, arr){
+  var opts = { responsive:true, maintainAspectRatio:false,
     plugins:{ legend:{display:false}, tooltip:{callbacks:{label:function(c){ return unit==='%'?c.parsed.y+'%':(unit==='n'?c.parsed.y+' jobs':'$'+c.parsed.y.toLocaleString('en-US')); }}} },
     scales:{ x:{grid:{display:false},ticks:{font:{size:11}}}, y:{grid:{color:GRID},beginAtZero:true,ticks:{font:{size:11},callback:function(v){ return unit==='%'?v+'%':(unit==='n'?v:'$'+(v>=1000?(v/1000)+'k':v)); }}} } };
+  if (arr) {
+    var ann = extremaAnnotations(arr, unit);
+    if (ann.annotations) opts.plugins.annotation = ann;
+  }
+  return opts;
 }
 function buildCharts(){
   var d = PERIODS[currentPeriod];
-  charts.revenue = new Chart(document.getElementById('chartRevenue'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.revenue,backgroundColor:GRAY_DARK,borderRadius:4,maxBarThickness:54}]},options:chartOpts('$')});
+  charts.revenue = new Chart(document.getElementById('chartRevenue'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.revenue,backgroundColor:GRAY_DARK,borderRadius:4,maxBarThickness:54}]},options:chartOpts('$', d.revenue)});
   // Margin gets the brand accent — it's THE health line the contractor cares about.
-  charts.margin = new Chart(document.getElementById('chartMargin'),{type:'line',data:{labels:d.revLabels,datasets:[{data:d.margin,borderColor:BRAND_PRIMARY,backgroundColor:BRAND_PRIMARY_SOFT,fill:true,tension:0.35,pointBackgroundColor:BRAND_PRIMARY,pointRadius:3,borderWidth:2}]},options:chartOpts('%')});
-  charts.expense = new Chart(document.getElementById('chartExpense'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.expense,backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:54}]},options:chartOpts('$')});
-  charts.jobs = new Chart(document.getElementById('chartJobs'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.jobs,backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:54}]},options:chartOpts('n')});
+  charts.margin = new Chart(document.getElementById('chartMargin'),{type:'line',data:{labels:d.revLabels,datasets:[{data:d.margin,borderColor:BRAND_PRIMARY,backgroundColor:BRAND_PRIMARY_SOFT,fill:true,tension:0.35,pointBackgroundColor:BRAND_PRIMARY,pointRadius:3,borderWidth:2}]},options:chartOpts('%', d.margin)});
+  charts.expense = new Chart(document.getElementById('chartExpense'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.expense,backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:54}]},options:chartOpts('$', d.expense)});
+  charts.jobs = new Chart(document.getElementById('chartJobs'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.jobs,backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:54}]},options:chartOpts('n', d.jobs)});
   paintChartInsights();
 }
 function updateCharts(){
@@ -1000,7 +1048,14 @@ function updateCharts(){
   ['revenue','margin','expense','jobs'].forEach(function(k){ charts[k].data.labels=d.revLabels; });
   charts.revenue.data.datasets[0].data=d.revenue; charts.margin.data.datasets[0].data=d.margin;
   charts.expense.data.datasets[0].data=d.expense; charts.jobs.data.datasets[0].data=d.jobs;
-  ['revenue','margin','expense','jobs'].forEach(function(k){ charts[k].update(); });
+  // FIN4: refresh max/min annotations to the new data.
+  var unitFor = {revenue:'$', margin:'%', expense:'$', jobs:'n'};
+  ['revenue','margin','expense','jobs'].forEach(function(k){
+    var ann = extremaAnnotations(d[k], unitFor[k]);
+    charts[k].options.plugins = charts[k].options.plugins || {};
+    charts[k].options.plugins.annotation = ann.annotations ? ann : { annotations: {} };
+    charts[k].update();
+  });
   paintChartInsights();
 }
 
