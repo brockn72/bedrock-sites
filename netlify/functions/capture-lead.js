@@ -3,6 +3,9 @@
 // code can ship before Brock wires the Turnstile widget.
 const { verifyTurnstile }   = require('../lib/turnstile');
 const { checkAndIncrement } = require('../lib/rate-limit');
+// SEC9: strip <script> tags + event handlers from any string before it
+// lands in a JSONB column (site_data here).
+const { sanitizeJsonb }     = require('../lib/sanitize');
 
 // Small HTML-escape used by the welcome email so a stray "<" in someone's name
 // can't break the markup or open an injection vector.
@@ -32,10 +35,11 @@ exports.handler = async (event) => {
     turnstileToken, // Cloudflare Turnstile token from the signup form (SEC1)
   } = body;
 
-  // Merge selected domain into site_data so deploy-site can access it
-  const mergedSiteData = selectedDomain
+  // Merge selected domain into site_data so deploy-site can access it.
+  // SEC9: sanitize before persisting to the JSONB column.
+  const mergedSiteData = sanitizeJsonb(selectedDomain
     ? { ...(siteData || {}), _selectedDomain: selectedDomain }
-    : (siteData || null);
+    : (siteData || null));
 
   if (!businessName) {
     return { statusCode: 400, body: JSON.stringify({ error: 'businessName required' }) };

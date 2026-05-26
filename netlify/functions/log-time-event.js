@@ -30,6 +30,9 @@ const TIME_CREDITS = {
   asset_uploaded:         3,
 };
 
+// SEC9: sanitize the JSONB `metadata` column before insert.
+const { sanitizeJsonb } = require('../lib/sanitize');
+
 function sb(url, key, path, opts) {
   return fetch(`${url}/rest/v1/${path}`, Object.assign({
     headers: Object.assign({
@@ -89,7 +92,7 @@ exports.handler = async (event) => {
     action_type:      actionType,
     minutes_credited: TIME_CREDITS[actionType],   // ignore any client-supplied value
     ref_id:           body.ref_id || null,
-    metadata:         body.metadata || null,
+    metadata:         sanitizeJsonb(body.metadata || null),
   };
   const res = await sb(supabaseUrl, supabaseKey, 'bedrock_time_log',
     { method: 'POST', headers: { Prefer: 'return=representation' }, body: JSON.stringify(rec) });

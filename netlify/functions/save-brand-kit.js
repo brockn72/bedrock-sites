@@ -1,6 +1,9 @@
 // Saves or updates a brand_kits row. MVP: keyed by email (no auth required).
 // When a Bearer token is present we also associate the row with the user_id
 // AND patch the user's profiles row so Marketing/Identity fields stay in sync.
+// SEC9: sanitize raw_data + brand_colors before they hit JSONB columns.
+const { sanitizeJsonb } = require('../lib/sanitize');
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -58,7 +61,7 @@ exports.handler = async (event) => {
     tone: tone || null,
     target_customer: target_customer || null,
     service_area: service_area || null,
-    raw_data: raw_data || null,
+    raw_data: sanitizeJsonb(raw_data || null),
     updated_at: new Date().toISOString(),
     ...(userId ? { user_id: userId } : {}),
   };
@@ -102,11 +105,11 @@ exports.handler = async (event) => {
     if (tone)          profilePatch.brand_tone      = tone;
     if (target_customer) profilePatch.target_customer = target_customer;
     if (color_primary || color_secondary || color_accent) {
-      profilePatch.brand_colors = {
+      profilePatch.brand_colors = sanitizeJsonb({
         primary:   color_primary   || null,
         secondary: color_secondary || null,
         accent:    color_accent    || null,
-      };
+      });
     }
 
     const profRes = await fetch(`${supabaseUrl}/rest/v1/profiles?on_conflict=user_id`, {

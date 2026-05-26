@@ -1,5 +1,8 @@
 // Saves or updates the contractor's profile (progressive enrichment per
 // BEDROCK-ECOSYSTEM-VISION). Auth required — operates on auth.uid().
+// SEC9: sanitize the `extra` and `brand_colors` JSONB columns before write.
+const { sanitizeJsonb } = require('../lib/sanitize');
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -69,8 +72,11 @@ exports.handler = async (event) => {
         incomingExtra[k] = v;
       }
     }
-    patch.extra = { ...existingExtra, ...incomingExtra };
+    patch.extra = sanitizeJsonb({ ...existingExtra, ...incomingExtra });
   }
+  // brand_colors is a small JSONB blob ({primary,secondary,accent}) — sanitize
+  // it on the way in so a hex string can't smuggle script content via a typo.
+  if (patch.brand_colors) patch.brand_colors = sanitizeJsonb(patch.brand_colors);
 
   patch.updated_at = new Date().toISOString();
   patch.email = email;

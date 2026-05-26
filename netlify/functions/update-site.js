@@ -1,3 +1,6 @@
+// SEC9: sanitize site_data before persisting to the JSONB column.
+const { sanitizeJsonb } = require('../lib/sanitize');
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -42,7 +45,7 @@ exports.handler = async (event) => {
   // Build update payload — only include fields that were sent
   const { siteData, businessName, phone, email, city, trade, services, serviceAreas } = body;
   const patch = {};
-  if (siteData     !== undefined) patch.site_data     = siteData;
+  if (siteData     !== undefined) patch.site_data     = sanitizeJsonb(siteData);
   if (businessName !== undefined) patch.business_name = businessName;
   if (phone        !== undefined) patch.phone         = phone;
   if (email        !== undefined) patch.email         = email;

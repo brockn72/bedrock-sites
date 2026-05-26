@@ -1,5 +1,8 @@
 // Records a SEO/GEO Optimizer run against the authenticated user's own site,
 // so the portal can show score-over-time history.
+// SEC9: sanitize the categories + top_issues arrays before write.
+const { sanitizeJsonb } = require('../lib/sanitize');
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -37,8 +40,8 @@ exports.handler = async (event) => {
     site_url:   body.site_url || null,
     score:      score,
     label:      body.label || null,
-    categories: Array.isArray(body.categories) ? body.categories : null,
-    top_issues: Array.isArray(body.top_issues) ? body.top_issues : null,
+    categories: Array.isArray(body.categories) ? sanitizeJsonb(body.categories) : null,
+    top_issues: Array.isArray(body.top_issues) ? sanitizeJsonb(body.top_issues) : null,
   };
 
   const res = await fetch(`${supabaseUrl}/rest/v1/site_audits`, {
