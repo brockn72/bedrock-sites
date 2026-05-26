@@ -175,14 +175,24 @@ table.fin-table tbody tr:hover{background:var(--off-white)}
 .cust{font-weight:600}
 .job-sub{color:var(--slate);font-size:0.72rem}
 .amt{font-weight:600;white-space:nowrap}
-.status-pill{display:inline-block;font-size:0.58rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:0.25rem 0.6rem;border-radius:999px;white-space:nowrap}
+/* Accessibility 2026-05-25: status pills now carry a leading glyph so the
+   state is readable without color (color-blind users + monochrome printouts). */
+.status-pill{display:inline-flex;align-items:center;gap:4px;font-size:0.58rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:0.25rem 0.6rem;border-radius:999px;white-space:nowrap}
+.status-pill::before{font-size:0.7rem;line-height:1;font-weight:700;letter-spacing:0}
 .st-paid{background:var(--green-bg);color:var(--green)}
+.st-paid::before{content:'✓'}
 .st-outstanding{background:var(--amber-bg);color:var(--amber)}
+.st-outstanding::before{content:'•'}
 .st-overdue{background:var(--red-bg);color:var(--red)}
+.st-overdue::before{content:'!'}
 .st-draft{background:rgba(13,27,46,0.06);color:var(--slate)}
+.st-draft::before{content:'…'}
 .st-sent{background:rgba(46,90,142,0.12);color:#23496f}
+.st-sent::before{content:'→'}
 .st-approved{background:var(--green-bg);color:var(--green)}
+.st-approved::before{content:'✓'}
 .st-declined{background:var(--red-bg);color:var(--red)}
+.st-declined::before{content:'×'}
 .margin-bar{display:flex;align-items:center;gap:0.5rem;justify-content:flex-end}
 .margin-track{width:54px;height:6px;background:var(--border-light);border-radius:3px;overflow:hidden}
 .margin-fill{height:100%;border-radius:3px}
@@ -879,7 +889,13 @@ var PROJECTS = [
 ];
 
 function money(n){ return '$'+Number(Math.round(n)).toLocaleString('en-US'); }
-function statusClass(s){ return 'st-'+s.toLowerCase(); }
+function statusClass(s){ return 'st-'+String(s||'').toLowerCase(); }
+// Accessibility: render the status pill with a real aria-label so screen readers
+// announce "Status: Overdue" instead of reading the bare word styled by color.
+function statusPillHtml(s){
+  var safe = String(s || '').replace(/[<>&"]/g, function(c){return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c];});
+  return '<span class="status-pill ' + statusClass(s) + '" role="status" aria-label="Status: ' + safe + '">' + safe + '</span>';
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // VIEW NAV
