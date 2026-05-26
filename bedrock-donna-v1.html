@@ -520,6 +520,12 @@ window.bedrockInPreviewMode = function(toolKey){
         <div class="d-conn-row"><span class="d-conn-dot" id="dotCalendar"></span> Calendar</div>
         <button class="d-conn-setup" onclick="navView('connections')">Setup Connections</button>
       </div>
+      <!-- G11 (Batch G, 2026-05-26): one-tap referral surface. Opens the
+           shared appModal with the contractor's code + share link. -->
+      <button class="d-nav" type="button" onclick="openReferModal()" style="margin-top:0.3rem">
+        <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        <span>Refer a friend</span>
+      </button>
       <button class="d-nav" data-view="help" onclick="navView('help')" style="margin-top:0.3rem">
         <svg class="nic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12" y2="17"/></svg>
         <span>Help</span>
@@ -1058,6 +1064,64 @@ function openModalRaw(eyebrow, title, bodyHtml, wide){
 }
 function closeModal(){ document.getElementById('appModal').classList.remove('show'); }
 document.getElementById('appModal').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+// G11 (Batch G, 2026-05-26): Refer-a-friend modal. Uses the shared appModal
+// infrastructure; fetches the contractor's code via get-referral-info.
+// Reads BedrockProfile.token() which holds the contractor's access token
+// (passed in via ?token= query param when Donna is launched from the portal).
+// Without a token we can't authorize the call, so we send the user back to
+// the portal.
+function openReferModal(){
+  var loadingBody = '<p style="font-family:DM Sans,sans-serif;font-size:0.86rem;color:#4A5568;line-height:1.55">Loading your code…</p>';
+  openModalRaw('Refer a friend', 'Get 2 months free for every contractor you refer', loadingBody, false);
+  var token = '';
+  try { token = (BedrockProfile && typeof BedrockProfile.token === 'function') ? BedrockProfile.token() : ''; } catch(_){}
+  if (!token){
+    document.getElementById('modalBody').innerHTML =
+      '<p style="font-family:DM Sans,sans-serif;font-size:0.86rem;color:#4A5568;line-height:1.55">' +
+      'Sign in from the portal to see your referral code.</p>' +
+      '<p style="margin-top:0.85rem"><a href="/portal.html" style="color:#8A6620;font-weight:700;text-decoration:none">&rarr; Open the portal</a></p>';
+    return;
+  }
+  fetch('/.netlify/functions/get-referral-info', { headers:{ Authorization:'Bearer ' + token } })
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(d){
+      var body = document.getElementById('modalBody');
+      if (!d || !d.code){
+        body.innerHTML = '<p style="font-family:DM Sans,sans-serif;font-size:0.86rem;color:#4A5568;line-height:1.55">' +
+          (d && d.message ? d.message : 'Your code isn\'t ready yet. Try again after your next sign-in.') +
+          '</p>';
+        return;
+      }
+      body.innerHTML =
+        '<p style="font-family:DM Sans,sans-serif;font-size:0.86rem;color:#4A5568;line-height:1.55;margin-bottom:0.85rem">' +
+          'Share this code with another contractor. When they sign up and pay, 2 months are credited to your account automatically.' +
+        '</p>' +
+        '<div style="display:flex;gap:0.6rem;align-items:stretch;flex-wrap:wrap;margin-bottom:0.85rem">' +
+          '<div id="rmCode" style="flex:1;min-width:160px;font-family:DM Sans,monospace;font-size:1.4rem;font-weight:700;letter-spacing:0.06em;color:#0D1B2E;background:#FAF7F2;border:1px dashed #E2E4EA;border-radius:6px;padding:0.85rem 1rem;text-align:center">' + d.code + '</div>' +
+          '<button type="button" id="rmCopyBtn" style="font-family:DM Sans,sans-serif;font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;background:#C9922A;color:#fff;border:none;padding:0.7rem 1.2rem;border-radius:6px;cursor:pointer">Copy code</button>' +
+        '</div>' +
+        '<div style="font-size:0.78rem;color:#4A5568;margin-bottom:0.6rem">Or share this link:</div>' +
+        '<div style="font-size:0.82rem;word-break:break-all"><a href="' + d.share_url + '" style="color:#8A6620;font-weight:600;text-decoration:none">' + d.share_url + '</a></div>' +
+        '<div style="display:flex;gap:1.5rem;flex-wrap:wrap;padding-top:1rem;margin-top:1rem;border-top:1px solid #E2E4EA">' +
+          '<div><div style="font-family:Cormorant Garamond,serif;font-size:1.3rem;font-weight:700;color:#0D1B2E">' + (d.invited || 0) + '</div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#4A5568">Invited</div></div>' +
+          '<div><div style="font-family:Cormorant Garamond,serif;font-size:1.3rem;font-weight:700;color:#0D1B2E">' + (d.joined || 0) + '</div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#4A5568">Joined</div></div>' +
+          '<div><div style="font-family:Cormorant Garamond,serif;font-size:1.3rem;font-weight:700;color:#0D1B2E">' + (d.credits_earned_months || 0) + '</div><div style="font-size:0.6rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#4A5568">Months credited</div></div>' +
+        '</div>';
+      var btn = document.getElementById('rmCopyBtn');
+      if (btn) btn.addEventListener('click', function(){
+        try {
+          navigator.clipboard.writeText(d.code).then(function(){
+            var t = btn.textContent; btn.textContent = '✓ Copied'; setTimeout(function(){ btn.textContent = t; }, 1600);
+          });
+        } catch(_){}
+      });
+    })
+    .catch(function(){
+      document.getElementById('modalBody').innerHTML =
+        '<p style="font-family:DM Sans,sans-serif;font-size:0.86rem;color:#4A5568">Couldn\'t load your code. Try again in a moment.</p>';
+    });
+}
 
 // Build a datalist of project name options, optionally filtered to one customer.
 function buildProjectOptions(customerId){
