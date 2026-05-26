@@ -1664,25 +1664,57 @@ function mockReceiptScan(){
     +'<button class="appr-btn appr-reject" onclick="rejectDraft()">Discard</button></div></div>';
   donnaReply("Read it — <strong>Menards, $248.17</strong>. Confirm it on the right and I'll file it as an expense.");
 }
+// OPS3 2026-05-25: Schedule draft is now editable. Fields (job name, start, end,
+// description, crew note) pre-fill with the previous demo defaults; commitScheduleEdits()
+// reads the live DOM values into lastDraft.scheduleData right before approve() fires,
+// so the real edited values land on the Google Calendar event.
 function renderSchedule(who){
-  // Real start/end datetimes — stashed on lastDraft so approve() can create a
-  // Google Calendar event (calendar-create.js).
   var start=new Date(); start.setDate(start.getDate()+5); start.setHours(7,30,0,0);
   var end=new Date(start); end.setHours(16,0,0,0);
   var hasWho=who&&who!=='a new customer';
+  var defName='Patio Install'+(hasWho?(' — '+who):'');
+  var defDesc='600 sq ft Paver Patio.';
+  var defCrew='Skid steer access — confirm gate width.';
   if(lastDraft) lastDraft.scheduleData={
-    summary:'Patio Install'+(hasWho?(' — '+who):''),
-    description:'600 sq ft Paver Patio. Crew note: skid steer access — confirm gate width.',
+    summary:defName,
+    description:defDesc+' Crew note: '+defCrew,
     startISO:start.toISOString(), endISO:end.toISOString()
   };
+  function localFmt(d){ var off=d.getTimezoneOffset()*60000; return new Date(d.getTime()-off).toISOString().slice(0,16); }
+  var inputCss='style="width:100%;font:inherit;font-size:0.84rem;padding:0.5rem 0.65rem;border:1px solid rgba(13,27,46,0.18);border-radius:5px;background:#fff;color:var(--ink);margin-top:0.25rem;margin-bottom:0.75rem;font-family:inherit"';
+  var labelCss='style="display:block;font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--slate);margin-top:0.4rem"';
   setPanel('Pending approval','Schedule a job',
-    '<div class="draft"><div class="draft-head"><div class="dh-type">Calendar event · draft</div>'
-    +'<div class="dh-title">Patio Install</div><div class="dh-meta">'+esc(who)+' · '+datePlus(5)+' · 7:30 AM – 4:00 PM</div></div>'
-    +'<div class="draft-body">'+liRow('Job','600 sq ft Paver Patio',0)+liRow('Crew note','Skid steer access — confirm gate width',0)
+    '<div class="draft"><div class="draft-head"><div class="dh-type">Calendar event · draft (edit before approve)</div>'
+    +'<div class="dh-meta">'+esc(who)+'</div></div>'
+    +'<div class="draft-body">'
+    +'<label '+labelCss+'>Job name</label><input id="schName" type="text" '+inputCss+' value="'+esc(defName)+'">'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem">'
+    +'<div><label '+labelCss+'>Start</label><input id="schStart" type="datetime-local" '+inputCss+' value="'+localFmt(start)+'"></div>'
+    +'<div><label '+labelCss+'>End</label><input id="schEnd" type="datetime-local" '+inputCss+' value="'+localFmt(end)+'"></div>'
+    +'</div>'
+    +'<label '+labelCss+'>Description</label><textarea id="schDesc" rows="2" '+inputCss+'>'+esc(defDesc)+'</textarea>'
+    +'<label '+labelCss+'>Crew note</label><textarea id="schCrew" rows="2" '+inputCss+'>'+esc(defCrew)+'</textarea>'
     +'<div class="draft-note">Donna: "I also drafted a reminder text for the day before. It won\'t send until you say so."</div></div>'
-    +'<div class="approval-row"><button class="appr-btn appr-approve" onclick="approve(\'schedule\')">✓ Approve &amp; Add</button>'
+    +'<div class="approval-row"><button class="appr-btn appr-approve" onclick="commitScheduleEdits();approve(\'schedule\')">✓ Approve &amp; Add</button>'
     +'<button class="appr-btn appr-reject" onclick="rejectDraft()">Reject</button></div>'
     +'<div class="approval-banner">Calendar event and reminder both wait for your approval.</div></div>');
+}
+
+// Pulls the live values out of the schedule draft inputs into lastDraft.scheduleData
+// right before approve('schedule') fires the calendar-create call.
+function commitScheduleEdits(){
+  if(!lastDraft || !lastDraft.scheduleData) return;
+  var n=document.getElementById('schName');
+  var s=document.getElementById('schStart');
+  var e=document.getElementById('schEnd');
+  var d=document.getElementById('schDesc');
+  var c=document.getElementById('schCrew');
+  if(n && n.value) lastDraft.scheduleData.summary=n.value.trim();
+  if(s && s.value) { try { lastDraft.scheduleData.startISO=new Date(s.value).toISOString(); } catch(_){} }
+  if(e && e.value) { try { lastDraft.scheduleData.endISO=new Date(e.value).toISOString();   } catch(_){} }
+  var desc=(d&&d.value?d.value.trim():'');
+  var crew=(c&&c.value?c.value.trim():'');
+  lastDraft.scheduleData.description = desc + (crew ? (desc?'\nCrew note: ':'Crew note: ')+crew : '');
 }
 // Persist an approved document to Supabase (donna_estimates / donna_invoices /
 // donna_receipts) via donna-crud.js. Returns a promise of the saved row so the
