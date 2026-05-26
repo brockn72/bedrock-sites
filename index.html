@@ -279,7 +279,7 @@ h2.heading-white{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3
 .hv-dot{width:11px;height:11px;border-radius:50%}
 .hv-dot.r{background:#ff5f57}.hv-dot.y{background:#febc2e}.hv-dot.g{background:#28c840}
 .hv-url{flex:1;background:#fafaf8;border:1px solid #ddd;border-radius:3px;padding:3px 10px;font-family:'Montserrat',sans-serif;font-size:0.6rem;color:#5a5a55;text-align:center;letter-spacing:0.02em}
-.hv-url::before{content:'🔒 ';font-size:0.55rem;opacity:0.7}
+.hv-url::before{content:'';font-size:0;display:none}
 /* Mock site hero — DELIBERATELY a different palette/font from Bedrock's site, 
    so visitors see this is what THEIR site can look like, not ours */
 .hv-mock-hero{background:#fafaf7;padding:1.4rem 1.4rem 1.6rem;color:#1a1a1a;position:relative;overflow:hidden;border-bottom:1px solid #e5e0d4}
@@ -828,7 +828,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 .smk-dot{width:7px;height:7px;border-radius:50%}
 .smk-dot.r{background:#ff5f57}.smk-dot.y{background:#febc2e}.smk-dot.g{background:#28c840}
 .smk-url{flex:1;background:#fafaf8;border:1px solid #ddd;border-radius:3px;padding:1px 8px;font-size:7px;color:#5a5a55;text-align:center;letter-spacing:0.02em}
-.smk-url::before{content:'🔒 ';font-size:6px;opacity:0.7}
+.smk-url::before{content:'';font-size:0;display:none}
 /* Mock nav bar */
 .smk-nav{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;flex-shrink:0;border-bottom:1px solid rgba(0,0,0,0.06)}
 .smk-logo{font-family:'Cormorant Garamond',serif;font-size:10px;font-weight:500;letter-spacing:0.02em}
@@ -2189,17 +2189,17 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
           <!-- "What Donna handles" — three concrete contractor moments -->
           <div class="wwd-scenarios">
             <div class="wwd-scn">
-              <div class="wwd-scn-icon" aria-hidden="true">🧱</div>
+              <div class="wwd-scn-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6"/><rect x="15" y="3" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/><rect x="3" y="15" width="6" height="6"/><rect x="15" y="15" width="6" height="6"/></svg></div>
               <div class="wwd-scn-h">"Just finished a patio job."</div>
               <div class="wwd-scn-b">Donna invoices it in 30 seconds &mdash; your customer, your rates, sent from your Gmail.</div>
             </div>
             <div class="wwd-scn">
-              <div class="wwd-scn-icon" aria-hidden="true">📝</div>
+              <div class="wwd-scn-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg></div>
               <div class="wwd-scn-h">"Customer wants a bid."</div>
               <div class="wwd-scn-b">Donna drafts the estimate from your labor rate and markup &mdash; review, tweak, approve, send.</div>
             </div>
             <div class="wwd-scn">
-              <div class="wwd-scn-icon" aria-hidden="true">🧾</div>
+              <div class="wwd-scn-icon" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l3-2 3 2 3-2 3 2 3-2 1 1V2l-1 1-3-2-3 2-3-2-3 2z"/></svg></div>
               <div class="wwd-scn-h">"Bought materials at the hardware store."</div>
               <div class="wwd-scn-b">Snap the receipt. Donna files it against the job and Finance picks it up automatically.</div>
             </div>
@@ -2212,7 +2212,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
           <div class="wwd-pv-cap">Preview &middot; Bedrock Operations</div>
           <div class="wwd-pv-donna">
             <div class="pd-msg pd-user">New estimate &mdash; Joe Smith, paver patio</div>
-            <div class="pd-msg pd-donna">Roughed it out with your usual rates. Estimate's ready &mdash; take a look. 😉</div>
+            <div class="pd-msg pd-donna">Roughed it out with your usual rates. Estimate's ready &mdash; take a look.</div>
           </div>
         </div>
       </div></div>
@@ -4691,10 +4691,10 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
         <div class="owo-card">
           <div class="owc-head"><span class="owc-label">Receipts &middot; categorized for you</span><span class="owc-num">Today</span></div>
           <div class="owc-body" style="gap:0">
-            <div class="owr-row"><div class="owr-ic">🧱</div><div class="owr-body"><div class="owr-vendor">Bend Stone &amp; Supply<span class="owr-tag" style="background:rgba(74,125,181,0.12);color:#1B3557">Materials &middot; Smith job</span></div><div class="owr-meta">Photo &middot; 2:14 PM &middot; Donna matched it to EST-2087</div></div><div class="owr-amt">$2,210</div></div>
-            <div class="owr-row"><div class="owr-ic">⛽</div><div class="owr-body"><div class="owr-vendor">Maverik 7&middot;11<span class="owr-tag" style="background:rgba(201,146,42,0.14);color:#92660e">Fuel &middot; vehicle 1</span></div><div class="owr-meta">Photo &middot; 7:42 AM</div></div><div class="owr-amt">$84.16</div></div>
-            <div class="owr-row"><div class="owr-ic">🔧</div><div class="owr-body"><div class="owr-vendor">Home Depot<span class="owr-tag" style="background:rgba(74,125,181,0.12);color:#1B3557">Tools &middot; jobsite</span></div><div class="owr-meta">Photo &middot; 9:08 AM</div></div><div class="owr-amt">$47.22</div></div>
-            <div class="owr-row"><div class="owr-ic">🥤</div><div class="owr-body"><div class="owr-vendor">Dutch Bros<span class="owr-tag" style="background:rgba(245,230,200,0.7);color:#92660e">Meal &middot; crew</span></div><div class="owr-meta">Photo &middot; 11:50 AM</div></div><div class="owr-amt">$18.40</div></div>
+            <div class="owr-row"><div class="owr-ic" aria-hidden="true">M</div><div class="owr-body"><div class="owr-vendor">Bend Stone &amp; Supply<span class="owr-tag" style="background:rgba(74,125,181,0.12);color:#1B3557">Materials &middot; Smith job</span></div><div class="owr-meta">Photo &middot; 2:14 PM &middot; Donna matched it to EST-2087</div></div><div class="owr-amt">$2,210</div></div>
+            <div class="owr-row"><div class="owr-ic" aria-hidden="true">F</div><div class="owr-body"><div class="owr-vendor">Maverik 7&middot;11<span class="owr-tag" style="background:rgba(201,146,42,0.14);color:#92660e">Fuel &middot; vehicle 1</span></div><div class="owr-meta">Photo &middot; 7:42 AM</div></div><div class="owr-amt">$84.16</div></div>
+            <div class="owr-row"><div class="owr-ic" aria-hidden="true">T</div><div class="owr-body"><div class="owr-vendor">Home Depot<span class="owr-tag" style="background:rgba(74,125,181,0.12);color:#1B3557">Tools &middot; jobsite</span></div><div class="owr-meta">Photo &middot; 9:08 AM</div></div><div class="owr-amt">$47.22</div></div>
+            <div class="owr-row"><div class="owr-ic" aria-hidden="true">C</div><div class="owr-body"><div class="owr-vendor">Dutch Bros<span class="owr-tag" style="background:rgba(245,230,200,0.7);color:#92660e">Meal &middot; crew</span></div><div class="owr-meta">Photo &middot; 11:50 AM</div></div><div class="owr-amt">$18.40</div></div>
           </div>
         </div>
 
