@@ -2,6 +2,13 @@
 // Accepts a single email address, sends one Resend email with a link back to the
 // site, returns { success: true }. No Supabase write, no DB at all — this is a
 // frictionless way for someone on their phone to switch over to their laptop.
+//
+// SEC4: gated by Cloudflare Turnstile + per-IP rate limit (5/hour) so the same
+// endpoint can't be used as a free email-blast cannon.
+
+const { verifyTurnstile }   = require('../lib/turnstile');
+const { checkAndIncrement } = require('../lib/rate-limit');
+
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: JSON.stringify({ error: 'Method Not Allowed' }) };
@@ -12,9 +19,29 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
-  const email = (body.email || '').trim();
+  const email          = (body.email || '').trim();
+  const turnstileToken = body.turnstileToken;
   if (!email || email.indexOf('@') === -1) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Valid email required' }) };
+  }
+
+  // SEC4: per-IP cooldown — same IP can request the email at most 5 times per hour.
+  const rl = await checkAndIncrement(event, 'desktop-link', 5);
+  if (!rl.ok) {
+    return {
+      statusCode: 429,
+      headers: { 'Content-Type': 'application/json', 'Retry-After': String(rl.retryAfter || 3600) },
+      body: JSON.stringify({ error: rl.error }),
+    };
+  }
+  // SEC4: bot-check token (reuses the SEC1 verify helper).
+  const ts = await verifyTurnstile(turnstileToken, event);
+  if (!ts.ok) {
+    return {
+      statusCode: 403,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: ts.error }),
+    };
   }
 
   const resendKey = process.env.RESEND_API_KEY;
