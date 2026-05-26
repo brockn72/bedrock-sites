@@ -1835,8 +1835,41 @@ function approve(kind){
       });
     }
   } else if(kind==='receipt'){
-    persistDoc('receipt',collectReceiptDraft());
+    // OPS1 2026-05-25: persist locally, then push to QBO as a Purchase (approval-gated).
+    var rcDraft = collectReceiptDraft();
+    var rcSaveP = persistDoc('receipt', rcDraft);
     donnaLogTime('receipt_scanned');
+    if (DONNA_TOKEN && rcDraft && rcDraft.amount) {
+      var rcSyncP = fetch('/.netlify/functions/qbo-sync', {
+        method:'POST',
+        headers:{'Content-Type':'application/json', Authorization:'Bearer '+DONNA_TOKEN},
+        body: JSON.stringify({
+          entity:'receipt',
+          record:{
+            total:   rcDraft.amount,
+            vendor:  rcDraft.vendor || '',
+            date:    rcDraft.date   || null,
+          }
+        })
+      }).then(function(r){return r.json();}).catch(function(){return null;});
+      Promise.all([rcSaveP, rcSyncP]).then(function(res){
+        var savedRow = res[0], sync = res[1];
+        if (sync && sync.synced) {
+          donnaReply("Logged it in QuickBooks too. ✓");
+          // Linkback: stamp the QBO Purchase id on the donna_receipts row.
+          if (savedRow && savedRow.id && sync.qbo_id) {
+            fetch('/.netlify/functions/donna-crud', {
+              method:'POST',
+              headers:{'Content-Type':'application/json', Authorization:'Bearer '+DONNA_TOKEN},
+              body: JSON.stringify({action:'save', entity:'receipt', id:savedRow.id,
+                record:{ qbo_purchase_id: sync.qbo_id }})
+            }).catch(function(){});
+          }
+        } else if (sync && sync.reason) {
+          donnaReply("Saved here &mdash; " + sync.reason);
+        }
+      });
+    }
   } else if(kind==='schedule'){
     // Create a real Google Calendar event when Calendar is connected.
     if(DONNA_TOKEN && lastDraft && lastDraft.scheduleData){

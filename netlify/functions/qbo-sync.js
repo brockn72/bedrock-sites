@@ -1,16 +1,19 @@
 // qbo-sync.js
-// Pushes an approved Donna entity (customer, estimate, or invoice) into the
-// contractor's QuickBooks Online company. Called AFTER the contractor approves
-// a draft in Donna — never before (the approval gate is non-negotiable).
+// Pushes an approved Donna entity (customer, estimate, invoice, or receipt)
+// into the contractor's QuickBooks Online company. Called AFTER the contractor
+// approves a draft in Donna — never before (the approval gate is non-negotiable).
 //
 // Graceful by design: if the contractor hasn't connected QBO, this returns
 // { synced:false, skipped:true } with HTTP 200, so Donna's own Supabase record
 // still saves. QuickBooks is an enhancement, not a hard dependency.
 //
+// OPS1 2026-05-25: receipts now sync as QBO `purchase` records (expense), using
+// the contractor's default bank/CC asset account and default expense account.
+//
 // ── Request body ───────────────────────────────────────────────────────────
-//   { entity: 'customer' | 'estimate' | 'invoice',
-//     record: { ... },        // the donna_* row being synced (line_items, total…)
-//     customer: { name, email, phone, qbo_customer_id } }  // estimate/invoice
+//   { entity: 'customer' | 'estimate' | 'invoice' | 'receipt',
+//     record: { ... },        // the donna_* row being synced (line_items/total/vendor/amount/date)
+//     customer: { name, email, phone, qbo_customer_id } }  // estimate/invoice only
 //
 // ── Returns ────────────────────────────────────────────────────────────────
 //   { synced, skipped?, qbo_id, qbo_customer_id }
@@ -75,6 +78,31 @@ async function findServiceItemRef(accessToken, realmId) {
   return item ? { value: item.Id, name: item.Name } : { value: '1' };
 }
 
+// OPS1: receipts need a bank/CC asset account (the "paid from" account on a
+// QBO Purchase) and an expense category account. We pick sensible defaults
+// from the sandbox if the contractor hasn't customized; either choice is
+// always editable later inside QuickBooks.
+async function findPaymentAccountRef(accessToken, realmId) {
+  // Prefer Checking, then any Bank/Cash, then any CreditCard.
+  let qr = await qboQuery(accessToken, realmId,
+    "SELECT * FROM Account WHERE AccountType IN ('Bank','Other Current Asset') ORDER BY Name MAXRESULTS 5");
+  let acc = (qr.Account || [])[0];
+  if (!acc) {
+    qr = await qboQuery(accessToken, realmId, "SELECT * FROM Account WHERE AccountType = 'Credit Card' MAXRESULTS 1");
+    acc = (qr.Account || [])[0];
+  }
+  return acc ? { value: acc.Id, name: acc.Name } : null;
+}
+async function findExpenseAccountRef(accessToken, realmId) {
+  // Prefer "Job Expenses" / "Materials" / "Supplies"; otherwise any Expense account.
+  const qr = await qboQuery(accessToken, realmId,
+    "SELECT * FROM Account WHERE AccountType = 'Expense' MAXRESULTS 20");
+  const accs = qr.Account || [];
+  const prefer = accs.find((a) => /materials|supplies|job|cost of/i.test(a.Name || ''));
+  const acc = prefer || accs[0];
+  return acc ? { value: acc.Id, name: acc.Name } : null;
+}
+
 // Convert Donna line_items into QBO SalesItemLine objects.
 function buildLines(lineItems, itemRef) {
   const items = Array.isArray(lineItems) && lineItems.length ? lineItems : [];
@@ -110,8 +138,8 @@ exports.handler = async (event) => {
   catch { return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
 
   const entity = (body.entity || '').toLowerCase();
-  if (['customer', 'estimate', 'invoice'].indexOf(entity) === -1) {
-    return { statusCode: 400, body: JSON.stringify({ error: 'entity must be customer, estimate, or invoice' }) };
+  if (['customer', 'estimate', 'invoice', 'receipt'].indexOf(entity) === -1) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'entity must be customer, estimate, invoice, or receipt' }) };
   }
 
   // Identify the contractor from their Supabase session.
@@ -148,6 +176,41 @@ exports.handler = async (event) => {
       const qboId = await ensureQboCustomer(accessToken, realmId, customer.name ? customer : record);
       return { statusCode: 200, headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ synced: true, qbo_id: qboId, qbo_customer_id: qboId }) };
+    }
+
+    // OPS1: receipt → QBO Purchase. Approval-gated upstream (Donna's UI).
+    if (entity === 'receipt') {
+      const amount = Number(record.total != null ? record.total : record.amount) || 0;
+      if (!(amount > 0)) {
+        return { statusCode: 200, headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ synced: false, skipped: true, reason: 'No amount on receipt — saved in Bedrock only.' }) };
+      }
+      const payAcct = await findPaymentAccountRef(accessToken, realmId);
+      const expAcct = await findExpenseAccountRef(accessToken, realmId);
+      if (!payAcct || !expAcct) {
+        return { statusCode: 200, headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ synced: false, skipped: true,
+            reason: 'QuickBooks needs a bank account and expense category before we can sync receipts.' }) };
+      }
+      const vendor = record.vendor ? String(record.vendor).trim() : '';
+      const payload = {
+        AccountRef: { value: payAcct.value },
+        PaymentType: 'Cash',          // Donna's receipt scan doesn't track payment method yet; default Cash, editable in QBO
+        TotalAmt:   Number(amount.toFixed(2)),
+        Line: [{
+          DetailType: 'AccountBasedExpenseLineDetail',
+          Amount:      Number(amount.toFixed(2)),
+          Description: vendor ? vendor + ' — receipt' : 'Receipt',
+          AccountBasedExpenseLineDetail: { AccountRef: { value: expAcct.value } },
+        }],
+      };
+      if (record.date) payload.TxnDate = record.date;
+      if (vendor)      payload.PrivateNote = vendor;
+
+      const created = await qboPost(accessToken, realmId, 'purchase', payload);
+      const qboObj = created.Purchase || {};
+      return { statusCode: 200, headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ synced: true, qbo_id: qboObj.Id || null }) };
     }
 
     // estimate / invoice — make sure the customer exists first.
