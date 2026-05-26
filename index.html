@@ -1667,6 +1667,50 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 }
 </style>
 
+<!-- SEC1/SEC4 2026-05-25: Cloudflare Turnstile bootstrap. Renders a managed widget into
+     every <div data-cf-ts-slot> once /get-config reveals TURNSTILE_SITE_KEY. Submit handlers
+     call BedrockTurnstile.token(slotId) to read the per-form token and ship it as
+     `turnstileToken` in the POST body. With no site key set, widgets just don't render
+     and submit handlers send '' — the server-side verifyTurnstile degrades open. -->
+<script>
+  window.onloadTurnstileCallback = function () {
+    if (window.BedrockTurnstile) window.BedrockTurnstile._tsReady();
+  };
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" async defer></script>
+<script>
+window.BedrockTurnstile = (function(){
+  var siteKey = null, tsLoaded = false;
+  var widgets = {};
+  function _render(el){
+    if (!el || el.dataset.cfTsRendered) return;
+    if (!siteKey || !tsLoaded || typeof turnstile === 'undefined') return;
+    var id = turnstile.render(el, { sitekey: siteKey, size: 'normal', theme: 'auto' });
+    if (id !== undefined && id !== null) { widgets[el.id] = id; el.dataset.cfTsRendered = '1'; }
+  }
+  function _renderAll(){ document.querySelectorAll('[data-cf-ts-slot]').forEach(_render); }
+  return {
+    _tsReady: function(){ tsLoaded = true; _renderAll(); },
+    init: function(){
+      fetch('/.netlify/functions/get-config').then(function(r){ return r.json(); }).then(function(c){
+        if (c && c.turnstileSiteKey) { siteKey = c.turnstileSiteKey; _renderAll(); }
+      }).catch(function(){});
+    },
+    token: function(slotId){
+      var el = document.getElementById(slotId); if (!el) return '';
+      var hidden = el.querySelector('input[name="cf-turnstile-response"]');
+      return (hidden && hidden.value) || '';
+    },
+    reset: function(slotId){
+      var id = widgets[slotId];
+      if (id !== undefined && window.turnstile) try { turnstile.reset(id); } catch(_) {}
+    },
+    renderSlot: function(slotId){ var el = document.getElementById(slotId); _render(el); }
+  };
+})();
+document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstile.init(); });
+</script>
+
 </head>
 <body>
 
@@ -1942,6 +1986,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
     </button>
     <form class="bml-form" id="bmlForm" onsubmit="bmlSend(event)">
       <input type="email" id="bmlEmail" required placeholder="you@yourbusiness.com" autocomplete="email">
+      <!-- SEC4 2026-05-25: Cloudflare Turnstile bot-check for the desktop-link email form -->
+      <div data-cf-ts-slot id="cfTs-bml" style="margin:0 auto;min-height:0"></div>
       <button type="submit" id="bmlSubmit">Send the link &rarr;</button>
     </form>
     <div class="bml-msg" id="bmlMsg"></div>
@@ -1961,9 +2007,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
       btn.disabled = true; var orig = btn.textContent; btn.textContent='Sending…';
       msg.textContent = ''; msg.className = 'bml-msg';
       try{
+        // SEC4: include the Turnstile token from the desktop-link widget.
+        var turnstileToken = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-bml')) || '';
         var r = await fetch('/.netlify/functions/send-desktop-link', {
           method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ email: email }),
+          body: JSON.stringify({ email: email, turnstileToken: turnstileToken }),
         });
         var d = await r.json();
         if(r.ok && d && d.success){

@@ -1626,6 +1626,53 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 }
 </style>
 
+<!-- SEC1/SEC4 2026-05-25: Cloudflare Turnstile bootstrap. Renders a managed widget into
+     every <div data-cf-ts-slot> once /get-config reveals TURNSTILE_SITE_KEY. Submit handlers
+     call BedrockTurnstile.token(slotId) to read the per-form token and ship it as
+     `turnstileToken` in the POST body. With no site key set, widgets just don't render
+     and submit handlers send '' — the server-side verifyTurnstile degrades open. -->
+<script>
+  window.onloadTurnstileCallback = function () {
+    if (window.BedrockTurnstile) window.BedrockTurnstile._tsReady();
+  };
+</script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onloadTurnstileCallback" async defer></script>
+<script>
+window.BedrockTurnstile = (function(){
+  var siteKey = null, tsLoaded = false;
+  var widgets = {}; // slotId → widget handle
+  function _render(el){
+    if (!el || el.dataset.cfTsRendered) return;
+    if (!siteKey || !tsLoaded || typeof turnstile === 'undefined') return;
+    var id = turnstile.render(el, { sitekey: siteKey, size: 'normal', theme: 'auto' });
+    if (id !== undefined && id !== null) { widgets[el.id] = id; el.dataset.cfTsRendered = '1'; }
+  }
+  function _renderAll(){ document.querySelectorAll('[data-cf-ts-slot]').forEach(_render); }
+  return {
+    _tsReady: function(){ tsLoaded = true; _renderAll(); },
+    init: function(){
+      fetch('/.netlify/functions/get-config').then(function(r){ return r.json(); }).then(function(c){
+        if (c && c.turnstileSiteKey) { siteKey = c.turnstileSiteKey; _renderAll(); }
+      }).catch(function(){});
+    },
+    token: function(slotId){
+      var el = document.getElementById(slotId); if (!el) return '';
+      var hidden = el.querySelector('input[name="cf-turnstile-response"]');
+      return (hidden && hidden.value) || '';
+    },
+    reset: function(slotId){
+      var id = widgets[slotId];
+      if (id !== undefined && window.turnstile) try { turnstile.reset(id); } catch(_) {}
+    },
+    // Render a placeholder added after initial load (e.g. modal openings).
+    renderSlot: function(slotId){
+      var el = document.getElementById(slotId); _render(el);
+    }
+  };
+})();
+document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstile.init(); });
+</script>
+
 </head>
 <body>
 <!-- G7a: builder preview-mode banner — amber, non-dismissible, same pattern as other tools.
@@ -2904,6 +2951,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <input type="password" id="opAcctPass" placeholder="At least 6 characters" autocomplete="new-password">
       </div>
       <label class="op-remember"><input type="checkbox" id="opRemember"> Remember me on this device</label>
+      <!-- SEC1 2026-05-25: Cloudflare Turnstile bot-check for the Optimizer-modal signup -->
+      <div data-cf-ts-slot id="cfTs-opa" style="margin:0.5rem 0;min-height:0"></div>
       <button class="op-modal-btn" id="opAcctBtn" onclick="submitAccount()">Create Account &amp; See My Report</button>
       <div class="op-modal-err" id="opAcctErr"></div>
       <div class="op-modal-skip"><a onclick="skipAccount()">Just show my score for now</a></div>
@@ -2983,6 +3032,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
             <input type="email" id="opG2Email" placeholder="you@email.com" autocomplete="email">
             <input type="password" id="opG2Pass" placeholder="Password (6+ chars)" autocomplete="new-password">
           </div>
+          <!-- SEC1 2026-05-25: Cloudflare Turnstile bot-check for the Optimizer gate2 -->
+          <div data-cf-ts-slot id="cfTs-opg2" style="margin:0.6rem 0;min-height:0"></div>
           <button class="g2-unlock" onclick="unlockFromResults()">Unlock Full Report</button>
           <div class="op-gate2-err" id="opG2Err"></div>
         </div>
@@ -3831,6 +3882,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
           <div class="b-field"><label class="b-label">Phone</label><input class="b-input" type="tel" id="s4Phone" placeholder="(555) 000-0000" autocomplete="tel"></div>
           <div class="b-field"><label class="b-label">Email</label><input class="b-input" type="email" id="s4Email" placeholder="you@yourbusiness.com" autocomplete="email"></div>
           <div id="s4Error" style="display:none;font-size:0.72rem;color:#b91c1c;padding:8px 10px;background:#fef2f2;border-left:3px solid #b91c1c;margin-bottom:0.75rem"></div>
+          <!-- SEC1 2026-05-25: Cloudflare Turnstile bot-check for the "Claim My Site" step -->
+          <div data-cf-ts-slot id="cfTs-claim" style="margin:0 0 0.75rem;min-height:0"></div>
           <button class="b-btn-gold" id="s4PayBtn" style="width:100%;margin-top:0.25rem" onclick="submitClaim()">Pay Now — $200 →</button>
           <div class="secure-note">Secured by Stripe. You'll be redirected to complete payment.</div>
         </div>
@@ -3983,6 +4036,8 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
         <input class="b-input" type="password" id="lcm-pass2" required placeholder="Re-enter your password" autocomplete="new-password" minlength="8">
       </div>
       <div id="lcm-error" style="display:none;background:#fceaea;color:#a32d2d;padding:0.6rem 0.85rem;font-size:0.74rem;margin-bottom:0.85rem"></div>
+      <!-- SEC1 2026-05-25: Cloudflare Turnstile bot-check (only renders when TURNSTILE_SITE_KEY is set in Netlify) -->
+      <div data-cf-ts-slot id="cfTs-lcm" style="margin:0 0 0.85rem;min-height:0"></div>
       <button type="submit" class="b-btn-gold" style="width:100%">Create Account &amp; Continue</button>
       <p style="font-size:0.66rem;font-weight:300;color:var(--text-muted);text-align:center;margin-top:0.85rem;line-height:1.6">Your account lets you log in to the client portal and manage your site. We won't share your info or send marketing without your permission.</p>
     </form>
@@ -5951,13 +6006,15 @@ function submitAccount(){
     else localStorage.removeItem('bedrock_opt_email');
   }catch(x){}
   var b=_opEl('opAcctBtn');b.disabled=true;b.textContent='Creating your account…';
+  // SEC1: per-form Turnstile token from the modal widget.
+  var tsTokOpa = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-opa')) || '';
   _opCreateAccount(email,pass,function(){
     _opAccount='created';
     b.textContent='Account created ✓';
     if(!(_opData&&_opMinDone)){_opEl('opModalTitle').textContent='Account created — finishing your scan…';}
     _opAutoSignIn(email,pass);
     _opMaybeReveal();
-  });
+  }, tsTokOpa);
 }
 
 function skipAccount(){_opAccount='skipped';_opMaybeReveal();}
@@ -5965,11 +6022,11 @@ function skipAccount(){_opAccount='skipped';_opMaybeReveal();}
 // Best-effort: capture-lead with source:'signup' creates the Supabase Auth
 // account (service key). Returns 200 even if Supabase is unset, so we proceed
 // regardless — the user is never blocked from their report.
-function _opCreateAccount(email,pass,done){
+function _opCreateAccount(email,pass,done,turnstileToken){
   var s=(_opData&&_opData.scraped)||{};
   var url=(_opData&&_opData.url)||_opEl('opUrl').value||'';
   fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({businessName:s.businessName||('Optimizer — '+_opHost(url)),contactName:'',email:email,password:pass,phone:s.phone||'',city:s.city||'',trade:s.trade||'',source:'signup',siteData:{audit:{url:url,score:_opData&&_opData.score}}})
+    body:JSON.stringify({businessName:s.businessName||('Optimizer — '+_opHost(url)),contactName:'',email:email,password:pass,phone:s.phone||'',city:s.city||'',trade:s.trade||'',source:'signup',siteData:{audit:{url:url,score:_opData&&_opData.score}},turnstileToken:turnstileToken||''})
   }).then(function(){done();}).catch(function(){done();});
 }
 
@@ -6085,12 +6142,14 @@ function unlockFromResults(){
   if(!email||email.indexOf('@')<1||email.indexOf('.')<2){e.textContent='Enter a valid email.';return;}
   if(pass.length<6){e.textContent='Password needs at least 6 characters.';return;}
   e.textContent='';
+  // SEC1: per-form Turnstile token from the gate2 widget.
+  var tsTokG2 = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-opg2')) || '';
   _opCreateAccount(email,pass,function(){
     _opAccount='created';
     _opAutoSignIn(email,pass);
     _opEl('opGate2').style.display='none';
     _opEl('opChecklist').style.display='block';
-  });
+  }, tsTokG2);
 }
 
 function goBuildFromAudit(){
@@ -6459,8 +6518,10 @@ async function submitLeadCapture(e){
   // Create the real Supabase account via capture-lead (source:'signup' triggers it).
   let ok=false;
   try{
+    // SEC1: include the Turnstile token from the lcm form widget.
+    const turnstileToken = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-lcm')) || '';
     const res=await fetch(LEAD_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},
-      body:JSON.stringify({businessName:biz,contactName:name,email,phone,password:pass,trade:S.trade,services:S.services,city:document.getElementById('bCity')?.value||'',serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'signup'})});
+      body:JSON.stringify({businessName:biz,contactName:name,email,phone,password:pass,trade:S.trade,services:S.services,city:document.getElementById('bCity')?.value||'',serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'signup',turnstileToken})});
     ok=res.ok;
     if(!ok){
       let msg='We couldn’t create your account. Please try again.';
@@ -8460,8 +8521,10 @@ async function submitClaim(){
   try{
     // 1. Save claim lead to Supabase + email notification
     let leadId=null;
+    // SEC1: include the Turnstile token from the claim widget.
+    const turnstileToken = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-claim')) || '';
     const leadRes=await fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim'})});
+      body:JSON.stringify({businessName:bizName,contactName:name,phone,email,trade:S.trade,city:document.getElementById('bCity')?.value||'',services:S.services,serviceAreas:S.serviceAreas,siteData:S.siteData||null,source:'claim',turnstileToken})});
     if(leadRes.ok){const d=await leadRes.json();leadId=d.leadId||null;}
     // 2. Try Stripe checkout — redirects away if available
     const checkRes=await fetch('/.netlify/functions/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -9717,6 +9780,8 @@ function closeMtbDrawer(){
       <input type="email" id="bdmCreateEmail" autocomplete="email" required>
       <label for="bdmCreatePass">Password</label>
       <input type="password" id="bdmCreatePass" autocomplete="new-password" required minlength="6">
+      <!-- SEC1 2026-05-25: Cloudflare Turnstile bot-check for the auth-modal "Create my account" path -->
+      <div data-cf-ts-slot id="cfTs-bdm" style="margin:0.85rem 0;min-height:0"></div>
       <button type="submit" class="bdm-submit" id="bdmCreateBtn">Create My Account</button>
       <p class="bdm-foot">Already have an account? <a onclick="authModalMode('signin')">Sign in</a></p>
     </form>
@@ -9768,7 +9833,9 @@ function bdmDoCreate(e){
   if(!email||email.indexOf('@')===-1){ bdmErr('bdmCreateErr','Enter a valid email.'); return; }
   if(pass.length<6){ bdmErr('bdmCreateErr','Password must be at least 6 characters.'); return; }
   btn.disabled=true; btn.textContent='Creating…';
-  fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({businessName:biz,contactName:name,email:email,password:pass,source:'signup'})})
+  // SEC1: include the Turnstile token from the auth-modal create widget.
+  var turnstileToken = (window.BedrockTurnstile && BedrockTurnstile.token('cfTs-bdm')) || '';
+  fetch('/.netlify/functions/capture-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({businessName:biz,contactName:name,email:email,password:pass,source:'signup',turnstileToken:turnstileToken})})
     .then(function(r){return r.json();}).then(function(d){
       if(d.success===false){ btn.disabled=false; btn.textContent='Create My Account'; bdmErr('bdmCreateErr',d.error||'That email may already be registered — try signing in.'); return; }
       return fetch('/.netlify/functions/portal-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'signin',email:email,password:pass})})
