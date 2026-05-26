@@ -416,9 +416,16 @@ footer{background:rgba(0,0,0,0.3);padding:1.25rem 5%;text-align:center;border-to
   /* My Account tab abbreviated */
   .nav-tab-group[data-top="subs"]>.nav-tab-btn{font-size:0;gap:0;padding-left:0.4rem;padding-right:0.4rem}
   .nav-tab-group[data-top="subs"]>.nav-tab-btn::after{content:'Account';font-size:0.5rem;font-weight:800;letter-spacing:0.04em;color:inherit}
-  /* Dashboard tab: home icon only — saves a chunk of horizontal space */
+  /* Dashboard tab: home icon only — saves a chunk of horizontal space.
+     SHELL2 2026-05-26: swapped the Unicode ⌂ for an inline-SVG mask so the
+     icon stays sharp on hi-DPI and inherits color from the button text. */
   .nav-tab-group[data-top="dashboard"]>.nav-tab-btn{font-size:0;padding-left:0.45rem;padding-right:0.45rem;min-width:28px}
-  .nav-tab-group[data-top="dashboard"]>.nav-tab-btn::before{content:'⌂';font-size:0.95rem;line-height:1;color:inherit}
+  .nav-tab-group[data-top="dashboard"]>.nav-tab-btn::before{
+    content:'';display:inline-block;width:15px;height:15px;vertical-align:-2px;
+    background-color:currentColor;
+    -webkit-mask:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3E%3Cpolyline points='9 22 9 12 15 12 15 22'/%3E%3C/svg%3E") center/contain no-repeat;
+            mask:url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z'/%3E%3Cpolyline points='9 22 9 12 15 12 15 22'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
 }
 
 /* ── SERVICES CHIPS (services-by-trade picker) ── */
