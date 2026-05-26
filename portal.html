@@ -2215,6 +2215,22 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           <div class="subs-faq-a">Buying Bedrock Marketing does <strong>not</strong> include Sites or Finance &amp; Operations &mdash; and vice versa. Each one solves a different problem and is priced independently. Want everything? Pick the <strong>Full Ecosystem bundle</strong> below for the biggest savings.</div>
         </div>
 
+        <!-- G2 (Batch G, 2026-05-26): monthly/annual billing toggle. Defaults to monthly.
+             Annual saves 10% on each tool and 15% on the Full Ecosystem bundle. -->
+        <style>
+          .billing-toggle{display:inline-flex;background:#fff;border:1px solid var(--border);border-radius:8px;padding:4px;margin-bottom:1rem;font-family:'DM Sans',sans-serif}
+          .billing-toggle button{background:transparent;border:none;font-family:inherit;font-size:0.74rem;font-weight:700;letter-spacing:0.04em;color:var(--text-muted);padding:0.5rem 1.1rem;border-radius:5px;cursor:pointer;transition:background .15s,color .15s;position:relative}
+          .billing-toggle button.active{background:var(--accent);color:#fff}
+          .billing-toggle button .save-pill{display:inline-block;background:rgba(255,255,255,0.22);color:#fff;font-size:0.56rem;font-weight:700;letter-spacing:0.08em;padding:0.12rem 0.4rem;border-radius:99px;margin-left:6px;text-transform:uppercase}
+          .billing-toggle button:not(.active) .save-pill{background:rgba(201,146,42,0.14);color:var(--accent-text)}
+          .billing-hint{font-size:0.74rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.55}
+        </style>
+        <div role="group" aria-label="Billing cycle" class="billing-toggle">
+          <button type="button" id="billMonthBtn" class="active" aria-pressed="true" onclick="setBilling('monthly')">Monthly</button>
+          <button type="button" id="billAnnualBtn" aria-pressed="false" onclick="setBilling('annual')">Annual <span class="save-pill">Save 10–15%</span></button>
+        </div>
+        <div class="billing-hint" id="billingHint">Charged monthly. Switch to annual to save 10% on each tool — and 15% on the Full Ecosystem bundle.</div>
+
         <div class="subs-grid" id="subsGrid">
           <!-- WEBSITE -->
           <button type="button" class="sub-card" data-prod="website" onclick="toggleProduct('website')">
@@ -3313,11 +3329,55 @@ var BUNDLE_TOTALS = {  // monthly total when this exact combo selected
   'marketing+cfo':          95,
   'website+marketing+cfo':  100,
 };
+// G2 (Batch G, 2026-05-26): annual billing support. Annual prices are
+// hand-set to match the Stripe products Brock creates (10% off per tool,
+// 15% off the Full Ecosystem bundle). Keep these in sync with the
+// STRIPE_*_ANNUAL_PRICE_ID values configured in Netlify.
+var PRICES_ANNUAL = { website:216, marketing:324, cfo:756 };
+var BUNDLE_TOTALS_ANNUAL = {
+  'website':                216,
+  'marketing':              324,
+  'cfo':                    756,
+  'website+marketing':      540,    // sum of two annuals (no extra bundle discount)
+  'website+cfo':            972,
+  'marketing+cfo':          1080,
+  'website+marketing+cfo':  1020,   // 15% off the $1200/yr (= $100/mo × 12) full ecosystem
+};
+var BILLING = 'monthly'; // 'monthly' | 'annual'
+var BILLING_KEY = 'bedrock-portal-billing';
 function loadCart() {
   try { var raw = localStorage.getItem(CART_KEY); if (raw) CART = Object.assign(CART, JSON.parse(raw)); } catch(_){}
+  // G2: restore billing preference if user picked one before.
+  try { var b = localStorage.getItem(BILLING_KEY); if (b === 'annual' || b === 'monthly') BILLING = b; } catch(_){}
+  applyBillingToToggleUI();
   paintCart();
 }
 function persistCart() { try { localStorage.setItem(CART_KEY, JSON.stringify(CART)); } catch(_){} }
+
+// G2: switch monthly ↔ annual. Re-paints cards + cart summary so prices stay
+// in sync with what we POST to create-subscription-checkout.
+function setBilling(mode){
+  if (mode !== 'monthly' && mode !== 'annual') return;
+  BILLING = mode;
+  try { localStorage.setItem(BILLING_KEY, mode); } catch(_){}
+  applyBillingToToggleUI();
+  paintCart();
+}
+function applyBillingToToggleUI(){
+  var m = document.getElementById('billMonthBtn');
+  var a = document.getElementById('billAnnualBtn');
+  var hint = document.getElementById('billingHint');
+  if (!m || !a) return;
+  if (BILLING === 'annual'){
+    m.classList.remove('active'); m.setAttribute('aria-pressed','false');
+    a.classList.add('active');    a.setAttribute('aria-pressed','true');
+    if (hint) hint.textContent = 'Charged once a year. Save 10% on each tool — and 15% on the Full Ecosystem bundle ($1,020/yr vs $1,200/yr).';
+  } else {
+    a.classList.remove('active'); a.setAttribute('aria-pressed','false');
+    m.classList.add('active');    m.setAttribute('aria-pressed','true');
+    if (hint) hint.textContent = 'Charged monthly. Switch to annual to save 10% on each tool — and 15% on the Full Ecosystem bundle.';
+  }
+}
 function toggleProduct(p) {
   CART[p] = !CART[p];
   paintCart();
@@ -3329,7 +3389,30 @@ function paintCart() {
     var toggle = card.querySelector('.sub-toggle');
     if (CART[p]) { card.classList.add('active'); toggle.textContent = '✓ In Cart'; }
     else { card.classList.remove('active'); toggle.textContent = '+ Add to Cart'; }
+    // G2: swap displayed price between monthly and annual.
+    var priceEl = card.querySelector('.sc-price'); if (priceEl){
+      var amt  = (BILLING === 'annual') ? PRICES_ANNUAL[p] : PRICES[p];
+      var unit = (BILLING === 'annual') ? '/yr' : '/mo';
+      priceEl.innerHTML = '$' + amt + '<span class="sc-price-unit">' + unit + '</span>';
+    }
   });
+  // G2: bundle card price + savings line.
+  var bundlePrice = document.querySelector('.bundle-card .bundle-price');
+  var bundleSave  = document.querySelector('.bundle-card .bundle-save');
+  if (bundlePrice){
+    if (BILLING === 'annual'){
+      bundlePrice.innerHTML = '$1,020<span class="bundle-price-unit">/yr</span>';
+    } else {
+      bundlePrice.innerHTML = '$100<span class="bundle-price-unit">/mo</span>';
+    }
+  }
+  if (bundleSave){
+    if (BILLING === 'annual'){
+      bundleSave.textContent = '$200 site setup fee waived. Save $180/yr vs. monthly billing — and $360/yr vs. buying all three separately.';
+    } else {
+      bundleSave.textContent = '$200 site setup fee waived. Save $20/mo vs. buying all three separately.';
+    }
+  }
   renderCart();
 }
 // Placeholder promo codes — wire to real Stripe coupons before launch
@@ -3370,10 +3453,14 @@ function renderCart() {
   }
   if (promoRow) promoRow.style.display = 'block';
 
-  var monthlyRetail = selected.reduce(function(s,p){ return s + PRICES[p]; }, 0);
+  // G2: pick the active price map + interval label up front.
+  var priceMap     = (BILLING === 'annual') ? PRICES_ANNUAL       : PRICES;
+  var bundleMap    = (BILLING === 'annual') ? BUNDLE_TOTALS_ANNUAL : BUNDLE_TOTALS;
+  var unitLabel    = (BILLING === 'annual') ? '/yr' : '/mo';
+  var monthlyRetail = selected.reduce(function(s,p){ return s + priceMap[p]; }, 0);
   var rawSetup      = selected.reduce(function(s,p){ return s + (SETUP_FEES[p] || 0); }, 0);
   var bundleKey     = selected.slice().sort().join('+');
-  var bundleMonthly = BUNDLE_TOTALS[bundleKey];
+  var bundleMonthly = bundleMap[bundleKey];
   if (bundleMonthly == null) bundleMonthly = monthlyRetail;
   var savings = monthlyRetail - bundleMonthly;
   // Selecting Website + Marketing + CFO individually auto-applies the Full Ecosystem.
@@ -3382,25 +3469,27 @@ function renderCart() {
 
   var names = { website:'Bedrock Website', marketing:'Bedrock Marketing', cfo:'Bedrock Finance &amp; Operations' };
   var lines = selected.map(function(p){
-    return '<div class="cart-line"><span class="cl-name">' + names[p] + '</span><span class="cl-price">$' + PRICES[p] + '<span style="font-size:0.65rem;color:var(--text-muted);font-weight:400;margin-left:3px">/mo</span></span></div>';
+    return '<div class="cart-line"><span class="cl-name">' + names[p] + '</span><span class="cl-price">$' + priceMap[p] + '<span style="font-size:0.65rem;color:var(--text-muted);font-weight:400;margin-left:3px">' + unitLabel + '</span></span></div>';
   });
   if (isFullEco) {
-    /* G4b: explicit savings — strikethrough $120 → $100 + "Save $20/mo vs. buying separately" */
+    /* G4b: explicit savings — strikethrough $120 → $100 + "Save $20/mo vs. buying separately"
+       G2: annual variant shows $1020 with $180 savings vs. monthly bundle. */
+    var ecoPriceTxt = (BILLING === 'annual') ? '$1,020' : '$100';
     lines.unshift('<div class="cart-line" style="background:#0D1B2E;border-radius:6px;padding:0.75rem 0.85rem 0.65rem;margin-bottom:0.35rem;display:flex;flex-direction:column;align-items:stretch;gap:0.35rem">'
       + '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:0.6rem;flex-wrap:wrap">'
         + '<span class="cl-name" style="color:#C9922A;font-weight:700">★ Full Ecosystem &mdash; all three tools</span>'
         + '<span style="display:inline-flex;align-items:baseline;gap:0.5rem">'
           + '<span style="color:rgba(255,255,255,0.45);text-decoration:line-through;font-size:0.85rem;font-weight:500">$' + monthlyRetail + '</span>'
-          + '<span class="cl-price" style="color:#fff;font-weight:700">$100<span style="font-size:0.65rem;color:rgba(255,255,255,0.55);font-weight:400;margin-left:3px">/mo</span></span>'
+          + '<span class="cl-price" style="color:#fff;font-weight:700">' + ecoPriceTxt + '<span style="font-size:0.65rem;color:rgba(255,255,255,0.55);font-weight:400;margin-left:3px">' + unitLabel + '</span></span>'
         + '</span>'
       + '</div>'
-      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3b6d11;background:rgba(155,224,138,0.18);padding:0.32rem 0.6rem;border-radius:4px;align-self:flex-start">Save $' + savings + '/mo vs. buying separately</div>'
+      + '<div style="font-family:\'DM Sans\',sans-serif;font-size:0.66rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#3b6d11;background:rgba(155,224,138,0.18);padding:0.32rem 0.6rem;border-radius:4px;align-self:flex-start">Save $' + savings + unitLabel + ' vs. buying separately</div>'
     + '</div>');
   }
   if (setupTotal > 0) {
     lines.push('<div class="cart-line"><span class="cl-name">One-time setup' + (CART.website ? ' (Sites)' : '') + '</span><span class="cl-price">$' + setupTotal + '</span></div>');
   }
-  if (savings > 0) lines.push('<div class="cart-line discount"><span class="cl-name">Bundle savings</span><span class="cl-price">−$' + savings + '/mo</span></div>');
+  if (savings > 0) lines.push('<div class="cart-line discount"><span class="cl-name">Bundle savings</span><span class="cl-price">−$' + savings + unitLabel + '</span></div>');
   if (isFullEco && rawSetup > 0) lines.push('<div class="cart-line discount"><span class="cl-name">Full Ecosystem &mdash; $' + rawSetup + ' site setup waived</span><span class="cl-price">−$' + rawSetup + '</span></div>');
 
   // ── Apply promo code ──
@@ -3413,16 +3502,17 @@ function renderCart() {
       finalSetup = 0;
     } else if (d.kind === 'monthly_off') {
       var off = Math.min(d.amount, finalMonthly);
-      lines.push('<div class="cart-line discount"><span class="cl-name">Promo "' + ACTIVE_PROMO.code + '"</span><span class="cl-price">−$' + off + '/mo</span></div>');
+      lines.push('<div class="cart-line discount"><span class="cl-name">Promo "' + ACTIVE_PROMO.code + '"</span><span class="cl-price">−$' + off + unitLabel + '</span></div>');
       finalMonthly -= off;
     } else if (d.kind === 'monthly_pct') {
       var pctOff = Math.round(finalMonthly * d.pct / 100);
-      lines.push('<div class="cart-line discount"><span class="cl-name">Promo "' + ACTIVE_PROMO.code + '" — ' + d.pct + '% off</span><span class="cl-price">−$' + pctOff + '/mo</span></div>');
+      lines.push('<div class="cart-line discount"><span class="cl-name">Promo "' + ACTIVE_PROMO.code + '" — ' + d.pct + '% off</span><span class="cl-price">−$' + pctOff + unitLabel + '</span></div>');
       finalMonthly -= pctOff;
     }
   }
 
-  lines.push('<div class="cart-line total"><span class="cl-name">Monthly total</span><span class="cl-price">$' + finalMonthly + '<span style="font-size:0.66rem;font-family:DM Sans;color:var(--text-muted);font-weight:400;margin-left:4px;letter-spacing:0">/mo</span></span></div>');
+  var totalLabel = (BILLING === 'annual') ? 'Annual total' : 'Monthly total';
+  lines.push('<div class="cart-line total"><span class="cl-name">' + totalLabel + '</span><span class="cl-price">$' + finalMonthly + '<span style="font-size:0.66rem;font-family:DM Sans;color:var(--text-muted);font-weight:400;margin-left:4px;letter-spacing:0">' + unitLabel + '</span></span></div>');
   if (finalSetup > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--text-muted);font-size:0.7rem">Plus today, one-time</span><span class="cl-price" style="font-size:1.1rem">$' + finalSetup + '</span></div>');
   else if (rawSetup > 0) lines.push('<div class="cart-line"><span class="cl-name" style="color:var(--green);font-size:0.7rem">Setup fee waived</span><span class="cl-price" style="font-size:1.1rem;color:var(--green)">$0</span></div>');
 
@@ -3538,7 +3628,7 @@ function checkout() {
   fetch('/.netlify/functions/create-subscription-checkout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + currentSession.access_token },
-    body: JSON.stringify({ tools: recurring, email: email, userId: userId }),
+    body: JSON.stringify({ tools: recurring, email: email, userId: userId, billing: BILLING }),
   })
     .then(function(r){ return r.json(); })
     .then(function(d){
