@@ -116,9 +116,10 @@ exports.handler = async (event) => {
         body: JSON.stringify({ raw: encoded }),
       });
       if (gRes.ok) return ok({ sent: true, via: 'gmail' });
-      console.error('[gmail-send] gmail api', gRes.status, await gRes.text());
+      // Log status only — Gmail bodies echo recipient address + message id.
+      console.error('[gmail-send] gmail api status=', gRes.status);
       // fall through to Resend on a Gmail failure
-    } catch (e) { console.error('[gmail-send] gmail', e.message); }
+    } catch (e) { console.error('[gmail-send] gmail code=', (e && e.code) || 'unknown'); }
   }
 
   // ── 2. Resend fallback (from Bedrock's verified address) ──────────────────
@@ -134,8 +135,9 @@ exports.handler = async (event) => {
         body: JSON.stringify(payload),
       });
       if (rRes.ok) return ok({ sent: true, via: 'resend' });
-      console.error('[gmail-send] resend', rRes.status, await rRes.text());
-    } catch (e) { console.error('[gmail-send] resend', e.message); }
+      // Log status only — Resend bodies echo recipient + html preview.
+      console.error('[gmail-send] resend status=', rRes.status);
+    } catch (e) { console.error('[gmail-send] resend code=', (e && e.code) || 'unknown'); }
   }
 
   return ok({ sent: false, reason: 'email could not be sent' });

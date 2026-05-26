@@ -156,12 +156,14 @@ Keep replies under ~120 words unless the contractor asks for detail.`;
       body: JSON.stringify({ model: MODEL, max_tokens: MAX_TOKENS, system: systemPrompt, messages }),
     });
   } catch (e) {
-    console.error('[donna-conversation] network', e);
+    // Short message only — full error may contain network internals / paths.
+    console.error('[donna-conversation] network code=', (e && e.code) || 'unknown', 'msg=', (e && e.message) || '');
     return { statusCode: 502, body: JSON.stringify({ error: 'Donna couldn’t be reached. Try again in a moment.' }) };
   }
 
   if (!aiRes.ok) {
-    console.error(`[donna-conversation] ${aiRes.status} — ${await aiRes.text()}`);
+    // Log status only — body can echo system prompt fragments + contractor messages.
+    console.error('[donna-conversation] anthropic status=', aiRes.status);
     return { statusCode: 502, body: JSON.stringify({ error: 'Donna hit a snag. Try again in a moment.' }) };
   }
 

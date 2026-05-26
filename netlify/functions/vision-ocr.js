@@ -51,12 +51,14 @@ exports.handler = async (event) => {
       }),
     });
   } catch (e) {
-    console.error('[vision-ocr] network', e);
+    // Short message only — full error contains image content + path internals.
+    console.error('[vision-ocr] network code=', (e && e.code) || 'unknown');
     return { statusCode: 502, body: JSON.stringify({ error: 'Couldn’t reach the receipt scanner.' }) };
   }
 
   if (!visionRes.ok) {
-    console.error(`[vision-ocr] ${visionRes.status} — ${await visionRes.text()}`);
+    // Status only — Vision bodies echo the API key tail + base64 image fragments.
+    console.error('[vision-ocr] status=', visionRes.status);
     return { statusCode: 502, body: JSON.stringify({ error: 'Receipt scan failed — enter the details by hand.' }) };
   }
 
