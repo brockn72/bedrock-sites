@@ -976,6 +976,16 @@ footer a:hover{text-decoration:underline}
             <button type="button" class="lub-btn" id="libUploadBtn" onclick="document.getElementById('libUploadInput').click()">Upload a file</button>
           </div>
           <div class="lib-upload-msg" id="libUploadMsg"></div>
+          <!-- MKT8 2026-05-25: search + sort for asset library -->
+          <div class="lib-controls" style="display:flex;flex-wrap:wrap;gap:0.55rem;align-items:center;margin:0.85rem 0 0.5rem">
+            <input type="search" id="libSearch" placeholder="Search filename or campaign…" oninput="setLibSearch(this.value)" style="flex:1;min-width:180px;font-family:'DM Sans',sans-serif;font-size:0.84rem;padding:0.55rem 0.75rem;border:1px solid var(--border-light);border-radius:6px;background:#fff" aria-label="Search assets by filename or campaign">
+            <select id="libSort" onchange="setLibSort(this.value)" style="font-family:'DM Sans',sans-serif;font-size:0.82rem;padding:0.55rem 0.7rem;border:1px solid var(--border-light);border-radius:6px;background:#fff" aria-label="Sort assets">
+              <option value="date_desc">Newest first</option>
+              <option value="date_asc">Oldest first</option>
+              <option value="name_asc">Name A–Z</option>
+              <option value="name_desc">Name Z–A</option>
+            </select>
+          </div>
           <div class="lib-filters" id="libFilters"></div>
           <div id="libraryBody"><div class="lib-empty">Loading your assets…</div></div>
         </div>
@@ -1276,6 +1286,12 @@ async function loadMarketingAssets(force){
   renderCampaigns();
 }
 function setLibFilter(c){ LIB_FILTER=c; renderLibrary(); }
+// MKT8 2026-05-25: search + sort state.
+var LIB_SEARCH = '';
+var LIB_SORT   = 'date_desc';
+function setLibSearch(q){ LIB_SEARCH = String(q || '').trim().toLowerCase(); renderLibrary(); }
+function setLibSort(s){   LIB_SORT   = s || 'date_desc'; renderLibrary(); }
+
 function renderLibrary(){
   var body=document.getElementById('libraryBody'); if(!body) return;
   var assets=MKT_ASSETS||[];
@@ -1287,9 +1303,25 @@ function renderLibrary(){
     chips+='<button class="lib-filter-btn '+(LIB_FILTER===c?'active':'')+'" onclick="setLibFilter('+JSON.stringify(c).replace(/"/g,'&quot;')+')">'+escMkt(c)+' ('+count+')</button>';
   });
   document.getElementById('libFilters').innerHTML=chips;
-  var filtered=LIB_FILTER==='all'?assets:assets.filter(function(a){return (a.campaign||'')===LIB_FILTER;});
+  // Apply campaign filter → search → sort.
+  var filtered = LIB_FILTER==='all' ? assets : assets.filter(function(a){return (a.campaign||'')===LIB_FILTER;});
+  if (LIB_SEARCH) {
+    filtered = filtered.filter(function(a){
+      var hay = ((a.filename||'') + ' ' + (a.campaign||'') + ' ' + (a.format||'')).toLowerCase();
+      return hay.indexOf(LIB_SEARCH) !== -1;
+    });
+  }
+  filtered = filtered.slice().sort(function(a, b){
+    if (LIB_SORT === 'name_asc')  return String(a.filename||'').localeCompare(String(b.filename||''));
+    if (LIB_SORT === 'name_desc') return String(b.filename||'').localeCompare(String(a.filename||''));
+    var ta = a.created_at ? new Date(a.created_at).getTime() : 0;
+    var tb = b.created_at ? new Date(b.created_at).getTime() : 0;
+    return LIB_SORT === 'date_asc' ? ta - tb : tb - ta;
+  });
   if(!filtered.length){
-    body.innerHTML='<div class="lib-empty">No saved assets yet. Build a flyer or post in <a onclick="navTo(\'build\')">Build Materials</a> — every download is saved to your library automatically.</div>';
+    body.innerHTML = LIB_SEARCH
+      ? '<div class="lib-empty">No assets match "' + escMkt(LIB_SEARCH) + '". Try a different word, or clear the search.</div>'
+      : '<div class="lib-empty">No saved assets yet. Build a flyer or post in <a onclick="navTo(\'build\')">Build Materials</a> — every download is saved to your library automatically.</div>';
     return;
   }
   body.innerHTML='<div class="asset-grid">'+filtered.map(function(a){
