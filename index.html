@@ -1788,7 +1788,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <!-- hidden May 2026 — Reviews moved to homepage Proof section -->
     <li id="nl-reviews-li" style="display:none"><a id="nl-reviews" href="#reviews" onclick="showPage('reviews',event)">Reviews</a></li>
     <!-- hidden May 2026 — Sites/Marketing/Optimizer now live under the Tools dropdown -->
-    <li style="display:none"><a id="nl-sites" href="/sites.html">Bedrock Sites</a></li>
+    <li style="display:none"><a id="nl-sites" href="/sites.html">Bedrock Website</a></li>
     <li style="display:none"><a id="nl-marketing" href="/bedrock-marketing-v1.html">Marketing</a></li>
     <li style="display:none"><a id="nl-optimizer" href="#optimizer" onclick="showPage('optimizer',event)">Optimizer</a></li>
     <!-- hidden May 2026 — account creation via the Sign In page + homepage CTA -->
@@ -2157,9 +2157,9 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
             <span class="wwd-feat">SEO / GEO Optimizer</span>
             <span class="wwd-feat">Analytics</span>
           </div>
-          <p class="wwd-acc-desc">A professional website built specifically for your trade &mdash; not a generic template you have to wrestle into shape. Most contractors lose work simply because they don't show up on Google, or their site looks like an afterthought next to the competition. With Bedrock Sites you answer a few plain questions, drop in your photos, and get a polished, mobile-ready site that's built to rank in local search. You preview the whole thing for free and only pay when you're ready to put it live. From there, editing it later takes minutes &mdash; no developer, no waiting.</p>
+          <p class="wwd-acc-desc">A professional website built specifically for your trade &mdash; not a generic template you have to wrestle into shape. Most contractors lose work simply because they don't show up on Google, or their site looks like an afterthought next to the competition. With Bedrock Website you answer a few plain questions, drop in your photos, and get a polished, mobile-ready site that's built to rank in local search. You preview the whole thing for free and only pay when you're ready to put it live. From there, editing it later takes minutes &mdash; no developer, no waiting.</p>
           <div class="wwd-acc-links">
-            <a href="/sites.html">&rarr; Go to Bedrock Sites</a>
+            <a href="/sites.html">&rarr; Go to Bedrock Website</a>
             <a href="#ourwork" onclick="showPage('ourwork',event)">&rarr; See Our Work</a>
           </div>
         </div>
@@ -3197,7 +3197,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <div class="bd-faq-group">
       <div class="bd-faq-group-head">
         <span class="bd-faq-group-mark">02</span>
-        <span class="bd-faq-group-title">Bedrock Sites &mdash; Website Builder</span>
+        <span class="bd-faq-group-title">Bedrock Website Builder</span>
         <span class="bd-faq-group-sub">Live now</span>
       </div>
       <div class="bd-faq-list">
@@ -6569,7 +6569,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <div style="text-align:center;max-width:480px">
       <div style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem">Client Portal</div>
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:#fff;margin-bottom:1rem">Manage your site.</h2>
-      <p style="font-family:'DM Sans',sans-serif;font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:2rem">Access your Bedrock Sites dashboard to edit your website, view analytics, and manage your account.</p>
+      <p style="font-family:'DM Sans',sans-serif;font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:2rem">Access your Bedrock Digital dashboard to edit your website, view analytics, and manage your account.</p>
       <a href="/portal.html" class="btn-gold" style="font-family:'DM Sans',sans-serif">Go to Portal</a>
       <div style="margin-top:1.5rem"><a href="#home" onclick="showPage('home',event)" style="font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.5);text-decoration:none">&larr; Back to Home</a></div>
     </div>
@@ -8269,7 +8269,7 @@ function scrollPreviewTo(section){
   if(!frame||!frame.contentWindow)return;
   try{frame.contentWindow.postMessage({type:'bdrk-preview-scroll',section:section},'*');}catch(e){}
 }
-function pageTitleFor(id){const map={home:'Bedrock Digital — Built for the Trades. Done for You.',sites:'Bedrock Sites — Professional Websites for Contractors',optimizer:'Bedrock Optimizer — Free SEO & AI Search Audit',about:'About Bedrock Digital',ourwork:'Our Work — Bedrock Digital',reviews:'Client Reviews — Bedrock Digital',login:'Sign In | Bedrock Digital',builder:'Build Your Site Free | Bedrock Digital',portal:'Client Portal | Bedrock Digital',howitworks:'How It Works — Bedrock Digital',tools:'Tools — Bedrock Digital'};return map[id]||'Bedrock Digital'}
+function pageTitleFor(id){const map={home:'Bedrock Digital — Built for the Trades. Done for You.',sites:'Bedrock Website Builder — Professional Websites for Contractors',optimizer:'Bedrock Optimizer — Free SEO & AI Search Audit',about:'About Bedrock Digital',ourwork:'Our Work — Bedrock Digital',reviews:'Client Reviews — Bedrock Digital',login:'Sign In | Bedrock Digital',builder:'Build Your Site Free | Bedrock Digital',portal:'Client Portal | Bedrock Digital',howitworks:'How It Works — Bedrock Digital',tools:'Tools — Bedrock Digital'};return map[id]||'Bedrock Digital'}
 function scrollToExamples(e){if(e&&e.preventDefault)e.preventDefault();showPage('home');setTimeout(()=>{const el=document.getElementById('examples');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},80);}
 
 // Quick-jump from nav to a specific section on the home page
@@ -10363,8 +10363,8 @@ function closeSampleModal(){
 function emailSelfBuilderLink(e){
   if(e&&e.preventDefault)e.preventDefault();
   const url=window.location.origin+window.location.pathname+'#builder';
-  const subject=encodeURIComponent('Bedrock Sites — finish your website preview');
-  const body=encodeURIComponent('Open this on your laptop or desktop to finish building your free website preview:\n\n'+url+'\n\n— Bedrock Sites');
+  const subject=encodeURIComponent('Bedrock Digital — finish your website preview');
+  const body=encodeURIComponent('Open this on your laptop or desktop to finish building your free website preview:\n\n'+url+'\n\n— Bedrock Digital');
   window.location.href='mailto:?subject='+subject+'&body='+body;
 }
 
@@ -10910,7 +10910,7 @@ ${JSON.stringify(S.siteData,null,2)}`;
     const headers={'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
     if(apiKey)headers['x-api-key']=apiKey;
     const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,
-      system:`You are a helpful website editor assistant for Bedrock Sites. Help business owners update their website content.
+      system:`You are a helpful website editor assistant for Bedrock Digital. Help business owners update their website content.
 
 ${fieldGuide}
 

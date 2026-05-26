@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Primary SEO -->
-<title>Bedrock Sites — Professional contractor websites, built in minutes</title>
-<meta name="description" content="Bedrock Sites is the website builder for trade contractors — plumbers, electricians, HVAC, landscapers. Free preview, $200 setup + $20/month, live the same day.">
+<title>Bedrock Website Builder — Professional contractor websites, built in minutes</title>
+<meta name="description" content="The Bedrock Digital website builder for trade contractors — plumbers, electricians, HVAC, landscapers. Free preview, $200 setup + $20/month, live the same day.">
 <meta name="keywords" content="contractor website builder, landscaping website, plumber website, electrician website, HVAC website, small business website, local business website, trade business website">
 <meta name="author" content="Bedrock Digital">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
@@ -16,11 +16,11 @@
 <!-- Open Graph + Twitter -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Bedrock Digital">
-<meta property="og:title" content="Bedrock Sites — Professional contractor websites, built in minutes">
+<meta property="og:title" content="Bedrock Website Builder — Professional contractor websites, built in minutes">
 <meta property="og:description" content="The website builder for trade contractors. Free preview, $200 setup + $20/month, live the same day.">
 <meta property="og:url" content="https://bedrock-sites.com/sites.html">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Bedrock Sites — Contractor websites built in minutes">
+<meta name="twitter:title" content="Bedrock Website Builder — Contractor websites built in minutes">
 <meta name="twitter:description" content="$200 setup + $20/month. Free preview before you pay. Built for the trades.">
 <meta property="og:image" content="https://bedrock-sites.com/og-image.svg">
 <meta name="twitter:image" content="https://bedrock-sites.com/og-image.svg">
@@ -1748,7 +1748,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <li class="nav-home-wrap">
       <a id="nl-tools" href="/#tools">Tools</a>
       <ul class="nav-jumps">
-        <li><a href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
+        <li><a href="#sites" onclick="showPage('sites',event)">Bedrock Website</a></li>
         <li><a href="/bedrock-marketing-v1.html">Bedrock Marketing</a></li>
         <li><a href="#optimizer" onclick="showPage('optimizer',event)">Optimizer &mdash; Free Scan</a></li>
       </ul>
@@ -4063,7 +4063,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <div style="text-align:center;max-width:480px">
       <div style="font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem">Client Portal</div>
       <h2 style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:#fff;margin-bottom:1rem">Manage your site.</h2>
-      <p style="font-family:'DM Sans',sans-serif;font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:2rem">Access your Bedrock Sites dashboard to edit your website, view analytics, and manage your account.</p>
+      <p style="font-family:'DM Sans',sans-serif;font-size:0.85rem;color:rgba(255,255,255,0.6);line-height:1.7;margin-bottom:2rem">Access your Bedrock Digital dashboard to edit your website, view analytics, and manage your account.</p>
       <a href="/portal.html" class="btn-gold" style="font-family:'DM Sans',sans-serif">Go to Portal</a>
       <div style="margin-top:1.5rem"><a href="#home" onclick="showPage('home',event)" style="font-family:'DM Sans',sans-serif;font-size:0.72rem;color:rgba(255,255,255,0.5);text-decoration:none">&larr; Back to Home</a></div>
     </div>
@@ -4090,7 +4090,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
       <div class="bd-footer-links">
         <div class="f-col-title">Products</div>
         <ul>
-          <li><a href="#sites" onclick="showPage('sites',event)">Bedrock Sites</a></li>
+          <li><a href="#sites" onclick="showPage('sites',event)">Bedrock Website</a></li>
           <li><a href="#optimizer" onclick="showPage('optimizer',event)">Bedrock Optimizer</a></li>
           <li><a href="mailto:support@bedrock-sites.com?subject=SEO%20Waitlist">Bedrock SEO</a></li>
           <li><a href="mailto:support@bedrock-sites.com?subject=CFO%20Waitlist">Bedrock CFO</a></li>
@@ -5829,7 +5829,7 @@ function scrollPreviewTo(section){
   if(!frame||!frame.contentWindow)return;
   try{frame.contentWindow.postMessage({type:'bdrk-preview-scroll',section:section},'*');}catch(e){}
 }
-function pageTitleFor(id){const map={home:'Bedrock Digital — Built for the Trades. Done for You.',sites:'Bedrock Sites — Professional Websites for Contractors',optimizer:'Bedrock Optimizer — Free SEO & AI Search Audit',about:'About Bedrock Digital',ourwork:'Our Work — Bedrock Digital',reviews:'Client Reviews — Bedrock Digital',login:'Client Login | Bedrock Digital',builder:'Build Your Site Free | Bedrock Digital',portal:'Client Portal | Bedrock Digital'};return map[id]||'Bedrock Digital'}
+function pageTitleFor(id){const map={home:'Bedrock Digital — Built for the Trades. Done for You.',sites:'Bedrock Website Builder — Professional Websites for Contractors',optimizer:'Bedrock Optimizer — Free SEO & AI Search Audit',about:'About Bedrock Digital',ourwork:'Our Work — Bedrock Digital',reviews:'Client Reviews — Bedrock Digital',login:'Client Login | Bedrock Digital',builder:'Build Your Site Free | Bedrock Digital',portal:'Client Portal | Bedrock Digital'};return map[id]||'Bedrock Digital'}
 function scrollToExamples(e){if(e&&e.preventDefault)e.preventDefault();showPage('home');setTimeout(()=>{const el=document.getElementById('examples');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});},80);}
 
 // Quick-jump from nav to a specific section on the home page
@@ -8017,8 +8017,8 @@ function closeSampleModal(){
 function emailSelfBuilderLink(e){
   if(e&&e.preventDefault)e.preventDefault();
   const url=window.location.origin+window.location.pathname+'#builder';
-  const subject=encodeURIComponent('Bedrock Sites — finish your website preview');
-  const body=encodeURIComponent('Open this on your laptop or desktop to finish building your free website preview:\n\n'+url+'\n\n— Bedrock Sites');
+  const subject=encodeURIComponent('Bedrock Digital — finish your website preview');
+  const body=encodeURIComponent('Open this on your laptop or desktop to finish building your free website preview:\n\n'+url+'\n\n— Bedrock Digital');
   window.location.href='mailto:?subject='+subject+'&body='+body;
 }
 
@@ -8564,7 +8564,7 @@ ${JSON.stringify(S.siteData,null,2)}`;
     const headers={'Content-Type':'application/json','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'};
     if(apiKey)headers['x-api-key']=apiKey;
     const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers,body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:2000,
-      system:`You are a helpful website editor assistant for Bedrock Sites. Help business owners update their website content.
+      system:`You are a helpful website editor assistant for Bedrock Digital. Help business owners update their website content.
 
 ${fieldGuide}
 
@@ -9866,7 +9866,7 @@ function closeMtbDrawer(){
 
 <script>
 // Embed mode — force the builder, and route the back button to the portal/hub
-// so it never lands on the Bedrock Sites marketing page or an old homepage.
+// so it never lands on the Bedrock Digital marketing page or an old homepage.
 (function(){
   try{
     if(!/[?&]embed=builder/.test(location.search)) return;

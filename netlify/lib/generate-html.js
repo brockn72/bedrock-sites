@@ -398,7 +398,7 @@ ${sectionOrder}
 <footer style="background:${isDark?'#0a0d10':t.primary};padding:1.5rem 5%;display:flex;justify-content:space-between;align-items:center;gap:1.25rem;flex-wrap:wrap;border-top:3px solid ${t.accent}">
   <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:#fff">${esc(biz)}</div>
   <div style="font-family:'Cormorant Garamond',serif;font-size:0.82rem;font-style:italic;color:${t.accent}">${esc(d.tagline||'')}</div>
-  <div style="font-size:0.6rem;font-weight:300;color:rgba(255,255,255,0.35)">© ${new Date().getFullYear()} ${esc(biz)} · Built by <a href="https://bedrock-sites.com" style="color:${t.accent}">Bedrock Sites</a></div>
+  <div style="font-size:0.6rem;font-weight:300;color:rgba(255,255,255,0.35)">© ${new Date().getFullYear()} ${esc(biz)} · Built by <a href="https://bedrock-sites.com" style="color:${t.accent}">Bedrock Digital</a></div>
 </footer>
 <script>
 document.querySelectorAll('a[href^="#"]').forEach(a=>{
