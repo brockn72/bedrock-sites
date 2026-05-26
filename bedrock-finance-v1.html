@@ -1274,15 +1274,28 @@ function renderProjects(){
   paintSortArrows();
   var tb = document.getElementById('projectRows');
   tb.innerHTML = rows.length ? rows.map(function(p){
+    var src = sourceBadge(p._source);
     if(p.cost==null){
       // QBO gives revenue, not job-level cost — show revenue honestly, no fake margin.
-      return '<tr><td class="cust">'+p.job+'</td><td class="job-sub">'+p.customer+'</td><td class="num amt">'+money(p.revenue)+'</td>'
-        +'<td class="num" style="color:var(--slate)">&mdash;</td><td class="num" style="color:var(--slate)">&mdash;</td></tr>';
+      return '<tr><td class="cust">'+src+p.job+'</td><td class="job-sub">'+p.customer+'</td><td class="num amt">'+money(p.revenue)+'</td>'
+        +'<td class="num" style="color:var(--slate)">&mdash;</td><td class="num" style="color:var(--slate)" title="Cost not available — Donna can fill this in if you draft this job through her">&mdash;</td></tr>';
     }
     var m=Math.round((p.revenue-p.cost)/p.revenue*100), c=marginColor(m);
-    return '<tr><td class="cust">'+p.job+'</td><td class="job-sub">'+p.customer+'</td><td class="num amt">'+money(p.revenue)+'</td><td class="num">'+money(p.cost)+'</td>'
+    return '<tr><td class="cust">'+src+p.job+'</td><td class="job-sub">'+p.customer+'</td><td class="num amt">'+money(p.revenue)+'</td><td class="num">'+money(p.cost)+'</td>'
       +'<td class="num"><div class="margin-bar"><div class="margin-track"><div class="margin-fill" style="width:'+Math.max(m,4)+'%;background:'+c+'"></div></div><span class="margin-pct" style="color:'+c+'">'+m+'%</span></div></td></tr>';
   }).join('') : emptyRow(5,'No jobs match those filters.');
+}
+// FIN2: small source-provenance badge so the contractor knows where the
+// margin came from — QuickBooks invoice, Donna draft, or both stitched.
+function sourceBadge(src){
+  if (!src) return '';
+  var defs = {
+    qbo:   { label: 'QBO',   bg: 'rgba(74,85,104,0.10)',  fg: '#4A5568' },
+    donna: { label: 'Donna', bg: 'rgba(201,146,42,0.16)', fg: '#92660e' },
+    both:  { label: 'Both',  bg: 'rgba(59,109,17,0.13)',  fg: '#3b6d11' }
+  };
+  var d = defs[src]; if (!d) return '';
+  return '<span aria-label="Data source: ' + d.label + '" title="Data source: ' + d.label + '" style="display:inline-block;font-size:0.5rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;background:' + d.bg + ';color:' + d.fg + ';padding:0.18rem 0.4rem;border-radius:3px;margin-right:0.45rem;vertical-align:1px">' + d.label + '</span>';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1527,23 +1540,69 @@ function applyQboData(data){
   ESTIMATES=estimates;
   OUTSTANDING_TOTAL=invoices.filter(function(i){return i.status!=='Paid';}).reduce(function(s,i){return s+(i.balance||i.amount);},0);
   // QBO invoices give real revenue; per-job cost needs Donna, so cost stays null.
-  // (applyDonnaProjects overrides PROJECTS afterward when Donna data exists.)
-  PROJECTS=invoices.map(function(i){ return {job:i.job,customer:i.customer,service:'',revenue:i.amount,cost:null,daysAgo:i.daysAgo}; });
+  // FIN2: tag _source so the merge step + UI badge know provenance.
+  PROJECTS=invoices.map(function(i){ return {job:i.job,customer:i.customer,service:'',revenue:i.amount,cost:null,daysAgo:i.daysAgo,_source:'qbo'}; });
   rebuildPeriods(invoices,expenses);
 }
 
-// Build the Projects list from Donna's own approved estimates + invoices. These
-// carry real line items, so per-job cost/margin can be computed — richer than
-// QBO's invoice-only data. An invoice supersedes the estimate it came from.
+// FIN2 2026-05-25: Build the Projects list from Donna's approved estimates +
+// invoices (line-item detail → real per-job cost/margin), then MERGE on top of
+// the QBO-derived PROJECTS instead of replacing it. The contractor sees ALL
+// their QBO invoices, with Donna-enriched margin wherever a Donna row matches
+// (by customer + total). Donna-only rows (no QBO match) are appended. Every
+// row gets _source = 'donna' | 'qbo' | 'both' so the UI can show a small
+// provenance badge next to each job.
 function applyDonnaProjects(estimates,invoices){
   estimates=estimates||[]; invoices=invoices||[];
   var supersededEst={};
   invoices.forEach(function(iv){ if(iv.estimate_id) supersededEst[iv.estimate_id]=true; });
-  var rows=[];
-  invoices.forEach(function(iv){ rows.push(donnaProjectRow(iv)); });
-  estimates.forEach(function(es){ if(!supersededEst[es.id]) rows.push(donnaProjectRow(es)); });
-  if(!rows.length) return false;
-  PROJECTS=rows;
+  // Build the Donna rows.
+  var donnaRows=[];
+  invoices.forEach(function(iv){ donnaRows.push(donnaProjectRow(iv)); });
+  estimates.forEach(function(es){ if(!supersededEst[es.id]) donnaRows.push(donnaProjectRow(es)); });
+  if(!donnaRows.length) return false;
+
+  // If there's no QBO baseline (Donna-only path), just use the Donna rows tagged.
+  var existing = Array.isArray(PROJECTS) ? PROJECTS : [];
+  if (!existing.length) {
+    PROJECTS = donnaRows.map(function(r){ r._source = 'donna'; return r; });
+    return true;
+  }
+
+  // Match Donna rows to QBO rows by customer + revenue (rounded to nearest $).
+  // QBO rows that match → take Donna's cost (richer signal) + source='both'.
+  // Donna-only rows → appended as 'donna'.
+  // QBO-only rows → 'qbo' tag preserved.
+  function keyOf(r){ return String(r.customer || '').trim().toLowerCase() + '|' + Math.round(Number(r.revenue) || 0); }
+  var donnaByKey = {};
+  donnaRows.forEach(function(r){ donnaByKey[keyOf(r)] = r; });
+
+  var merged = existing.map(function(row){
+    var existingSource = row._source || 'qbo';
+    var k = keyOf(row);
+    var match = donnaByKey[k];
+    if (match) {
+      delete donnaByKey[k];
+      // If the existing row was already from Donna (no QBO connection path),
+      // we're enriching Donna with Donna — keep label as 'donna', no fake "both".
+      var newSource = existingSource === 'donna' ? 'donna' : (match.cost != null ? 'both' : 'qbo');
+      return {
+        job:      row.job || match.job,
+        customer: row.customer || match.customer,
+        service:  row.service || match.service || '',
+        revenue:  row.revenue,
+        cost:     match.cost != null ? match.cost : row.cost,
+        daysAgo:  row.daysAgo != null ? row.daysAgo : match.daysAgo,
+        _source:  newSource,
+      };
+    }
+    return row;  // preserve existing _source (qbo or donna)
+  });
+  // Append Donna-only rows (no QBO invoice matched).
+  Object.keys(donnaByKey).forEach(function(k){
+    var r = donnaByKey[k]; r._source = 'donna'; merged.push(r);
+  });
+  PROJECTS = merged;
   return true;
 }
 // Parse the customer / job name out of a Donna doc's notes field
@@ -1596,7 +1655,9 @@ function applyDonnaData(data){
   INVOICES=invoices;
   ESTIMATES=estimates;
   OUTSTANDING_TOTAL=invoices.reduce(function(s,i){return s+i.amount;},0);
-  PROJECTS=invoices.map(function(i){ return {job:i.job,customer:i.customer,service:'',revenue:i.amount,cost:null,daysAgo:i.daysAgo}; });
+  // FIN2: source-tag so applyDonnaProjects doesn't accidentally label all
+  // Donna-only rows as "both" when there's no QBO connection.
+  PROJECTS=invoices.map(function(i){ return {job:i.job,customer:i.customer,service:'',revenue:i.amount,cost:null,daysAgo:i.daysAgo,_source:'donna'}; });
   rebuildPeriods(invoices,expenses);
 }
 
