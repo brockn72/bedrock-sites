@@ -92,6 +92,16 @@ exports.handler = async (event) => {
   // change still works exactly as before.
   const billing = (body.billing === 'annual') ? 'annual' : 'monthly';
 
+  // G8 (Batch G, 2026-05-26): optional referral code for this purchase. Two
+  // sources are accepted, preferred order:
+  //   1) request body field `referralCode` (sent by the portal cart)
+  //   2) localStorage-captured code echoed back through the same field
+  // Stamped onto Stripe metadata + the trusted checkout state so the webhook
+  // can fire the referrer's reward on first paid conversion. We deliberately
+  // do NOT validate the code here against the DB — the webhook re-checks
+  // (single source of truth, no race with sign-up code generation).
+  const referralCode = (body.referralCode || '').toString().trim().toUpperCase();
+
   // SEC5: server resolves the user from the Supabase access token in the
   // Authorization header. Anything the client posted in body.userId is ignored.
   const authResult = await getUserFromAuthHeader(event);
@@ -167,6 +177,7 @@ exports.handler = async (event) => {
     email:   email || null,
     tools:   billed,
     billing: billing, // G1: webhook can inspect interval via trusted state
+    referral_code: referralCode || null, // G8
   });
   if (!stateRes.ok) {
     return { statusCode: 500, body: JSON.stringify({ error: stateRes.error || 'Could not start checkout.' }) };
@@ -179,6 +190,10 @@ exports.handler = async (event) => {
   params.append('subscription_data[metadata][user_id]', userId);
   params.append('subscription_data[metadata][tools]',   toolList);
   params.append('subscription_data[metadata][billing]', billing); // G1
+  if (referralCode) {
+    params.append('metadata[referral_code]', referralCode);                       // G8
+    params.append('subscription_data[metadata][referral_code]', referralCode);    // G8
+  }
 
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',

@@ -34,6 +34,11 @@ exports.handler = async (event) => {
     selectedDomain, // domain picked in Step 2
     turnstileToken, // Cloudflare Turnstile token from the signup form (SEC1)
   } = body;
+  // G8 (Batch G, 2026-05-26): optional referral code captured at signup.
+  // Normalized to uppercase; saved on the leads row + a pending referrals
+  // row once we know the lead's user_id. Self-referral and unknown-code
+  // checks happen later in the webhook so they're a single source of truth.
+  const referralCodeIn = (body.referralCode || '').toString().trim().toUpperCase();
 
   // Merge selected domain into site_data so deploy-site can access it.
   // SEC9: sanitize before persisting to the JSONB column.
@@ -84,6 +89,9 @@ exports.handler = async (event) => {
             site_data:     mergedSiteData,
             source:        source      || 'unknown',
             status:        source === 'claim' ? 'claim' : 'new',
+            // G8: only overwrite the existing lead's referral_code if a new
+            // one was supplied (prevents accidental clearing on a re-submit).
+            ...(referralCodeIn ? { referral_code: referralCodeIn } : {}),
           }),
         });
         return {
@@ -241,6 +249,7 @@ exports.handler = async (event) => {
         source:        source      || 'unknown',
         status:        source === 'claim' ? 'claim' : 'new',
         user_id:       userId      || null,
+        referral_code: referralCodeIn || null, // G8
       }),
     });
 
@@ -250,6 +259,50 @@ exports.handler = async (event) => {
     } else {
       // SEC8: status only.
       console.error('[capture-lead] lead insert failed status=', res.status);
+    }
+  }
+
+  // G8: attribute the referral once we have a leadId. We look up the referrer
+  // by code, guard against self-referral by email + user_id, and write a
+  // 'pending' row. The webhook flips it to 'paid' → 'credited' on conversion.
+  if (referralCodeIn && leadId && supabaseUrl && supabaseKey) {
+    try {
+      const lookup = await fetch(
+        `${supabaseUrl}/rest/v1/profiles?referral_code=eq.${encodeURIComponent(referralCodeIn)}&select=user_id,email&limit=1`,
+        { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+      );
+      if (lookup.ok) {
+        const refRows = await lookup.json();
+        const referrer = refRows[0];
+        const selfMatch =
+          (referrer && referrer.user_id && userId && referrer.user_id === userId) ||
+          (referrer && referrer.email && email && referrer.email.toLowerCase() === email.toLowerCase());
+        if (referrer && !selfMatch) {
+          await fetch(`${supabaseUrl}/rest/v1/referrals`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              apikey:         supabaseKey,
+              Authorization: `Bearer ${supabaseKey}`,
+              Prefer:        'return=minimal',
+            },
+            body: JSON.stringify({
+              referrer_user_id: referrer.user_id,
+              referred_lead_id: leadId,
+              referred_user_id: userId || null,
+              referred_email:   email || null,
+              referral_code:    referralCodeIn,
+              status:           'pending',
+            }),
+          });
+        } else if (selfMatch) {
+          console.log('[capture-lead] referral self-match blocked');
+        }
+      }
+    } catch (e) {
+      // Non-fatal — the lead is already saved. Worst case: no reward fires
+      // later. We log status so a future debug session can find the cause.
+      console.error('[capture-lead] referral attribution failed:', e.message);
     }
   }
 
