@@ -62,7 +62,11 @@ function stripTags(html) {
 
 function firstMatch(re, str) {
   const m = re.exec(str || '');
-  return m ? m[1].trim() : '';
+  if (!m) return '';
+  // Fall back to the full match when the regex has no capture group (e.g. the
+  // logo-img scan in scrape()). Pre-existing bug surfaced during recalibration.
+  const v = m[1] !== undefined ? m[1] : m[0];
+  return typeof v === 'string' ? v.trim() : '';
 }
 
 function extractJsonLd(html) {
@@ -157,7 +161,9 @@ function buildChecks({ html, text, url, ps, jsonld }) {
   const isLocalBusinessSite = localSignals >= 2;
 
   // WEB4: universal best-practice signals (apply to every site type).
-  const hasTitle = !!(titleTag && titleTag.length >= 10);
+  // Single-word brand titles ("Apple") count as good. The full-title quality
+  // check is exercised elsewhere via city_in_title for local business sites.
+  const hasTitle = !!(titleTag && titleTag.length >= 4);
   const hasOgTitle = /<meta[^>]+property=["']og:title["']/i.test(html);
   const hasOgDesc  = /<meta[^>]+property=["']og:description["']/i.test(html);
   const hasOgImage = /<meta[^>]+property=["']og:image["']/i.test(html);
@@ -551,7 +557,15 @@ function scrape({ html, text, titleTag, h1, localBiz, url }) {
   };
 }
 
-function scoreLabel(score) {
+function scoreLabel(score, siteContext) {
+  // WEB4: phrase the label differently for non-local sites so a Fortune 500 with
+  // no LocalBusiness schema isn't accused of being "invisible in local search".
+  if (siteContext === 'general') {
+    if (score >= 80) return 'Solid web fundamentals.';
+    if (score >= 60) return 'Solid foundation, a few quality signals to add.';
+    if (score >= 40) return 'Missing some basic SEO signals — fixable.';
+    return 'Significant SEO + discoverability gaps.';
+  }
   if (score >= 80) return 'Solid foundation — a few things to improve';
   if (score >= 60) return 'Falling behind — missing key signals Google and AI use';
   if (score >= 40) return "Significant issues — you're likely invisible in local search";
@@ -677,7 +691,7 @@ exports.handler = async (event) => {
       ok: true,
       url: url.href,
       score,
-      label: scoreLabel(score),
+      label: scoreLabel(score, siteContext),
       categories,
       checks,
       topIssues,
