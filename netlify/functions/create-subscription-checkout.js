@@ -3,16 +3,24 @@
 // bundle that combines all three).
 //
 // ── Required Netlify env vars ──────────────────────────────────────────────
-//   STRIPE_SECRET_KEY            — already set (LIVE)
-//   SITE_URL                     — already set (https://bedrock-sites.com)
-//   STRIPE_WEBSITE_PRICE_ID      — Bedrock Website recurring price ($20/mo)        ← G4e: add this
-//   STRIPE_MARKETING_PRICE_ID    — Bedrock Marketing recurring price ($30/mo)
-//   STRIPE_FINOPS_PRICE_ID       — Finance & Operations recurring price ($70/mo)
-//   STRIPE_BUNDLE_ALL_PRICE_ID   — Full Ecosystem bundle ($100/mo, optional)       ← single-line-item bundle
-// Create those products in the Stripe dashboard (LIVE mode), copy each recurring
-// price ID (price_...), and add them as Netlify env vars.
+//   STRIPE_SECRET_KEY                  — already set (LIVE)
+//   SITE_URL                           — already set (https://bedrock-sites.com)
+//   STRIPE_WEBSITE_PRICE_ID            — Bedrock Website monthly price ($20/mo)
+//   STRIPE_MARKETING_PRICE_ID          — Bedrock Marketing monthly price ($30/mo)
+//   STRIPE_FINOPS_PRICE_ID             — Finance & Operations monthly price ($70/mo)
+//   STRIPE_BUNDLE_ALL_PRICE_ID         — Full Ecosystem monthly bundle ($100/mo)
+// ── Annual prices (G1 / Batch G, 2026-05-26) ───────────────────────────────
+//   STRIPE_WEBSITE_ANNUAL_PRICE_ID     — Website annual ($216/yr — 10% off)
+//     (Falls back to STRIPE_SUBSCRIPTION_PRICE_ID if the explicit annual var
+//      isn't set, so the pre-existing env var has a use.)
+//   STRIPE_MARKETING_ANNUAL_PRICE_ID   — Marketing annual ($324/yr — 10% off)
+//   STRIPE_FINOPS_ANNUAL_PRICE_ID      — FinOps annual ($756/yr — 10% off)
+//   STRIPE_BUNDLE_ALL_ANNUAL_PRICE_ID  — Full Ecosystem annual ($1020/yr — 15% off)
+// Create those products in the Stripe dashboard (test mode FIRST, then live),
+// copy each recurring price ID (price_...), and add them as Netlify env vars.
 //
-// Request body: { tools: ['website','marketing','cfo'], email, userId }
+// Request body: { tools: ['website','marketing','cfo'], email, userId,
+//                  billing: 'monthly' | 'annual'    (G1 — defaults to monthly) }
 // Response:     { url: 'https://checkout.stripe.com/...' }
 //
 // G4e fix: previously the Full Ecosystem checkout only billed Marketing + FinOps
@@ -28,13 +36,37 @@
 const { getUserFromAuthHeader } = require('../lib/auth');
 const { createCheckoutState }   = require('../lib/checkout-state');
 
+// G1 (Batch G, 2026-05-26): per-tool price lookup is now keyed by billing
+// interval. The 'monthly' map is the original behavior; 'annual' is new and
+// optional — a request with billing:'annual' will only succeed if the
+// corresponding *_ANNUAL_PRICE_ID env var is set in Netlify.
 const PRICE_ENV = {
-  website:            'STRIPE_WEBSITE_PRICE_ID',
-  marketing:          'STRIPE_MARKETING_PRICE_ID',
-  finance_operations: 'STRIPE_FINOPS_PRICE_ID',
-  // portal cart uses the legacy key "cfo" for the Finance & Operations bundle
-  cfo:                'STRIPE_FINOPS_PRICE_ID',
+  monthly: {
+    website:            'STRIPE_WEBSITE_PRICE_ID',
+    marketing:          'STRIPE_MARKETING_PRICE_ID',
+    finance_operations: 'STRIPE_FINOPS_PRICE_ID',
+    cfo:                'STRIPE_FINOPS_PRICE_ID',
+  },
+  annual: {
+    website:            'STRIPE_WEBSITE_ANNUAL_PRICE_ID',
+    marketing:          'STRIPE_MARKETING_ANNUAL_PRICE_ID',
+    finance_operations: 'STRIPE_FINOPS_ANNUAL_PRICE_ID',
+    cfo:                'STRIPE_FINOPS_ANNUAL_PRICE_ID',
+  },
 };
+
+// Resolve a Stripe price ID env var with fallback. The pre-existing
+// STRIPE_SUBSCRIPTION_PRICE_ID can serve as Website's annual price so it
+// doesn't have to be re-set if Brock already wired it to the right Stripe
+// product.
+function resolvePriceEnv(envName, billing, tool) {
+  const direct = process.env[envName];
+  if (direct) return direct;
+  if (billing === 'annual' && (tool === 'website')) {
+    return process.env.STRIPE_SUBSCRIPTION_PRICE_ID || '';
+  }
+  return '';
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
@@ -56,6 +88,10 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'No tools selected' }) };
   }
 
+  // G1: pick billing interval. Defaults to monthly so any caller predating this
+  // change still works exactly as before.
+  const billing = (body.billing === 'annual') ? 'annual' : 'monthly';
+
   // SEC5: server resolves the user from the Supabase access token in the
   // Authorization header. Anything the client posted in body.userId is ignored.
   const authResult = await getUserFromAuthHeader(event);
@@ -71,7 +107,11 @@ exports.handler = async (event) => {
   // four user-facing tools active via the metadata.tools list below.
   const hasAllThree = ['website','marketing','cfo'].every(function(t){ return tools.indexOf(t) !== -1; })
                    || ['website','marketing','finance_operations'].every(function(t){ return tools.indexOf(t) !== -1; });
-  const bundlePid = process.env.STRIPE_BUNDLE_ALL_PRICE_ID;
+  // G1: bundle env var swaps to the annual bundle ID when billing is annual.
+  const bundlePid = (billing === 'annual')
+    ? process.env.STRIPE_BUNDLE_ALL_ANNUAL_PRICE_ID
+    : process.env.STRIPE_BUNDLE_ALL_PRICE_ID;
+  const priceMap  = PRICE_ENV[billing];
 
   // Resolve each requested tool to its configured Stripe price ID.
   const priceIds = [];
@@ -82,9 +122,9 @@ exports.handler = async (event) => {
     billed.push('website', 'marketing', 'finance_operations');
   } else {
     for (const t of tools) {
-      const envName = PRICE_ENV[t];
+      const envName = priceMap[t];
       if (!envName) continue;                       // unknown SKU — skip
-      const pid = process.env[envName];
+      const pid = resolvePriceEnv(envName, billing, t);
       if (pid) { priceIds.push(pid); billed.push(t); }
       else     { missing.push(envName); }
     }
@@ -126,6 +166,7 @@ exports.handler = async (event) => {
     user_id: userId,
     email:   email || null,
     tools:   billed,
+    billing: billing, // G1: webhook can inspect interval via trusted state
   });
   if (!stateRes.ok) {
     return { statusCode: 500, body: JSON.stringify({ error: stateRes.error || 'Could not start checkout.' }) };
@@ -134,8 +175,10 @@ exports.handler = async (event) => {
   params.append('subscription_data[metadata][state]', stateRes.token);
   params.append('metadata[user_id]', userId);
   params.append('metadata[tools]',   toolList);
+  params.append('metadata[billing]', billing); // G1
   params.append('subscription_data[metadata][user_id]', userId);
   params.append('subscription_data[metadata][tools]',   toolList);
+  params.append('subscription_data[metadata][billing]', billing); // G1
 
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
