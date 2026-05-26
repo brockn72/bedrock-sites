@@ -64,26 +64,50 @@ nav{background:var(--dark);display:flex;justify-content:space-between;align-item
 /* ── NOTIFICATION BELL ── */
 .bell-wrap{position:relative;display:none}
 .bell-wrap.show{display:inline-flex;align-items:center}
-.bell-btn{background:transparent;border:none;cursor:pointer;color:rgba(255,255,255,0.7);padding:0.4rem;border-radius:6px;transition:color .15s,background .15s;position:relative}
-.bell-btn:hover{color:var(--accent);background:rgba(255,255,255,0.04)}
+.bell-btn{background:transparent;border:1px solid transparent;cursor:pointer;color:rgba(255,255,255,0.78);padding:0.45rem;border-radius:7px;transition:color .15s,background .15s,border-color .15s;position:relative}
+.bell-btn:hover{color:var(--accent);background:rgba(201,146,42,0.08);border-color:rgba(201,146,42,0.25)}
+.bell-wrap.open .bell-btn{color:var(--accent);background:rgba(201,146,42,0.12);border-color:rgba(201,146,42,0.35)}
 .bell-btn svg{width:20px;height:20px;display:block}
-.bell-badge{position:absolute;top:0;right:0;min-width:16px;height:16px;background:var(--accent);color:#fff;border-radius:99px;font-size:0.55rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--dark)}
+.bell-badge{position:absolute;top:-2px;right:-2px;min-width:18px;height:18px;background:var(--accent);color:#fff;border-radius:99px;font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 5px;border:2px solid var(--dark);box-shadow:0 2px 6px rgba(0,0,0,0.25)}
 .bell-badge.zero{display:none}
-.bell-menu{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--border);border-top:2px solid var(--accent);min-width:330px;max-width:380px;box-shadow:0 10px 32px rgba(13,27,46,0.25);display:none;z-index:60;max-height:480px;overflow-y:auto}
-.bell-wrap.open .bell-menu{display:block}
-.bell-head{padding:0.85rem 1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.bell-head-title{font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-weight:600;color:var(--dark)}
-.bell-mark-read{font-size:0.58rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);background:none;border:none;cursor:pointer}
-.bell-mark-read:hover{text-decoration:underline}
-.bell-item{display:flex;align-items:flex-start;gap:0.65rem;padding:0.85rem 1rem;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text);transition:background .15s;cursor:pointer}
-.bell-item:hover{background:var(--offwhite)}
+/* NAV1 2026-05-26: bell dropdown restyled to match portal — Cormorant heading, gold eyebrow, brand spacing. */
+.bell-menu{position:absolute;top:calc(100% + 8px);right:0;background:#fff;border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:8px;min-width:360px;max-width:400px;box-shadow:0 14px 38px rgba(13,27,46,0.28);display:none;z-index:60;max-height:520px;overflow:hidden;display:none;flex-direction:column}
+.bell-wrap.open .bell-menu{display:flex}
+.bell-head{padding:1rem 1.1rem 0.85rem;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#FAF7F2,#fff);flex-shrink:0}
+.bell-head-eye{font-family:'DM Sans',sans-serif;font-size:0.54rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:0.2rem}
+.bell-head-row{display:flex;justify-content:space-between;align-items:center;gap:0.5rem}
+.bell-head-title{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--dark);line-height:1.1}
+.bell-head-sub{font-family:'DM Sans',sans-serif;font-size:0.7rem;color:var(--text-muted);margin-top:0.25rem;line-height:1.4}
+.bell-mark-read{font-family:'DM Sans',sans-serif;font-size:0.56rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);background:none;border:none;cursor:pointer;padding:0.2rem 0.3rem;border-radius:3px;flex-shrink:0}
+.bell-mark-read:hover{background:rgba(201,146,42,0.08);text-decoration:none}
+.bell-body{overflow-y:auto;flex:1;max-height:420px}
+.bell-section{padding:0.65rem 1.1rem 0.3rem}
+.bell-section-eye{font-family:'DM Sans',sans-serif;font-size:0.52rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-muted)}
+.bell-item{display:flex;align-items:flex-start;gap:0.7rem;padding:0.75rem 1.1rem;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text);transition:background .14s;cursor:pointer;border-left:3px solid transparent}
+.bell-item:hover{background:var(--offwhite);border-left-color:var(--accent)}
 .bell-item:last-child{border-bottom:none}
-.bell-item.unread{background:rgba(201,146,42,0.04)}
-.bell-icon{width:32px;height:32px;flex-shrink:0;border-radius:50%;background:var(--offwhite);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:0.85rem}
-.bell-text{flex:1}
-.bell-msg{font-size:0.78rem;color:var(--text);font-weight:500;margin-bottom:2px;line-height:1.35}
-.bell-meta{font-size:0.62rem;color:var(--text-muted)}
-.bell-empty{padding:2rem 1rem;text-align:center;color:var(--text-muted);font-size:0.78rem}
+.bell-item.unread{background:rgba(201,146,42,0.05)}
+.bell-item.done{background:rgba(59,109,17,0.04);cursor:default}
+.bell-item.done:hover{background:rgba(59,109,17,0.06);border-left-color:rgba(59,109,17,0.4)}
+.bell-item.done .bell-msg{color:var(--text-muted);text-decoration:line-through}
+.bell-item.progress{border-left-color:var(--accent)}
+.bell-icon{width:34px;height:34px;flex-shrink:0;border-radius:50%;background:var(--offwhite);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:0.85rem;border:1px solid var(--border)}
+.bell-icon svg{width:16px;height:16px}
+.bell-item.done .bell-icon{background:var(--green-bg,rgba(59,109,17,0.12));color:var(--green,#3b6d11);border-color:rgba(59,109,17,0.2)}
+.bell-item.progress .bell-icon{background:rgba(201,146,42,0.15);border-color:rgba(201,146,42,0.3)}
+.bell-text{flex:1;min-width:0}
+.bell-msg{font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--text);font-weight:600;margin-bottom:2px;line-height:1.35}
+.bell-meta{font-family:'DM Sans',sans-serif;font-size:0.7rem;color:var(--text-muted);line-height:1.45}
+.bell-status{display:inline-block;margin-left:0.35rem;font-family:'DM Sans',sans-serif;font-size:0.5rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;padding:0.15rem 0.4rem;border-radius:3px;vertical-align:middle}
+.bell-status.done{background:rgba(59,109,17,0.12);color:var(--green,#3b6d11)}
+.bell-status.progress{background:rgba(201,146,42,0.16);color:var(--accent)}
+.bell-arrow{flex-shrink:0;color:var(--text-muted);font-size:0.9rem;align-self:center;opacity:0;transition:opacity .14s}
+.bell-item:hover .bell-arrow{opacity:0.8}
+.bell-item.done .bell-arrow{display:none}
+.bell-empty{padding:2rem 1rem;text-align:center;color:var(--text-muted);font-family:'DM Sans',sans-serif;font-size:0.78rem}
+.bell-foot{padding:0.7rem 1.1rem;border-top:1px solid var(--border);background:#FAF7F2;flex-shrink:0;text-align:center}
+.bell-foot a{font-family:'DM Sans',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);text-decoration:none}
+.bell-foot a:hover{text-decoration:underline}
 
 /* ── LAYOUT ── */
 main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:2.5rem 5%}
@@ -781,10 +805,21 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
       </button>
       <div class="bell-menu" id="bellMenu" role="menu">
         <div class="bell-head">
-          <span class="bell-head-title">Notifications</span>
-          <button class="bell-mark-read" onclick="markAllRead()">Mark all read</button>
+          <div class="bell-head-eye">Get started</div>
+          <div class="bell-head-row">
+            <div>
+              <div class="bell-head-title">Your next steps</div>
+              <div class="bell-head-sub" id="bellHeadSub">—</div>
+            </div>
+            <button class="bell-mark-read" onclick="markAllRead()" title="Dismiss any one-off alerts (your checklist progress stays as-is)">Clear alerts</button>
+          </div>
         </div>
-        <div id="bellList"></div>
+        <div class="bell-body">
+          <div id="bellList"></div>
+        </div>
+        <div class="bell-foot">
+          <a href="#" onclick="event.preventDefault();document.getElementById('bellWrap').classList.remove('open');goTab('dashboard','default');setTimeout(function(){var el=document.getElementById('onboardCard');if(el)el.scrollIntoView({behavior:'smooth'});},80);">Open full checklist &rarr;</a>
+        </div>
       </div>
     </div>
     <span class="nav-user" id="navUserEmail"></span>
@@ -1088,6 +1123,18 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           .dh-mini .dh-breakdown .br-row{display:flex;justify-content:space-between;padding:0.25rem 0;border-bottom:1px dashed rgba(13,27,46,0.06);color:var(--text)}
           .dh-mini .dh-breakdown .br-row:last-child{border-bottom:none}
           .dh-mini .dh-breakdown small{display:block;margin-top:0.4rem;font-style:italic;color:var(--text-muted)}
+          /* NAV1 2026-05-26: "Your business" section wraps all support cards below the tool grid into one cohesive group. */
+          .dh-below-section{margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border)}
+          .dh-below-eye{font-family:'DM Sans',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem}
+          .dh-below-section .banner-grid,
+          .dh-below-section .dh-secondary,
+          .dh-below-section .banner-card{margin-bottom:1rem !important}
+          .dh-below-section > *:last-child{margin-bottom:0 !important}
+          /* NAV1 2026-05-26: Hiring Out / Money Saved dashboard card hidden — moved to My Account as a table. Not deleted (reversible). */
+          #dhMoneyCard{display:none !important}
+          /* With Money Saved hidden, dh-secondary drops to 2 columns (Profile %, Time Saved). */
+          .dh-secondary{grid-template-columns:1fr 1fr}
+          @media(max-width:860px){.dh-secondary{grid-template-columns:1fr}}
         </style>
         <div class="dh-secondary">
           <div class="dh-mini">
@@ -1533,9 +1580,8 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           <div id="feedbackMsg" style="font-size:0.7rem;color:var(--text-muted);margin-top:6px"></div>
         </div>
 
-        <!-- B2: dashboard reorder + dismissable sections.
-             Order: Get Started -> Welcome -> Profile prompt -> Quick links -> Tool cards -> 3 stats -> rest.
-             Each dismissable section auto-hides when its task is done. -->
+        <!-- NAV1 2026-05-26: dashboard reorder — tool cards lead, contextual prompts next, "your business" support cards grouped below.
+             Previous order (Get Started -> Welcome -> Profile -> Launchpad -> Tools -> stats -> rest) buried the tools behind onboarding chrome. -->
         <script>
         (function(){
           var pane = document.getElementById('pane-dashboard-default'); if(!pane) return;
@@ -1547,12 +1593,37 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           };
           // Hide welcome on load if previously dismissed
           try { if (localStorage.getItem(WELCOME_DISMISS_KEY) === '1') { var c=document.getElementById('wmInline'); if(c) c.style.display='none'; } } catch(_){}
-          // Reorder dashboard children into spec order. Sections not in the list stay below.
-          var ORDER = ['onboardCard','wmInline','profileNudgeBanner','dashLaunchpad','dhToolGrid'];
-          // dh-secondary is the 3-card stats row; find it via its first child anchor
-          ORDER.forEach(function(id){ var el = document.getElementById(id); if(el && el.parentNode === pane) pane.appendChild(el); });
-          // dh-secondary doesn't have an ID — find by class and re-append
-          var secondary = pane.querySelector('.dh-secondary'); if (secondary) pane.appendChild(secondary);
+
+          // TOP zone — tool cards lead, then contextual prompts (NBA banner, Get Started, profile nudge, welcome, launchpad).
+          // These are prepended in reverse so the first item in TOP_ORDER ends up at the top.
+          var TOP_ORDER = ['dhToolGrid','dhNba','onboardCard','profileNudgeBanner','wmInline','dashLaunchpad'];
+          for (var i = TOP_ORDER.length - 1; i >= 0; i--) {
+            var el = document.getElementById(TOP_ORDER[i]);
+            if (el && el.parentNode === pane) pane.insertBefore(el, pane.firstChild);
+          }
+          // BELOW zone — wrap the "your business" support cards into one cohesive section under the tool cards.
+          // Cards: dh-secondary (Profile %/Time Saved), Account+Quick Links banner-grid, dashProfileCard,
+          // googlePresenceCard, Recent Activity + Finance Snapshot banner-grid.
+          var BELOW_IDS = ['dashProfileCard','googlePresenceCard']; // ID-tagged below cards
+          var section = document.getElementById('dhBelowSection');
+          if (!section) {
+            section = document.createElement('div');
+            section.id = 'dhBelowSection';
+            section.className = 'dh-below-section';
+            section.innerHTML = '<div class="dh-below-eye">Your business</div>';
+            pane.appendChild(section);
+          }
+          // .dh-secondary (Profile %, Time Saved, Money Saved-hidden)
+          var secondary = pane.querySelector('.dh-secondary'); if (secondary) section.appendChild(secondary);
+          // Both .banner-grid blocks: Account + Quick Links, then Recent Activity + Finance Snapshot.
+          // Skip the hidden "Need Help / Spread the Word" grid (display:none) so we don't pull it out of its archived position.
+          var grids = pane.querySelectorAll('.banner-grid');
+          grids.forEach(function(g){
+            if (g.style.display === 'none') return; // skip archived "Need Help" grid
+            section.appendChild(g);
+          });
+          // Business Profile + Google Presence cards
+          BELOW_IDS.forEach(function(id){ var el = document.getElementById(id); if (el && el.parentNode === pane) section.appendChild(el); });
           // Auto-hide observer: when all onboard items are .done, hide the whole onboardCard. When profile pct = 100, hide profile nudge.
           window.maybeAutoHideDashSections = function(){
             try {
@@ -3329,19 +3400,114 @@ function loadStoredNotifications(session) {
   renderNotifications();
 }
 function persistNotifications() { try { localStorage.setItem(NOTIF_KEY, JSON.stringify(NOTIFICATIONS)); } catch(_){} }
+
+// NAV1 2026-05-26: bell mirrors the Get Started onboarding checklist 1:1.
+// Items are read live from the DOM (#onboardList .onboard-item) so the bell's
+// labels, links, and done/progress state always match the dashboard checklist
+// — no separate source of truth. Ad-hoc events (integration ok/fail, review)
+// still surface via NOTIFICATIONS array below the checklist.
+function buildOnboardBellItems() {
+  var src = document.querySelectorAll('#onboardList .onboard-item');
+  if (!src.length) return [];
+  // Default icons per data-step. Same DM Sans + SVG style as the rest of the portal.
+  var STEP_ICON = {
+    profile:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>',
+    subscription:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>',
+    qbo:           '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>',
+    google:        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+    brandkit:      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>',
+    firstestimate: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="14" x2="15" y2="14"/><line x1="9" y1="17" x2="13" y2="17"/></svg>',
+  };
+  var DONE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+  var items = [];
+  Array.prototype.forEach.call(src, function(item){
+    var step = item.getAttribute('data-step') || '';
+    var name = item.querySelector('.onboard-item-name');
+    var sub  = item.querySelector('.onboard-item-sub');
+    var isDone = item.classList.contains('done');
+    var isProgress = item.classList.contains('progress');
+    items.push({
+      step: step,
+      msg: name ? name.textContent : step,
+      meta: sub ? sub.textContent : '',
+      done: isDone,
+      progress: isProgress,
+      // Click invokes the same handler the checklist row does — single source of truth for navigation.
+      onclickAttr: item.getAttribute('onclick') || '',
+      icon: isDone ? DONE_ICON : (STEP_ICON[step] || '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/></svg>'),
+    });
+  });
+  return items;
+}
+
 function renderNotifications() {
   var list = document.getElementById('bellList'); if (!list) return;
-  if (!NOTIFICATIONS.length) { list.innerHTML = '<div class="bell-empty">You\'re all caught up.</div>'; }
-  else {
-    list.innerHTML = NOTIFICATIONS.map(function(n, i){
-      var unread = n.read ? '' : ' unread';
-      return '<a class="bell-item'+unread+'" onclick="clickNotif('+i+')"><div class="bell-icon">'+(n.icon||'•')+'</div><div class="bell-text"><div class="bell-msg">'+n.msg+'</div><div class="bell-meta">'+(n.meta||'')+'</div></div></a>';
+  var html = '';
+
+  // Section 1 — Get Started checklist mirror (always shown if the checklist exists).
+  var onboardItems = buildOnboardBellItems();
+  var incompleteCount = 0;
+  if (onboardItems.length) {
+    html += '<div class="bell-section"><div class="bell-section-eye">Get Started with Bedrock</div></div>';
+    html += onboardItems.map(function(o, i){
+      if (!o.done) incompleteCount++;
+      var cls = 'bell-item' + (o.done ? ' done' : (o.progress ? ' progress unread' : ' unread'));
+      var status = o.done
+        ? '<span class="bell-status done">Done</span>'
+        : (o.progress ? '<span class="bell-status progress">In progress</span>' : '');
+      var clickAttr = o.done
+        ? 'onclick="event.preventDefault();return false;"'
+        : 'onclick="clickOnboardNotif('+i+')"';
+      return '<a class="'+cls+'" '+clickAttr+' role="menuitem">'
+        + '<div class="bell-icon">'+o.icon+'</div>'
+        + '<div class="bell-text"><div class="bell-msg">'+o.msg+status+'</div><div class="bell-meta">'+(o.meta||'')+'</div></div>'
+        + '<div class="bell-arrow">&rarr;</div>'
+        + '</a>';
     }).join('');
   }
-  var unread = NOTIFICATIONS.filter(function(n){ return !n.read; }).length;
+
+  // Section 2 — ad-hoc one-off notifications (integration ok/fail, new review, etc.).
+  if (NOTIFICATIONS.length) {
+    html += '<div class="bell-section"><div class="bell-section-eye">Alerts</div></div>';
+    html += NOTIFICATIONS.map(function(n, i){
+      var unread = n.read ? '' : ' unread';
+      return '<a class="bell-item'+unread+'" onclick="clickNotif('+i+')" role="menuitem"><div class="bell-icon">'+(n.icon||'•')+'</div><div class="bell-text"><div class="bell-msg">'+n.msg+'</div><div class="bell-meta">'+(n.meta||'')+'</div></div><div class="bell-arrow">&rarr;</div></a>';
+    }).join('');
+  }
+
+  if (!html) html = '<div class="bell-empty">You\'re all caught up.</div>';
+  list.innerHTML = html;
+
+  // Cache onboard items on the window so clickOnboardNotif can fire the right handler.
+  window._bellOnboardCache = onboardItems;
+
+  // Header subtitle reflects checklist progress.
+  var sub = document.getElementById('bellHeadSub');
+  if (sub) {
+    if (onboardItems.length) {
+      var done = onboardItems.length - incompleteCount;
+      sub.textContent = (incompleteCount === 0)
+        ? "You're all set up — nice work."
+        : done + ' of ' + onboardItems.length + ' done · ' + incompleteCount + ' to go';
+    } else {
+      sub.textContent = 'Your account alerts.';
+    }
+  }
+
+  // Badge = incomplete checklist steps + unread ad-hoc notifications.
+  var unreadAlerts = NOTIFICATIONS.filter(function(n){ return !n.read; }).length;
+  var total = incompleteCount + unreadAlerts;
   var badge = document.getElementById('bellBadge');
-  if (badge) { badge.textContent = unread; badge.classList.toggle('zero', unread === 0); }
+  if (badge) { badge.textContent = total; badge.classList.toggle('zero', total === 0); }
 }
+
+// Run the same onclick the checklist row uses so navigation stays in sync.
+window.clickOnboardNotif = function(i) {
+  var o = (window._bellOnboardCache || [])[i]; if (!o) return;
+  document.getElementById('bellWrap').classList.remove('open');
+  if (o.onclickAttr) { try { (new Function(o.onclickAttr))(); } catch(_){} }
+};
+
 function toggleBell(e) { if (e) e.stopPropagation(); document.getElementById('bellWrap').classList.toggle('open'); }
 document.addEventListener('click', function(e){ if (!e.target.closest('#bellWrap')) document.getElementById('bellWrap').classList.remove('open'); });
 function markAllRead() { NOTIFICATIONS.forEach(function(n){ n.read = true; }); renderNotifications(); persistNotifications(); }
@@ -3350,6 +3516,7 @@ function clickNotif(i) {
   n.read = true; renderNotifications(); persistNotifications();
   document.getElementById('bellWrap').classList.remove('open');
   if (n.link && n.link.tab) goTab(n.link.tab, n.link.sub || null);
+  else if (n.link && n.link.href) location.href = n.link.href;
 }
 
 // ── SUBSCRIPTIONS / CART ─────────────────────────────────────────────────────
@@ -3814,6 +3981,9 @@ function renderOnboard() {
     if (gs) gs.style.display = '';
   }
   saveOnboard(o);
+  // NAV1 2026-05-26: bell mirrors the checklist 1:1 — re-render whenever state changes
+  // so item labels, done/progress badges, and the bell count all match.
+  try { if (typeof renderNotifications === 'function') renderNotifications(); } catch(_){}
 }
 // Toast — short floating message. Replaces alert() in connection / billing flows.
 function portalToast(msg, kind) {

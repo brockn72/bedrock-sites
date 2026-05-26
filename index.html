@@ -1772,7 +1772,9 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <div class="logo-text"><span class="wordmark">Bedrock</span><span class="sub">Digital</span></div>
   </a>
   <ul class="nav-links" id="hpNavLinks">
-    <!-- SITE3 2026-05-25: nav collapsed to 5 links (Tools · How It Works · Pricing · Our Work · Sign In) + one gold CTA. Old Home/About links archived below. -->
+    <!-- NAV1 2026-05-26: Home added back as explicit tab (users couldn't find that the logo navigates home).
+         Pricing demoted from standalone tab to a child of How It Works. Final order: Home / Tools / How It Works (Pricing + FAQ) / Our Work / Sign In / Create Free Account. -->
+    <li><a id="nl-home" href="#home" onclick="showPage('home',event)">Home</a></li>
     <li class="nav-home-wrap">
       <a id="nl-tools" href="#tools" onclick="showPage('tools',event)">Tools</a>
       <ul class="nav-jumps">
@@ -1787,13 +1789,13 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <li class="nav-home-wrap">
       <a id="nl-howitworks" href="#howitworks" onclick="showPage('howitworks',event)">How It Works</a>
       <ul class="nav-jumps">
+        <li><a href="#hiw-pricing" onclick="showPage('howitworks',event);setTimeout(function(){var p=document.getElementById('hiw-pricing');if(p)p.scrollIntoView({behavior:'smooth'});},250)">Pricing</a></li>
         <li><a href="#hiw-faq" onclick="showPage('howitworks',event);setTimeout(function(){var f=document.getElementById('hiw-faq');if(f)f.scrollIntoView({behavior:'smooth'});},250)">FAQ</a></li>
       </ul>
     </li>
-    <li><a id="nl-pricing" href="#hiw-pricing" onclick="showPage('howitworks',event);setTimeout(function(){var p=document.getElementById('hiw-pricing');if(p)p.scrollIntoView({behavior:'smooth'});},250)">Pricing</a></li>
+    <!-- NAV1 2026-05-26: standalone Pricing tab demoted into the How It Works dropdown. Kept here display:none in case we need to revert. -->
+    <li style="display:none"><a id="nl-pricing" href="#hiw-pricing" onclick="showPage('howitworks',event);setTimeout(function(){var p=document.getElementById('hiw-pricing');if(p)p.scrollIntoView({behavior:'smooth'});},250)">Pricing</a></li>
     <li><a id="nl-ourwork" href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
-    <!-- ARCHIVED 2026-05-25: SITE3 — Home link removed; logo on the left already links home -->
-    <!-- <li><a id="nl-home" href="#home" onclick="showPage('home',event)">Home</a></li> -->
     <!-- ARCHIVED 2026-05-25: SITE3 — About link moved to footer; reachable via /about deep-link -->
     <!-- <li><a id="nl-about" href="#about" onclick="showPage('about',event)">About</a></li> -->
     <li id="navLoginLi">
@@ -6628,7 +6630,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
           <li><a href="#howitworks" onclick="showPage('howitworks',event)">How It Works</a></li>
           <li><a href="#about" onclick="showPage('about',event)">About Us</a></li>
           <li><a href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
-          <li><a href="#bd-pricing" onclick="event.preventDefault();var p=document.getElementById('bd-pricing');if(p)p.scrollIntoView({behavior:'smooth'});">Pricing</a></li>
+          <li><a href="#hiw-pricing" onclick="showPage('howitworks',event);setTimeout(function(){var p=document.getElementById('hiw-pricing');if(p)p.scrollIntoView({behavior:'smooth'});},250)">Pricing</a></li>
           <li><a href="#" onclick="event.preventDefault();openAuthModal('signin')">Sign In</a></li>
         </ul>
       </div>
