@@ -146,7 +146,12 @@ exports.handler = async (event) => {
         console.log('[capture-lead][dry-run] welcome email skipped');
       } else if (resendKey && email) {
         const fromEmail = process.env.RESEND_FROM || 'hello@bedrock-sites.com';
-        const firstName = (contactName || '').trim().split(/\s+/)[0] || 'there';
+        // SITE15 2026-05-26: empty + special-character-only fallback. Empty
+        // names already fell back to "there"; this also catches first "words"
+        // that are pure punctuation (e.g. "?", "!@#") which would otherwise
+        // render literally in the greeting ("Hey !@#,").
+        const firstNameRaw = (contactName || '').trim().split(/\s+/)[0] || '';
+        const firstName = /[A-Za-zÀ-ɏ]/.test(firstNameRaw) ? firstNameRaw : 'there';
         const welcomeHtml = `
           <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;max-width:560px;margin:0 auto;color:#0D1B2E;line-height:1.55">
             <p style="font-size:18px;margin:0 0 18px">Hey ${escHtml(firstName)},</p>
