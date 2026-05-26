@@ -6,6 +6,9 @@ const { checkAndIncrement } = require('../lib/rate-limit');
 // SEC9: strip <script> tags + event handlers from any string before it
 // lands in a JSONB column (site_data here).
 const { sanitizeJsonb }     = require('../lib/sanitize');
+// G13 (Batch G, 2026-05-26): allocate the contractor's referral code at
+// signup so the welcome email can show it. Persists into profiles below.
+const { generateReferralCode } = require('../lib/referral-code');
 
 // Small HTML-escape used by the welcome email so a stray "<" in someone's name
 // can't break the markup or open an injection vector.
@@ -125,6 +128,10 @@ exports.handler = async (event) => {
     }
   }
 
+  // G13: hoisted so it's visible both inside the auth-success branch (welcome
+  // email) and in the profile upsert below.
+  let allocatedRefCode = '';
+
   // Create a Supabase Auth account when the customer signs up (new account step
   // between builder Step 2 and Step 3) or claims their site. Either path that
   // supplies an email + password gets a real portal login created.
@@ -147,6 +154,28 @@ exports.handler = async (event) => {
     if (authRes.ok) {
       const authData = await authRes.json();
       userId = authData.id || null;
+
+      // G13 (Batch G, 2026-05-26): allocate the new contractor's referral code
+      // before the welcome email so it can be displayed in the message body.
+      // Best-effort — if allocation or the lookup fails, we just omit the
+      // referral line from the email and let get-referral-info lazy-allocate
+      // later. The code is persisted via the profile upsert below. The
+      // variable is hoisted above this branch so the upsert sees it.
+      try {
+        const findExisting = async (candidate) => {
+          const r = await fetch(
+            `${supabaseUrl}/rest/v1/profiles?referral_code=eq.${encodeURIComponent(candidate)}&select=user_id&limit=1`,
+            { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+          );
+          if (!r.ok) return true;
+          const rows = await r.json();
+          return rows.length > 0;
+        };
+        allocatedRefCode = await generateReferralCode(businessName, findExisting);
+      } catch (e) {
+        console.warn('[capture-lead] referral code allocation skipped:', e.message);
+      }
+
       // Pre-beta task #1: warm welcome email when a real Supabase account was just
       // created. Skipped if Auth creation failed (no account = nothing to welcome
       // them into). Fire-and-forget so a Resend hiccup never blocks signup.
@@ -173,6 +202,13 @@ exports.handler = async (event) => {
               <li style="margin-bottom:8px"><strong>Connect what you already use.</strong> QuickBooks, Gmail, Google Calendar &mdash; one connection works across every Bedrock tool.</li>
             </ol>
             <p style="margin:0 0 14px">If something&rsquo;s confusing or broken, hit reply &mdash; this email goes straight to me and I usually answer the same day. No tickets, no phone tree, no script.</p>
+            ${allocatedRefCode ? `
+            <div style="margin:18px 0 22px;padding:14px 16px;background:#FAF7F2;border-left:3px solid #C9922A;border-radius:0 6px 6px 0">
+              <p style="margin:0 0 6px;font-size:13px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#8A6620">One more thing — your referral code</p>
+              <p style="margin:0 0 8px;font-size:22px;font-weight:700;color:#0D1B2E;letter-spacing:0.02em">${escHtml(allocatedRefCode)}</p>
+              <p style="margin:0;font-size:14px;color:#4A5568">Know another contractor who needs a website? Send them your code. Every contractor who uses it and pays = <strong>2 months free</strong> on your account. No claiming, no forms — it just happens.</p>
+            </div>
+            ` : ''}
             <p style="margin:0 0 4px">&mdash; Brock</p>
             <p style="margin:0;font-size:13px;color:#718096">Brock Niederer &middot; Founder, Bedrock Digital<br><a href="mailto:support@bedrock-sites.com" style="color:#C9922A;text-decoration:none">support@bedrock-sites.com</a></p>
           </div>
@@ -209,6 +245,13 @@ exports.handler = async (event) => {
       if (trade)         profilePayload.trade = trade;
       if (city)          profilePayload.city  = city;
       if (Array.isArray(serviceAreas) && serviceAreas.length) profilePayload.service_areas = serviceAreas;
+      // G13 (Batch G, 2026-05-26): persist the just-allocated referral code so
+      // the same code shown in the welcome email is what the contractor sees
+      // when they hit the portal. Skipped if allocation failed earlier — the
+      // get-referral-info endpoint will lazy-allocate on first call.
+      if (allocatedRefCode) {
+        profilePayload.referral_code = allocatedRefCode;
+      }
       const profRes = await fetch(`${supabaseUrl}/rest/v1/profiles?on_conflict=user_id`, {
         method: 'POST',
         headers: {
