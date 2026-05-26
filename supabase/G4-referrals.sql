@@ -79,7 +79,15 @@ create policy "referrals_read_own"
 -- default once enabled, which is what we want.
 
 ------------------------------------------------------------------------------
--- 5) Notes for Brock
+-- 5) checkout_states — new optional columns for billing + referral_code
+--     (so the trusted state token can carry these new fields, not just the
+--      Stripe metadata mirror). Safe to run repeatedly.
+------------------------------------------------------------------------------
+alter table checkout_states add column if not exists billing       text;
+alter table checkout_states add column if not exists referral_code text;
+
+------------------------------------------------------------------------------
+-- 6) Notes for Brock
 ------------------------------------------------------------------------------
 -- • Run this file once in Supabase SQL editor.
 -- • Verify the indexes exist by re-running — every statement is `if not exists`

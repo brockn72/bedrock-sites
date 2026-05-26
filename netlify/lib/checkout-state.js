@@ -19,11 +19,16 @@
 //     business_name text,
 //     email         text,
 //     tools         text[],
+//     billing       text,         -- G1 (Batch G, 2026-05-26): 'monthly' | 'annual'
+//     referral_code text,         -- G8 (Batch G, 2026-05-26): captured for reward firing
 //     created_at    timestamptz not null default now(),
 //     expires_at    timestamptz not null,
 //     consumed_at   timestamptz
 //   );
 //   create index if not exists idx_checkout_states_expires on checkout_states(expires_at);
+//   -- If the table already exists from an earlier deploy, run instead:
+//   --   alter table checkout_states add column if not exists billing text;
+//   --   alter table checkout_states add column if not exists referral_code text;
 //   -- optional cleanup: delete from checkout_states where expires_at < now() - interval '1 day';
 
 const { randomBytes } = require('crypto');
@@ -50,6 +55,8 @@ async function createCheckoutState(payload) {
     business_name: payload.business_name || null,
     email:         payload.email || null,
     tools:         payload.tools || null,
+    billing:       payload.billing || null,         // G1 (Batch G)
+    referral_code: payload.referral_code || null,   // G8 (Batch G)
     created_at:    now.toISOString(),
     expires_at:    expires.toISOString(),
   };

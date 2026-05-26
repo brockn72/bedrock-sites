@@ -3,6 +3,14 @@ const { deploySite } = require('../lib/deploy-site');
 const { sendOnboardingEmail } = require('../lib/onboarding-email');
 const { consumeCheckoutState } = require('../lib/checkout-state');
 
+// G9 (Batch G, 2026-05-26): reward amount in cents per referral. Spec calls
+// for 2 months free to the referrer. Monthly Website = $20 → 2 months = $40.
+// Annual subscribers receive the same dollar value (2 months prorated). For
+// today, we apply a flat $40 ($4000) credit; if Brock wants to differentiate
+// monthly vs. annual referrers later, this is the single place to change.
+const REFERRAL_REWARD_CENTS = 4000;
+const REFERRAL_REWARD_MONTHS = 2;
+
 function verifyStripeSignature(rawBody, sigHeader, secret) {
   if (!sigHeader) return false;
   const parts  = Object.fromEntries(sigHeader.split(',').map(p => p.split('=')));
@@ -147,6 +155,26 @@ exports.handler = async (event) => {
                      : (session.metadata.tools || '').split(',').map((s) => s.trim()).filter(Boolean);
       await upsertToolSubs(supabaseUrl, supabaseKey, subUserId, subTools, 'active',
                            session.subscription || '', session.customer || '');
+
+      // G9 (Batch G, 2026-05-26): fire the referrer's reward on first paid
+      // tool subscription. Wrapped in try/catch so any failure here does NOT
+      // block the customer's subscription from being marked active.
+      try {
+        const referralCode = (trustedState && trustedState.referral_code)
+                          || (session.metadata && session.metadata.referral_code) || '';
+        if (referralCode) {
+          await fireReferralReward({
+            supabaseUrl, supabaseKey, resendKey,
+            stripeKey:    process.env.STRIPE_SECRET_KEY,
+            referralCode: String(referralCode).toUpperCase(),
+            referredUserId:  subUserId,
+            referredEmail:   session.customer_details?.email || session.customer_email || '',
+            referredCustId:  session.customer || '',
+          });
+        }
+      } catch (e) {
+        console.error('[stripe-webhook] referral reward failed:', e.message);
+      }
       if (resendKey && process.env.RESEND_DRY_RUN === 'true') {
         console.log('[stripe-webhook][dry-run] tool-subscription notify email skipped');
       } else if (resendKey) {
@@ -269,3 +297,239 @@ exports.handler = async (event) => {
 
   return { statusCode: 200, body: JSON.stringify({ received: true }) };
 };
+
+// G9 (Batch G, 2026-05-26): Apply a Stripe customer-balance credit to the
+// referrer, mark the referrals row credited, increment the referrer's
+// profiles.referral_credits_earned, and email the referrer via Resend.
+//
+// Guards (defense-in-depth — duplicate of the SQL constraints):
+//   1. Code must resolve to a referrer profile.
+//   2. The referrer cannot be the new paying customer (self-referral block,
+//      by user_id and by email).
+//   3. There must be a referrals row in 'pending' state for this attribution.
+//      If it doesn't exist (referred lead was created before the referral
+//      program existed), we create one on the fly so the credit still fires.
+//   4. The referrals row must not already be 'credited' — prevents double
+//      rewards if Stripe re-fires the webhook.
+//   5. The referrer must have a stripe_customer_id we can credit against —
+//      otherwise we leave the row in 'paid' state and email Brock so he can
+//      apply the credit manually.
+//
+// Credit is applied via Stripe's customer-balance API as a negative-amount
+// balance transaction (Stripe convention: balance < 0 ⇒ credit, deducted
+// from next invoice).
+async function fireReferralReward({
+  supabaseUrl, supabaseKey, resendKey, stripeKey,
+  referralCode, referredUserId, referredEmail, referredCustId,
+}) {
+  if (!referralCode || !supabaseUrl || !supabaseKey || !stripeKey) return;
+
+  // 1) Look up the referrer.
+  const refLookup = await fetch(
+    `${supabaseUrl}/rest/v1/profiles?referral_code=eq.${encodeURIComponent(referralCode)}&select=user_id,email,business_name,referral_credits_earned&limit=1`,
+    { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+  );
+  if (!refLookup.ok) { console.error('[fireReferralReward] profile lookup status=', refLookup.status); return; }
+  const refRows = await refLookup.json();
+  if (!refRows.length) { console.log('[fireReferralReward] unknown code, skipping'); return; }
+  const referrer = refRows[0];
+
+  // 2) Self-referral guard.
+  if (referrer.user_id && referredUserId && referrer.user_id === referredUserId) {
+    console.log('[fireReferralReward] self-referral by user_id, skipping');
+    return;
+  }
+  if (referrer.email && referredEmail && referrer.email.toLowerCase() === referredEmail.toLowerCase()) {
+    console.log('[fireReferralReward] self-referral by email, skipping');
+    return;
+  }
+
+  // 3) Locate or create the referrals row.
+  let referralRow = null;
+  const findRow = await fetch(
+    `${supabaseUrl}/rest/v1/referrals?referrer_user_id=eq.${referrer.user_id}&referral_code=eq.${encodeURIComponent(referralCode)}&order=created_at.desc&limit=1`
+    + (referredEmail ? `&referred_email=eq.${encodeURIComponent(referredEmail.toLowerCase())}` : ''),
+    { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+  );
+  if (findRow.ok) {
+    const rows = await findRow.json();
+    referralRow = rows[0] || null;
+  }
+  if (!referralRow) {
+    // Backfill: create the attribution row now. This covers the case where the
+    // referred lead was captured before the referrals table existed.
+    const ins = await fetch(`${supabaseUrl}/rest/v1/referrals`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify({
+        referrer_user_id: referrer.user_id,
+        referred_user_id: referredUserId || null,
+        referred_email:   referredEmail  || null,
+        referral_code:    referralCode,
+        status:           'pending',
+      }),
+    });
+    if (ins.ok) {
+      const inserted = await ins.json();
+      referralRow = inserted[0] || null;
+    } else {
+      console.error('[fireReferralReward] referral row backfill status=', ins.status);
+      return;
+    }
+  }
+
+  // 4) Already credited? Don't double-charge ourselves.
+  if (referralRow.status === 'credited') {
+    console.log('[fireReferralReward] already credited, skipping referral id=', referralRow.id);
+    return;
+  }
+
+  // 5) Find the referrer's stripe_customer_id from their most recent active
+  //    subscription. No customer = can't apply credit automatically.
+  let referrerStripeCustId = '';
+  try {
+    const subRes = await fetch(
+      `${supabaseUrl}/rest/v1/subscriptions?user_id=eq.${referrer.user_id}&stripe_customer_id=not.is.null&select=stripe_customer_id&order=updated_at.desc&limit=1`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+    );
+    if (subRes.ok) {
+      const rows = await subRes.json();
+      referrerStripeCustId = (rows[0] && rows[0].stripe_customer_id) || '';
+    }
+  } catch (_) { /* fall through */ }
+
+  if (!referrerStripeCustId) {
+    // Park in 'paid' state so we know to manually credit later.
+    await fetch(`${supabaseUrl}/rest/v1/referrals?id=eq.${referralRow.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({
+        status: 'paid',
+        referred_user_id: referredUserId || referralRow.referred_user_id || null,
+      }),
+    });
+    notifyOpsCreditPending(resendKey, referrer, referralCode);
+    return;
+  }
+
+  // 6) Apply the Stripe customer-balance credit. Negative amount = credit.
+  const txnBody = new URLSearchParams();
+  txnBody.append('amount',      String(-REFERRAL_REWARD_CENTS));
+  txnBody.append('currency',    'usd');
+  txnBody.append('description', `Bedrock referral reward — code ${referralCode}`);
+  const txnRes = await fetch(
+    `https://api.stripe.com/v1/customers/${encodeURIComponent(referrerStripeCustId)}/balance_transactions`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${stripeKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: txnBody.toString(),
+    }
+  );
+  if (!txnRes.ok) {
+    console.error('[fireReferralReward] Stripe balance txn status=', txnRes.status);
+    // Stripe call failed — leave the row at 'paid' so a retry won't double-credit.
+    await fetch(`${supabaseUrl}/rest/v1/referrals?id=eq.${referralRow.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        Prefer: 'return=minimal',
+      },
+      body: JSON.stringify({ status: 'paid' }),
+    });
+    return;
+  }
+  const txn = await txnRes.json();
+
+  // 7) Mark referrals row credited + bump the referrer's profile counter.
+  await fetch(`${supabaseUrl}/rest/v1/referrals?id=eq.${referralRow.id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify({
+      status: 'credited',
+      credited_at: new Date().toISOString(),
+      credited_stripe_txn:   txn.id || null,
+      credited_amount_cents: REFERRAL_REWARD_CENTS,
+      referred_user_id:      referredUserId || referralRow.referred_user_id || null,
+    }),
+  });
+  await fetch(`${supabaseUrl}/rest/v1/profiles?user_id=eq.${referrer.user_id}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+      Prefer: 'return=minimal',
+    },
+    body: JSON.stringify({
+      referral_credits_earned: (referrer.referral_credits_earned || 0) + REFERRAL_REWARD_MONTHS,
+    }),
+  });
+
+  // 8) Email the referrer. RESEND_DRY_RUN respected so test mode doesn't send.
+  if (resendKey && process.env.RESEND_DRY_RUN === 'true') {
+    console.log('[fireReferralReward][dry-run] referrer notify email skipped');
+  } else if (resendKey && referrer.email) {
+    const fromEmail = process.env.RESEND_FROM || 'hello@bedrock-sites.com';
+    const firstName = (referrer.business_name || 'there').split(/\s+/)[0];
+    const html = `
+      <div style="font-family:sans-serif;max-width:540px">
+        <h2 style="color:#0D1B2E">Hey ${firstName} — your buddy just signed up.</h2>
+        <p>Someone you referred just became a paying Bedrock customer. As promised, you've earned <strong>${REFERRAL_REWARD_MONTHS} months free</strong> ($${REFERRAL_REWARD_CENTS/100}) on your subscription.</p>
+        <p>The credit is already on your account. It'll come off your next ${REFERRAL_REWARD_MONTHS} bills automatically — nothing to claim.</p>
+        <p style="margin-top:2rem;padding-top:1rem;border-top:1px solid #eee;color:#666;font-size:0.85rem">Want to refer someone else? Your code is still <strong>${referralCode}</strong>. Every referral that pays = another ${REFERRAL_REWARD_MONTHS} months free.</p>
+      </div>`;
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: fromEmail, to: [referrer.email],
+        subject: `Your referral just paid — ${REFERRAL_REWARD_MONTHS} months free credited`,
+        html,
+      }),
+    }).catch((e) => console.error('[fireReferralReward] referrer email failed:', e.message));
+  }
+}
+
+function notifyOpsCreditPending(resendKey, referrer, referralCode) {
+  if (!resendKey) return;
+  if (process.env.RESEND_DRY_RUN === 'true') {
+    console.log('[fireReferralReward][dry-run] ops credit-pending email skipped');
+    return;
+  }
+  const fromEmail = process.env.RESEND_FROM  || 'hello@bedrock-sites.com';
+  const toEmail   = process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com';
+  fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      from: fromEmail, to: [toEmail],
+      subject: `Manual referral credit needed — ${referralCode}`,
+      html: `<div style="font-family:sans-serif"><h2>Referral reward couldn't auto-apply</h2>
+        <p>Code: <strong>${referralCode}</strong><br>
+        Referrer: ${referrer.business_name || '—'} (${referrer.email || '—'})<br>
+        Reason: no stripe_customer_id on file for this referrer (they may not have an active subscription).</p>
+        <p>Apply a $${REFERRAL_REWARD_CENTS/100} customer balance credit manually in Stripe, then mark the referrals row credited.</p>
+      </div>`,
+    }),
+  }).catch(() => {});
+}
