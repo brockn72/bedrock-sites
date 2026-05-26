@@ -110,15 +110,22 @@ async function deploySite(leadId) {
   }
 
   // --- Register custom domain if one was selected ---
+  // Domain env hygiene 2026-05-25: accept either env-var naming. Failure here
+  // is non-fatal — the site is still live on its Cloudflare Workers subdomain
+  // (liveUrl falls back below). If Name.com is DOWN, this catches the timeout,
+  // logs status only, and ships the site on subdomain. The contractor can
+  // retry domain registration later from the portal.
   let customDomainUrl = '';
   const selectedDomain = lead.site_data?._selectedDomain;
-  if (selectedDomain && process.env.NAMECOM_USERNAME && process.env.NAMECOM_TOKEN) {
+  const hasNamecom = (process.env.NAMECOM_USERNAME || process.env.NAMES_API_USER)
+                  && (process.env.NAMECOM_TOKEN    || process.env.NAMES_API_TOKEN);
+  if (selectedDomain && hasNamecom) {
     try {
       const domainResult = await registerAndDeployDomain(selectedDomain, scriptName);
       customDomainUrl = domainResult.customDomain;
     } catch (domainErr) {
-      // Domain failure doesn't block the site — it's live on subdomain
-      console.error('[deploy-site] Domain registration failed:', domainErr.message);
+      // Domain failure doesn't block the site — it ships on the subdomain.
+      console.error('[deploy-site] domain registration status=', (domainErr && domainErr.message || '').slice(0, 120));
     }
   }
 

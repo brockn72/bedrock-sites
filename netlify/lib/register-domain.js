@@ -5,8 +5,16 @@ function cfHeaders(token) {
   return { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
 }
 
+// Domain env hygiene 2026-05-25: accept either naming convention. The vault
+// doc + Netlify env use NAMES_API_USER / NAMES_API_TOKEN; .env.example +
+// historical code use NAMECOM_USERNAME / NAMECOM_TOKEN. Whichever is set wins.
 function namecomAuth() {
-  const b = Buffer.from(`${process.env.NAMECOM_USERNAME}:${process.env.NAMECOM_TOKEN}`);
+  const user  = process.env.NAMECOM_USERNAME || process.env.NAMES_API_USER  || '';
+  const token = process.env.NAMECOM_TOKEN    || process.env.NAMES_API_TOKEN || '';
+  if (!user || !token) {
+    throw new Error('Name.com credentials missing — set NAMECOM_USERNAME + NAMECOM_TOKEN (or NAMES_API_USER + NAMES_API_TOKEN) in Netlify.');
+  }
+  const b = Buffer.from(`${user}:${token}`);
   return 'Basic ' + b.toString('base64');
 }
 
