@@ -97,6 +97,10 @@ async function sendOnboardingEmail(opts) {
   const resendKey  = process.env.RESEND_API_KEY;
   const resendFrom = process.env.RESEND_FROM;
   if (!resendKey || !resendFrom) return { sent: false, error: 'Resend not configured' };
+  if (process.env.RESEND_DRY_RUN === 'true') {
+    console.log('[onboarding-email][dry-run] email skipped (delay_index ' + dayIdx + ')');
+    return { sent: false, dry_run: true };
+  }
 
   const siteUrl   = process.env.SITE_URL || 'https://bedrock-sites.com';
   const portalUrl = `${siteUrl}/portal.html`;

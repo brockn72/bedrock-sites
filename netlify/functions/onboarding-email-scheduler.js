@@ -27,6 +27,10 @@ exports.handler = async () => {
     console.error('[onboarding-scheduler] Resend not configured');
     return { statusCode: 200, body: 'skipped — Resend not configured' };
   }
+  if (process.env.RESEND_DRY_RUN === 'true') {
+    console.log('[onboarding-scheduler][dry-run] email skipped');
+    return { statusCode: 200, body: 'skipped — RESEND_DRY_RUN=true' };
+  }
 
   const hdr = { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } };
 

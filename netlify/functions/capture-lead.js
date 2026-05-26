@@ -109,7 +109,9 @@ exports.handler = async (event) => {
       // Pre-beta task #1: warm welcome email when a real Supabase account was just
       // created. Skipped if Auth creation failed (no account = nothing to welcome
       // them into). Fire-and-forget so a Resend hiccup never blocks signup.
-      if (resendKey && email) {
+      if (resendKey && email && process.env.RESEND_DRY_RUN === 'true') {
+        console.log('[capture-lead][dry-run] welcome email skipped');
+      } else if (resendKey && email) {
         const fromEmail = process.env.RESEND_FROM || 'hello@bedrock-sites.com';
         const firstName = (contactName || '').trim().split(/\s+/)[0] || 'there';
         const welcomeHtml = `
@@ -213,7 +215,9 @@ exports.handler = async (event) => {
   }
 
   // Email Brock only when the customer clicks "Claim My Site" (not on every preview)
-  if (source === 'claim' && resendKey) {
+  if (source === 'claim' && resendKey && process.env.RESEND_DRY_RUN === 'true') {
+    console.log('[capture-lead][dry-run] claim notify email skipped');
+  } else if (source === 'claim' && resendKey) {
     const fromEmail = process.env.RESEND_FROM || 'hello@bedrock-sites.com';
     const toEmail   = process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com';
 

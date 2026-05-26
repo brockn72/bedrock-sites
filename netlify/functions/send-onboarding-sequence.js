@@ -23,6 +23,15 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch { return { statusCode: 400, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
 
+  if (process.env.RESEND_DRY_RUN === 'true') {
+    console.log('[send-onboarding-sequence][dry-run] email skipped');
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sent: false, dry_run: true }),
+    };
+  }
+
   const result = await sendOnboardingEmail({
     to:           body.email,
     name:         body.name,

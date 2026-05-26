@@ -22,6 +22,15 @@ exports.handler = async (event) => {
     return { statusCode: 503, body: JSON.stringify({ error: 'Email service not configured' }) };
   }
 
+  if (process.env.RESEND_DRY_RUN === 'true') {
+    console.log('[send-desktop-link][dry-run] email skipped');
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ success: true, emailed: false }),
+    };
+  }
+
   const fromEmail = process.env.RESEND_FROM || 'hello@bedrock-sites.com';
   const siteUrl   = process.env.SITE_URL || 'https://bedrock-sites.com';
   const esc       = (s) => String(s || '').replace(/[<>&"]/g, (c) => ({ '<':'&lt;', '>':'&gt;', '&':'&amp;', '"':'&quot;' }[c]));

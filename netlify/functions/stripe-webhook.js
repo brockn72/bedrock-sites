@@ -118,7 +118,9 @@ exports.handler = async (event) => {
       const subTools  = session.metadata.tools.split(',').map((s) => s.trim()).filter(Boolean);
       await upsertToolSubs(supabaseUrl, supabaseKey, subUserId, subTools, 'active',
                            session.subscription || '', session.customer || '');
-      if (resendKey) {
+      if (resendKey && process.env.RESEND_DRY_RUN === 'true') {
+        console.log('[stripe-webhook][dry-run] tool-subscription notify email skipped');
+      } else if (resendKey) {
         const fromEmail = process.env.RESEND_FROM  || 'hello@bedrock-sites.com';
         const toEmail   = process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com';
         await fetch('https://api.resend.com/emails', {
@@ -176,7 +178,9 @@ exports.handler = async (event) => {
     }
 
     // Email Brock
-    if (resendKey) {
+    if (resendKey && process.env.RESEND_DRY_RUN === 'true') {
+      console.log('[stripe-webhook][dry-run] paid-customer notify email skipped');
+    } else if (resendKey) {
       const fromEmail = process.env.RESEND_FROM  || 'hello@bedrock-sites.com';
       const toEmail   = process.env.NOTIFY_EMAIL || 'brockniederer@gmail.com';
       const siteBlock = deployedUrl
@@ -219,7 +223,9 @@ exports.handler = async (event) => {
 
     // Welcome email to customer — day 0 of the onboarding sequence. Days 2
     // and 7 are sent by onboarding-email-scheduler.js (daily scheduled fn).
-    if (customerEmail && deployedUrl) {
+    if (customerEmail && deployedUrl && process.env.RESEND_DRY_RUN === 'true') {
+      console.log('[stripe-webhook][dry-run] day-0 onboarding email skipped');
+    } else if (customerEmail && deployedUrl) {
       await sendOnboardingEmail({
         to:           customerEmail,
         name:         businessName,

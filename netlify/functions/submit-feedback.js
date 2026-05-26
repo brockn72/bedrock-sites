@@ -37,6 +37,15 @@ exports.handler = async (event) => {
     };
   }
 
+  if (process.env.RESEND_DRY_RUN === 'true') {
+    console.log(`[submit-feedback][dry-run] ${kind} email skipped`);
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ success: true, emailed: false }),
+    };
+  }
+
   const esc = (s) => String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
