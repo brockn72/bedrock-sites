@@ -75,13 +75,14 @@ exports.handler = async (event) => {
       body: JSON.stringify(evt),
     });
     if (!cRes.ok) {
-      console.error('[calendar-create] calendar api', cRes.status, await cRes.text());
+      // Log status only — Calendar bodies echo event details + access tokens.
+      console.error('[calendar-create] calendar api status=', cRes.status);
       return ok({ created: false, reason: 'Calendar didn’t accept that event.' });
     }
     const ev = await cRes.json();
     return ok({ created: true, event_link: ev.htmlLink || null });
   } catch (e) {
-    console.error('[calendar-create]', e.message);
+    console.error('[calendar-create] code=', (e && e.code) || 'unknown');
     return ok({ created: false, reason: 'Could not reach Google Calendar.' });
   }
 };
