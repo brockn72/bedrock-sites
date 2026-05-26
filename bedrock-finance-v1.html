@@ -158,6 +158,10 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 .chart-card .ch-sub{font-size:0.7rem;color:var(--slate);margin-bottom:0.85rem}
 .chart-box{position:relative;height:230px}
 .chart-box.tall{height:250px}
+/* FIN3 2026-05-25: per-chart insight line — short plain-English takeaway sentence. */
+.ch-insight{font-family:'DM Sans',sans-serif;font-size:0.78rem;color:var(--navy-deep);background:rgba(201,146,42,0.07);border-left:3px solid var(--gold);padding:0.55rem 0.8rem;border-radius:4px;margin:0.5rem 0 0.85rem;line-height:1.5}
+.ch-insight strong{color:var(--navy-deep);font-weight:700}
+.ch-insight:empty{display:none}
 
 /* tables */
 .table-block{background:#fff;border:1px solid var(--border-light);border-radius:6px;overflow:hidden;margin-bottom:1.75rem}
@@ -533,10 +537,11 @@ footer a{color:var(--gold);text-decoration:none}
         </script>
 
         <div class="chart-grid">
-          <div class="chart-card wide"><h3>Revenue over time</h3><div class="ch-sub">What you've billed and collected across the period.</div><div class="chart-box tall"><canvas id="chartRevenue"></canvas></div></div>
-          <div class="chart-card"><h3>Estimated margin over time</h3><div class="ch-sub">Revenue minus estimated job cost, as a percent.</div><div class="chart-box"><canvas id="chartMargin"></canvas></div></div>
-          <div class="chart-card"><h3>Expense trends</h3><div class="ch-sub">Materials, equipment, and other job costs.</div><div class="chart-box"><canvas id="chartExpense"></canvas></div></div>
-          <div class="chart-card wide"><h3>Job volume per month</h3><div class="ch-sub">How many jobs you completed each month.</div><div class="chart-box"><canvas id="chartJobs"></canvas></div></div>
+          <!-- FIN3 2026-05-25: per-chart insight line, populated by paintChartInsights() after each chart updates. -->
+          <div class="chart-card wide"><h3>Revenue over time</h3><div class="ch-sub">What you've billed and collected across the period.</div><div class="ch-insight" id="insRevenue" aria-live="polite"></div><div class="chart-box tall"><canvas id="chartRevenue"></canvas></div></div>
+          <div class="chart-card"><h3>Estimated margin over time</h3><div class="ch-sub">Revenue minus estimated job cost, as a percent.</div><div class="ch-insight" id="insMargin" aria-live="polite"></div><div class="chart-box"><canvas id="chartMargin"></canvas></div></div>
+          <div class="chart-card"><h3>Expense trends</h3><div class="ch-sub">Materials, equipment, and other job costs.</div><div class="ch-insight" id="insExpense" aria-live="polite"></div><div class="chart-box"><canvas id="chartExpense"></canvas></div></div>
+          <div class="chart-card wide"><h3>Job volume per month</h3><div class="ch-sub">How many jobs you completed each month.</div><div class="ch-insight" id="insJobs" aria-live="polite"></div><div class="chart-box"><canvas id="chartJobs"></canvas></div></div>
         </div>
       </div>
     </div>
@@ -988,6 +993,7 @@ function buildCharts(){
   charts.margin = new Chart(document.getElementById('chartMargin'),{type:'line',data:{labels:d.revLabels,datasets:[{data:d.margin,borderColor:BRAND_PRIMARY,backgroundColor:BRAND_PRIMARY_SOFT,fill:true,tension:0.35,pointBackgroundColor:BRAND_PRIMARY,pointRadius:3,borderWidth:2}]},options:chartOpts('%')});
   charts.expense = new Chart(document.getElementById('chartExpense'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.expense,backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:54}]},options:chartOpts('$')});
   charts.jobs = new Chart(document.getElementById('chartJobs'),{type:'bar',data:{labels:d.revLabels,datasets:[{data:d.jobs,backgroundColor:GRAY_MID,borderRadius:4,maxBarThickness:54}]},options:chartOpts('n')});
+  paintChartInsights();
 }
 function updateCharts(){
   var d = PERIODS[currentPeriod];
@@ -995,6 +1001,50 @@ function updateCharts(){
   charts.revenue.data.datasets[0].data=d.revenue; charts.margin.data.datasets[0].data=d.margin;
   charts.expense.data.datasets[0].data=d.expense; charts.jobs.data.datasets[0].data=d.jobs;
   ['revenue','margin','expense','jobs'].forEach(function(k){ charts[k].update(); });
+  paintChartInsights();
+}
+
+// FIN3: one-line plain-English takeaway above each time-series chart.
+// Reads the same PERIODS data the chart was built from and finds the
+// max/min/trend so the contractor doesn't have to scan the y-axis.
+function paintChartInsights(){
+  var d = PERIODS[currentPeriod]; if (!d) return;
+  function fmt$(n){ return '$' + Math.round(n).toLocaleString('en-US'); }
+  function indexMax(arr){ var mi=0,mv=arr[0]; for(var i=1;i<arr.length;i++) if(arr[i]>mv){mv=arr[i];mi=i;} return mi; }
+  function indexMin(arr){ var mi=0,mv=arr[0]; for(var i=1;i<arr.length;i++) if(arr[i]<mv){mv=arr[i];mi=i;} return mi; }
+  function trend(arr){
+    if (arr.length < 2) return 'flat';
+    var first = arr[0], last = arr[arr.length-1];
+    if (last > first * 1.05) return 'up';
+    if (last < first * 0.95) return 'down';
+    return 'flat';
+  }
+  function setIns(id, html){ var el = document.getElementById(id); if (el) el.innerHTML = '<strong>Insight:</strong> ' + html; }
+
+  // Revenue
+  if (d.revenue && d.revenue.length) {
+    var mi = indexMax(d.revenue);
+    var tr = trend(d.revenue);
+    setIns('insRevenue', 'Best window was <strong>' + d.revLabels[mi] + ' — ' + fmt$(d.revenue[mi]) + '</strong>. Overall trend is ' + tr + '.');
+  }
+  // Margin (%)
+  if (d.margin && d.margin.length) {
+    var mmi = indexMax(d.margin), mni = indexMin(d.margin);
+    setIns('insMargin', 'Highest margin was <strong>' + d.margin[mmi] + '%</strong> in ' + d.revLabels[mmi]
+      + '; lowest was <strong>' + d.margin[mni] + '%</strong> in ' + d.revLabels[mni] + '.');
+  }
+  // Expense
+  if (d.expense && d.expense.length) {
+    var ei = indexMax(d.expense);
+    setIns('insExpense', 'Biggest expense window: <strong>' + d.revLabels[ei] + ' — ' + fmt$(d.expense[ei]) + '</strong>. Watch for the materials line.');
+  }
+  // Jobs
+  if (d.jobs && d.jobs.length) {
+    var ji = indexMax(d.jobs);
+    var total = d.jobs.reduce(function(s,n){return s+n;},0);
+    setIns('insJobs', 'Most jobs in one window: <strong>' + d.jobs[ji] + '</strong> in ' + d.revLabels[ji]
+      + '. Total this period: <strong>' + total + ' jobs</strong>.');
+  }
 }
 function resizeCharts(){ Object.keys(charts).forEach(function(k){ if(charts[k]) charts[k].resize(); }); }
 function setPeriod(p,btn){
