@@ -168,7 +168,11 @@ nav.top{background:var(--navy-deep);display:flex;justify-content:space-between;a
 /* tables */
 .table-block{background:#fff;border:1px solid var(--border-light);border-radius:6px;overflow:hidden;margin-bottom:1.75rem}
 .table-block-head{padding:1.1rem 1.25rem;border-bottom:1px solid var(--border-light)}
-.table-block-head .tb-eyebrow{font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--gold);margin-bottom:0.2rem}
+/* BRAND2 2026-05-26: tb-eyebrow demoted from gold → slate. Two or three of
+   these appear simultaneously on Statements / Projects views, which pushed
+   gold past the brand-kit 2-3-per-page max. The table heading (h3) right
+   below still anchors the section visually. */
+.table-block-head .tb-eyebrow{font-size:0.56rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted-dark);margin-bottom:0.2rem}
 .table-block-head h3{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:700;color:var(--navy-deep);line-height:1.15}
 .table-block-head .tb-sub{font-size:0.74rem;color:var(--slate);margin-top:0.15rem}
 .table-scroll{overflow-x:auto}
