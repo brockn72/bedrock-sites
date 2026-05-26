@@ -1699,6 +1699,8 @@ function selectRecipe(key){
   STATE.recipe = key;
   STATE.material = r.material;
   STATE.template = r.template;
+  // MKT4: fresh budget of AI attempts per recipe.
+  if (typeof resetAiAttempts === 'function') resetAiAttempts();
   // Seed campaign_note so the AI knows the recipe intent, and prefill the CTA
   // so the contractor sees a sane default for THIS recipe (still editable).
   var cn = document.getElementById('campaign_note');
@@ -1957,7 +1959,23 @@ window.addEventListener('resize', function(){ if (STATE.view === 'build') render
 // ─────────────────────────────────────────────────────────────────────────────
 // AI COPY
 // ─────────────────────────────────────────────────────────────────────────────
+// MKT4 2026-05-25: cap "Try Another Headline" at 3 attempts per recipe to stop
+// runaway token spend + decision paralysis. The first click is "Generate"; the
+// next two are "Try another"; after that the button reads "Edit by hand" and is
+// disabled until the contractor changes recipe or hits Reset.
+var _aiAttempts = 0;
+var MAX_AI_ATTEMPTS = 3;
+function resetAiAttempts(){
+  _aiAttempts = 0;
+  var btn = document.getElementById('aiBtn');
+  if (btn) { btn.disabled = false; btn.innerHTML = '✨ Generate copy with AI'; }
+}
 async function generateCopy() {
+  if (_aiAttempts >= MAX_AI_ATTEMPTS) {
+    var note0 = document.getElementById('aiNote');
+    if (note0) { note0.textContent = 'You\'ve used your 3 AI attempts for this recipe — edit the copy by hand or pick a different recipe.'; note0.style.display = 'block'; }
+    return;
+  }
   readCopy();
   var btn = document.getElementById('aiBtn'), note = document.getElementById('aiNote');
   btn.disabled = true; btn.innerHTML = '<span class="spin"></span>Writing copy…';
@@ -1976,6 +1994,7 @@ async function generateCopy() {
       document.getElementById('copy_cta').value         = data.copy.cta || '';
       renderPreview();
       if (data.warning) { note.textContent = data.warning; note.style.display = 'block'; }
+      _aiAttempts += 1;
     } else {
       note.textContent = data.error || 'AI returned no copy &mdash; try again or type it manually.';
       note.style.display = 'block';
@@ -1983,7 +2002,12 @@ async function generateCopy() {
   } catch(e) {
     note.textContent = 'Network error &mdash; check your connection and try again.'; note.style.display = 'block';
   }
-  btn.disabled = false; btn.innerHTML = '✨ Generate copy with AI';
+  // Update button text based on attempts left.
+  btn.disabled = false;
+  var left = MAX_AI_ATTEMPTS - _aiAttempts;
+  if (_aiAttempts === 0)       btn.innerHTML = '✨ Generate copy with AI';
+  else if (left > 0)           btn.innerHTML = '↻ Try another headline (' + left + ' left)';
+  else                         { btn.innerHTML = 'Edit by hand'; btn.disabled = true; }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
