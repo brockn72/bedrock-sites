@@ -918,7 +918,11 @@ footer a:hover{text-decoration:underline}
                   <div id="previewMount"></div>
                 </div>
               </div>
-              <div class="dl-row">
+              <!-- MKT5 2026-05-25: photo required gate. dl-row + photoRequiredNote toggle. -->
+              <div id="photoRequiredNote" style="display:none;background:#FFF8EC;border:1px solid #C9922A;border-radius:6px;padding:0.75rem 0.9rem;margin:0.6rem 0;font-size:0.78rem;color:#92660e;line-height:1.55">
+                <strong>Add a photo of your work first.</strong> Recipes use your real job photo &mdash; no stock fallback. Drop one above and the download buttons will unlock.
+              </div>
+              <div class="dl-row" id="dlRow">
                 <button class="btn-gold" onclick="downloadFile('png')">PNG</button>
                 <button class="btn-outline" onclick="downloadFile('jpg')">JPG</button>
                 <button class="btn-outline" onclick="downloadFile('pdf')">PDF</button>
@@ -1939,6 +1943,7 @@ function renderPreview() {
   if (STATE.view !== 'build') return;
   readCopy();
   setStageStyles();
+  if (typeof syncPhotoGate === 'function') syncPhotoGate();
   var dims = MATERIALS[STATE.material];
   var photo = STATE.photos[STATE.activePhoto] || '';
   var html = templateHTML(STATE.brandKit, STATE.copy, photo, dims);
@@ -1959,6 +1964,20 @@ window.addEventListener('resize', function(){ if (STATE.view === 'build') render
 // ─────────────────────────────────────────────────────────────────────────────
 // AI COPY
 // ─────────────────────────────────────────────────────────────────────────────
+// MKT5 2026-05-25: real photo required before any generation or download.
+// hasRealPhoto() is the single source of truth; syncPhotoGate() flips the
+// inline note + download row visibility based on the photo bin state.
+function hasRealPhoto(){
+  return !!(STATE && STATE.photos && STATE.photos.length > 0);
+}
+function syncPhotoGate(){
+  var has = hasRealPhoto();
+  var note = document.getElementById('photoRequiredNote'); if (note) note.style.display = has ? 'none' : 'block';
+  var dl   = document.getElementById('dlRow');             if (dl)   dl.style.opacity = has ? '1' : '0.45';
+  // Keep the AI button labeled gracefully when photos are missing — the click
+  // handler will still bail with a clear message.
+}
+
 // MKT4 2026-05-25: cap "Try Another Headline" at 3 attempts per recipe to stop
 // runaway token spend + decision paralysis. The first click is "Generate"; the
 // next two are "Try another"; after that the button reads "Edit by hand" and is
@@ -1971,6 +1990,13 @@ function resetAiAttempts(){
   if (btn) { btn.disabled = false; btn.innerHTML = '✨ Generate copy with AI'; }
 }
 async function generateCopy() {
+  // MKT5: real photo required before any generation or download.
+  if (!hasRealPhoto()) {
+    var noteP = document.getElementById('aiNote');
+    if (noteP) { noteP.textContent = 'Add a photo of your work first — recipes use your real job photo, no stock fallback.'; noteP.style.display = 'block'; }
+    syncPhotoGate();
+    return;
+  }
   if (_aiAttempts >= MAX_AI_ATTEMPTS) {
     var note0 = document.getElementById('aiNote');
     if (note0) { note0.textContent = 'You\'ve used your 3 AI attempts for this recipe — edit the copy by hand or pick a different recipe.'; note0.style.display = 'block'; }
@@ -2096,6 +2122,13 @@ async function captureCanvas() {
 }
 
 async function downloadFile(kind) {
+  // MKT5: refuse download without a real photo. Recipes are real photos only.
+  if (!hasRealPhoto()) {
+    syncPhotoGate();
+    var s0 = document.getElementById('dlStatus');
+    if (s0) s0.textContent = 'Add a photo of your work first — drop one in the Photos box above.';
+    return;
+  }
   var status = document.getElementById('dlStatus');
   status.textContent = 'Rendering ' + kind.toUpperCase() + '…';
   try {
