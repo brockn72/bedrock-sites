@@ -238,6 +238,9 @@ function generateCustomerSite(lead) {
   const pageDesc  = esc(d.subheadline || (biz + ' — ' + tradeLabel + ' serving ' + (city || 'your area') + '. Call ' + (phone || 'today') + ' for a free estimate.'));
   const siteUrl   = lead.live_url || lead.site_url || (d._selectedDomain ? ('https://' + d._selectedDomain) : '');
   const ogImage   = (d.photos && d.photos[0]) || (Array.isArray(d.hero_photos) && d.hero_photos[0]) || '';
+  // WEB3 2026-05-25: hero alt — prefer the contractor's own caption from
+  // site_data.photoAlts[0]; fall back to a business + trade description.
+  const ogImageAlt = (Array.isArray(d.photoAlts) && d.photoAlts[0]) || (biz + ' — ' + tradeLabel);
   const serviceAreasList = (d.service_areas && d.service_areas.length ? d.service_areas : (city ? [city] : []));
   const trade     = lead.trade || '';
 
@@ -296,7 +299,7 @@ ${siteUrl ? `<link rel="canonical" href="${esc(siteUrl)}">` : ''}
 <meta property="og:description" content="${pageDesc}">
 ${siteUrl ? `<meta property="og:url" content="${esc(siteUrl)}">` : ''}
 ${ogImage ? `<meta property="og:image" content="${esc(ogImage)}">
-<meta property="og:image:alt" content="${esc(biz)} — ${esc(tradeLabel)}">` : ''}
+<meta property="og:image:alt" content="${esc(ogImageAlt)}">` : ''}
 
 <!-- Twitter card -->
 <meta name="twitter:card" content="${ogImage ? 'summary_large_image' : 'summary'}">

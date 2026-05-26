@@ -5165,6 +5165,18 @@ function hexToHsl(hex){
 }
 function removeLogo(){S.logo=null;document.getElementById('logoWrap').innerHTML=`<div class="upload-zone" id="logoDrop" onclick="document.getElementById('logoInput').click()"><span class="upload-zone-icon" aria-hidden="true">⤓</span><div class="upload-zone-text">Drop your logo here</div><span class="upload-zone-or">or</span><div class="upload-zone-sub">Click to browse — PNG, JPG, or SVG</div></div>`;wireLogoDrop();}
 
+// WEB3 2026-05-25: every uploaded photo gets an auto-generated alt text. The
+// contractor can edit it inline; alts ride alongside the photo array so the
+// generated site can use them and screen readers / SEO crawlers have something
+// real. Default pattern: "<business> — <trade> — <filename without ext>".
+if (!Array.isArray(S.photoAlts)) S.photoAlts = [];
+function autoAltFor(file, i){
+  var biz = (S.brandKit && S.brandKit.business_name) || S.bizName || 'Work';
+  var trade = (S.trade || S.tradeLabel || 'project');
+  var name = (file && file.name) ? String(file.name).replace(/\.[a-z0-9]+$/i, '').replace(/[-_]+/g, ' ').trim() : ('photo ' + (i + 1));
+  return (biz + ' — ' + trade + ' — ' + name).replace(/\s+/g, ' ').slice(0, 120);
+}
+
 async function handlePhotos(e){await addPhotosFromFiles(Array.from(e.target.files));}
 async function addPhotosFromFiles(files){
   const imageFiles=files.filter(f=>f.type&&f.type.startsWith('image/'));
@@ -5174,14 +5186,41 @@ async function addPhotosFromFiles(files){
     if(imageFiles.length===0){alert(`Please drop image files only (${dropped} non-image file${dropped>1?'s':''} were skipped).`);return;}
   }
   const slice=imageFiles.slice(0,PHOTO_CAP-S.photos.length);
-  for(const f of slice){S.photos.push(await fileToCompressedBase64(f));}
+  for(let k=0; k<slice.length; k++){
+    const f = slice[k];
+    S.photos.push(await fileToCompressedBase64(f));
+    S.photoAlts.push(autoAltFor(f, S.photos.length - 1));
+  }
   renderPhotos();
   // Hide drop zone once we hit the cap
   const dz=document.getElementById('photosDrop');
   if(dz)dz.style.display=S.photos.length>=PHOTO_CAP?'none':'';
 }
-function removePhoto(i){S.photos.splice(i,1);renderPhotos();const dz=document.getElementById('photosDrop');if(dz)dz.style.display=S.photos.length>=PHOTO_CAP?'none':'';if(S.siteData)renderPreview();}
-function renderPhotos(){const g=document.getElementById('photoGrid');g.innerHTML='';S.photos.forEach((u,i)=>{const d=document.createElement('div');d.className='photo-slot';d.innerHTML=`<img src="${u}" alt="Work photo ${i+1}"><button class="photo-remove" onclick="removePhoto(${i})" aria-label="Remove photo ${i+1}">✕</button>`;g.appendChild(d);});}
+function removePhoto(i){
+  S.photos.splice(i,1);
+  if (Array.isArray(S.photoAlts)) S.photoAlts.splice(i,1);
+  renderPhotos();
+  const dz=document.getElementById('photosDrop');
+  if(dz)dz.style.display=S.photos.length>=PHOTO_CAP?'none':'';
+  if(S.siteData)renderPreview();
+}
+function setPhotoAlt(i, v){
+  if (!Array.isArray(S.photoAlts)) S.photoAlts = [];
+  S.photoAlts[i] = String(v || '').slice(0, 200);
+}
+function renderPhotos(){
+  const g=document.getElementById('photoGrid'); if (!g) return;
+  g.innerHTML='';
+  S.photos.forEach((u,i)=>{
+    var alt = (S.photoAlts && S.photoAlts[i]) || ('Work photo ' + (i+1));
+    const d=document.createElement('div');
+    d.className='photo-slot';
+    d.innerHTML = `<img src="${u}" alt="${alt.replace(/[<>&"]/g, function(c){return ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'})[c];})}">`
+      + `<button class="photo-remove" onclick="removePhoto(${i})" aria-label="Remove photo ${i+1}">✕</button>`
+      + `<input type="text" class="photo-alt" value="${alt.replace(/"/g,'&quot;')}" placeholder="Photo caption (helps search engines + screen readers)" oninput="setPhotoAlt(${i}, this.value)" aria-label="Photo ${i+1} alt text" style="display:block;width:100%;margin-top:6px;padding:5px 7px;border:1px solid var(--border);font-size:0.66rem;background:#fff">`;
+    g.appendChild(d);
+  });
+}
 
 // === DRAG & DROP WIRING ===
 // Both the logo zone and photos zone get the same drag-active visual feedback.
@@ -5537,7 +5576,8 @@ function _actuallySaveBuildState(){
       savedAt:Date.now(),
       S:{
         trade:S.trade,services:S.services,color:S.color,goals:S.goals,
-        photos:S.photos,logo:S.logo,siteData:S.siteData,customColors:S.customColors,
+        // WEB3: persist alts alongside photos so they survive save/restore.
+        photos:S.photos,photoAlts:S.photoAlts||[],logo:S.logo,siteData:S.siteData,customColors:S.customColors,
         autofill:S.autofill,heroStyle:S.heroStyle,hasExistingBranding:S.hasExistingBranding,
         fontPair:S.fontPair,serviceAreas:S.serviceAreas,heroPhotoIndex:S.heroPhotoIndex,
         specialtyPhotos:S.specialtyPhotos,processPhotos:S.processPhotos,
