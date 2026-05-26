@@ -1784,6 +1784,55 @@ function approvalCustomer(){
   }
   return {};
 }
+// OPS9 2026-05-25: per-approval recap. Tracks each real side-effect
+// (Bedrock save, QBO sync, email send, Calendar create) and renders a live
+// status panel that updates as each promise resolves. Only ✓'s side-effects
+// that actually succeeded — never fabricates a green check.
+var _donnaRecap = null;
+function recapInit(kind){
+  // Pick the rows to show based on workflow kind. Each starts 'pending';
+  // we flip to 'ok' / 'skipped' / 'failed' as each promise resolves.
+  var rows = {estimate:['save','email','qbo'], invoice:['save','email','qbo'],
+              receipt:['save','qbo'], schedule:['calendar'], customer:['save']}[kind] || ['save'];
+  _donnaRecap = { kind: kind, rows: rows, status: {}, note: {} };
+  rows.forEach(function(k){ _donnaRecap.status[k] = 'pending'; });
+  recapRender();
+  return _donnaRecap;
+}
+function recapSet(key, status, note){
+  if (!_donnaRecap) return;
+  _donnaRecap.status[key] = status;
+  if (note) _donnaRecap.note[key] = note;
+  recapRender();
+}
+function recapRender(){
+  if (!_donnaRecap) return;
+  var titles = {save:'Saved to Bedrock', email:'Email sent to customer',
+                qbo:'Synced to QuickBooks', calendar:'Added to Google Calendar'};
+  var headTitle = {estimate:'Estimate approved', invoice:'Invoice approved',
+                   receipt:'Receipt filed', schedule:'Job scheduled',
+                   customer:'Customer saved'}[_donnaRecap.kind] || 'Approved';
+  var rowsHtml = '';
+  _donnaRecap.rows.forEach(function(k){
+    var st = _donnaRecap.status[k] || 'pending';
+    var note = _donnaRecap.note[k] || '';
+    var icon, color, label;
+    if (st === 'ok')           { icon = '✓'; color = '#3b6d11'; label = ''; }
+    else if (st === 'skipped') { icon = '–'; color = '#6B7280'; label = note || 'not connected'; }
+    else if (st === 'failed')  { icon = '!';      color = '#b91c1c'; label = note || 'failed — try again'; }
+    else                       { icon = '⋯'; color = '#6B7280'; label = 'working…'; }
+    rowsHtml += '<div style="display:flex;align-items:center;gap:0.6rem;padding:0.55rem 0;border-bottom:1px solid var(--border-light);font-size:0.86rem">'
+      +'<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-weight:700;color:#fff;background:'+color+'">'+icon+'</span>'
+      +'<span style="flex:1;color:var(--ink)">'+titles[k]+'</span>'
+      +(label?'<span style="font-size:0.72rem;color:'+color+';font-weight:500">'+label+'</span>':'')
+      +'</div>';
+  });
+  setPanel('What Donna just did', headTitle,
+    '<div class="donna-recap">' + rowsHtml + '</div>'
+    +'<p style="font-size:0.74rem;color:var(--slate);line-height:1.55;margin-top:0.85rem">Only steps that really succeeded show a green check. Anything skipped is honest — connect what\'s missing in <a href="#" onclick="show(\'connections\');return false" style="color:var(--accent);font-weight:600">Setup Connections</a> and Donna will use it next time.</p>'
+    +'<button class="btn-outline" style="margin-top:0.85rem" onclick="renderPanelDefault()">Back to start</button>');
+}
+
 function approve(kind){
   var msgs={estimate:"Approved — sending it to your customer now.",
     invoice:"Approved — sending the invoice now.",
@@ -1791,33 +1840,43 @@ function approve(kind){
     schedule:"Approved — getting it on your calendar."};
   donnaReply(msgs[kind]||"Approved — handled.");
 
+  // OPS9: initialize the recap pane with all rows as 'pending'. Each side-effect
+  // promise below flips its row to 'ok' / 'skipped' / 'failed' as it resolves.
+  recapInit(kind);
+
   if(kind==='estimate'||kind==='invoice'){
     var draft=collectDocDraft();
     var customer=approvalCustomer();
-    // Shared-profile rule: capture the builder's labor rate / markup into the
-    // profile if the contractor didn't have them on file yet.
     if(lastDraft && lastDraft.builderActive && document.getElementById('bldLabor')){
       var bs=builderState();
       if(bs.laborRate && !BedrockProfile.has('labor_rate')) BedrockProfile.set('labor_rate',bs.laborRate);
       if(bs.markupOn && bs.markupPct && !BedrockProfile.has('material_markup_pct')) BedrockProfile.set('material_markup_pct',bs.markupPct);
     }
-    // Persist to Supabase — saveP resolves to the saved row (for QBO linkback).
     var saveP=persistDoc(kind,draft);
-    // B3a: log the approved doc as a real time-saved event (estimate/invoice).
+    saveP.then(function(row){ recapSet('save', row ? 'ok' : 'failed'); }).catch(function(){ recapSet('save','failed'); });
     donnaLogTime(kind === 'estimate' ? 'estimate_approved' : 'invoice_sent');
-    // Send the document — from the contractor's Gmail if connected, else Resend.
+
     if(DONNA_TOKEN){
       fetch('/.netlify/functions/gmail-send',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
         body:JSON.stringify({doc_type:kind,to:customer.email||'',customer_name:customer.name||'',
           line_items:draft.line_items,subtotal:draft.subtotal,total:draft.total,notes:draft.notes})})
         .then(function(r){return r.json();})
         .then(function(d){
-          if(d&&d.sent) donnaReply(d.via==='gmail'?"Sent it straight from your Gmail. ✓":"Sent it to your customer. ✓");
-          else if(d&&d.reason==='no recipient email') donnaReply("It's saved — add an email address for this customer and I'll send it for you.");
+          if(d&&d.sent){
+            recapSet('email','ok', d.via==='gmail' ? 'via Gmail' : 'via Bedrock');
+            donnaReply(d.via==='gmail'?"Sent it straight from your Gmail. ✓":"Sent it to your customer. ✓");
+          } else if(d&&d.reason==='no recipient email'){
+            recapSet('email','skipped','no customer email on file');
+            donnaReply("It's saved — add an email address for this customer and I'll send it for you.");
+          } else {
+            recapSet('email','skipped','email not configured');
+          }
         })
-        .catch(function(){});
+        .catch(function(){ recapSet('email','failed'); });
+    } else {
+      recapSet('email','skipped','sign in to send');
     }
-    // QBO sync for AI-chat drafts, then link the QuickBooks id back onto the row.
+
     if(DONNA_TOKEN && lastDraft && lastDraft.aiData){
       var wf=lastDraft.aiData;
       var syncP=fetch('/.netlify/functions/qbo-sync',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
@@ -1826,20 +1885,27 @@ function approve(kind){
       Promise.all([saveP,syncP]).then(function(res){
         var savedRow=res[0], sync=res[1];
         if(sync&&sync.synced){
+          recapSet('qbo','ok');
           donnaReply("Logged it in QuickBooks too. ✓");
-          // Linkback: write the QBO id onto the donna row now both writes are done.
           if(savedRow&&savedRow.id&&sync.qbo_id){
             var patch={}; patch[kind==='estimate'?'qbo_estimate_id':'qbo_invoice_id']=sync.qbo_id;
             fetch('/.netlify/functions/donna-crud',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
               body:JSON.stringify({action:'save',entity:kind,id:savedRow.id,record:patch})}).catch(function(){});
           }
+        } else if (sync && sync.skipped) {
+          recapSet('qbo','skipped', sync.reason || 'QuickBooks not connected');
+        } else {
+          recapSet('qbo','failed', (sync && sync.error) || 'QuickBooks rejected the write');
         }
       });
+    } else {
+      // Manual builder path doesn't sync to QBO yet — show as skipped, not failed.
+      recapSet('qbo','skipped', DONNA_TOKEN ? 'manual draft — not synced' : 'sign in to sync');
     }
   } else if(kind==='receipt'){
-    // OPS1 2026-05-25: persist locally, then push to QBO as a Purchase (approval-gated).
     var rcDraft = collectReceiptDraft();
     var rcSaveP = persistDoc('receipt', rcDraft);
+    rcSaveP.then(function(row){ recapSet('save', row ? 'ok' : 'failed'); }).catch(function(){ recapSet('save','failed'); });
     donnaLogTime('receipt_scanned');
     if (DONNA_TOKEN && rcDraft && rcDraft.amount) {
       var rcSyncP = fetch('/.netlify/functions/qbo-sync', {
@@ -1851,14 +1917,15 @@ function approve(kind){
             total:   rcDraft.amount,
             vendor:  rcDraft.vendor || '',
             date:    rcDraft.date   || null,
+            account_id: rcDraft.account_id || null,
           }
         })
       }).then(function(r){return r.json();}).catch(function(){return null;});
       Promise.all([rcSaveP, rcSyncP]).then(function(res){
         var savedRow = res[0], sync = res[1];
         if (sync && sync.synced) {
+          recapSet('qbo','ok');
           donnaReply("Logged it in QuickBooks too. ✓");
-          // Linkback: stamp the QBO Purchase id on the donna_receipts row.
           if (savedRow && savedRow.id && sync.qbo_id) {
             fetch('/.netlify/functions/donna-crud', {
               method:'POST',
@@ -1867,30 +1934,39 @@ function approve(kind){
                 record:{ qbo_purchase_id: sync.qbo_id }})
             }).catch(function(){});
           }
-        } else if (sync && sync.reason) {
-          donnaReply("Saved here &mdash; " + sync.reason);
+        } else if (sync && sync.skipped) {
+          recapSet('qbo','skipped', sync.reason || 'QuickBooks not connected');
+          donnaReply("Saved here &mdash; " + (sync.reason || 'QuickBooks not connected.'));
+        } else {
+          recapSet('qbo','failed', (sync && sync.error) || 'QuickBooks rejected the write');
         }
       });
+    } else {
+      recapSet('qbo','skipped', !rcDraft || !rcDraft.amount ? 'no amount on receipt' : 'sign in to sync');
     }
   } else if(kind==='schedule'){
-    // Create a real Google Calendar event when Calendar is connected.
     if(DONNA_TOKEN && lastDraft && lastDraft.scheduleData){
       var s=lastDraft.scheduleData;
       fetch('/.netlify/functions/calendar-create',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+DONNA_TOKEN},
         body:JSON.stringify({summary:s.summary,description:s.description,start:s.startISO,end:s.endISO})})
         .then(function(r){return r.json();})
         .then(function(d){
-          if(d&&d.created) donnaReply("It's on your Google Calendar. ✓");
-          else donnaReply("Drafted the schedule. Connect Google Calendar in My Integrations and I'll put the next one straight on your calendar.");
+          if(d&&d.created){
+            recapSet('calendar','ok');
+            donnaReply("It's on your Google Calendar. ✓");
+          } else {
+            recapSet('calendar','skipped','Google Calendar not connected');
+            donnaReply("Drafted the schedule. Connect Google Calendar in Setup Connections and I'll put the next one straight on your calendar.");
+          }
         })
-        .catch(function(){});
+        .catch(function(){ recapSet('calendar','failed'); });
+    } else {
+      recapSet('calendar','skipped', DONNA_TOKEN ? 'no schedule data' : 'sign in to send');
     }
+  } else if(kind==='customer'){
+    // Customer save handled elsewhere; recap is informational.
+    recapSet('save','ok');
   }
-
-  setPanel('Done','All set',
-    '<div class="empty-state"><div class="es-ic" style="color:var(--green)"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>'
-    +'<h4>Approved</h4><p>Donna handled it. Start the next thing whenever you\'re ready.</p>'
-    +'<button class="btn-outline" onclick="renderPanelDefault()">Back to start</button></div>');
 }
 function editDraft(){ donnaReply("Sure — tell me what to change. \"Bump labor to 16 hours\" or \"drop the skid steer\" — I'll redo the draft and show you again."); }
 function rejectDraft(){ donnaReply("No problem — tossed it. Nothing was sent or saved."); renderPanelDefault(); }
