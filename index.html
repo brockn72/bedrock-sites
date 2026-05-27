@@ -3801,16 +3801,17 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
 <!-- FOOTER moved out of #home — now a global footer after </main> so it shows on every page -->
 
 <!-- A1: homepage section order — runs after all sections are parsed but before first paint.
-     Uses appendChild to physically reorder #home children in the desired sequence:
-     Hero -> Welcome -> Mobile-link -> Power of Connected Tools -> Here's What We Do ->
-     Why Bedrock (bd-products) -> Our Work (bd-showcase2) -> Pricing (bd-pricing) ->
-     Get Started (bd-cta) -> Proof (bd-proof). Hidden sections are unaffected. -->
+     Uses appendChild to physically reorder #home children in the desired sequence.
+     Any section NOT in this array stays at its original DOM position — which means
+     it ends up BEFORE every listed section (since the listed ones all get appended
+     to the end). So new sections must be added here in their intended slot.
+     HOME3 2026-05-26: bd-beforewith added directly after bd-whatwedo per spec. -->
 <script>
 (function(){
   var home = document.getElementById('home'); if(!home) return;
   var ORDER = [
     'bd-hero','bd-welcome','bd-mobile-link','bd-stats',
-    'bd-connected','bd-whatwedo','bd-products',
+    'bd-connected','bd-whatwedo','bd-beforewith','bd-products',
     'bd-showcase2','bd-pricing',
     'bd-cta','bd-proof',
     // hidden / legacy — keep them at the end so they don't clutter the visible flow
