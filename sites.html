@@ -1577,10 +1577,11 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 .bd-login-help a{color:#C9922A;text-decoration:none}
 @media(max-width:820px){.bd-login-grid{grid-template-columns:1fr;gap:2rem;padding:2.25rem 1.75rem}.bd-login-inner{max-width:460px}}
 
-/* FOOTER (shared) — HOME1 2026-05-26: matches index.html 4-column compact footer. */
+/* FOOTER (shared) — HOME4 2026-05-26: matches index.html 4-column horizontal footer.
+   Breakpoint at 720px (4→2 cols) and 480px (2→1 col) so 4 columns survive on common laptops. */
 #bd-footer{background:#0D1B2E;padding:2.25rem 5% 1.5rem;border-top:3px solid #C9922A}
 .bd-footer-inner{max-width:1320px;margin:0 auto}
-.bd-footer-top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:2rem;margin-bottom:1.6rem;align-items:start}
+.bd-footer-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:1.5rem;margin-bottom:1.6rem;align-items:start}
 .bd-footer-brand .f-logo{font-family:'Playfair Display',serif;font-size:1.25rem;color:#fff;margin-bottom:0.3rem;line-height:1.1}
 .bd-footer-brand .f-tagline{font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:400;color:rgba(255,255,255,0.6);max-width:260px;line-height:1.55;letter-spacing:0}
 .bd-footer-links .f-col-title{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;margin-bottom:0.85rem}
@@ -1608,7 +1609,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   #bd-products div[style*="grid-template-columns:1fr 1fr 1fr"]{grid-template-columns:1fr!important}
   .bd-opt-inner{grid-template-columns:1fr;gap:2rem}
   .bd-score-mockup{order:-1}
-  .bd-footer-top{grid-template-columns:1fr 1fr;gap:1.75rem}
+  /* HOME4 2026-05-26: 4-column footer holds at mobile-nav breakpoint; 4→2 happens at 720px below. */
   .bd-stats-grid{grid-template-columns:1fr}
   .bd-stat{border-right:none;border-bottom:1px solid rgba(13,27,46,0.08);padding:1.5rem 1rem}
   .bd-stat:last-child{border-bottom:none}
@@ -1631,11 +1632,18 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   .bd-score-ring{width:120px;height:120px}
   #bd-faq{padding:3rem 5%!important}
 }
+@media(max-width:720px){
+  /* HOME4 2026-05-26: footer drops to 2 columns between 480-720px. */
+  .bd-footer-top{grid-template-columns:1fr 1fr;gap:1.5rem}
+}
 @media(max-width:640px){
   .bd-hero-ctas{flex-direction:column;align-items:center}
   .bd-btn-gold,.bd-btn-outline,.bd-btn-dark{width:100%;text-align:center}
-  .bd-footer-top{grid-template-columns:1fr;gap:1.5rem}
   .bd-footer-bottom{flex-direction:column;text-align:center}
+}
+@media(max-width:480px){
+  /* HOME4 2026-05-26: single column on phones. */
+  .bd-footer-top{grid-template-columns:1fr;gap:1.25rem}
   #bd-what{padding:2.5rem 4%}
   #bd-products{padding:2.5rem 4%}
   #bd-optimizer{padding:2.5rem 4%}
@@ -4097,9 +4105,17 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
 <footer id="bd-footer">
   <div class="bd-footer-inner">
     <div class="bd-footer-top">
+      <!-- HOME4 2026-05-26: footer columns reordered L→R: Bedrock Digital · Company · Products · Legal. -->
       <div class="bd-footer-brand">
         <div class="f-logo">Bedrock Digital</div>
         <div class="f-tagline">Spend more time on the job. Less time on everything else.</div>
+      </div>
+      <div class="bd-footer-links">
+        <div class="f-col-title">Company</div>
+        <ul>
+          <li><a href="/#about">About</a></li>
+          <li><a href="/#ourwork">Our Work</a></li>
+        </ul>
       </div>
       <div class="bd-footer-links">
         <div class="f-col-title">Products</div>
@@ -4109,13 +4125,6 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
           <li><a href="/bedrock-donna-v1.html">Bedrock Operations</a></li>
           <li><a href="/bedrock-finance-v1.html">Bedrock Finance</a></li>
           <li><a href="/#optimizer">Bedrock SEO</a></li>
-        </ul>
-      </div>
-      <div class="bd-footer-links">
-        <div class="f-col-title">Company</div>
-        <ul>
-          <li><a href="/#about">About</a></li>
-          <li><a href="/#ourwork">Our Work</a></li>
         </ul>
       </div>
       <div class="bd-footer-links">

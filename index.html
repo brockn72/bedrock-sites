@@ -1594,11 +1594,12 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
 @media(max-width:820px){.bd-login-grid{grid-template-columns:1fr;gap:2rem;padding:2.25rem 1.75rem}.bd-login-inner{max-width:460px}}
 
 /* FOOTER (shared) */
-/* HOME1 2026-05-26: footer rebuilt as a compact 4-column rectangle. Reduced vertical padding;
-   brand column is slimmer (logo + one-line tagline only, no extended copy paragraph). */
+/* HOME4 2026-05-26: footer is a 4-column horizontal rectangle. Keep 4 columns down to ~720px
+   so it doesn't snap to a 2x2 square on common laptop widths. Drop to 2 columns under 720px,
+   single column under 480px. Columns L→R: Bedrock Digital · Company · Products · Legal. */
 #bd-footer{background:#0D1B2E;padding:2.25rem 5% 1.5rem;border-top:3px solid #C9922A}
 .bd-footer-inner{max-width:1320px;margin:0 auto}
-.bd-footer-top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:2rem;margin-bottom:1.6rem;align-items:start}
+.bd-footer-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:1.5rem;margin-bottom:1.6rem;align-items:start}
 .bd-footer-brand .f-logo{font-family:'Playfair Display',serif;font-size:1.25rem;color:#fff;margin-bottom:0.3rem;line-height:1.1}
 .bd-footer-brand .f-tagline{font-family:'DM Sans',sans-serif;font-size:0.74rem;font-weight:400;color:rgba(255,255,255,0.6);max-width:260px;line-height:1.55;letter-spacing:0}
 .bd-footer-links .f-col-title{font-family:'DM Sans',sans-serif;font-size:0.58rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#C9922A;margin-bottom:0.85rem}
@@ -1647,8 +1648,7 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   #bd-products div[style*="grid-template-columns:1fr 1fr 1fr"]{grid-template-columns:1fr!important}
   .bd-opt-inner{grid-template-columns:1fr;gap:2rem}
   .bd-score-mockup{order:-1}
-  .bd-footer-top{grid-template-columns:1fr 1fr;gap:1.75rem}
-  /* HOME1 2026-05-26: footer drops to a single column on phones below 540px (handled by the 640 breakpoint media). */
+  /* HOME4 2026-05-26: 4-column footer holds up to ~720px (handled by its own breakpoint below) — at the 880px mobile-nav breakpoint we keep 4 columns. */
   .bd-stats-grid{grid-template-columns:1fr}
   .bd-stat{border-right:none;border-bottom:1px solid rgba(13,27,46,0.08);padding:1.5rem 1rem}
   .bd-stat:last-child{border-bottom:none}
@@ -1671,12 +1671,18 @@ footer{background:var(--dark);padding:1.75rem 5%;display:flex;justify-content:sp
   .bd-score-ring{width:120px;height:120px}
   #bd-faq{padding:3rem 5%!important}
 }
+@media(max-width:720px){
+  /* HOME4 2026-05-26: footer drops to 2 columns between 480-720px. */
+  .bd-footer-top{grid-template-columns:1fr 1fr;gap:1.5rem}
+}
 @media(max-width:640px){
   .bd-hero-ctas{flex-direction:column;align-items:center}
   .bd-btn-gold,.bd-btn-outline,.bd-btn-dark{width:100%;text-align:center}
-  /* HOME1 2026-05-26: on phones the 4-col footer collapses to a single column. */
-  .bd-footer-top{grid-template-columns:1fr;gap:1.5rem}
   .bd-footer-bottom{flex-direction:column;text-align:center}
+}
+@media(max-width:480px){
+  /* HOME4 2026-05-26: single column on phones. */
+  .bd-footer-top{grid-template-columns:1fr;gap:1.25rem}
   #bd-what{padding:2.5rem 4%}
   #bd-products{padding:2.5rem 4%}
   #bd-optimizer{padding:2.5rem 4%}
@@ -1844,10 +1850,12 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <h1>Spend more time on the job.<br><em>Less time on everything else.</em></h1>
     <p class="bd-hero-sub">Your website, marketing, daily operations, and finances &mdash; already set up for your trade and working together from day one.</p>
     <!-- SITE5 2026-05-25: price above the fold -->
-    <p class="bd-hero-price" style="font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:500;letter-spacing:0.04em;color:#C9922A;margin:-1.25rem auto 2.5rem;max-width:560px">From $200 setup + $20/mo &mdash; see your site before you pay.</p>
+    <!-- HOME4 2026-05-26: tagline above the CTA now cycles with the rotating button (5s per slide). -->
+    <p id="bdHeroTagline" class="bd-hero-price" style="font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:500;letter-spacing:0.04em;color:#C9922A;margin:-1.25rem auto 2.5rem;max-width:560px;min-height:1.5em">See your website before you pay.</p>
     <!-- HOME1 2026-05-26: hero rotating CTA with visible carousel affordances — clickable dots + Next arrow.
-         Manual interaction resets/pauses the auto-rotate timer so the user is always in control. -->
+         HOME4 2026-05-26: phantom spacer matches the Next arrow's width so the gold CTA sits at true horizontal center. -->
     <div class="bd-hero-ctas">
+      <span class="bd-hero-cta-spacer" aria-hidden="true"></span>
       <a id="bdHeroCtaRotate"
          href="/sites.html?embed=builder"
          class="bd-btn-gold"
@@ -1878,7 +1886,9 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
     <!-- HOME1 2026-05-26: dot indicators sit just under the rotating CTA. Click any dot to jump to that slide. -->
     <div class="bd-hero-dots" id="bdHeroDots" role="tablist" aria-label="Tool selector"></div>
     <style>
-      .bd-hero-cta-next{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;margin-left:0.5rem;background:rgba(255,255,255,0.06);border:1px solid rgba(201,146,42,0.45);border-radius:50%;color:#F5E6C8;cursor:pointer;transition:background .15s,border-color .15s,color .15s;vertical-align:middle}
+      /* HOME4 2026-05-26: spacer is the same width as the Next arrow + its margin, so the gold CTA stays at true horizontal center. */
+      .bd-hero-cta-spacer{display:inline-block;width:34px;height:34px;margin-right:0.5rem;flex:0 0 auto;visibility:hidden}
+      .bd-hero-cta-next{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;margin-left:0.5rem;background:rgba(255,255,255,0.06);border:1px solid rgba(201,146,42,0.45);border-radius:50%;color:#F5E6C8;cursor:pointer;transition:background .15s,border-color .15s,color .15s;vertical-align:middle;flex:0 0 auto}
       .bd-hero-cta-next:hover{background:rgba(201,146,42,0.18);border-color:#C9922A;color:#fff}
       .bd-hero-cta-next:focus{outline:none;box-shadow:0 0 0 3px rgba(201,146,42,0.35)}
       .bd-hero-dots{display:flex;gap:8px;justify-content:center;margin:0.95rem auto 0;flex-wrap:wrap}
@@ -1886,32 +1896,57 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
       .bd-hero-dot:hover{background:rgba(255,255,255,0.45);transform:scale(1.12)}
       .bd-hero-dot.active{background:#C9922A;transform:scale(1.15)}
       .bd-hero-dot:focus{outline:none;box-shadow:0 0 0 3px rgba(201,146,42,0.35)}
-      @media(max-width:520px){.bd-hero-cta-next{width:30px;height:30px}}
+      /* HOME4 2026-05-26: subtle fade as the rotating tagline + CTA label change. */
+      #bdHeroCtaRotate,#bdHeroTagline{transition:opacity .25s ease}
+      #bdHeroCtaRotate.bdrot-fade,#bdHeroTagline.bdrot-fade{opacity:0}
+      @media(max-width:520px){
+        .bd-hero-cta-next,.bd-hero-cta-spacer{width:30px;height:30px}
+      }
     </style>
     <script>
       (function(){
         var btn = document.getElementById('bdHeroCtaRotate');
         var nextBtn = document.getElementById('bdHeroCtaNext');
         var dotsWrap = document.getElementById('bdHeroDots');
+        var tagline = document.getElementById('bdHeroTagline');
         if (!btn) return;
+        // HOME4 2026-05-26: tagline added per slide; CTA + tagline cycle together (5s each, slower than the prior 3s).
+        // Finance + SEO taglines are best-effort defaults — Brock to refine.
         var ROT = [
-          { label: 'Build My Website Free',        href: '/sites.html?embed=builder',     short: 'Website' },
-          { label: 'Build My Free Branding Kit',   href: '/bedrock-marketing-v1.html',    short: 'Marketing' },
-          { label: 'Get Business Insights',        href: '/bedrock-finance-v1.html',      short: 'Finance' },
-          { label: 'Meet Your Assistant',          href: '/bedrock-donna-v1.html',        short: 'Operations' },
-          { label: 'Test My Site for SEO',         href: '/#optimizer',                   short: 'SEO' }
+          { label: 'Build My Website Free',        href: '/sites.html?embed=builder',     short: 'Website',
+            tagline: 'See your website before you pay.' },
+          { label: 'Build My Free Branding Kit',   href: '/bedrock-marketing-v1.html',    short: 'Marketing',
+            tagline: '$30/mo — your brand kit + 5 social posts a week.' },
+          { label: 'Meet Your Assistant',          href: '/bedrock-donna-v1.html',        short: 'Operations',
+            tagline: 'Input your business info — get an assistant that bills, invoices, and tracks receipts.' },
+          { label: 'Get Business Insights',        href: '/bedrock-finance-v1.html',      short: 'Finance',
+            tagline: 'See which jobs make money — at a glance.' },
+          { label: 'Test My Site for SEO',         href: '/#optimizer',                   short: 'SEO',
+            tagline: 'Free SEO audit — see how you show up on Google.' }
         ];
         var reduce = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-        var idx = 0, timer = null, paused = false, PERIOD = 3000;
-        function paint(){
+        var idx = 0, timer = null, paused = false, PERIOD = 5000;
+        function paintImmediate(){
           btn.textContent = ROT[idx].label;
           btn.setAttribute('href', ROT[idx].href);
+          if (tagline) tagline.textContent = ROT[idx].tagline;
           if (dotsWrap) {
             Array.prototype.forEach.call(dotsWrap.querySelectorAll('.bd-hero-dot'), function(d, i){
               d.classList.toggle('active', i === idx);
               d.setAttribute('aria-selected', i === idx ? 'true' : 'false');
             });
           }
+        }
+        function paint(){
+          if (reduce) { paintImmediate(); return; }
+          // Quick crossfade: fade-out (180ms) → swap text → fade-in.
+          btn.classList.add('bdrot-fade');
+          if (tagline) tagline.classList.add('bdrot-fade');
+          setTimeout(function(){
+            paintImmediate();
+            btn.classList.remove('bdrot-fade');
+            if (tagline) tagline.classList.remove('bdrot-fade');
+          }, 180);
         }
         function tick(){ if (paused) return; idx = (idx + 1) % ROT.length; paint(); }
         function start(){ if (timer) clearInterval(timer); if (!reduce) timer = setInterval(tick, PERIOD); }
@@ -1928,7 +1963,7 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
           });
         }
         if (nextBtn) nextBtn.addEventListener('click', function(){ goto(idx + 1); });
-        paint();
+        paintImmediate();
         if (!reduce) {
           start();
           btn.addEventListener('mouseenter', function(){ paused = true; });
@@ -2478,13 +2513,12 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
       <div class="bw-cell before bw-day-fri"><span class="bw-day">Fri</span><span>You chase unpaid invoices and try to remember who owes what.</span></div>
       <div class="bw-cell with   bw-day-fri"><span class="bw-check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span><span>Finance shows you exactly which jobs made money and which invoices are still out &mdash; at a glance.</span></div>
 
-      <!-- Sat — Before is still working; With is the payoff (empty / free time). -->
+      <!-- HOME4 2026-05-26: Sat/Sun With-column copy clarified — they may still be on the job, but they're off the business admin. -->
       <div class="bw-cell before bw-day-sat"><span class="bw-day">Sat</span><span>Catching up on the admin you didn't finish all week.</span></div>
-      <div class="bw-cell with free bw-day-sat"><span class="bw-day">Sat</span><span class="bw-free">Free time<small>The weekend's yours.</small></span></div>
+      <div class="bw-cell with free bw-day-sat"><span class="bw-day">Sat</span><span class="bw-free">The weekend's yours<small>You're off the business work.</small></span></div>
 
-      <!-- Sun — same payoff. -->
       <div class="bw-cell before bw-day-sun"><span class="bw-day">Sun</span><span>More of the same. The "weekend" is just unpaid office work.</span></div>
-      <div class="bw-cell with free bw-day-sun"><span class="bw-day">Sun</span><span class="bw-free">Free time<small>You're off.</small></span></div>
+      <div class="bw-cell with free bw-day-sun"><span class="bw-day">Sun</span><span class="bw-free">The weekend's yours<small>You're off the business work.</small></span></div>
     </div>
 
     <!-- HOME2 2026-05-26: section CTA routes to the Tools page (navy/gold ghost button, not the filled gold). -->
@@ -6791,9 +6825,17 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
 <footer id="bd-footer">
   <div class="bd-footer-inner">
     <div class="bd-footer-top">
+      <!-- HOME4 2026-05-26: footer columns reordered L→R: Bedrock Digital · Company · Products · Legal. -->
       <div class="bd-footer-brand">
         <div class="f-logo">Bedrock Digital</div>
         <div class="f-tagline">Spend more time on the job. Less time on everything else.</div>
+      </div>
+      <div class="bd-footer-links">
+        <div class="f-col-title">Company</div>
+        <ul>
+          <li><a href="#about" onclick="showPage('about',event)">About</a></li>
+          <li><a href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
+        </ul>
       </div>
       <div class="bd-footer-links">
         <div class="f-col-title">Products</div>
@@ -6803,13 +6845,6 @@ document.addEventListener('DOMContentLoaded', function(){ window.BedrockTurnstil
           <li><a href="/bedrock-donna-v1.html">Bedrock Operations</a></li>
           <li><a href="/bedrock-finance-v1.html">Bedrock Finance</a></li>
           <li><a href="#optimizer" onclick="showPage('optimizer',event)">Bedrock SEO</a></li>
-        </ul>
-      </div>
-      <div class="bd-footer-links">
-        <div class="f-col-title">Company</div>
-        <ul>
-          <li><a href="#about" onclick="showPage('about',event)">About</a></li>
-          <li><a href="#ourwork" onclick="showPage('ourwork',event)">Our Work</a></li>
         </ul>
       </div>
       <div class="bd-footer-links">

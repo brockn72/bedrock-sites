@@ -1132,6 +1132,8 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           .dh-below-section > *:last-child{margin-bottom:0 !important}
           /* NAV1 2026-05-26: Hiring Out / Money Saved dashboard card hidden — moved to My Account as a table. Not deleted (reversible). */
           #dhMoneyCard{display:none !important}
+          /* DASH2 2026-05-26: Open Preview tool cards hidden on the dashboard. Tool launches live in the top tab bar + My Account → Subscriptions. Kept in markup for reversibility. */
+          #dhToolGrid{display:none !important}
           /* With Money Saved hidden, dh-secondary drops to 2 columns (Profile %, Time Saved). */
           .dh-secondary{grid-template-columns:1fr 1fr}
           @media(max-width:860px){.dh-secondary{grid-template-columns:1fr}}
@@ -1594,9 +1596,10 @@ body.bd-embed-subs #pane-subs-cart{display:block !important}
           // Hide welcome on load if previously dismissed
           try { if (localStorage.getItem(WELCOME_DISMISS_KEY) === '1') { var c=document.getElementById('wmInline'); if(c) c.style.display='none'; } } catch(_){}
 
-          // TOP zone — tool cards lead, then contextual prompts (NBA banner, Get Started, profile nudge, welcome, launchpad).
-          // These are prepended in reverse so the first item in TOP_ORDER ends up at the top.
-          var TOP_ORDER = ['dhToolGrid','dhNba','onboardCard','profileNudgeBanner','wmInline','dashLaunchpad'];
+          // DASH2 2026-05-26: top of dashboard now leads with Welcome → Get Started → Profile %, then
+          // the rest. Open-Preview tool cards (#dhToolGrid) hidden with display:none in CSS below
+          // (kept in markup, reversible) per Brock's directive.
+          var TOP_ORDER = ['wmInline','onboardCard','profileNudgeBanner','dhNba','dashLaunchpad'];
           for (var i = TOP_ORDER.length - 1; i >= 0; i--) {
             var el = document.getElementById(TOP_ORDER[i]);
             if (el && el.parentNode === pane) pane.insertBefore(el, pane.firstChild);
@@ -3345,9 +3348,13 @@ window.notifProfileIncomplete = function(pct){
     meta:'Just now', link:{ href:'/account.html#profile' },
   });
 };
+// DASH2 2026-05-26: ad-hoc alert icons swapped from emoji (✓ ⚠ ★) to inline brand SVGs
+// so they match the Get Started checklist styling. Every link target points to a real
+// page/anchor that's wired up in account.html.
 window.notifIntegrationConnected = function(name){
   window.pushNotif({
-    id:'int-ok-'+name, icon:'✓',
+    id:'int-ok-'+name,
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
     msg:name+' connected successfully.',
     meta:'Just now', dismissAfterMs:5000,
     link:{ href:'/account.html#integrations' },
@@ -3355,7 +3362,8 @@ window.notifIntegrationConnected = function(name){
 };
 window.notifIntegrationFailed = function(name){
   window.pushNotif({
-    id:'int-fail-'+name, icon:'⚠',
+    id:'int-fail-'+name,
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
     msg:name+' connection failed — try again.',
     meta:'Just now', persistent:true,
     link:{ href:'/account.html#integrations' },
@@ -3363,7 +3371,8 @@ window.notifIntegrationFailed = function(name){
 };
 window.notifNewReview = function(detail){
   window.pushNotif({
-    id:'review-'+Date.now(), icon:'★',
+    id:'review-'+Date.now(),
+    icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
     msg:'A client left you a review on Google'+(detail?' — "'+detail+'"':'.'),
     meta:'Just now',
     link:{ href:'/account.html#google' },
